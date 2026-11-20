@@ -216,7 +216,8 @@ const store = {
   .datos strong { font: 400 clamp(22px, 5vw, 30px)/1 var(--fuente-titulo); text-transform: uppercase; }
   .datos span { font-size: 12px; }
   @media (min-width: 900px) {
-    .hero__grid { grid-template-columns: 1.05fr 1fr; align-items: center; padding-block: 48px 36px; gap: 48px; }
+    .hero__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; padding-block: 48px 36px; gap: 48px; }
+    .hero h1 { font-size: clamp(64px, 9.5vw, 170px); }
     .datos { grid-template-columns: repeat(4, 1fr); }
     .datos li { border-bottom: 0; border-right: var(--borde-fino); }
     .datos li:nth-child(2n) { border-right: var(--borde-fino); }
