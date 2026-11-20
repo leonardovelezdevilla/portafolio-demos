@@ -133,3 +133,4 @@ input[aria-invalid='true'], select[aria-invalid='true'], textarea[aria-invalid='
 
 .campo > label.marca { display: flex; font-weight: 400; margin-bottom: 0; }
 .oscuro .muted { color: var(--texto-claro-suave); }
+.oscuro .etiqueta { color: var(--texto-claro-suave); }
