@@ -1,0 +1,333 @@
+---
+import { SERVICIOS, VEHICULOS } from '../data/precios';
+import Icon from './Icon.astro';
+---
+<section class="seccion cot" id="cotizador" aria-labelledby="t-cot">
+  <div class="wrap">
+    <p class="etiqueta">Cotizador de mantenimiento</p>
+    <h2 id="t-cot">Tu rango de precio en cuatro pasos</h2>
+    <p class="intro">Elige tu vehículo, el kilometraje y los servicios. Te damos un rango en soles con IGV incluido. No pedimos tus datos para cotizar.</p>
+
+    <div class="cot__grid">
+    <form id="cot-form" class="caja" novalidate method="post" action="/404/" aria-label="Cotizador paso a paso">
+      <noscript><p class="aviso">Para armar la cotización paso a paso se necesita JavaScript. Mientras tanto, mira el tarifario de arriba o escríbenos por <a href="https://wa.me/51935852637">WhatsApp</a>.</p></noscript>
+
+      <ol class="pasos" id="cot-pasos" aria-label="Progreso del cotizador">
+        <li data-ind="1"><span>1</span> Vehículo<small class="solo-lectores"></small></li>
+        <li data-ind="2"><span>2</span> Kilometraje<small class="solo-lectores"></small></li>
+        <li data-ind="3"><span>3</span> Servicios<small class="solo-lectores"></small></li>
+        <li data-ind="4"><span>4</span> Rango<small class="solo-lectores"></small></li>
+      </ol>
+
+      <div class="paso" data-paso="1">
+        <fieldset class="campo" aria-describedby="e-vehiculo">
+          <legend>1. ¿Qué tipo de vehículo tienes?</legend>
+          <div class="opciones">
+            {VEHICULOS.map((v, i) => (
+              <label class="op">
+                <input type="radio" name="vehiculo" value={v.id} required />
+                <span class="icono-op"><Icon nombre={v.id} tamano={32} /></span>
+                <span class="op__txt"><span class="op__nombre">{v.nombre}</span><span class="op__sub">{v.ejemplo}</span></span>
+                <span class="op__marca"><Icon nombre="ok" tamano={20} /></span>
+              </label>
+            ))}
+          </div>
+          <p class="err" id="e-vehiculo" role="alert"></p>
+        </fieldset>
+      </div>
+
+      <div class="paso" data-paso="2">
+        <div class="campo">
+          <label for="km">2. ¿Cuántos kilómetros tiene?</label>
+          <p class="ayuda" id="km-ayuda">Mira el tablero. Puedes escribir un valor aproximado, por ejemplo 45 000.</p>
+          <input id="km" name="km" inputmode="numeric" autocomplete="off" aria-describedby="km-ayuda e-km" />
+          <p class="err" id="e-km" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="paso" data-paso="3">
+        <fieldset class="campo" aria-describedby="e-servicio">
+          <legend>3. ¿Qué servicios necesitas?</legend>
+          <p class="ayuda">Marca uno o varios.</p>
+          <div class="opciones" id="cot-servicios">
+            {SERVICIOS.map((s) => (
+              <label class="op">
+                <input type="checkbox" name="servicio" value={s.id} aria-describedby={`s-${s.id}`} />
+                <span class="icono-op"><Icon nombre={s.id} tamano={24} /></span>
+                <span class="op__txt"><span class="op__nombre">{s.nombre}</span><span class="op__sub" id={`s-${s.id}`}>{s.incluye}</span></span>
+                <span class="op__marca"><Icon nombre="ok" tamano={20} /></span>
+              </label>
+            ))}
+          </div>
+          <p class="err" id="e-servicio" role="alert"></p>
+        </fieldset>
+      </div>
+
+      <div class="nav" id="cot-nav">
+        <button type="button" class="btn btn--borde" id="cot-atras" hidden><Icon nombre="flecha-izq" tamano={20} /> Atrás</button>
+        <button type="button" class="btn btn--oscuro" id="cot-sig">Siguiente <Icon nombre="flecha-der" tamano={20} /></button>
+      </div>
+
+      <div class="resultado" id="cot-resultado" hidden>
+        <h3 id="cot-titulo" tabindex="-1">Tu rango referencial</h3>
+        <p class="muted" id="cot-resumen"></p>
+        <table class="tabla">
+          <caption class="solo-lectores">Rango por servicio, en soles con IGV incluido</caption>
+          <thead><tr><th scope="col">Servicio</th><th scope="col" class="der">Rango (IGV incl.)</th></tr></thead>
+          <tbody id="cot-filas"></tbody>
+          <tfoot><tr><th scope="row">Total estimado</th><td class="der" id="cot-total"></td></tr></tfoot>
+        </table>
+        <p class="aviso" id="cot-aviso"></p>
+        <p class="muted" id="cot-depende">La parte alta del rango aplica si hay que cambiar piezas adicionales (por ejemplo, discos en frenos o bujías especiales) o si eliges repuestos de gama alta. La inspección lo confirma.</p>
+        <p class="aviso" id="cot-nodisp" hidden></p>
+
+        <div class="envio">
+          <label class="marca">
+            <input type="checkbox" id="cot-consent" aria-describedby="e-cot-consent" />
+            <span>Acepto que mi mensaje se abra en WhatsApp con el resumen de esta cotización. Lee la <a href="/privacidad/">política de privacidad</a>.</span>
+          </label>
+          <p class="err" id="e-cot-consent" role="alert"></p>
+          <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos personales sensibles.</p>
+          <div class="nav">
+            <a class="btn" id="cot-wa" href="https://wa.me/51935852637" aria-disabled="true"><Icon nombre="mensaje" tamano={20} /> Enviar por WhatsApp</a>
+            <a class="btn btn--oscuro" id="cot-reservar" href="#reserva"><Icon nombre="calendario" tamano={20} /> Reservar con esta cotización</a>
+            <button type="button" class="btn btn--borde" id="cot-cambiar">Cambiar servicios</button>
+            <button type="button" class="btn btn--borde" id="cot-reiniciar">Cotizar de nuevo</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <aside class="cot__aside" aria-labelledby="t-dep">
+      <h3 id="t-dep">De qué depende el precio</h3>
+      <ul>
+        <li><strong>Tipo de vehículo.</strong> Una camioneta lleva más aceite y piezas más grandes que un auto.</li>
+        <li><strong>Kilometraje.</strong> A más kilómetros, más posibilidad de piezas gastadas: sube solo el tope del rango.</li>
+        <li><strong>Repuestos.</strong> Alternativos o de gama alta: te mostramos las opciones antes de cambiar nada.</li>
+        <li><strong>Inspección.</strong> Con el vehículo en el elevador confirmamos el monto y tú apruebas.</li>
+      </ul>
+      <p class="muted">Todos los montos son de ejemplo de demo, en soles con IGV incluido.</p>
+    </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { SERVICIOS, VEHICULOS, type ServicioId, type VehiculoId } from '../data/precios';
+  import { AVISO_PRECIO, bandaKm, cotizar, formatoRango, parsearKm, servicioDisponible, soles } from '../lib/cotizador';
+  import { enlaceWhatsApp } from '../data/taller';
+
+  const form = document.getElementById('cot-form') as HTMLFormElement;
+  form.dataset.js = '1';
+  const pasos = Array.from(form.querySelectorAll<HTMLElement>('.paso'));
+  const inds = Array.from(form.querySelectorAll<HTMLElement>('[data-ind]'));
+  const btnAtras = document.getElementById('cot-atras') as HTMLButtonElement;
+  const btnSig = document.getElementById('cot-sig') as HTMLButtonElement;
+  const nav = document.getElementById('cot-nav')!;
+  const res = document.getElementById('cot-resultado')!;
+  const kmInput = document.getElementById('km') as HTMLInputElement;
+  let actual = 1;
+
+  const err = (id: string, msg: string) => {
+    document.getElementById('e-' + id)!.textContent = msg;
+  };
+  const vehiculoSel = () => (form.querySelector<HTMLInputElement>('input[name="vehiculo"]:checked')?.value ?? '') as VehiculoId | '';
+  const serviciosSel = () => Array.from(form.querySelectorAll<HTMLInputElement>('input[name="servicio"]:checked')).map((i) => i.value as ServicioId);
+
+  function actualizarDisponibles() {
+    const v = vehiculoSel();
+    for (const s of SERVICIOS) {
+      const input = form.querySelector<HTMLInputElement>(`input[name="servicio"][value="${s.id}"]`)!;
+      const sub = document.getElementById('s-' + s.id)!;
+      const ok = !v || servicioDisponible(s.id, v);
+      input.disabled = !ok;
+      if (!ok) input.checked = false;
+      sub.textContent = ok ? s.incluye : 'No disponible para motos.';
+    }
+  }
+
+  function marcarInd(n: number) {
+    inds.forEach((li) => {
+      const k = Number(li.dataset.ind);
+      li.classList.toggle('activo', k === n);
+      li.classList.toggle('hecho', k < n);
+      if (k === n) li.setAttribute('aria-current', 'step');
+      else li.removeAttribute('aria-current');
+      li.querySelector('small')!.textContent = k < n ? ' (completado)' : k === n ? ' (paso actual)' : ' (pendiente)';
+    });
+  }
+
+  function enfocarPaso(n: number) {
+    const p = pasos[n - 1];
+    (p.querySelector<HTMLElement>('input:checked:not(:disabled)') ?? p.querySelector<HTMLElement>('input:not(:disabled)'))?.focus();
+  }
+
+  function mostrar(n: number) {
+    actual = n;
+    pasos.forEach((p) => (p.hidden = Number(p.dataset.paso) !== n));
+    marcarInd(n);
+    btnAtras.hidden = n === 1;
+    btnSig.hidden = false;
+    nav.hidden = false;
+    res.hidden = true;
+    btnSig.innerHTML = btnSig.innerHTML.replace(/^[^<]*/, n === 3 ? 'Ver rango ' : 'Siguiente ');
+  }
+
+  function validar(n: number): boolean {
+    if (n === 1) {
+      const ok = vehiculoSel() !== '';
+      err('vehiculo', ok ? '' : 'Elige el tipo de vehículo para continuar.');
+      if (!ok) form.querySelector<HTMLInputElement>('input[name="vehiculo"]')!.focus();
+      return ok;
+    }
+    if (n === 2) {
+      const km = parsearKm(kmInput.value);
+      const ok = km !== null;
+      err('km', ok ? '' : 'Escribe el kilometraje con números, entre 0 y 500 000.');
+      kmInput.setAttribute('aria-invalid', String(!ok));
+      if (!ok) kmInput.focus();
+      return ok;
+    }
+    const ok = serviciosSel().length > 0;
+    err('servicio', ok ? '' : 'Marca al menos un servicio.');
+    if (!ok) form.querySelector<HTMLInputElement>('input[name="servicio"]:not(:disabled)')?.focus();
+    return ok;
+  }
+
+  let ultimo = { texto: '', vehiculo: '' as string, servicios: '' as string };
+
+  function mostrarResultado() {
+    const v = vehiculoSel() as VehiculoId;
+    const km = parsearKm(kmInput.value)!;
+    const c = cotizar(v, km, serviciosSel());
+    const veh = VEHICULOS.find((x) => x.id === v)!;
+    const banda = bandaKm(km);
+    document.getElementById('cot-resumen')!.textContent = `${veh.nombre}, ${new Intl.NumberFormat('es-PE').format(km)} km (${banda.etiqueta.toLowerCase()}).`;
+    const filas = document.getElementById('cot-filas')!;
+    filas.replaceChildren(
+      ...c.lineas.map((l) => {
+        const tr = document.createElement('tr');
+        const th = document.createElement('th');
+        th.scope = 'row';
+        th.textContent = l.nombre;
+        const td = document.createElement('td');
+        td.className = 'der';
+        td.textContent = formatoRango(l.min, l.max);
+        tr.append(th, td);
+        return tr;
+      }),
+    );
+    document.getElementById('cot-total')!.textContent = formatoRango(c.min, c.max);
+    document.getElementById('cot-aviso')!.textContent = AVISO_PRECIO;
+    const nd = document.getElementById('cot-nodisp')!;
+    nd.hidden = c.noDisponibles.length === 0;
+    nd.textContent = 'Sin rango: ' + c.noDisponibles.map((id) => SERVICIOS.find((s) => s.id === id)!.nombre).join(', ') + '.';
+    const lista = c.lineas.map((l) => `- ${l.nombre}: ${formatoRango(l.min, l.max)}`).join('\n');
+    const texto = `Hola Taller Ruta, hice una cotización de demo.\nVehículo: ${veh.nombre}, ${new Intl.NumberFormat('es-PE').format(km)} km.\n${lista}\nTotal referencial: ${formatoRango(c.min, c.max)} (IGV incluido).\nEntiendo que el precio final requiere inspección. Quisiera coordinar una revisión.`;
+    ultimo = { texto, vehiculo: v, servicios: c.lineas.map((l) => l.nombre).join(', ') };
+    document.getElementById('cot-wa')!.setAttribute('href', enlaceWhatsApp(texto));
+    pasos.forEach((p) => (p.hidden = true));
+    nav.hidden = true;
+    res.hidden = false;
+    marcarInd(4);
+    (document.getElementById('cot-titulo') as HTMLElement).focus();
+    void soles;
+  }
+
+  btnSig.addEventListener('click', () => {
+    if (!validar(actual)) return;
+    if (actual === 3) return mostrarResultado();
+    if (actual === 1) actualizarDisponibles();
+    mostrar(actual + 1);
+    enfocarPaso(actual);
+  });
+  btnAtras.addEventListener('click', () => {
+    mostrar(actual - 1);
+    enfocarPaso(actual);
+  });
+  document.getElementById('cot-cambiar')!.addEventListener('click', () => {
+    mostrar(3);
+    enfocarPaso(3);
+  });
+  kmInput.addEventListener('input', () => {
+    err('km', '');
+    kmInput.removeAttribute('aria-invalid');
+  });
+  form.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === 'vehiculo') {
+      err('vehiculo', '');
+      actualizarDisponibles();
+    }
+    if (t.name === 'servicio') err('servicio', '');
+  });
+  form.addEventListener('submit', (e) => e.preventDefault());
+  kmInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      btnSig.click();
+    }
+  });
+
+  const consent = document.getElementById('cot-consent') as HTMLInputElement;
+  const wa = document.getElementById('cot-wa') as HTMLAnchorElement;
+  consent.addEventListener('change', () => {
+    wa.setAttribute('aria-disabled', String(!consent.checked));
+    if (consent.checked) err('cot-consent', '');
+  });
+  wa.addEventListener('click', (e) => {
+    if (!consent.checked) {
+      e.preventDefault();
+      err('cot-consent', 'Marca la casilla para abrir WhatsApp.');
+      consent.focus();
+    }
+  });
+  document.getElementById('cot-reservar')!.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('cotizacion-lista', { detail: ultimo }));
+  });
+  document.getElementById('cot-reiniciar')!.addEventListener('click', () => {
+    form.reset();
+    actualizarDisponibles();
+    consent.checked = false;
+    wa.setAttribute('aria-disabled', 'true');
+    mostrar(1);
+    form.querySelector<HTMLInputElement>('input[name="vehiculo"]')!.focus();
+  });
+
+  actualizarDisponibles();
+  mostrar(1);
+</script>
+
+<style is:global>
+  .cot { background: var(--hueso); }
+  .caja { margin-top: 32px; background: var(--papel); border: 2px solid var(--asfalto); border-radius: var(--radio); padding: clamp(18px, 4vw, 40px); max-width: 880px; }
+  .cot__grid { display: grid; gap: 28px; margin-top: 32px; }
+  @media (min-width: 1100px) { .cot__grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
+  .cot__grid .caja { margin-top: 0; max-width: none; }
+  .cot__aside { border-top: 3px solid var(--asfalto); padding-top: 16px; }
+  .cot__aside h3 { font-size: 1.7rem; }
+  .cot__aside li { padding-block: 10px; border-bottom: 1px solid var(--linea); }
+  .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 28px; counter-reset: p; font-size: 0.9rem; font-weight: 600; color: var(--texto-suave); }
+  .pasos li { display: grid; gap: 4px; padding-top: 8px; border-top: 6px solid #8a959b; }
+  .pasos li span { font-family: var(--f-titular); font-size: 1.3rem; line-height: 1; }
+  .pasos li.hecho { border-top-color: var(--acero); color: var(--texto); }
+  .pasos li.activo { border-top-color: var(--senal); color: var(--texto); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  @media (max-width: 420px) { .pasos { font-size: 0.875rem; } }
+  .caja legend { font-family: var(--f-titular); font-weight: 700; font-size: 1.7rem; text-transform: uppercase; margin-bottom: 12px; }
+  .caja label[for='km'] { font-family: var(--f-titular); font-weight: 700; font-size: 1.7rem; text-transform: uppercase; }
+  .icono-op { display: grid; place-items: center; flex: none; }
+  .nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  .nav[hidden] { display: none; }
+  .resultado h3 { font-size: 2rem; outline-offset: 6px; }
+  .tabla { width: 100%; border-collapse: collapse; margin: 16px 0 20px; }
+  .tabla th, .tabla td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  .tabla th { font-weight: 600; }
+  .tabla .der { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tabla thead th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-suave); border-bottom: 2px solid var(--asfalto); }
+  .tabla tfoot th, .tabla tfoot td { font-family: var(--f-titular); font-size: 1.6rem; border-bottom: 0; border-top: 3px solid var(--asfalto); }
+  @media (max-width: 420px) { .tabla .der { white-space: normal; } .tabla tfoot th, .tabla tfoot td { font-size: 1.35rem; } }
+  .envio { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--asfalto); }
+  .aviso { margin-bottom: 12px; }
+  /* Sin JS se ven todos los pasos y no hay botones de navegación. */
+  .caja:not([data-js]) .pasos, .caja:not([data-js]) .nav, .caja:not([data-js]) .resultado { display: none; }
+</style>

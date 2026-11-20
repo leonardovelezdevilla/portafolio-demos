@@ -1,0 +1,344 @@
+---
+import Icon from './Icon.astro';
+import { GRUPOS, etiquetaGrupo } from '../data/horarios';
+import { vacantesDe } from '../lib/vacantes';
+import { NIVELES } from '../lib/test-nivel';
+import { AVISO_WHATSAPP } from '../lib/negocio';
+import { PARENTESCOS } from '../lib/matricula';
+
+const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel === n) }));
+---
+
+<section class="seccion oscuro" id="matricula" aria-labelledby="mat-tit">
+  <div class="contenedor mat">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Matrícula</p>
+      <h2 id="mat-tit">Pide tu matrícula en <em>dos minutos</em></h2>
+      <p class="lead">Completa los datos y termina en WhatsApp con el mensaje listo. En esta demo no se reserva ninguna vacante real.</p>
+    </div>
+
+    <div class="mat__panel">
+      <form id="mat-form" novalidate aria-labelledby="mat-tit">
+        <div id="mat-resumen" class="resumen-errores" role="alert" tabindex="-1"></div>
+        <p class="visually-hidden" id="mat-estado" role="status"></p>
+        <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio.</p>
+
+        <fieldset>
+          <legend>1. Alumno</legend>
+          <div class="grid-2">
+            <div class="campo">
+              <label for="m-alumno">Nombre y apellido del alumno <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="m-alumno" name="alumno" autocomplete="name" maxlength="80" required aria-required="true" aria-describedby="err-alumno" />
+              <p class="error" id="err-alumno" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="m-nac">Fecha de nacimiento <span class="req" aria-hidden="true">*</span></label>
+              <input type="date" id="m-nac" name="nacimiento" autocomplete="bday" required aria-required="true" aria-describedby="ayuda-nac err-nacimiento" />
+              <p class="ayuda" id="ayuda-nac">Solo para saber si es menor de edad. No se envía por WhatsApp.</p>
+              <p class="error" id="err-nacimiento" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="m-cel">Celular del alumno <span class="req" id="m-cel-req" aria-hidden="true">*</span></label>
+              <input type="tel" id="m-cel" name="celular" inputmode="numeric" autocomplete="tel-national" maxlength="11" aria-required="true" aria-describedby="ayuda-cel err-celular" />
+              <p class="ayuda" id="ayuda-cel">9 dígitos. Si es menor de edad, es opcional.</p>
+              <p class="error" id="err-celular" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="m-correo">Correo electrónico <span class="req" aria-hidden="true">*</span></label>
+              <input type="email" id="m-correo" name="correo" autocomplete="email" maxlength="120" required aria-required="true" aria-describedby="err-correo" />
+              <p class="error" id="err-correo" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset id="m-apoderado-set" hidden>
+          <legend>2. Padre, madre o apoderado (obligatorio para menores de edad)</legend>
+          <div class="aviso aviso--azul mat__menor">
+            <Icon name="info" />
+            <p>El alumno es menor de 18 años: la matrícula la hace y autoriza su padre, madre o apoderado. Elige un grupo de jóvenes (12 a 17).</p>
+          </div>
+          <div class="grid-2">
+            <div class="campo">
+              <label for="m-apod">Nombre y apellido <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="m-apod" name="apoderado" autocomplete="off" maxlength="80" aria-describedby="err-apoderado" />
+              <p class="error" id="err-apoderado" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="m-paren">Parentesco <span class="req" aria-hidden="true">*</span></label>
+              <select id="m-paren" name="parentesco" aria-describedby="err-parentesco">
+                <option value="">Elige una opción</option>
+                {PARENTESCOS.map((p) => <option value={p}>{p}</option>)}
+              </select>
+              <p class="error" id="err-parentesco" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="m-celapod">Celular del padre, madre o apoderado <span class="req" aria-hidden="true">*</span></label>
+              <input type="tel" id="m-celapod" name="celularApoderado" inputmode="numeric" autocomplete="off" maxlength="11" aria-describedby="err-celularApoderado" />
+              <p class="error" id="err-celularApoderado" hidden></p>
+            </div>
+          </div>
+          <div class="campo">
+            <div class="check">
+              <input type="checkbox" id="m-autoriza" name="autorizacion" aria-describedby="err-autorizacion" />
+              <label for="m-autoriza"><span class="req" aria-hidden="true">*</span> Soy el padre, madre o apoderado y autorizo la matrícula del menor.</label>
+            </div>
+            <p class="error" id="err-autorizacion" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span id="m-num-horario">2</span>. Horario elegido</legend>
+          <div class="campo">
+            <label for="m-horario">Grupo <span class="req" aria-hidden="true">*</span></label>
+            <select id="m-horario" name="horario" required aria-required="true" aria-describedby="ayuda-horario err-horario">
+              <option value="">Elige un horario</option>
+              {porNivel.map(({ n, grupos }) => (
+                <optgroup label={`Nivel ${n}`}>
+                  {grupos.map((g) => {
+                    const v = vacantesDe(g);
+                    return (
+                      <option value={g.id} disabled={v.libres <= 0} data-libres={v.libres} data-publico={g.publico.startsWith('Jóvenes') ? 'j' : 'a'}>
+                        {etiquetaGrupo(g)} · {g.publico} · {v.texto}
+                      </option>
+                    );
+                  })}
+                </optgroup>
+              ))}
+            </select>
+            <p class="ayuda" id="ayuda-horario">Si no sabes tu nivel, haz primero el test. Aparecen desactivados los grupos sin vacantes y los de otra edad (según la fecha de nacimiento).</p>
+            <p class="error" id="err-horario" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span id="m-num-consent">3</span>. Consentimiento</legend>
+          <div class="campo">
+            <div class="check">
+              <input type="checkbox" id="m-consent" name="consentimiento" required aria-required="true" aria-describedby="err-consentimiento" />
+              <label for="m-consent">
+                <span class="req" aria-hidden="true">*</span> Acepto el tratamiento de mis datos personales (o los del menor a mi cargo) para gestionar esta matrícula, según la{" "}
+                <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad<span class="visually-hidden"> (se abre en otra pestaña)</span></a>.
+              </label>
+            </div>
+            <p class="error" id="err-consentimiento" hidden></p>
+          </div>
+          <p class="mat__meta"><Icon name="message-circle" /> {AVISO_WHATSAPP}</p>
+        </fieldset>
+
+        <button type="submit" class="btn btn--sol">Revisar mi matrícula</button>
+      </form>
+
+      <div id="mat-conf" class="conf" tabindex="-1" role="region" aria-labelledby="mat-conf-tit" hidden>
+        <span class="etiqueta-demo">Confirmación de demo</span>
+        <h3 id="mat-conf-tit">Tu solicitud está lista</h3>
+        <dl id="mat-datos" class="conf__datos"></dl>
+        <ol class="conf__pasos">
+          <li>Envía el mensaje por WhatsApp (botón de abajo).</li>
+          <li>Te escribimos para agendar la entrevista de ubicación.</li>
+          <li>Pagas el ciclo y los materiales (<span id="mat-precio"></span>, IGV incluido) y confirmas tu vacante.</li>
+        </ol>
+        <p>{AVISO_WHATSAPP}</p>
+        <p><strong>Esto es una demostración:</strong> no se guardó ningún dato ni se reservó ninguna vacante. En una academia real, la matrícula se confirma tras la entrevista de ubicación y el pago.</p>
+        <div class="conf__acciones">
+          <a class="btn btn--sol" id="mat-wa" href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer">
+            <Icon name="message-circle" /> Abrir WhatsApp con el mensaje<span class="visually-hidden"> (se abre en otra pestaña)</span>
+          </a>
+          <button type="button" class="btn btn--suave" id="mat-editar">Corregir datos</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mat__panel { background: var(--papel); color: var(--tinta); border-radius: 20px; padding: clamp(1.1rem, 4vw, 2.25rem); max-width: 56rem; }
+  .mat__panel :global(legend) { font: 600 1.5rem/1.2 var(--serif); margin-bottom: 0.9rem; }
+  .mat__panel a { color: var(--azul-700); }
+  .oscuro .mat__panel :global(:focus-visible) { outline-color: var(--azul-900); }
+  .mat__panel :global(.btn--sol:focus-visible), .mat__panel :global(.btn:focus-visible) { outline-color: var(--azul-900); }
+  .nota-req { font-size: 0.92rem; color: var(--tinta-suave); }
+  .mat__menor { margin-bottom: 1.1rem; }
+  .mat__meta { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.93rem; color: var(--tinta-suave); margin: 0 0 0.5rem; }
+  .mat__meta :global(.icono) { margin-top: 0.2rem; }
+  .conf { display: grid; gap: 0.75rem; }
+  .conf:focus { outline: 3px solid var(--azul-700); outline-offset: 6px; }
+  .conf h3 { margin: 0.25rem 0 0; color: var(--azul-900); }
+  .conf p { margin: 0; }
+  .conf__datos { display: grid; gap: 0.25rem 1rem; grid-template-columns: max-content 1fr; margin: 0; background: var(--blanco); border: 1.5px solid var(--linea); border-radius: var(--radio); padding: 1rem 1.1rem; }
+  .conf__datos :global(dt) { font-weight: 700; color: var(--azul-900); }
+  .conf__datos :global(dd) { margin: 0; }
+  .conf__pasos { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.3rem; }
+  .conf__acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .mat__panel :global(.btn--suave) { color: var(--azul-900); border-color: var(--azul-900); }
+</style>
+
+<script>
+  import { hoyLima, edadEn } from '../lib/fechas';
+  import { GRUPOS, etiquetaGrupo } from '../data/horarios';
+  import { PRECIOS, soles } from '../data/precios';
+  import { esMenorDeEdad, validarMatricula, construirUrlWhatsApp, type DatosMatricula } from '../lib/matricula';
+
+  const form = document.getElementById('mat-form') as HTMLFormElement;
+  const resumen = document.getElementById('mat-resumen')!;
+  const estadoEl = document.getElementById('mat-estado')!;
+  let eraMenor = false;
+  const conf = document.getElementById('mat-conf')!;
+  const apod = document.getElementById('m-apoderado-set') as HTMLFieldSetElement;
+  const nac = document.getElementById('m-nac') as HTMLInputElement;
+  const horario = document.getElementById('m-horario') as HTMLSelectElement;
+  const celReq = document.getElementById('m-cel-req')!;
+  const celInput = document.getElementById('m-cel') as HTMLInputElement;
+  const numHorario = document.getElementById('m-num-horario')!;
+  const numConsent = document.getElementById('m-num-consent')!;
+
+  nac.max = hoyLima();
+
+  const campos: Record<string, string> = {
+    alumno: 'm-alumno', nacimiento: 'm-nac', celular: 'm-cel', correo: 'm-correo',
+    apoderado: 'm-apod', parentesco: 'm-paren', celularApoderado: 'm-celapod', autorizacion: 'm-autoriza',
+    horario: 'm-horario', consentimiento: 'm-consent',
+  };
+  const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+  const chk = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).checked;
+
+  function leer(): DatosMatricula {
+    return {
+      alumno: val('alumno'), nacimiento: val('nacimiento'), celular: val('celular'), correo: val('correo'),
+      horario: val('horario'), consentimiento: chk('consentimiento'),
+      apoderado: val('apoderado'), parentesco: val('parentesco'), celularApoderado: val('celularApoderado'), autorizacion: chk('autorizacion'),
+    };
+  }
+  const esMenor = () => esMenorDeEdad(edadEn(nac.value, hoyLima()));
+
+  function actualizarMenor() {
+    const menor = esMenor();
+    apod.hidden = !menor;
+    ['m-apod', 'm-paren', 'm-celapod', 'm-autoriza'].forEach((id) => {
+      const el = document.getElementById(id)!;
+      el.toggleAttribute('required', menor);
+      el.setAttribute('aria-required', String(menor));
+    });
+    celReq.hidden = menor;
+    celInput.setAttribute('aria-required', String(!menor));
+    numHorario.textContent = menor ? '3' : '2';
+    numConsent.textContent = menor ? '4' : '3';
+    // Grupos de la otra edad quedan desactivados (los sin vacantes ya vienen desactivados).
+    const edad = edadEn(nac.value, hoyLima());
+    Array.from(horario.options).forEach((o) => {
+      if (!o.dataset.publico) return;
+      const incompatible = edad >= 0 && ((menor && o.dataset.publico === 'a') || (!menor && o.dataset.publico === 'j'));
+      o.disabled = Number(o.dataset.libres) <= 0 || incompatible;
+    });
+    if (horario.selectedOptions[0]?.disabled) horario.value = '';
+    if (menor !== eraMenor) {
+      eraMenor = menor;
+      estadoEl.textContent = menor
+        ? 'Se agregó la sección de padre, madre o apoderado. Solo puedes elegir grupos de jóvenes.'
+        : 'Se quitó la sección de padre, madre o apoderado. Solo puedes elegir grupos de adultos.';
+    }
+  }
+  nac.addEventListener('change', actualizarMenor);
+  nac.addEventListener('input', actualizarMenor);
+
+  function limpiar() {
+    Object.entries(campos).forEach(([k, id]) => {
+      const p = document.getElementById(`err-${k}`);
+      if (p) { p.hidden = true; p.textContent = ''; }
+      document.getElementById(id)?.removeAttribute('aria-invalid');
+    });
+    resumen.replaceChildren();
+  }
+  function resolver(k: string) {
+    const p = document.getElementById(`err-${k}`);
+    if (p) p.hidden = true;
+    document.getElementById(campos[k])?.removeAttribute('aria-invalid');
+    resumen.querySelector(`li[data-k="${k}"]`)?.remove();
+    if (!resumen.querySelector('li')) resumen.replaceChildren();
+  }
+  const alCambiar = (e: Event) => {
+    const t = e.target as HTMLInputElement;
+    if (campos[t.name] && t.getAttribute('aria-invalid') === 'true') resolver(t.name);
+  };
+  form.addEventListener('input', alCambiar);
+  form.addEventListener('change', alCambiar);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    limpiar();
+    const hoy = hoyLima();
+    const d = leer();
+    const err = validarMatricula(d, hoy) as Record<string, string>;
+    const claves = Object.keys(campos).filter((k) => err[k]);
+    if (claves.length) {
+      claves.forEach((k) => {
+        const p = document.getElementById(`err-${k}`)!;
+        p.textContent = err[k];
+        p.hidden = false;
+        document.getElementById(campos[k])?.setAttribute('aria-invalid', 'true');
+      });
+      const t = document.createElement('p');
+      t.textContent = `Revisa ${claves.length} ${claves.length === 1 ? 'dato' : 'datos'} antes de continuar:`;
+      const ul = document.createElement('ul');
+      claves.forEach((k) => {
+        const li = document.createElement('li');
+        li.dataset.k = k;
+        const a = document.createElement('a');
+        a.href = `#${campos[k]}`;
+        a.textContent = err[k];
+        a.addEventListener('click', (ev) => { ev.preventDefault(); document.getElementById(campos[k])?.focus(); });
+        li.append(a);
+        ul.append(li);
+      });
+      resumen.replaceChildren(t, ul);
+      // El foco va al primer campo inválido en el orden de la página.
+      const orden = Array.from(form.querySelectorAll<HTMLElement>('[aria-invalid="true"]'))[0];
+      resumen.scrollIntoView({ block: 'nearest' });
+      (orden ?? resumen).focus();
+      return;
+    }
+    const menor = esMenorDeEdad(edadEn(d.nacimiento, hoy));
+    const g = GRUPOS.find((x) => x.id === d.horario)!;
+    const precio = PRECIOS[g.modalidad];
+    const filas: Array<[string, string]> = [['Alumno', d.alumno.trim()], ['Horario', etiquetaGrupo(g)], ['Público', g.publico]];
+    if (menor) {
+      filas.push(['Padre, madre o apoderado', `${d.apoderado.trim()} (${d.parentesco})`]);
+    }
+    filas.push(['Precio', `${soles(precio.ciclo)} el ciclo + ${soles(precio.materiales)} de materiales (IGV incluido)`]);
+    document.getElementById('mat-precio')!.textContent = `${soles(precio.ciclo + precio.materiales)}`;
+    const dl = document.getElementById('mat-datos')!;
+    dl.replaceChildren();
+    filas.forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    (document.getElementById('mat-wa') as HTMLAnchorElement).href = construirUrlWhatsApp(d, hoy);
+    form.hidden = true;
+    conf.hidden = false;
+    conf.focus();
+  });
+
+  document.getElementById('mat-editar')!.addEventListener('click', () => {
+    conf.hidden = true;
+    form.hidden = false;
+    document.getElementById('m-alumno')!.focus();
+  });
+
+  window.addEventListener('lumen:horario', (e) => {
+    const id = (e as CustomEvent<string>).detail;
+    const op = id ? horario.querySelector<HTMLOptionElement>(`option[value="${id}"]`) : null;
+    if (op) {
+      conf.hidden = true;
+      form.hidden = false;
+      if (op.disabled) {
+        estadoEl.textContent = 'Ese horario no está disponible para la edad indicada; elige otro grupo.';
+        return;
+      }
+      horario.value = id!;
+      estadoEl.textContent = '';
+      setTimeout(() => (estadoEl.textContent = `Horario seleccionado: ${op.text}.`), 30);
+      setTimeout(() => document.getElementById('m-alumno')!.focus({ preventScroll: true }), 400);
+    }
+  });
+  actualizarMenor();
+</script>

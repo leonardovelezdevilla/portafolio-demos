@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import { TALLER } from '../data/taller';
+---
+<Base titulo="Política de privacidad (demo)" descripcion="Aviso de privacidad de demostración de Taller Ruta según la Ley 29733 y el DS 003-2013-JUS: finalidades, destinatarios, conservación y derechos ARCO." ruta="/privacidad/">
+  <section class="legal">
+    <div class="wrap legal__in">
+      <h1>Política de privacidad</h1>
+      <p class="aviso-demo">Texto de demostración para un sitio de portafolio, elaborado con la estructura que pide el artículo 18 de la Ley 29733, Ley de Protección de Datos Personales, y su reglamento (DS 003-2013-JUS). No es asesoría legal: un taller real debe revisarlo con un abogado. En esta demo ningún formulario envía ni guarda datos.</p>
+
+      <h2>1. Titular del banco de datos y responsable</h2>
+      <p>{TALLER.razonSocial}, RUC {TALLER.ruc}, con domicilio en {TALLER.direccion}. Contacto de privacidad: {TALLER.correo} (dirección ficticia de demo).</p>
+
+      <h2>2. Datos que recopilamos</h2>
+      <ul class="lista">
+        <li><strong>Reserva de cita:</strong> nombre, celular, tipo de vehículo, servicio que necesitas y, si decides darla, la placa (la placa permite identificar al titular del vehículo, por eso es un dato personal y es opcional).</li>
+        <li><strong>Libro de Reclamaciones:</strong> los datos que exige la hoja de reclamación (nombre, documento, domicilio, teléfono, correo y, si el consumidor es menor de edad, los de su padre, madre o apoderado).</li>
+        <li><strong>Cotizador y seguimiento:</strong> no piden datos personales.</li>
+      </ul>
+
+      <h2>3. Finalidades</h2>
+      <ul class="lista">
+        <li>Coordinar y avisarte de tu cita (finalidad que aceptas en la casilla de la reserva).</li>
+        <li>Atender y responder tu reclamo o queja, dentro del plazo legal.</li>
+        <li>Cumplir obligaciones legales del taller, como emitir comprobantes de pago cuando contratas un servicio.</li>
+      </ul>
+      <p>No usamos tus datos para publicidad ni los vendemos. Si algún día lo hiciéramos, te pediríamos un consentimiento aparte.</p>
+
+      <h2>4. Consentimiento y su retiro</h2>
+      <p>Tratamos tus datos con tu consentimiento libre, previo, expreso, informado e inequívoco, que das marcando la casilla correspondiente. Puedes revocarlo en cualquier momento escribiendo al contacto de privacidad; el retiro no afecta lo ya tratado.</p>
+
+      <h2>5. Destinatarios y transferencia fuera del Perú</h2>
+      <p>Al usar los botones «WhatsApp», tu mensaje, tu número y los datos que incluyas pasan a WhatsApp (Meta), un tercero cuyos servidores pueden estar fuera del Perú. Meta trata esos datos según sus propias políticas. Fuera de esto y de las autoridades que lo exijan por ley, no compartimos tus datos. No escribas datos sensibles en el mensaje.</p>
+
+      <h2>6. Plazo de conservación</h2>
+      <p>Datos de la cita: hasta 12 meses después de la fecha del servicio o hasta que retires tu consentimiento, lo que ocurra primero. Hoja de reclamación: el tiempo que exija la normativa de protección al consumidor y tributaria. Cifras de ejemplo de demo.</p>
+
+      <h2>7. Banco de datos</h2>
+      <p>Los datos se almacenarían en el banco de datos «Clientes y citas» del titular, que en un taller real debe inscribirse en el Registro Nacional de Protección de Datos Personales (RNPDP) de la Autoridad Nacional de Protección de Datos Personales. Esta demo no almacena nada y no está inscrita.</p>
+
+      <h2>8. Seguridad</h2>
+      <p>Aplicaríamos medidas técnicas y organizativas razonables para evitar la pérdida, el acceso no autorizado o la alteración de tus datos.</p>
+
+      <h2>9. Tus derechos (ARCO)</h2>
+      <p>Puedes ejercer los derechos de acceso, rectificación, cancelación y oposición, y también de información y revocación, escribiendo a {TALLER.correo} con tu nombre y documento. Responderíamos en los plazos del reglamento. Si no estás conforme, puedes acudir a la Autoridad Nacional de Protección de Datos Personales.</p>
+
+      <p><a href="/">Volver al inicio</a></p>
+    </div>
+  </section>
+</Base>

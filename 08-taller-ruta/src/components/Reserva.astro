@@ -1,0 +1,358 @@
+---
+import { SERVICIOS, VEHICULOS } from '../data/precios';
+import Icon from './Icon.astro';
+---
+<section class="seccion seccion--oscura" id="reserva" aria-labelledby="t-res">
+  <div class="wrap res">
+    <div class="res__lado">
+      <p class="etiqueta">Reserva de cita</p>
+      <h2 id="t-res">Elige día y turno. Nosotros te esperamos.</h2>
+      <p class="intro">Atendemos de lunes a sábado, en turno de mañana y de tarde, con cupos limitados para dedicarle tiempo a cada vehículo.</p>
+      <dl class="horario">
+        <div><dt>Lunes a viernes</dt><dd>Mañana: ingreso de 8:00 a 12:00<br />Tarde: ingreso de 14:00 a 17:30</dd></div>
+        <div><dt>Sábados</dt><dd>Mañana: ingreso de 8:00 a 12:00<br />Tarde: ingreso de 14:00 a 16:00</dd></div>
+        <div><dt>Domingos y feriados</dt><dd>Cerrado</dd></div>
+      </dl>
+      <p class="muted pequeno">Los cupos que ves son simulados para la demo (<span class="chip-demo">Ejemplo de demo</span>). Horas de Lima.</p>
+    </div>
+
+    <div class="res__form">
+      <form id="res-form" novalidate method="post" action="/404/" aria-label="Reserva de cita" class="panel">
+        <noscript><p class="aviso">La reserva en línea necesita JavaScript. Puedes escribirnos por <a href="https://wa.me/51935852637">WhatsApp</a>.</p></noscript>
+        <p id="r-nota" class="aviso" role="status" hidden></p>
+        <div id="res-resumen" class="resumen-errores" role="alert" tabindex="-1" hidden>
+          <h3 id="res-titulo">Revisa estos campos</h3>
+          <ul id="res-lista"></ul>
+        </div>
+
+        <div class="campo">
+          <label for="r-nombre">Nombre</label>
+          <input id="r-nombre" name="nombre" autocomplete="given-name" maxlength="60" aria-describedby="e-r-nombre" />
+          <p class="err" id="e-r-nombre"></p>
+        </div>
+        <div class="campo">
+          <label for="r-cel">Celular (9 dígitos)</label>
+          <input id="r-cel" name="cel" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="11" aria-describedby="e-r-cel" />
+          <p class="err" id="e-r-cel"></p>
+        </div>
+        <div class="campo">
+          <label for="r-veh">Tipo de vehículo</label>
+          <select id="r-veh" name="veh" aria-describedby="e-r-veh">
+            <option value="">Elige una opción</option>
+            {VEHICULOS.map((v) => <option value={v.id}>{v.nombre}</option>)}
+          </select>
+          <p class="err" id="e-r-veh"></p>
+        </div>
+        <div class="campo">
+          <label for="r-placa">Placa (opcional)</label>
+          <p class="ayuda" id="r-placa-ayuda">Formatos: ABC-123, A1B-234 o 1234-AB para motos. La placa es un dato personal: escríbela solo si quieres que la revisemos antes.</p>
+          <input id="r-placa" name="placa" autocomplete="off" maxlength="8" aria-describedby="r-placa-ayuda e-r-placa" />
+          <p class="err" id="e-r-placa"></p>
+        </div>
+        <div class="campo">
+          <label for="r-serv">¿Qué necesitas?</label>
+          <select id="r-serv" name="serv" aria-describedby="e-r-serv">
+            <option value="">Elige una opción</option>
+            {SERVICIOS.map((s) => <option value={s.id}>{s.nombre}</option>)}
+            <option value="varios">Varios servicios (los vemos en el taller)</option>
+            <option value="falla">Tengo una falla y no sé qué es</option>
+          </select>
+          <p class="err" id="e-r-serv"></p>
+        </div>
+        <div class="campo">
+          <label for="r-fecha">Día</label>
+          <select id="r-fecha" name="fecha" aria-describedby="e-r-fecha"><option value="">Elige un día</option></select>
+          <p class="err" id="e-r-fecha"></p>
+        </div>
+        <fieldset class="campo" id="r-turnos" aria-describedby="e-r-turno">
+          <legend>Turno</legend>
+          <p class="ayuda" id="r-turnos-ayuda" role="status">Primero elige un día.</p>
+          <div class="turnos" id="r-turnos-lista"></div>
+          <p class="err" id="e-r-turno"></p>
+        </fieldset>
+
+        <div class="campo">
+          <label class="marca">
+            <input type="checkbox" id="r-consent" name="consent" aria-describedby="e-r-consent" />
+            <span>Acepto que mis datos (nombre, celular y, si la pongo, mi placa) se usen para coordinar esta cita y avisarme de ella, y que se abra WhatsApp con ese mensaje. Lee la <a href="/privacidad/">política de privacidad</a>.</span>
+          </label>
+          <p class="err" id="e-r-consent"></p>
+        </div>
+        <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos sensibles. En esta demo no se envía ni guarda nada.</p>
+        <button class="btn" type="submit"><Icon nombre="calendario" tamano={20} /> Reservar cita (demo)</button>
+      </form>
+
+      <div id="res-ok" class="panel confirma" hidden>
+        <h3 tabindex="-1" id="res-ok-t">Resumen de tu cita (demo)</h3>
+        <p><strong id="res-codigo"></strong></p>
+        <dl class="datos" id="res-datos"></dl>
+        <p class="aviso">Demostración: no se envió ni guardó ningún dato, así que tu cita aún no está agendada. En un taller real, la cita queda confirmada cuando envías el mensaje por WhatsApp y el taller te responde. El código de seguimiento (TR-DEMO-…) te lo entregamos al recibir tu vehículo en el taller.</p>
+        <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
+        <div class="nav">
+          <a class="btn" id="res-wa" href="https://wa.me/51935852637"><Icon nombre="mensaje" tamano={20} /> Confirmar por WhatsApp</a>
+          <button type="button" class="btn btn--oscuro" id="res-otra">Hacer otra reserva</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { enlaceWhatsApp } from '../data/taller';
+  import { SERVICIOS, VEHICULOS } from '../data/precios';
+  import { celularValido, diasReservables, estadoTurno, fechaLegible, formatearPlaca, placaValida, turnoReservable, turnosDelDia, type TurnoId } from '../lib/reserva';
+
+  const form = document.getElementById('res-form') as HTMLFormElement;
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  const ahora = () => new Date();
+  const selFecha = $('r-fecha') as HTMLSelectElement;
+
+  // Días disponibles (hora de Lima).
+  function cargarDias() {
+    const dias = diasReservables(ahora());
+    selFecha.replaceChildren(new Option('Elige un día', ''));
+    for (const d of dias) {
+      const resumen = turnosDelDia(d)
+        .map((t) => {
+          const e = estadoTurno(d, t, ahora());
+          if (e.estado === 'cerrado') return `${t.nombre}: cerrado`;
+          if (e.estado === 'agotado') return `${t.nombre}: agotado`;
+          return `${t.nombre}: ${e.libres} ${e.libres === 1 ? 'cupo' : 'cupos'}`;
+        })
+        .join(' · ');
+      selFecha.append(new Option(`${fechaLegible(d)} · ${resumen}`, d));
+    }
+  }
+
+  const TXT: Record<string, string> = { disponible: 'Disponible', ultimos: 'Últimos cupos', agotado: 'Agotado', cerrado: 'Cerrado para hoy' };
+  function cargarTurnos() {
+    const lista = $('r-turnos-lista');
+    const f = selFecha.value;
+    lista.replaceChildren();
+    $('r-turnos-ayuda').textContent = f ? '' : 'Primero elige un día.';
+    if (!f) return;
+    const resumenTurnos: string[] = [];
+    for (const t of turnosDelDia(f)) {
+      const e = estadoTurno(f, t, ahora());
+      const libre = e.estado === 'disponible' || e.estado === 'ultimos';
+      const label = document.createElement('label');
+      label.className = 'op';
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'turno';
+      input.value = t.id;
+      if (!libre) input.setAttribute('aria-disabled', 'true');
+      input.addEventListener('click', (ev) => {
+        if (input.getAttribute('aria-disabled') === 'true') ev.preventDefault();
+      });
+      const txt = document.createElement('span');
+      txt.className = 'op__txt';
+      const n = document.createElement('span');
+      n.className = 'op__nombre';
+      n.textContent = t.nombre;
+      const s = document.createElement('span');
+      s.className = 'op__sub';
+      s.textContent = `${t.horario}. ${TXT[e.estado]}${libre ? `: ${e.libres} de 6 cupos` : ''}.`;
+      txt.append(n, s);
+      const marca = document.createElement('span');
+      marca.className = 'op__marca';
+      marca.setAttribute('aria-hidden', 'true');
+      label.append(input, txt, marca);
+      lista.append(label);
+      resumenTurnos.push(`${t.nombre}: ${libre ? (e.estado === 'ultimos' ? 'últimos cupos' : 'con cupos') : e.estado === 'agotado' ? 'agotado' : 'cerrado'}`);
+    }
+    $('r-turnos-ayuda').textContent = `Turnos de ese día. ${resumenTurnos.join('. ')}.`;
+  }
+
+  const ERR_IDS = ['nombre', 'cel', 'veh', 'placa', 'serv', 'fecha', 'turno', 'consent'];
+  const CAMPO: Record<string, string> = { nombre: 'r-nombre', cel: 'r-cel', veh: 'r-veh', placa: 'r-placa', serv: 'r-serv', fecha: 'r-fecha', turno: 'r-turnos', consent: 'r-consent' };
+  const ETQ: Record<string, string> = { nombre: 'Nombre', cel: 'Celular', veh: 'Tipo de vehículo', placa: 'Placa', serv: 'Qué necesitas', fecha: 'Día', turno: 'Turno', consent: 'Consentimiento' };
+
+  function setErr(k: string, msg: string) {
+    $('e-r-' + k).textContent = msg;
+    const campo = $(CAMPO[k]);
+    if (campo) {
+      if (msg) campo.setAttribute('aria-invalid', 'true');
+      else campo.removeAttribute('aria-invalid');
+    }
+  }
+
+  function datos() {
+    const g = (id: string) => (($(id) as HTMLInputElement).value ?? '').trim();
+    return {
+      nombre: g('r-nombre'),
+      cel: g('r-cel').replace(/[\s-]/g, ''),
+      veh: g('r-veh'),
+      placa: g('r-placa'),
+      serv: g('r-serv'),
+      fecha: g('r-fecha'),
+      turno: (form.querySelector<HTMLInputElement>('input[name="turno"]:checked')?.value ?? '') as TurnoId | '',
+      consent: ($('r-consent') as HTMLInputElement).checked,
+    };
+  }
+
+  function calcular() {
+    const d = datos();
+    const m: Record<string, string> = {
+      nombre: d.nombre.length >= 2 ? '' : 'Escribe tu nombre.',
+      cel: celularValido(d.cel) ? '' : 'El celular debe tener 9 dígitos y empezar con 9.',
+      veh: d.veh ? '' : 'Elige el tipo de vehículo.',
+      placa: !d.placa || placaValida(d.placa) ? '' : 'La placa no tiene un formato válido. Ejemplos: ABC-123, A1B-234 o 1234-AB.',
+      serv: d.serv ? '' : 'Cuéntanos qué necesitas.',
+      fecha: d.fecha ? '' : 'Elige un día de atención.',
+      turno: d.fecha && d.turno && turnoReservable(d.fecha, d.turno, ahora()) ? '' : d.fecha ? 'Elige un turno con cupos.' : 'Elige primero el día y luego el turno.',
+      consent: d.consent ? '' : 'Marca la casilla de consentimiento para continuar.',
+    };
+    return { d, m, malos: ERR_IDS.filter((k) => m[k]) };
+  }
+
+  const primerControl = (k: string) => {
+    const el = $(CAMPO[k]);
+    return el.matches('input,select') ? el : (el.querySelector<HTMLElement>('input') ?? selFecha);
+  };
+
+  function pintarResumen(m: Record<string, string>, malos: string[], enfocar: boolean) {
+    const resumen = $('res-resumen');
+    if (!malos.length) {
+      resumen.hidden = true;
+      return;
+    }
+    $('res-titulo').textContent = malos.length === 1 ? 'Revisa 1 campo' : `Revisa ${malos.length} campos`;
+    $('res-lista').replaceChildren(
+      ...malos.map((k) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + CAMPO[k];
+        a.textContent = `${ETQ[k]}: ${m[k]}`;
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          primerControl(k).focus();
+        });
+        li.append(a);
+        return li;
+      }),
+    );
+    resumen.hidden = false;
+    if (enfocar) {
+      // El foco va al primer campo inválido; su descripción incluye el conteo de errores.
+      const foco = primerControl(malos[0]);
+      const base = foco.dataset.base ?? foco.getAttribute('aria-describedby') ?? '';
+      foco.dataset.base = base;
+      foco.setAttribute('aria-describedby', `res-titulo ${base}`.trim());
+      resumen.scrollIntoView({ block: 'nearest' });
+      foco.focus();
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    form.querySelectorAll<HTMLElement>('[data-base]').forEach((el) => {
+      el.setAttribute('aria-describedby', el.dataset.base!);
+      delete el.dataset.base;
+    });
+    const { d, m, malos } = calcular();
+    for (const k of ERR_IDS) setErr(k, m[k]);
+    const resumen = $('res-resumen');
+    if (malos.length) {
+      pintarResumen(m, malos, true);
+      return;
+    }
+    resumen.hidden = true;
+    const turnoDef = turnosDelDia(d.fecha).find((t) => t.id === d.turno)!;
+    const veh = VEHICULOS.find((v) => v.id === d.veh)!.nombre;
+    const serv = SERVICIOS.find((s) => s.id === d.serv)?.nombre ?? (d.serv === 'varios' ? 'Varios servicios' : 'Revisión de una falla');
+    const codigo = `CITA-DEMO-${String(Date.now()).slice(-5)}`;
+    const placa = d.placa ? formatearPlaca(d.placa) : 'sin indicar';
+    const filas: [string, string][] = [
+      ['Día', fechaLegible(d.fecha)],
+      ['Turno', `${turnoDef.nombre} (${turnoDef.horario.toLowerCase()})`],
+      ['Vehículo', `${veh}, placa ${placa}`],
+      ['Servicio', serv],
+      ['Nombre', d.nombre],
+      ['Celular', d.cel],
+    ];
+    $('res-datos').replaceChildren(
+      ...filas.map(([k, v]) => {
+        const div = document.createElement('div');
+        const dt = document.createElement('dt');
+        dt.textContent = k;
+        const dd = document.createElement('dd');
+        dd.textContent = v;
+        div.append(dt, dd);
+        return div;
+      }),
+    );
+    $('res-codigo').textContent = `Código: ${codigo}`;
+    const texto = `Hola Taller Ruta, soy ${d.nombre}. Quiero confirmar mi cita de demo (${codigo}): ${fechaLegible(d.fecha)}, turno ${turnoDef.nombre.toLowerCase()}. Vehículo: ${veh}, placa ${placa}. Necesito: ${serv}.`;
+    $('res-wa').setAttribute('href', enlaceWhatsApp(texto));
+    form.hidden = true;
+    $('res-ok').hidden = false;
+    $('res-ok-t').focus();
+  });
+
+  selFecha.addEventListener('change', () => {
+    setErr('fecha', '');
+    setErr('turno', '');
+    cargarTurnos();
+  });
+  function alCambiar(e: Event) {
+    const t = e.target as HTMLInputElement;
+    const k = Object.keys(CAMPO).find((x) => CAMPO[x] === t.id) ?? (t.name === 'turno' ? 'turno' : '');
+    if (k && $('e-r-' + k).textContent) setErr(k, '');
+    if (!$('res-resumen').hidden) {
+      const { m, malos } = calcular();
+      pintarResumen(m, malos, false);
+    }
+  }
+  form.addEventListener('input', alCambiar);
+  form.addEventListener('change', alCambiar);
+  $('r-placa').addEventListener('blur', () => {
+    const p = ($('r-placa') as HTMLInputElement).value;
+    if (p && placaValida(p)) ($('r-placa') as HTMLInputElement).value = formatearPlaca(p);
+  });
+  $('res-otra').addEventListener('click', () => {
+    form.reset();
+    cargarDias();
+    cargarTurnos();
+    $('r-nota').hidden = true;
+    $('res-ok').hidden = true;
+    form.hidden = false;
+    ($('r-nombre') as HTMLElement).focus();
+  });
+
+  // Viene del cotizador: precarga vehículo y servicio principal.
+  window.addEventListener('cotizacion-lista', (ev) => {
+    const d = (ev as CustomEvent<{ vehiculo: string; servicios: string }>).detail;
+    const nota = $('r-nota');
+    nota.textContent = `Datos tomados de tu cotización: ${VEHICULOS.find((v) => v.id === d.vehiculo)?.nombre ?? ''}${d.servicios ? ', ' + d.servicios : ''}. Revisa y completa el resto.`;
+    nota.hidden = false;
+    $('reserva').scrollIntoView();
+    window.setTimeout(() => $('r-nombre').focus(), 0);
+    (($('r-veh')) as HTMLSelectElement).value = d.vehiculo;
+    const ids = SERVICIOS.filter((s) => d.servicios.includes(s.nombre)).map((s) => s.id);
+    ($('r-serv') as HTMLSelectElement).value = ids.length === 1 ? ids[0] : ids.length > 1 ? 'varios' : '';
+  });
+
+  cargarDias();
+</script>
+
+<style is:global>
+  .res { display: grid; gap: 40px; }
+  @media (min-width: 960px) { .res { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } }
+  .horario { display: grid; gap: 0; margin: 28px 0 20px; border-top: 1px solid var(--linea-oscura); }
+  .horario div { padding-block: 14px; border-bottom: 1px solid var(--linea-oscura); display: grid; gap: 4px; }
+  .horario dt { font-family: var(--f-titular); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; color: var(--senal); }
+  .horario dd { margin: 0; }
+  .pequeno { font-size: 0.93rem; }
+  .panel { background: var(--papel); color: var(--texto); border-radius: var(--radio); padding: clamp(18px, 4vw, 36px); --foco: #14181b; }
+  .panel .muted { color: var(--texto-suave); }
+  .turnos { display: grid; gap: 10px; }
+  .confirma h3 { font-size: 2rem; }
+  .datos { display: grid; gap: 0; margin: 12px 0 20px; border-top: 2px solid var(--asfalto); }
+  .datos div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linea); }
+  .datos dt { font-weight: 600; color: var(--texto-suave); }
+  .datos dd { margin: 0; overflow-wrap: anywhere; }
+  .nav { display: flex; flex-wrap: wrap; gap: 12px; }
+  .panel .opciones, .turnos { grid-template-columns: 1fr; }
+  .panel legend { font-weight: 600; padding: 0; margin-bottom: 6px; }
+</style>

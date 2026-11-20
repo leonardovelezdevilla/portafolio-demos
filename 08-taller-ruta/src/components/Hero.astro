@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import foto from '../assets/fotos/pizarra-herramientas.jpg';
+import Icon from './Icon.astro';
+---
+<section class="hero oscuro">
+  <div class="wrap hero__in">
+    <div class="hero__txt">
+      <p class="etiqueta">Taller mecánico en Los Olivos</p>
+      <h1>Un rango en soles antes de abrir tu auto.</h1>
+      <p class="hero__lead">Cotiza tu mantenimiento en un minuto, reserva tu turno y sigue el estado de tu vehículo. El precio final requiere inspección: si aparece algo más, te lo mostramos y no hacemos nada sin tu aprobación.</p>
+      <div class="hero__acciones">
+        <a class="btn" href="#cotizador">Cotizar mantenimiento <Icon nombre="flecha-der" tamano={20} /></a>
+        <a class="btn btn--borde" href="#reserva">Reservar cita</a>
+      </div>
+      <ul class="hero__datos">
+        <li><Icon nombre="reloj" tamano={20} /> <span>Lunes a sábado, mañana y tarde. <span id="hero-apertura"></span></span></li>
+        <li><Icon nombre="pin" tamano={20} /> <span>Av. Ejemplo 000, Los Olivos <span class="muted">(dirección ficticia)</span></span></li>
+        <li><Icon nombre="insignia" tamano={20} /> Precios con IGV incluido</li>
+      </ul>
+    </div>
+    <figure class="hero__foto">
+      <Image src={foto} alt="Pizarra de taller con llaves fijas y de corona colgadas por tamaños, y un esmeril de banco desenfocado delante" width={960} widths={[480, 720, 960]} sizes="(min-width: 960px) 520px, 100vw" format="webp" quality={72} loading="eager" fetchpriority="high" decoding="async" />
+      <figcaption class="hero__pie">Herramienta limpia y a la vista, como el presupuesto.</figcaption>
+    </figure>
+  </div>
+  <div class="hero__ruta" aria-hidden="true"></div>
+</section>
+
+<script>
+  import { estadoApertura } from '../lib/reserva';
+  const el = document.getElementById('hero-apertura');
+  if (el) el.textContent = estadoApertura(new Date()).texto + '.';
+</script>
+
+<style>
+  .hero { background: var(--asfalto); color: var(--texto-claro); padding-top: clamp(40px, 7vw, 88px); }
+  .hero__in { display: grid; gap: 40px; padding-bottom: clamp(40px, 6vw, 72px); align-items: center; }
+  @media (min-width: 960px) { .hero__in { grid-template-columns: 1.15fr 0.85fr; gap: 64px; } }
+  .hero h1 { color: #fff; }
+  .hero__lead { font-size: 1.2rem; color: var(--texto-claro-suave); max-width: 52ch; }
+  .hero__acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 28px; }
+  .hero__datos { display: grid; gap: 4px 28px; font-size: 0.98rem; color: var(--texto-claro-suave); }
+  @media (min-width: 560px) { .hero__datos { grid-template-columns: repeat(auto-fit, minmax(210px, max-content)); } }
+  .hero__datos li { display: flex; align-items: center; gap: 10px; min-height: 32px; }
+  .hero__datos .icono { color: var(--senal); }
+  .hero__foto { margin: 0; position: relative; }
+  .hero__foto img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; filter: grayscale(0.15) contrast(1.05); }
+  .hero__pie { font-size: 0.85rem; color: var(--texto-claro-suave); margin-top: 8px; }
+  .hero__ruta { height: 14px; background: repeating-linear-gradient(90deg, var(--senal) 0 56px, transparent 56px 96px); opacity: 0.95; }
+</style>

@@ -1,0 +1,39 @@
+---
+const preguntas = [
+  { p: '¿El precio del cotizador es el precio final?', r: 'No. Es un rango referencial con IGV incluido. El precio final se confirma después de inspeccionar el vehículo y de que apruebes el presupuesto.' },
+  { p: '¿Cuánto demora un cambio de aceite o un diagnóstico?', r: '<span class="chip-demo">Ejemplo de demo</span> Un cambio de aceite suele tomar menos de una hora; un diagnóstico por escáner, entre una y dos horas. Son tiempos de referencia: te confirmamos el real al recibir tu vehículo.' },
+  { p: '¿Necesito saber mi placa para reservar?', r: 'No, es opcional. Si la escribes, la validamos con los formatos peruanos (ABC-123, A1B-234 o 1234-AB para motos).' },
+  { p: '¿Qué pasa si encuentran un problema distinto al que consulté?', r: 'Te avisamos con el detalle y el monto. Solo se hace lo que apruebes, y el vehículo queda como lo recibimos si decides no continuar (el diagnóstico sí se cobra).' },
+  { p: '¿Puedo ver el estado de mi vehículo?', r: 'Sí. Al recibir tu vehículo en el taller te damos un código de seguimiento con cinco etapas: recibido, diagnóstico, aprobación, reparación y listo.' },
+  { p: '¿Atienden domingos y feriados?', r: 'No. Atendemos de lunes a sábado, en turno de mañana y de tarde. El sábado la tarde es más corta.' },
+  { p: '¿Cómo reclamo si no quedé conforme?', r: 'Escríbenos por WhatsApp o registra tu caso en el Libro de Reclamaciones, que responde en un plazo de 15 días hábiles.' },
+];
+---
+<section class="seccion seccion--papel" id="preguntas" aria-labelledby="t-faq">
+  <div class="wrap faq">
+    <div>
+      <p class="etiqueta">Preguntas frecuentes</p>
+      <h2 id="t-faq">Lo que más nos preguntan</h2>
+    </div>
+    <div class="faq__lista">
+      {preguntas.map((q) => (
+        <details>
+          <summary>{q.p}</summary>
+          <p set:html={q.r} />
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { display: grid; gap: 32px; }
+  @media (min-width: 960px) { .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; } }
+  .faq__lista { border-top: 3px solid var(--asfalto); }
+  details { border-bottom: 1px solid var(--linea); }
+  summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding-block: 10px; font-weight: 600; font-size: 1.1rem; cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-family: var(--f-titular); font-size: 1.8rem; line-height: 1; flex: none; }
+  details[open] summary::after { content: '\2212'; }
+  details p { margin: 0 0 18px; color: var(--texto-suave); max-width: 62ch; }
+</style>

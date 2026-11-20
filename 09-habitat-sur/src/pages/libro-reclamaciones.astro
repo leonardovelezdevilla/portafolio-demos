@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Libro de Reclamaciones de demo · Habitat Sur" descripcion="Libro de Reclamaciones de demostración según el DS 011-2011-PCM: formulario validado y constancia imprimible, sin enviar ni guardar nada." ruta="/libro-reclamaciones/">
+  <article class="contenedor texto lr-w">
+    <p class="sobretitulo">Documento de demo</p>
+    <h1>Libro de Reclamaciones</h1>
+    <p>Habitat Sur es ficticio. Este formulario sigue la estructura de la hoja de reclamación del DS 011-2011-PCM, valida en tu navegador y genera una constancia de ejemplo. No se envía ni se guarda nada.</p>
+    <p>En un local real el Libro (físico o virtual) debe estar en un lugar visible, con un aviso que informe de su existencia, y el proveedor debe entregar copia de la hoja al consumidor.</p>
+
+    <form id="lr-form" class="lr" novalidate>
+      <div class="resumen-err" tabindex="-1" hidden id="lr-resumen"></div>
+
+      <fieldset>
+        <legend>Hoja de reclamación</legend>
+        <p><strong>Hoja N.º:</strong> HR-DEMO-0001 (correlativo de ejemplo). <strong>Fecha:</strong> <span id="lr-fecha-hoy"></span></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>1. Identificación del proveedor</legend>
+        <p class="prov">Razón social: Habitat Sur S.A.C. (ficticia)<br />RUC: 20000000001 (ficticio)<br />Dirección: Av. Ejemplo 123, Chorrillos, Lima (ficticia)</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Identificación del consumidor reclamante</legend>
+        <div class="campo"><label for="lr-nombre">Nombre y apellidos</label><input id="lr-nombre" data-k="nombre" type="text" autocomplete="name" aria-describedby="lr-nombre-e" /><p class="err" id="lr-nombre-e"></p></div>
+        <div class="campo"><label for="lr-tdoc">Tipo de documento</label><select id="lr-tdoc" data-k="tdoc" aria-describedby="lr-tdoc-e"><option value="">Elige una opción</option><option>DNI</option><option>Carné de extranjería</option><option>Pasaporte</option></select><p class="err" id="lr-tdoc-e"></p></div>
+        <div class="campo"><label for="lr-doc">Número de documento</label><input id="lr-doc" data-k="doc" type="text" inputmode="numeric" autocomplete="off" aria-describedby="lr-doc-a lr-doc-e" /><p class="ayuda" id="lr-doc-a">DNI: 8 números. Otros documentos: de 6 a 12 letras o números.</p><p class="err" id="lr-doc-e"></p></div>
+        <div class="campo"><label for="lr-dom">Domicilio</label><input id="lr-dom" data-k="dom" type="text" autocomplete="street-address" aria-describedby="lr-dom-e" /><p class="err" id="lr-dom-e"></p></div>
+        <div class="campo"><label for="lr-tel">Teléfono</label><input id="lr-tel" data-k="tel" type="tel" inputmode="tel" autocomplete="tel-national" aria-describedby="lr-tel-e" /><p class="err" id="lr-tel-e"></p></div>
+        <div class="campo"><label for="lr-mail">Correo electrónico</label><input id="lr-mail" data-k="mail" type="email" autocomplete="email" aria-describedby="lr-mail-a lr-mail-e" /><p class="ayuda" id="lr-mail-a">Ejemplo: nombre@ejemplo.invalid</p><p class="err" id="lr-mail-e"></p></div>
+        <div class="check"><input id="lr-menor" type="checkbox" aria-controls="lr-apoderado" /><label for="lr-menor">El reclamante es menor de edad: completaré los datos de su padre, madre o apoderado.</label></div>
+        <div id="lr-apoderado" class="sub" hidden>
+          <div class="campo"><label for="lr-anombre">Nombre del padre, madre o apoderado</label><input id="lr-anombre" data-k="anombre" type="text" aria-describedby="lr-anombre-e" /><p class="err" id="lr-anombre-e"></p></div>
+          <div class="campo"><label for="lr-adoc">Documento del padre, madre o apoderado</label><input id="lr-adoc" data-k="adoc" type="text" inputmode="numeric" aria-describedby="lr-adoc-e" /><p class="err" id="lr-adoc-e"></p></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Identificación del bien contratado</legend>
+        <div class="campo"><label for="lr-bien">Tipo</label><select id="lr-bien" data-k="bien" aria-describedby="lr-bien-e"><option value="">Elige una opción</option><option>Producto (departamento)</option><option>Servicio (asesoría, visita, trámite)</option></select><p class="err" id="lr-bien-e"></p></div>
+        <div class="campo"><label for="lr-bdesc">Descripción del producto o servicio</label><textarea id="lr-bdesc" data-k="bdesc" rows="3" aria-describedby="lr-bdesc-e"></textarea><p class="err" id="lr-bdesc-e"></p></div>
+        <div class="campo"><label for="lr-monto">Monto reclamado (S/)</label><input id="lr-monto" data-k="monto" type="text" inputmode="decimal" aria-describedby="lr-monto-a lr-monto-e" /><p class="ayuda" id="lr-monto-a">Si no hay un monto, escribe 0.</p><p class="err" id="lr-monto-e"></p></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>4. Detalle de la reclamación y pedido del consumidor</legend>
+        <fieldset class="tipo" aria-describedby="lr-tipo-e">
+          <legend class="etq">Tipo</legend>
+          <div class="check"><input id="lr-reclamo" type="radio" name="tipo" value="Reclamo" data-k="tipo" /><label for="lr-reclamo"><strong>Reclamo:</strong> disconformidad relacionada con los productos o servicios.</label></div>
+          <div class="check"><input id="lr-queja" type="radio" name="tipo" value="Queja" /><label for="lr-queja"><strong>Queja:</strong> malestar o descontento respecto a la atención al público, sin relación con el producto o servicio.</label></div>
+          <p class="err" id="lr-tipo-e"></p>
+        </fieldset>
+        <div class="campo"><label for="lr-detalle">Detalle</label><textarea id="lr-detalle" data-k="detalle" rows="4" aria-describedby="lr-detalle-e"></textarea><p class="err" id="lr-detalle-e"></p></div>
+        <div class="campo"><label for="lr-pedido">Pedido del consumidor</label><textarea id="lr-pedido" data-k="pedido" rows="3" aria-describedby="lr-pedido-e"></textarea><p class="err" id="lr-pedido-e"></p></div>
+      </fieldset>
+
+      <p class="ayuda">El proveedor debe responder en un plazo no mayor a <strong>15 días hábiles</strong>. La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el Indecopi.</p>
+      <p class="ayuda">Información sobre tus datos: en esta demo se usan solo en tu navegador para armar la constancia. Consulta la <a href="/privacidad/">política de privacidad</a>.</p>
+      <button class="btn btn-primario" type="submit">Generar hoja de ejemplo</button>
+    </form>
+
+    <section id="lr-ok" class="constancia" tabindex="-1" hidden aria-labelledby="lr-ok-t">
+      <h2 id="lr-ok-t">Constancia de hoja de reclamación (ejemplo)</h2>
+      <dl id="lr-dl"></dl>
+      <p>Es una constancia simulada: no se envió nada. El proveedor tendría 15 días hábiles para responder.</p>
+      <p class="no-print"><button type="button" class="btn btn-primario" id="lr-imprimir">Imprimir constancia</button> <button type="button" class="btn" id="lr-nuevo">Llenar otra hoja</button></p>
+    </section>
+    <p class="no-print"><a href="/">Volver al inicio</a></p>
+  </article>
+</Base>
+<style is:global>
+  .lr { display: grid; gap: 1.4rem; }
+  .lr fieldset { border: 2px solid var(--tinta); background: var(--blanco); padding: 1.2rem; display: grid; gap: 1rem; min-width: 0; margin: 0; }
+  .lr legend { font: 700 1.15rem var(--f-titulo); padding-inline: .4rem; }
+  .lr .tipo { border: 0; padding: 0; background: none; }
+  .lr .etq { font: 600 1rem var(--f-cuerpo); padding: 0; }
+  .lr .prov { margin: 0; }
+  .lr .sub { display: grid; gap: 1rem; padding-left: 1rem; border-left: 2px solid var(--linea); }
+  .constancia { border: 2px solid var(--tinta); background: var(--blanco); padding: 1.5rem; margin-block: 1.5rem; }
+  .constancia dl { margin: 0 0 1rem; }
+  .constancia dl div { padding: .55rem 0; border-top: 1px solid var(--linea); display: grid; gap: .1rem; }
+  .constancia dt { font-weight: 600; font-size: .92rem; color: var(--tinta-2); }
+  .constancia dd { margin: 0; white-space: pre-wrap; }
+  @media (min-width: 640px) { .constancia dl div { grid-template-columns: 14rem 1fr; gap: 1rem; } }
+  @media print { .cab, .pie, .saltar, .no-print, .lr, .texto > p, .texto > h1, .sobretitulo { display: none !important; } .constancia { border: 0; } }
+</style>
+<script>
+  import { pintarResumen } from '../lib/resumen';
+  const f = document.getElementById('lr-form') as HTMLFormElement;
+  const ok = document.getElementById('lr-ok')!;
+  const resumen = document.getElementById('lr-resumen')!;
+  const menor = document.getElementById('lr-menor') as HTMLInputElement;
+  const apo = document.getElementById('lr-apoderado')!;
+  const hoy = new Date();
+  const fechaTxt = new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(hoy);
+  document.getElementById('lr-fecha-hoy')!.textContent = fechaTxt;
+  const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value.trim();
+  menor.addEventListener('change', () => { apo.hidden = !menor.checked; });
+  const sinDoc = () => val('lr-tdoc') === 'DNI' ? /^\d{8}$/.test(val('lr-doc')) : /^[A-Za-z0-9]{6,12}$/.test(val('lr-doc'));
+  type Regla = [string, () => boolean, string];
+  const reglas = (): Regla[] => {
+    const r: Regla[] = [
+      ['lr-nombre', () => val('lr-nombre').length >= 3 && /\s/.test(val('lr-nombre')), 'Escribe tu nombre y apellidos.'],
+      ['lr-tdoc', () => val('lr-tdoc') !== '', 'Elige el tipo de documento.'],
+      ['lr-doc', sinDoc, 'Revisa el número de documento: DNI de 8 números u otro documento de 6 a 12 caracteres.'],
+      ['lr-dom', () => val('lr-dom').length >= 8, 'Escribe tu domicilio (calle, número y distrito).'],
+      ['lr-tel', () => /^\+?[\d\s-]{7,15}$/.test(val('lr-tel')), 'Escribe un teléfono válido (7 a 15 dígitos).'],
+      ['lr-mail', () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('lr-mail')), 'Escribe un correo válido, por ejemplo nombre@ejemplo.invalid.'],
+      ['lr-bien', () => val('lr-bien') !== '', 'Indica si es un producto o un servicio.'],
+      ['lr-bdesc', () => val('lr-bdesc').length >= 5, 'Describe brevemente el producto o servicio.'],
+      ['lr-monto', () => /^\d+([.,]\d{1,2})?$/.test(val('lr-monto')), 'Escribe el monto en soles (por ejemplo 0 o 1500,50).'],
+      ['lr-reclamo', () => (document.getElementById('lr-reclamo') as HTMLInputElement).checked || (document.getElementById('lr-queja') as HTMLInputElement).checked, 'Elige si es un reclamo o una queja.'],
+      ['lr-detalle', () => val('lr-detalle').length >= 10, 'Cuéntanos el detalle (mínimo 10 caracteres).'],
+      ['lr-pedido', () => val('lr-pedido').length >= 5, 'Escribe qué pides (mínimo 5 caracteres).'],
+    ];
+    if (menor.checked) {
+      r.push(['lr-anombre', () => val('lr-anombre').length >= 3 && /\s/.test(val('lr-anombre')), 'Escribe el nombre y apellidos del padre, madre o apoderado.']);
+      r.push(['lr-adoc', () => /^[A-Za-z0-9]{6,12}$/.test(val('lr-adoc')), 'Escribe el documento del padre, madre o apoderado.']);
+    }
+    return r;
+  };
+  const errId = (id: string) => (id === 'lr-reclamo' ? 'lr-tipo-e' : `${id}-e`);
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const malos: { id: string; msg: string }[] = [];
+    for (const [id, valido, msg] of reglas()) {
+      const bien = valido();
+      document.getElementById(errId(id))!.textContent = bien ? '' : msg;
+      const el = document.getElementById(id)!;
+      if (bien) el.removeAttribute('aria-invalid'); else { el.setAttribute('aria-invalid', 'true'); malos.push({ id, msg }); }
+    }
+    if (malos.length) {
+      pintarResumen(resumen, malos.map((m) => ({ msg: m.msg, enfocar: () => document.getElementById(m.id)?.focus() })));
+      document.getElementById(malos[0].id)!.focus();
+      return;
+    }
+    resumen.hidden = true;
+    const tipo = (document.getElementById('lr-reclamo') as HTMLInputElement).checked ? 'Reclamo' : 'Queja';
+    const hoja = 'HR-DEMO-0001';
+    const filas: [string, string][] = [
+      ['Hoja de reclamación N.º', hoja], ['Fecha', fechaTxt],
+      ['Proveedor', 'Habitat Sur S.A.C. (ficticia), RUC 20000000001 (ficticio), Av. Ejemplo 123, Chorrillos, Lima (ficticia)'],
+      ['Consumidor', val('lr-nombre')], ['Documento', `${val('lr-tdoc')} ${val('lr-doc')}`], ['Domicilio', val('lr-dom')], ['Teléfono', val('lr-tel')], ['Correo', val('lr-mail')],
+    ];
+    if (menor.checked) filas.push(['Padre, madre o apoderado', `${val('lr-anombre')}, documento ${val('lr-adoc')}`]);
+    filas.push(['Bien contratado', `${val('lr-bien')}: ${val('lr-bdesc')}`], ['Monto reclamado', `S/ ${val('lr-monto')}`], ['Tipo', tipo], ['Detalle', val('lr-detalle')], ['Pedido del consumidor', val('lr-pedido')], ['Firma del consumidor', '(espacio de firma de ejemplo; en la hoja impresa firmaría el consumidor)'], ['Observaciones y acciones adoptadas por el proveedor', '(en blanco, de ejemplo: lo completaría el proveedor)'], ['Plazo de respuesta', '15 días hábiles'], ['Fecha de comunicación de la respuesta', '(a completar por el proveedor al responder)']);
+    const dl = document.getElementById('lr-dl')!;
+    dl.replaceChildren();
+    for (const [k, v] of filas) {
+      const d = document.createElement('div'); const dt = document.createElement('dt'); const dd = document.createElement('dd');
+      dt.textContent = k; dd.textContent = v; d.append(dt, dd); dl.append(d);
+    }
+    f.hidden = true; ok.hidden = false; ok.focus();
+  });
+  document.getElementById('lr-imprimir')!.addEventListener('click', () => window.print());
+  document.getElementById('lr-nuevo')!.addEventListener('click', () => { ok.hidden = true; f.hidden = false; f.reset(); apo.hidden = true; document.getElementById('lr-nombre')!.focus(); });
+</script>

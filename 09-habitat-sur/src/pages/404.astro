@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Página no encontrada · Habitat Sur (demo)" descripcion="La página que buscas no existe en esta demo.">
+  <section class="contenedor nf">
+    <p class="sobretitulo">Error 404</p>
+    <h1>Esta página no existe.</h1>
+    <p class="lead">Quizá el enlace cambió. Vuelve al inicio o revisa los departamentos disponibles.</p>
+    <p class="acc"><a class="btn btn-primario" href="/">Ir al inicio</a> <a class="btn" href="/departamentos/">Ver departamentos</a></p>
+  </section>
+</Base>
+<style>
+  .nf { padding-block: 5rem; }
+  .acc { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 2rem; }
+</style>

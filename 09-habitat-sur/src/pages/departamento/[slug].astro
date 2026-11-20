@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Galeria from '../../components/Galeria.astro';
+import Plano from '../../components/Plano.astro';
+import Simulador from '../../components/Simulador.astro';
+import Agenda from '../../components/Agenda.astro';
+import { departamentos, TIPO_CAMBIO } from '../../data/departamentos';
+import { soles, dolares } from '../../lib/formato';
+export function getStaticPaths() { return departamentos.map((d) => ({ params: { slug: d.slug }, props: { d } })); }
+const { d } = Astro.props;
+const ruta = `/departamento/${d.slug}/`;
+const disponibilidad = d.etapa === 'entrega inmediata' ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder';
+const apartamento = {
+  '@type': 'Apartment',
+  name: `${d.nombre}, ${d.proyecto} (ficticio)`,
+  description: 'Inmueble ficticio de demo de portafolio.',
+  url: ruta,
+  numberOfRooms: d.dormitorios,
+  numberOfBathroomsTotal: d.banos,
+  floorSize: { '@type': 'QuantitativeValue', value: d.area, unitCode: 'MTK' },
+  address: { '@type': 'PostalAddress', addressLocality: d.distrito, addressCountry: 'PE' },
+};
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Offer',
+  url: ruta,
+  price: d.precio,
+  priceCurrency: 'PEN',
+  availability: disponibilidad,
+  description: 'Oferta ficticia de demo de portafolio; precio de ejemplo.',
+  itemOffered: apartamento,
+};
+const tc = String(TIPO_CAMBIO).replace('.', ',');
+const cap = d.etapa[0].toUpperCase() + d.etapa.slice(1);
+const dorm = `${d.dormitorios} ${d.dormitorios === 1 ? 'dormitorio' : 'dormitorios'}`;
+const banos = `${d.banos} ${d.banos === 1 ? 'baño' : 'baños'}`;
+---
+<Base titulo={`${d.nombre}, ${d.distrito} · Habitat Sur`} descripcion={`${dorm}, ${d.area} m², ${soles(d.precio)} (precio de ejemplo). ${d.resumen}`} ruta={ruta} jsonld={jsonld}>
+  <div class="contenedor ficha">
+    <nav class="migas" aria-label="Ruta de navegación"><a href="/">Inicio</a> <span aria-hidden="true">/</span> <a href="/departamentos/">Departamentos</a> <span aria-hidden="true">/</span> <span aria-current="page">{d.nombre}</span></nav>
+    <header class="f-cab">
+      <div>
+        <p class="sobretitulo">{d.distrito} · {d.proyecto}</p>
+        <h1>{d.nombre}</h1>
+        <p class="lead">{d.resumen}</p>
+      </div>
+      <div class="f-precio">
+        <p class="etapa">{d.etapa === 'entrega inmediata' ? 'Entrega inmediata' : `${cap} · entrega estimada ${d.entrega}`}</p>
+        <p class="monto">{soles(d.precio)}</p>
+        <p class="ref">Referencial {dolares(d.precio)} (tipo de cambio fijo de demo, S/ {tc} por US$). Precio de ejemplo, sin desglose de IGV ni gastos notariales y registrales.</p>
+        <p class="f-btns"><a class="btn btn-primario" href="#visita">Agendar visita</a> <a class="btn" href="#sim">Simular cuota</a></p>
+      </div>
+    </header>
+
+    <div class="f-cols">
+      <div class="f-izq">
+        <Galeria fotos={d.fotos} nombre={d.nombre} />
+      </div>
+      <div class="f-der">
+        <h2>Características</h2>
+        <dl class="datos">
+          <div><dt><Icon name="bed-double" size={18} /> Dormitorios</dt><dd>{d.dormitorios}</dd></div>
+          <div><dt><Icon name="bath" size={18} /> Baños</dt><dd>{d.banos}</dd></div>
+          <div><dt><Icon name="ruler" size={18} /> Área techada (sin áreas comunes)</dt><dd>{d.area} m²</dd></div>
+          <div><dt><Icon name="building-2" size={18} /> Piso</dt><dd>{d.piso}</dd></div>
+          <div><dt><Icon name="map-pin" size={18} /> Zona</dt><dd>{d.distrito}, {d.zona}</dd></div>
+          <div><dt><Icon name="calendar" size={18} /> Entrega (fecha estimada)</dt><dd>{d.entrega}</dd></div>
+        </dl>
+        <ul class="car">
+          {d.caracteristicas.map((c) => <li><Icon name="check" size={18} /> {c}</li>)}
+        </ul>
+        <p class="salvedad"><Icon name="info" size={18} /> <span><strong>Datos de ejemplo.</strong> Áreas, fechas de entrega y equipamiento son referenciales: en un proyecto real constarían en la minuta y en los planos aprobados, y pueden variar.</span></p>
+      </div>
+    </div>
+
+    <section class="bloque" aria-labelledby="plano-h">
+      <h2 id="plano-h">Plano esquemático</h2>
+      <div class="plano-w"><Plano dormitorios={d.dormitorios} banos={d.banos} area={d.area} /></div>
+    </section>
+  </div>
+
+  <div class="oscuro-papel"><div class="contenedor seccion"><Simulador precio={d.precio} id="sim" /></div></div>
+  <div class="contenedor seccion"><Agenda departamento={`${d.nombre}, ${d.distrito}`} id="visita" /></div>
+</Base>
+<style>
+  .ficha { padding-top: 1.5rem; padding-bottom: 3rem; }
+  .migas { font-size: .95rem; margin-bottom: 1.5rem; }
+  .migas a { color: var(--tinta); }
+  .f-cab { display: grid; gap: 1.5rem; border-bottom: 2px solid var(--tinta); padding-bottom: 2rem; margin-bottom: 2rem; }
+  .f-cab h1 { font-size: clamp(2.2rem, 7vw, 3.8rem); }
+  .f-precio { border: 2px solid var(--tinta); background: var(--blanco); padding: 1.2rem; align-self: start; }
+  .f-precio p { margin-bottom: .5rem; }
+  .f-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .etapa { font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; color: var(--sol-osc); }
+  .monto { font: 700 clamp(2.2rem, 7vw, 3rem)/1.05 var(--f-titulo); margin: 0 0 .3rem; }
+  .ref { font-size: .9rem; color: var(--tinta-2); }
+  @media (min-width: 900px) { .f-cab { grid-template-columns: 1.4fr 1fr; align-items: end; } }
+  .f-cols { display: grid; gap: 2.5rem; }
+  @media (min-width: 1000px) { .f-cols { grid-template-columns: 1.35fr 1fr; align-items: start; } }
+  .datos { margin: 0 0 1.5rem; }
+  .datos div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-top: 1px solid var(--linea); }
+  .datos dt { display: inline-flex; align-items: center; gap: .5rem; color: var(--tinta-2); }
+  .datos dd { margin: 0; font-weight: 600; text-align: right; }
+  .car { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+  .car li { display: flex; gap: .6rem; align-items: flex-start; }
+  .car :global(svg) { margin-top: .25rem; color: var(--sol-osc); flex: none; }
+  .salvedad { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; padding: 1rem; background: #fff3de; border: 2px solid var(--tinta); font-size: .95rem; }
+  .salvedad :global(svg) { margin-top: .2rem; }
+  .bloque { margin-top: 3rem; }
+  .plano-w { max-width: 640px; }
+  .oscuro-papel { background: var(--papel-2); border-block: 2px solid var(--tinta); }
+</style>

@@ -1,0 +1,38 @@
+---
+// Plano esquemático propio, generado a partir de los datos. No está a escala ni es un plano de venta.
+interface Props { dormitorios: number; banos: number; area: number; }
+const { dormitorios, banos, area } = Astro.props;
+type Sala = { n: string; x: number; y: number; w: number; h: number };
+const X0 = 20, Y0 = 20, W = 360, H = 260, ALTO_SUP = 120;
+const salas: Sala[] = [
+  { n: 'Sala-comedor', x: X0, y: Y0, w: 210, h: ALTO_SUP },
+  { n: 'Cocina', x: X0 + 210, y: Y0, w: 150, h: ALTO_SUP },
+];
+const banoW = 80;
+const dormW = (W - banoW) / dormitorios;
+const yb = Y0 + ALTO_SUP, hb = H - ALTO_SUP;
+for (let i = 0; i < dormitorios; i++) salas.push({ n: dormitorios === 1 ? 'Dormitorio' : `Dorm. ${i + 1}`, x: X0 + i * dormW, y: yb, w: dormW, h: hb });
+for (let i = 0; i < banos; i++) salas.push({ n: banos === 1 ? 'Baño' : `Baño ${i + 1}`, x: X0 + W - banoW, y: yb + (i * hb) / banos, w: banoW, h: hb / banos });
+const lista = salas.map((s) => s.n).join(', ');
+---
+<figure class="plano">
+  <svg viewBox="0 0 400 300" role="img" aria-labelledby="plano-t plano-d" focusable="false">
+    <title id="plano-t">Plano esquemático del departamento</title>
+    <desc id="plano-d">Esquema no a escala con {lista}. Área techada de {area} metros cuadrados.</desc>
+    <rect x="12" y="12" width="376" height="276" fill="#fffdf8" stroke="#16293a" stroke-width="1" stroke-dasharray="2 4" />
+    {salas.map((s) => (
+      <g>
+        <rect x={s.x} y={s.y} width={s.w} height={s.h} fill={s.n.startsWith('Dorm') ? '#ece7da' : s.n.startsWith('Baño') ? '#dfe7ee' : '#fffdf8'} stroke="#16293a" stroke-width="3" />
+        <text x={s.x + s.w / 2} y={s.y + s.h / 2 + 5} text-anchor="middle" font-size="18" font-weight="600" fill="#16293a" font-family="Hanken Grotesk, sans-serif">{s.n}</text>
+      </g>
+    ))}
+    <rect x={X0 + 90} y={Y0 + ALTO_SUP - 3} width="40" height="6" fill="#fffdf8" />
+    <path d="M20 294h360M20 289v10M380 289v10" stroke="#44566a" stroke-width="1.5" fill="none" />
+  </svg>
+  <figcaption>Distribución tipo de ejemplo, no a escala. {area} m² techados. Los ambientes pueden variar en el plano final de la promotora.</figcaption>
+</figure>
+<style>
+  .plano { margin: 0; border: 2px solid var(--tinta); background: var(--blanco); padding: 1rem; }
+  svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: .92rem; color: var(--tinta-2); margin-top: .6rem; }
+</style>

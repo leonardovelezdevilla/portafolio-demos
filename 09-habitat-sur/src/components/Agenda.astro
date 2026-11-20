@@ -1,0 +1,140 @@
+---
+import Icon from './Icon.astro';
+import { FRANJAS } from '../lib/visita';
+interface Props { departamento: string; id?: string; }
+const { departamento, id = 'ag' } = Astro.props;
+---
+<section class="ag" id={id} data-agenda data-depto={departamento} aria-labelledby={`${id}-t`}>
+  <h2 id={`${id}-t`}>Agenda una visita</h2>
+  <p class="lead">Elige día y franja. Horarios de ejemplo de una sala de ventas ficticia.</p>
+  <form class="ag-form" novalidate data-form>
+    <div class="resumen-err" tabindex="-1" hidden data-resumen></div>
+    <div class="campo">
+      <label for={`${id}-fecha`}>Día de la visita</label>
+      <input id={`${id}-fecha`} name="fecha" type="date" required aria-describedby={`${id}-fecha-a ${id}-fecha-e`} data-campo="fecha" />
+      <p class="ayuda" id={`${id}-fecha-a`}>Atendemos de lunes a sábado, desde mañana y hasta dentro de 45 días. Los sábados solo en la mañana.</p>
+      <p class="err" id={`${id}-fecha-e`} data-err="fecha"></p>
+    </div>
+    <fieldset class="campo franjas" aria-describedby={`${id}-franja-e`} data-grupo-franja>
+      <legend class="etiqueta">Franja horaria</legend>
+      {FRANJAS.map((f) => (
+        <label class="radio">
+          <input type="radio" name="franja" value={f.id} data-franja />
+          <span>{f.etiqueta}<small data-nodisp={f.id}></small></span>
+        </label>
+      ))}
+      <p class="err" id={`${id}-franja-e`} data-err="franja"></p>
+    </fieldset>
+    <div class="campo">
+      <label for={`${id}-nombre`}>Nombre y apellido</label>
+      <input id={`${id}-nombre`} name="nombre" type="text" autocomplete="name" required aria-describedby={`${id}-nombre-e`} data-campo="nombre" />
+      <p class="err" id={`${id}-nombre-e`} data-err="nombre"></p>
+    </div>
+    <div class="campo">
+      <label for={`${id}-tel`}>Celular (9 dígitos)</label>
+      <input id={`${id}-tel`} name="telefono" type="tel" inputmode="tel" autocomplete="tel-national" required aria-describedby={`${id}-tel-e`} data-campo="telefono" />
+      <p class="err" id={`${id}-tel-e`} data-err="telefono"></p>
+    </div>
+    <div class="campo">
+      <div class="check">
+        <input id={`${id}-cons`} type="checkbox" name="consentimiento" aria-describedby={`${id}-cons-e`} data-campo="consentimiento" />
+        <label for={`${id}-cons`}>Acepto que Habitat Sur use mi nombre y celular solo para coordinar esta visita, según la <a href="/privacidad/">política de privacidad</a> (demo).</label>
+      </div>
+      <p class="err" id={`${id}-cons-e`} data-err="consentimiento"></p>
+    </div>
+    <p class="ayuda"><Icon name="message-circle" size={16} /> Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos de tus ingresos, deudas ni documentos.</p>
+    <button type="submit" class="btn btn-primario">Preparar mensaje de WhatsApp</button>
+  </form>
+  <div class="ag-ok" hidden data-ok>
+    <h3 tabindex="-1" data-ok-t>Tu visita está lista para enviar</h3>
+    <dl class="ag-dl" data-dl></dl>
+    <p>Aún no se envió nada. Toca el botón para abrir WhatsApp con el mensaje escrito y envíalo desde allí (número de demo). Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
+    <p><a class="btn btn-primario" data-wa href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer">Abrir WhatsApp<span class="sr-only"> (se abre en otra pestaña)</span></a> <button type="button" class="btn" data-editar>Cambiar datos</button></p>
+    <p class="ayuda">El botón se abre en otra pestaña.</p>
+  </div>
+</section>
+<style>
+  .ag-form, .ag-ok { display: grid; gap: 1.1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.3rem; max-width: 640px; }
+  .ag-ok[hidden] { display: none; }
+  .franjas { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .radio { display: grid; grid-template-columns: 28px 1fr; gap: .7rem; align-items: start; padding: .7rem; border: 2px solid var(--tinta-2); background: var(--papel); min-height: 48px; cursor: pointer; margin-bottom: .5rem; }
+  .radio:has(input:checked) { border-color: var(--tinta); background: #fff3de; }
+  .radio input { width: 24px; height: 24px; margin: .1rem 0 0; accent-color: var(--sol); }
+  .radio small { display: block; color: var(--error); font-weight: 600; }
+  .radio small:empty { display: none; }
+  .radio:has(input:disabled) { border-style: dashed; border-color: var(--linea); cursor: not-allowed; background: transparent; }
+  .ag-dl { margin: 0; }
+  .ag-dl div { display: flex; flex-wrap: wrap; gap: .2rem 1rem; padding: .5rem 0; border-top: 1px solid var(--linea); }
+  .ag-dl dt { min-width: 7rem; color: var(--tinta-2); }
+  .ag-dl dd { margin: 0; font-weight: 600; }
+  .ag-ok p { margin: 0; }
+  .ag-ok .btn { margin: .3rem .5rem 0 0; }
+</style>
+<script>
+  import { franjasDelDia, parseFecha, validarVisita, mensajeWhatsApp, urlWhatsApp, fechaMinima, fechaMaxima, FRANJAS, type Visita } from '../lib/visita';
+  import { pintarResumen } from '../lib/resumen';
+  document.querySelectorAll<HTMLElement>('[data-agenda]').forEach((ag) => {
+    const q = <T extends HTMLElement>(s: string) => ag.querySelector<T>(s)!;
+    const form = q<HTMLFormElement>('[data-form]');
+    const resumen = q('[data-resumen]');
+    const ok = q('[data-ok]');
+    const grupo = q('[data-grupo-franja]');
+    const fecha = q<HTMLInputElement>('[data-campo="fecha"]');
+    const campo = (n: string) => q<HTMLInputElement>(`[data-campo="${n}"]`);
+    const hoy = new Date();
+    fecha.min = fechaMinima(hoy);
+    fecha.max = fechaMaxima(hoy);
+    const radios = [...ag.querySelectorAll<HTMLInputElement>('[data-franja]')];
+    const franjaActual = () => radios.find((r) => r.checked)?.value ?? '';
+    const actualizarFranjas = () => {
+      const f = parseFecha(fecha.value);
+      const dispo = f ? franjasDelDia(f).map((x) => x.id as string) : FRANJAS.map((x) => x.id as string);
+      radios.forEach((r) => {
+        const no = !dispo.includes(r.value);
+        r.disabled = no;
+        ag.querySelector<HTMLElement>(`[data-nodisp="${r.value}"]`)!.textContent = no ? 'No disponible ese día' : '';
+        if (no && r.checked) r.checked = false;
+      });
+    };
+    const ponerError = (k: string, msg: string | undefined) => {
+      q(`[data-err="${k}"]`).textContent = msg ?? '';
+      const el = k === 'franja' ? grupo : campo(k);
+      if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+    };
+    fecha.addEventListener('change', () => {
+      actualizarFranjas();
+      const e = validarVisita({ ...datos(), nombre: 'Ana Quispe', telefono: '900000000', consentimiento: true, franja: '' }, new Date());
+      ponerError('fecha', e.fecha);
+    });
+    function datos(): Visita { return { departamento: ag.dataset.depto ?? '', fecha: fecha.value, franja: franjaActual(), nombre: campo('nombre').value, telefono: campo('telefono').value, consentimiento: campo('consentimiento').checked }; }
+    const foco = (k: string) => (k === 'franja' ? (radios.find((r) => !r.disabled) ?? radios[0]) : campo(k)).focus();
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const d = datos();
+      const err = validarVisita(d, new Date());
+      const claves = Object.keys(err) as (keyof typeof err)[];
+      for (const k of ['fecha', 'franja', 'nombre', 'telefono', 'consentimiento']) ponerError(k, err[k as keyof typeof err]);
+      if (claves.length) {
+        pintarResumen(resumen, claves.map((k) => ({ msg: err[k]!, enfocar: () => foco(k) })));
+        foco(claves[0]);
+        return;
+      }
+      resumen.hidden = true;
+      const msg = mensajeWhatsApp(d, ag.dataset.depto ?? '');
+      const f = parseFecha(d.fecha)!;
+      const dl = q('[data-dl]');
+      dl.replaceChildren();
+      const filas: [string, string][] = [
+        ['Departamento', ag.dataset.depto ?? ''],
+        ['Día', new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).format(f)],
+        ['Franja', FRANJAS.find((x) => x.id === d.franja)?.etiqueta ?? ''],
+        ['Nombre', d.nombre.trim()],
+        ['Celular', d.telefono.replace(/[\s-]/g, '')],
+      ];
+      for (const [k, v] of filas) { const row = document.createElement('div'); const dt = document.createElement('dt'); const dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; row.append(dt, dd); dl.append(row); }
+      q<HTMLAnchorElement>('[data-wa]').href = urlWhatsApp(msg);
+      form.hidden = true; ok.hidden = false; q('[data-ok-t]').focus();
+    });
+    q('[data-editar]').addEventListener('click', () => { ok.hidden = true; form.hidden = false; fecha.focus(); });
+  });
+</script>

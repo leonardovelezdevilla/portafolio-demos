@@ -1,4 +1,6 @@
-# Resumen del portafolio de 5 demos (20-11-2026)
+# Resumen del portafolio de demos (20-11-2026)
+
+> Ampliado el 20-11-2026 con 5 demos más: 06 Pulso Studio, 08 Taller Ruta, 09 Habitat Sur, 10 Lumen y 11 Casa Patas (ver el README de cada una). Sus botones de WhatsApp también llegan al número del estudio.
 
 Abre [index.html](index.html) para ver el panel con las cinco demos.
 

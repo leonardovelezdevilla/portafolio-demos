@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import TestNivel from '../components/TestNivel.astro';
+import Horarios from '../components/Horarios.astro';
+import Metodo from '../components/Metodo.astro';
+import Precios from '../components/Precios.astro';
+import Docentes from '../components/Docentes.astro';
+import Matricula from '../components/Matricula.astro';
+import Faq from '../components/Faq.astro';
+import { NEGOCIO } from '../lib/negocio';
+import { PRECIOS } from '../data/precios';
+
+const escuela = {
+  '@type': 'LanguageSchool',
+  '@id': '/#escuela',
+  name: `${NEGOCIO.nombreLargo} (demo ficticia)`,
+  description: 'Academia ficticia de inglés para jóvenes y adultos en Pueblo Libre, Lima. Demo de portafolio.',
+  url: '/',
+  image: '/og.png',
+  telephone: `+${NEGOCIO.whatsapp}`,
+  address: { '@type': 'PostalAddress', streetAddress: NEGOCIO.direccion, addressLocality: 'Pueblo Libre', addressRegion: 'Lima', addressCountry: 'PE' },
+  areaServed: 'Lima, Perú',
+  priceRange: 'S/ 400 - S/ 480 por ciclo (ficticio)',
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '20:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '13:00' },
+  ],
+};
+const curso = (modalidad: 'Presencial' | 'Virtual') => ({
+  '@type': 'Course',
+  name: `Inglés A1 a C1, ${modalidad.toLowerCase()} (ciclo de 8 semanas, demo)`,
+  description: 'Curso ficticio de inglés por niveles A1 a C1 para jóvenes y adultos. 24 horas de clase por ciclo.',
+  provider: { '@id': '/#escuela' },
+  inLanguage: 'en',
+  educationalLevel: 'A1, A2, B1, B2, C1',
+  hasCourseInstance: { '@type': 'CourseInstance', courseMode: modalidad === 'Virtual' ? 'online' : 'onsite', courseWorkload: 'PT24H' },
+  offers: { '@type': 'Offer', price: PRECIOS[modalidad].ciclo, priceCurrency: 'PEN', category: 'Precio ficticio con IGV incluido; materiales aparte' },
+});
+const jsonld = { '@context': 'https://schema.org', '@graph': [escuela, curso('Presencial'), curso('Virtual')] };
+---
+
+<Base
+  titulo="Lumen | Academia de inglés en Pueblo Libre (demo)"
+  descripcion="Test de nivel de 12 preguntas, horarios por nivel con vacantes, precios por ciclo en S/ y matrícula por WhatsApp. Academia ficticia de demostración."
+  ruta="/"
+  jsonld={jsonld}
+>
+  <Hero />
+  <TestNivel />
+  <Horarios />
+  <Metodo />
+  <Precios />
+  <Docentes />
+  <Matricula />
+  <Faq />
+</Base>

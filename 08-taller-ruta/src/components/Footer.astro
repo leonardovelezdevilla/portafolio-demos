@@ -1,0 +1,43 @@
+---
+import { TALLER, WA_BASE } from '../data/taller';
+import Icon from './Icon.astro';
+---
+<footer class="pie oscuro">
+  <div class="wrap pie__grid">
+    <div>
+      <p class="pie__logo">Taller Ruta</p>
+      <p class="muted">Mantenimiento y reparación de autos, SUV, camionetas y motos en Los Olivos, Lima.</p>
+    </div>
+    <div>
+      <h2 class="pie__h">Contacto y horario</h2>
+      <ul class="pie__lista">
+        <li><a href={WA_BASE}>Escribir por WhatsApp</a></li>
+        <li><span class="muted">{TALLER.direccion}</span></li>
+        <li><span class="muted">Lunes a sábado. Mañana y tarde.</span></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="pie__h">Legal (de demo)</h2>
+      <ul class="pie__lista">
+        <li><a href="/privacidad/">Política de privacidad</a></li>
+        <li><a href="/terminos/">Términos de uso</a></li>
+      </ul>
+      <p class="pie__libro"><a class="libro-btn" href="/libro-reclamaciones/"><Icon nombre="libro" tamano={24} /> Libro de Reclamaciones</a></p>
+    </div>
+  </div>
+  <div class="wrap pie__fin">
+    <p>Demo de portafolio — Vélez De Villa. Taller Ruta es una marca ficticia; {TALLER.razonSocial}, RUC {TALLER.ruc}. Precios, códigos y cupos son «Ejemplo de demo».</p>
+  </div>
+</footer>
+
+<style>
+  .pie { background: var(--asfalto); color: var(--texto-claro); padding-top: 56px; border-top: 6px solid var(--senal); }
+  .pie__grid { display: grid; gap: 36px; padding-bottom: 40px; }
+  @media (min-width: 768px) { .pie__grid { grid-template-columns: 1.3fr 1fr 1fr; } }
+  .pie__logo { font-family: var(--f-titular); font-weight: 700; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .pie__h { font-family: var(--f-cuerpo); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-claro-suave); margin-bottom: 10px; }
+  .pie__lista a { display: inline-flex; align-items: center; min-height: 44px; }
+  .pie__lista li > span { display: block; padding-block: 6px; }
+  .pie__libro { margin-top: 12px; }
+  .pie__fin { border-top: 1px solid var(--linea-oscura); padding-block: 22px; font-size: 0.9rem; color: var(--texto-claro-suave); }
+</style>

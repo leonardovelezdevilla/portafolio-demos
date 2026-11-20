@@ -1,0 +1,236 @@
+---
+import Icon from './Icon.astro';
+import { PREGUNTAS } from '../lib/test-nivel';
+import { AVISO_NIVEL } from '../lib/negocio';
+---
+
+<section class="seccion seccion--blanca" id="test" aria-labelledby="test-tit">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Test de nivel</p>
+      <h2 id="test-tit">Descubre tu nivel en <em>12 preguntas</em></h2>
+      <p class="lead">Gramática y vocabulario, de lo básico a lo avanzado. Si no sabes una respuesta, elige «No lo sé»: no resta puntos y evita que el azar te ubique mal.</p>
+    </div>
+
+    <div class="aviso aviso--azul test__aviso">
+      <Icon name="info" />
+      <p>{AVISO_NIVEL}</p>
+    </div>
+
+    <form id="test-form" class="test" novalidate aria-labelledby="test-tit">
+      <div class="test__cab">
+        <p class="test__prog" id="test-prog-txt">12 preguntas</p>
+        <progress id="test-barra" class="test__barra" max="12" value="1" aria-label="Avance del test" aria-valuetext="Pregunta 1 de 12" hidden></progress>
+      </div>
+
+      {PREGUNTAS.map((p, i) => (
+        <fieldset class="pregunta" data-i={i}>
+          <legend tabindex="-1">
+            <span class="pregunta__num">Pregunta {i + 1} de {PREGUNTAS.length}</span>
+            <span class="pregunta__tipo">{p.tipo}</span>
+            <span class="pregunta__enun" lang="en">{p.enunciado}</span>
+          </legend>
+          <div class="opciones">
+            {p.opciones.map((o, j) => (
+              <div class="opcion">
+                <input type="radio" name={`p${i}`} id={`p${i}-${j}`} value={j} />
+                <label for={`p${i}-${j}`}><span class="punto"></span><span lang="en">{o}</span></label>
+              </div>
+            ))}
+            <div class="opcion opcion--nose">
+              <input type="radio" name={`p${i}`} id={`p${i}-n`} value="-1" />
+              <label for={`p${i}-n`}><span class="punto"></span><span>No lo sé</span></label>
+            </div>
+          </div>
+        </fieldset>
+      ))}
+
+      <p class="error test__error" id="test-error" role="alert"></p>
+
+      <div class="test__nav" id="test-nav" hidden>
+        <button type="button" class="btn btn--suave" id="test-atras"><Icon name="arrow-left" /> Anterior</button>
+        <button type="button" class="btn" id="test-sig">Siguiente <Icon name="arrow-right" /></button>
+      </div>
+      <button type="button" class="btn btn--coral" id="test-empezar" hidden>Empezar el test</button>
+      <noscript><p class="test__sinjs">Sin JavaScript, el test se muestra como lista completa. Para ver tu resultado automáticamente necesitas activar JavaScript; si no, escríbenos por WhatsApp y te ubicamos en una entrevista.</p></noscript>
+    </form>
+
+    <div id="test-res" class="resultado" tabindex="-1" role="region" aria-labelledby="res-tit" hidden>
+      <div class="resultado__cab">
+        <h3 id="res-tit" class="sobretitulo resultado__tit">Tu nivel referencial</h3>
+        <p class="resultado__nivel" id="res-nivel"></p>
+        <p id="res-desc" class="lead"></p>
+      </div>
+      <p class="resultado__datos" id="res-datos"></p>
+      <p class="resultado__irregular" id="res-irregular" hidden>Tus aciertos son desparejos entre niveles (por ejemplo, aciertos en un nivel alto con fallos en uno más bajo). Puede haber sido azar: la entrevista lo aclarará.</p>
+      <ul class="desglose" id="res-desglose" aria-label="Aciertos por nivel"></ul>
+      <div class="aviso">
+        <Icon name="info" />
+        <p><strong>Resultado referencial.</strong> No es un certificado ni equivale a un examen internacional, y no mide cómo hablas. La ubicación final se confirma con una entrevista breve antes de iniciar el ciclo. Si cometiste errores por descuido, puedes repetir el test.</p>
+      </div>
+      <div class="resultado__acciones">
+        <a class="btn btn--coral" id="res-horarios" href="/#horarios">Ver horarios de este nivel <Icon name="arrow-right" /></a>
+        <a class="btn btn--suave" href="/#matricula">Ir a la matrícula</a>
+        <button type="button" class="btn btn--suave" id="res-otra">Repetir el test</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .test__aviso { max-width: 52rem; margin-bottom: 1.75rem; }
+  .test { max-width: 52rem; background: var(--papel); border: 1.5px solid var(--linea); border-radius: 20px; padding: clamp(1rem, 3vw, 2rem); }
+  .test__cab { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .test__prog { margin: 0; font-weight: 700; color: var(--azul-900); }
+  .test__barra { flex: 1; min-width: 8rem; height: 0.6rem; appearance: none; border: 0; border-radius: 999px; background: var(--azul-100); overflow: hidden; accent-color: var(--coral); }
+  .test__barra::-webkit-progress-bar { background: var(--azul-100); border-radius: 999px; }
+  .test__barra::-webkit-progress-value { background: var(--coral); border-radius: 999px; }
+  .test__barra::-moz-progress-bar { background: var(--coral); border-radius: 999px; }
+  .pregunta { margin-bottom: 1.75rem; }
+  .pregunta legend { display: block; width: 100%; margin-bottom: 0.9rem; }
+  .pregunta legend:focus { outline: none; }
+  .pregunta__num { display: block; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coral-700); }
+  .pregunta__tipo { display: block; font-size: 0.85rem; color: var(--tinta-suave); font-weight: 400; margin-bottom: 0.3rem; }
+  .pregunta__enun { display: block; font: 600 clamp(1.35rem, 3.6vw, 1.75rem)/1.3 var(--serif); color: var(--azul-900); }
+  .test--js .pregunta { margin-bottom: 1rem; }
+  .test--js .pregunta__num { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .opcion--nose label { background: var(--papel); border-style: dashed; color: var(--tinta-suave); }
+  .resultado__tit { margin: 0; font-family: var(--sans); font-size: 0.8rem; line-height: 1.2; letter-spacing: 0.14em; }
+  .resultado__irregular { margin: 0; padding: 0.7rem 0.9rem; border: 1px dashed var(--sol); border-radius: 10px; color: #f1f4fb; }
+  .test__nav { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .test__error { margin-top: 0.5rem; }
+  .test__sinjs { font-size: 0.95rem; }
+  @media (min-width: 40rem) { .opciones { grid-template-columns: 1fr 1fr; } }
+
+  .resultado { max-width: 52rem; background: var(--azul-900); color: #e9edf8; border-radius: 20px; padding: clamp(1.25rem, 4vw, 2.25rem); display: grid; gap: 1.1rem; }
+  .resultado:focus { outline: 3px solid var(--sol); outline-offset: 4px; }
+  .resultado .sobretitulo { color: var(--sol); }
+  .resultado .lead { color: #d3daee; margin: 0; }
+  .resultado__nivel { font: 600 clamp(4rem, 16vw, 7rem)/1 var(--serif); color: var(--sol); margin: 0 0 0.25rem; }
+  .resultado__datos { margin: 0; font-weight: 600; }
+  .desglose { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+  .desglose :global(li) { background: rgb(255 255 255 / 0.08); border-radius: 10px; padding: 0.55rem 0.8rem; display: flex; justify-content: space-between; gap: 0.5rem; font-weight: 600; }
+  .resultado .aviso { background: var(--sol-100); }
+  .resultado__acciones { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .resultado :global(.btn--suave) { color: #fff; border-color: #fff; }
+  .resultado :global(.btn--suave:hover) { background: rgb(255 255 255 / 0.14); color: #fff; }
+  .resultado :global(.btn:focus-visible) { outline-color: var(--sol); }
+</style>
+
+<script>
+  import { DESCRIPCION_NIVEL, NIVELES, PREGUNTAS, calcularResultado, todasRespondidas } from '../lib/test-nivel';
+
+  const form = document.getElementById('test-form') as HTMLFormElement;
+  const preguntas = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.pregunta'));
+  const barra = document.getElementById('test-barra') as HTMLProgressElement;
+  const progTxt = document.getElementById('test-prog-txt')!;
+  const nav = document.getElementById('test-nav')!;
+  const btnAtras = document.getElementById('test-atras') as HTMLButtonElement;
+  const btnSig = document.getElementById('test-sig') as HTMLButtonElement;
+  const btnEmpezar = document.getElementById('test-empezar') as HTMLButtonElement;
+  const err = document.getElementById('test-error')!;
+  const avisar = (msg: string) => {
+    err.textContent = '';
+    if (msg) setTimeout(() => (err.textContent = msg), 30);
+  };
+  const res = document.getElementById('test-res')!;
+  let actual = -1; // -1 = pantalla inicial
+
+  const respuesta = (i: number): number | null => {
+    const marcada = form.querySelector<HTMLInputElement>(`input[name="p${i}"]:checked`);
+    return marcada ? Number(marcada.value) : null;
+  };
+  const todas = () => PREGUNTAS.map((_, i) => respuesta(i));
+
+  function mostrar(i: number, mover = true) {
+    actual = i;
+    form.classList.add('test--js');
+    preguntas.forEach((p, k) => (p.hidden = k !== i));
+    barra.hidden = false;
+    barra.value = i + 1;
+    barra.setAttribute('aria-valuetext', `Pregunta ${i + 1} de ${PREGUNTAS.length}`);
+    progTxt.textContent = `Pregunta ${i + 1} de ${PREGUNTAS.length}`;
+    nav.hidden = false;
+    btnEmpezar.hidden = true;
+    btnAtras.disabled = i === 0;
+    btnSig.firstChild!.textContent = i === PREGUNTAS.length - 1 ? 'Ver mi resultado ' : 'Siguiente ';
+    avisar('');
+    if (mover) preguntas[i].querySelector<HTMLElement>('legend')!.focus();
+  }
+
+  function inicio() {
+    actual = -1;
+    form.classList.add('test--js');
+    preguntas.forEach((p) => (p.hidden = true));
+    nav.hidden = true;
+    barra.hidden = true;
+    progTxt.textContent = '12 preguntas · unos 5 minutos';
+    btnEmpezar.hidden = false;
+    avisar('');
+  }
+
+  btnEmpezar.addEventListener('click', () => mostrar(0));
+  btnAtras.addEventListener('click', () => { if (actual > 0) mostrar(actual - 1); });
+  btnSig.addEventListener('click', () => {
+    if (respuesta(actual) === null) {
+      avisar('Elige una opción para continuar.');
+      return;
+    }
+    if (actual < PREGUNTAS.length - 1) {
+      mostrar(actual + 1);
+      return;
+    }
+    const r = todas();
+    if (!todasRespondidas(r)) {
+      const falta = r.findIndex((x) => x === null);
+      mostrar(falta);
+      avisar(`Falta responder la pregunta ${falta + 1}.`);
+      return;
+    }
+    resultado(r);
+  });
+  form.addEventListener('change', () => avisar(''));
+  // Enter sobre una opción no debe enviar nada.
+  form.addEventListener('submit', (e) => e.preventDefault());
+
+  function resultado(r: Array<number | null>) {
+    const x = calcularResultado(r);
+    document.getElementById('res-nivel')!.textContent = x.nivel;
+    document.getElementById('res-desc')!.textContent = `Tu resultado apunta a ${x.nivel}: en gramática y vocabulario respondes como un estudiante de ese nivel. ${DESCRIPCION_NIVEL[x.nivel]}`;
+    document.getElementById('res-irregular')!.hidden = !x.irregular;
+    document.getElementById('res-datos')!.textContent = `${x.aciertos} de ${x.total} respuestas correctas (${x.puntos} de ${x.maximo} puntos).`;
+    const lista = document.getElementById('res-desglose')!;
+    lista.replaceChildren(
+      ...NIVELES.map((n) => {
+        const li = document.createElement('li');
+        const a = document.createElement('span');
+        a.textContent = n;
+        const b = document.createElement('span');
+        b.textContent = `${x.porNivel[n].aciertos} de ${x.porNivel[n].total}`;
+        li.append(a, b);
+        return li;
+      }),
+    );
+    (document.getElementById('res-horarios') as HTMLAnchorElement).dataset.nivel = x.nivel;
+    (document.getElementById('res-horarios') as HTMLAnchorElement).childNodes[0].textContent = `Ver horarios de ${x.nivel} `;
+    form.hidden = true;
+    res.hidden = false;
+    res.focus();
+    res.scrollIntoView({ block: 'nearest' });
+  }
+
+  document.getElementById('res-horarios')!.addEventListener('click', (e) => {
+    const nivel = (e.currentTarget as HTMLElement).dataset.nivel;
+    window.dispatchEvent(new CustomEvent('lumen:nivel', { detail: nivel }));
+  });
+  document.getElementById('res-otra')!.addEventListener('click', () => {
+    form.reset();
+    res.hidden = true;
+    form.hidden = false;
+    inicio();
+    document.getElementById('test-tit')?.scrollIntoView({ block: 'start' });
+    btnEmpezar.focus();
+  });
+
+  inicio();
+</script>

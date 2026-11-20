@@ -1,0 +1,276 @@
+---
+import Base from '../layouts/Base.astro';
+import { TALLER } from '../data/taller';
+---
+<Base titulo="Libro de Reclamaciones (demo)" descripcion="Libro de Reclamaciones de demostración de Taller Ruta con los campos de la hoja del DS 011-2011-PCM, constancia imprimible y plazo de 15 días hábiles." ruta="/libro-reclamaciones/">
+  <section class="legal">
+    <div class="wrap legal__in">
+      <h1>Libro de Reclamaciones</h1>
+      <p class="aviso-demo">Demostración: este formulario no envía ni guarda nada. Reproduce los campos de la hoja de reclamación prevista en el reglamento del Código de Protección y Defensa del Consumidor (DS 011-2011-PCM). El proveedor debe responder en un plazo no mayor a <strong>15 días hábiles</strong>.</p>
+
+      <form id="lr-form" novalidate method="post" action="/404/">
+        <div id="lr-resumen" class="resumen-errores" role="alert" tabindex="-1" hidden>
+          <h3>Revisa estos campos</h3>
+          <ul id="lr-lista"></ul>
+        </div>
+
+        <section aria-labelledby="lr-h0">
+          <h2 id="lr-h0">Hoja de reclamación</h2>
+          <dl class="prov">
+            <div><dt>N.º de hoja</dt><dd id="lr-hoja-previa">Se asigna al registrar (demo)</dd></div>
+            <div><dt>Fecha</dt><dd id="lr-fecha"></dd></div>
+            <div><dt>Proveedor</dt><dd>{TALLER.razonSocial}</dd></div>
+            <div><dt>RUC</dt><dd>{TALLER.ruc}</dd></div>
+            <div><dt>Establecimiento</dt><dd>{TALLER.direccion}</dd></div>
+          </dl>
+        </section>
+
+        <h2>1. Identificación del consumidor reclamante</h2>
+        <div class="campo">
+          <label for="lr-nombre">Nombre completo</label>
+          <input id="lr-nombre" name="nombre" autocomplete="name" aria-describedby="e-nombre" />
+          <p class="err" id="e-nombre"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-tdoc">Tipo de documento</label>
+          <select id="lr-tdoc" name="tdoc">
+            <option value="dni">DNI</option>
+            <option value="ce">Carné de extranjería</option>
+            <option value="pas">Pasaporte</option>
+            <option value="ruc">RUC</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="lr-doc">Número de documento</label>
+          <input id="lr-doc" name="doc" inputmode="text" maxlength="12" aria-describedby="e-doc" />
+          <p class="err" id="e-doc"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-domicilio">Domicilio</label>
+          <input id="lr-domicilio" name="domicilio" autocomplete="street-address" aria-describedby="e-domicilio" />
+          <p class="err" id="e-domicilio"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-tel">Teléfono (9 dígitos)</label>
+          <input id="lr-tel" name="tel" type="tel" inputmode="numeric" maxlength="9" autocomplete="tel-national" aria-describedby="e-tel" />
+          <p class="err" id="e-tel"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-correo">Correo electrónico</label>
+          <input id="lr-correo" name="correo" type="email" autocomplete="email" aria-describedby="e-correo" />
+          <p class="err" id="e-correo"></p>
+        </div>
+        <div class="campo">
+          <label class="marca"><input type="checkbox" id="lr-menor" name="menor" /> <span>El consumidor es menor de edad</span></label>
+        </div>
+        <div id="lr-apoderado" hidden>
+          <div class="campo">
+            <label for="lr-ap-nombre">Nombre del padre, madre o apoderado</label>
+            <input id="lr-ap-nombre" name="apNombre" aria-describedby="e-apNombre" />
+            <p class="err" id="e-apNombre"></p>
+          </div>
+          <div class="campo">
+            <label for="lr-ap-doc">Documento del padre, madre o apoderado</label>
+            <input id="lr-ap-doc" name="apDoc" maxlength="12" aria-describedby="e-apDoc" />
+            <p class="err" id="e-apDoc"></p>
+          </div>
+        </div>
+
+        <h2>2. Identificación del bien contratado</h2>
+        <fieldset class="campo" id="lr-bien" aria-describedby="e-bien">
+          <legend>Tipo de bien</legend>
+          <label class="marca"><input type="radio" name="bien" value="servicio" /> <span>Servicio</span></label>
+          <label class="marca"><input type="radio" name="bien" value="producto" /> <span>Producto (por ejemplo, un repuesto)</span></label>
+          <p class="err" id="e-bien"></p>
+        </fieldset>
+        <div class="campo">
+          <label for="lr-monto">Monto reclamado en S/ (0 si no aplica)</label>
+          <input id="lr-monto" name="monto" inputmode="decimal" aria-describedby="e-monto" />
+          <p class="err" id="e-monto"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-desc">Descripción del producto o servicio (mínimo 10 caracteres)</label>
+          <input id="lr-desc" name="desc" aria-describedby="e-desc" />
+          <p class="err" id="e-desc"></p>
+        </div>
+
+        <h2>3. Detalle de la reclamación y pedido del consumidor</h2>
+        <fieldset class="campo" id="lr-tipo" aria-describedby="e-tipo">
+          <legend>Tipo</legend>
+          <label class="marca"><input type="radio" name="tipo" value="reclamo" /> <span><strong>Reclamo:</strong> disconformidad relacionada con los productos o servicios.</span></label>
+          <label class="marca"><input type="radio" name="tipo" value="queja" /> <span><strong>Queja:</strong> malestar o descontento no relacionado con los productos o servicios, o por la atención al público.</span></label>
+          <p class="err" id="e-tipo"></p>
+        </fieldset>
+        <div class="campo">
+          <label for="lr-detalle">Detalle (mínimo 20 caracteres)</label>
+          <textarea id="lr-detalle" name="detalle" rows="5" aria-describedby="e-detalle"></textarea>
+          <p class="err" id="e-detalle"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-pedido">Pedido del consumidor (mínimo 10 caracteres)</label>
+          <textarea id="lr-pedido" name="pedido" rows="3" aria-describedby="e-pedido"></textarea>
+          <p class="err" id="e-pedido"></p>
+        </div>
+
+        <h2>4. Observaciones y acciones adoptadas por el proveedor</h2>
+        <p class="muted">Espacio a cargo del proveedor; en esta demo permanece vacío. La respuesta se brinda en un plazo máximo de 15 días hábiles.</p>
+
+        <p class="aviso-demo">Tratamiento de datos: usaremos los datos de esta hoja solo para atender tu reclamo, según la <a href="/privacidad/">política de privacidad</a>. No necesitas aceptar nada adicional para registrar tu reclamo. La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante Indecopi.</p>
+        <p class="muted">Declaro que la información es veraz. La firma del consumidor iría en la copia impresa.</p>
+        <button class="btn" type="submit">Registrar reclamo (demo)</button>
+      </form>
+
+      <div id="lr-ok" hidden>
+        <h2 tabindex="-1" id="lr-ok-t">Constancia de hoja de reclamación (demo): copia para el consumidor</h2>
+        <p class="aviso-demo no-imprimir">No se envió ni guardó ningún dato. Imprime o guarda como PDF esta constancia desde tu navegador.</p>
+        <dl class="prov" id="lr-const"></dl>
+        <p class="no-imprimir"><button type="button" class="btn" id="lr-imprimir">Imprimir constancia</button> <a class="btn btn--borde" href="/">Volver al inicio</a></p>
+      </div>
+      <p id="lr-volver"><a href="/">Volver al inicio</a></p>
+    </div>
+  </section>
+
+  <script>
+    import { partesLima, sumarDiasHabiles } from '../lib/reserva';
+    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    const form = $('lr-form') as HTMLFormElement;
+    const hoy = new Date();
+    const fechaTxt = new Intl.DateTimeFormat('es-PE', { dateStyle: 'long', timeZone: 'America/Lima' }).format(hoy);
+    $('lr-fecha').textContent = fechaTxt;
+    const fechaLimite = new Intl.DateTimeFormat('es-PE', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(sumarDiasHabiles(partesLima(hoy).fecha, 15) + 'T00:00:00Z'));
+
+    const menor = $('lr-menor') as HTMLInputElement;
+    menor.addEventListener('change', () => ($('lr-apoderado').hidden = !menor.checked));
+
+    const V = (name: string) => {
+      const el = form.elements.namedItem(name);
+      if (el instanceof RadioNodeList) return el.value.trim();
+      return ((el as HTMLInputElement | null)?.value ?? '').trim();
+    };
+    const ORDEN: [string, string, string][] = [
+      ['nombre', 'lr-nombre', 'Nombre'],
+      ['doc', 'lr-doc', 'Documento'],
+      ['domicilio', 'lr-domicilio', 'Domicilio'],
+      ['tel', 'lr-tel', 'Teléfono'],
+      ['correo', 'lr-correo', 'Correo'],
+      ['apNombre', 'lr-ap-nombre', 'Apoderado'],
+      ['apDoc', 'lr-ap-doc', 'Documento del apoderado'],
+      ['bien', 'lr-bien', 'Tipo de bien'],
+      ['monto', 'lr-monto', 'Monto'],
+      ['desc', 'lr-desc', 'Descripción'],
+      ['tipo', 'lr-tipo', 'Reclamo o queja'],
+      ['detalle', 'lr-detalle', 'Detalle'],
+      ['pedido', 'lr-pedido', 'Pedido'],
+    ];
+    const docOk = (tipo: string, v: string) => (tipo === 'dni' ? /^\d{8}$/.test(v) : tipo === 'ruc' ? /^\d{11}$/.test(v) : /^[A-Za-z0-9]{6,12}$/.test(v));
+    const docMsg = (tipo: string) => (tipo === 'dni' ? 'El DNI debe tener 8 dígitos.' : tipo === 'ruc' ? 'El RUC debe tener 11 dígitos.' : 'Escribe un número válido (6 a 12 letras o números).');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const esMenor = menor.checked;
+      const tdoc = V('tdoc');
+      const m: Record<string, string> = {
+        nombre: V('nombre').length >= 3 ? '' : 'Escribe tu nombre completo.',
+        doc: docOk(tdoc, V('doc')) ? '' : docMsg(tdoc),
+        domicilio: V('domicilio').length >= 5 ? '' : 'Escribe tu domicilio.',
+        tel: /^9\d{8}$/.test(V('tel')) ? '' : 'El teléfono debe tener 9 dígitos y empezar con 9.',
+        correo: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(V('correo')) ? '' : 'Escribe un correo válido.',
+        apNombre: !esMenor || V('apNombre').length >= 3 ? '' : 'Escribe el nombre del padre, madre o apoderado.',
+        apDoc: !esMenor || /^[A-Za-z0-9]{6,12}$/.test(V('apDoc')) ? '' : 'Escribe el documento del padre, madre o apoderado.',
+        bien: V('bien') ? '' : 'Indica si es un servicio o un producto.',
+        monto: /^\d+([.,]\d{1,2})?$/.test(V('monto')) ? '' : 'Escribe un monto en soles (0 si no aplica).',
+        desc: V('desc').length >= 10 ? '' : 'Describe el producto o servicio con al menos 10 caracteres.',
+        tipo: V('tipo') ? '' : 'Elige reclamo o queja.',
+        detalle: V('detalle').length >= 20 ? '' : 'Cuéntanos con al menos 20 caracteres.',
+        pedido: V('pedido').length >= 10 ? '' : 'Indica qué solicitas, con al menos 10 caracteres.',
+      };
+      for (const [k, id] of ORDEN) {
+        $('e-' + k).textContent = m[k];
+        const el = $(id);
+        if (el.matches('input,textarea,select')) {
+          if (m[k]) el.setAttribute('aria-invalid', 'true');
+          else el.removeAttribute('aria-invalid');
+        }
+      }
+      const malos = ORDEN.filter(([k]) => m[k]);
+      const resumen = $('lr-resumen');
+      if (malos.length) {
+        $('lr-lista').replaceChildren(
+          ...malos.map(([k, id, nombre]) => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + id;
+            a.textContent = `${nombre}: ${m[k]}`;
+            a.addEventListener('click', (ev) => {
+              ev.preventDefault();
+              const el = $(id);
+              (el.matches('input,textarea,select') ? el : el.querySelector('input')!).focus();
+            });
+            li.append(a);
+            return li;
+          }),
+        );
+        resumen.hidden = false;
+        const primero = $(malos[0][1]);
+        (primero.matches('input,textarea,select') ? primero : primero.querySelector<HTMLElement>('input')!).focus();
+        return;
+      }
+      resumen.hidden = true;
+      const limite = fechaLimite;
+      const hoja = `LR-DEMO-${String(Date.now()).slice(-6)}`;
+      const tdocTxt = { dni: 'DNI', ce: 'Carné de extranjería', pas: 'Pasaporte', ruc: 'RUC' }[tdoc as 'dni'];
+      const filas: [string, string][] = [
+        ['N.º de hoja', hoja],
+        ['Fecha', fechaTxt],
+        ['Proveedor', 'Taller Ruta Servicios Automotrices S.A.C. (ficticia)'],
+        ['RUC', '20000000001 (RUC ficticio)'],
+        ['Establecimiento', 'Av. Ejemplo 000, Los Olivos, Lima (dirección ficticia)'],
+        ['Consumidor', V('nombre')],
+        [tdocTxt, V('doc')],
+        ['Domicilio', V('domicilio')],
+        ['Teléfono', V('tel')],
+        ['Correo', V('correo')],
+        ...(esMenor ? ([['Padre, madre o apoderado', `${V('apNombre')} (documento ${V('apDoc')})`]] as [string, string][]) : []),
+        ['Bien contratado', V('bien') === 'servicio' ? 'Servicio' : 'Producto'],
+        ['Descripción', V('desc')],
+        ['Monto reclamado', `S/ ${V('monto').replace(',', '.')}`],
+        ['Tipo', V('tipo') === 'reclamo' ? 'Reclamo' : 'Queja'],
+        ['Detalle', V('detalle')],
+        ['Pedido del consumidor', V('pedido')],
+        ['Plazo de respuesta', `Hasta 15 días hábiles (fecha límite estimada: ${limite})`],
+        ['Copia', 'Copia para el consumidor (el proveedor conserva otra copia)'],
+        ['Observaciones del proveedor', '(a cargo del proveedor; vacío en la demo)'],
+      ];
+      $('lr-const').replaceChildren(
+        ...filas.map(([k, v]) => {
+          const d = document.createElement('div');
+          const dt = document.createElement('dt');
+          dt.textContent = k;
+          const dd = document.createElement('dd');
+          dd.textContent = v;
+          d.append(dt, dd);
+          return d;
+        }),
+      );
+      form.hidden = true;
+      $('lr-volver').hidden = true;
+      $('lr-ok').hidden = false;
+      $('lr-ok-t').focus();
+    });
+    $('lr-imprimir').addEventListener('click', () => window.print());
+  </script>
+
+  <style>
+    h2 { margin-top: 28px; }
+    .prov { display: grid; gap: 0; margin: 12px 0 8px; border-top: 2px solid var(--asfalto); }
+    .prov div { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--linea); }
+    @media (min-width: 600px) { .prov div { grid-template-columns: 200px 1fr; gap: 16px; } }
+    .prov dt { font-weight: 600; color: var(--texto-suave); }
+    .prov dd { margin: 0; overflow-wrap: anywhere; }
+    .campo { margin-bottom: 20px; }
+    @media print {
+      :global(header), :global(footer), :global(.salto), .no-imprimir { display: none !important; }
+      :global(body) { background: #fff; }
+    }
+  </style>
+</Base>

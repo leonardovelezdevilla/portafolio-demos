@@ -1,0 +1,11 @@
+import { chromium } from 'playwright-core';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+const dir = path.dirname(fileURLToPath(import.meta.url));
+const nav = await chromium.launch({ channel: 'msedge' });
+const page = await nav.newPage({ viewport: { width: 1200, height: 630 } });
+await page.goto(pathToFileURL(path.join(dir, 'og.html')).href);
+await page.evaluate(() => document.fonts.ready);
+await page.screenshot({ path: path.join(dir, '..', 'public', 'og.png') });
+await nav.close();
+console.log('og.png listo');

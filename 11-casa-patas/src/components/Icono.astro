@@ -1,0 +1,35 @@
+---
+import huella from 'lucide-static/icons/paw-print.svg?raw';
+import sirena from 'lucide-static/icons/siren.svg?raw';
+import estetoscopio from 'lucide-static/icons/stethoscope.svg?raw';
+import banio from 'lucide-static/icons/bath.svg?raw';
+import pastilla from 'lucide-static/icons/pill.svg?raw';
+import reloj from 'lucide-static/icons/clock.svg?raw';
+import pin from 'lucide-static/icons/map-pin.svg?raw';
+import telefono from 'lucide-static/icons/phone.svg?raw';
+import mensaje from 'lucide-static/icons/message-circle.svg?raw';
+import menu from 'lucide-static/icons/menu.svg?raw';
+import cerrar from 'lucide-static/icons/x.svg?raw';
+import check from 'lucide-static/icons/check.svg?raw';
+import abajo from 'lucide-static/icons/chevron-down.svg?raw';
+import libro from 'lucide-static/icons/book-open.svg?raw';
+import aviso from 'lucide-static/icons/triangle-alert.svg?raw';
+import imprimir from 'lucide-static/icons/printer.svg?raw';
+import flecha from 'lucide-static/icons/arrow-right.svg?raw';
+import calendario from 'lucide-static/icons/calendar-days.svg?raw';
+import jeringa from 'lucide-static/icons/syringe.svg?raw';
+import tijera from 'lucide-static/icons/scissors.svg?raw';
+import escudo from 'lucide-static/icons/shield-check.svg?raw';
+import info from 'lucide-static/icons/info.svg?raw';
+import corazon from 'lucide-static/icons/heart-pulse.svg?raw';
+
+const iconos = { huella, sirena, estetoscopio, banio, pastilla, reloj, pin, telefono, mensaje, menu, cerrar, check, abajo, libro, aviso, imprimir, flecha, calendario, jeringa, tijera, escudo, info, corazon };
+interface Props { nombre: keyof typeof iconos; tamano?: number }
+const { nombre, tamano = 20 } = Astro.props;
+const svg = iconos[nombre]
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/\s(width|height)="24"/g, '')
+  .replace('<svg', `<svg width="${tamano}" height="${tamano}" aria-hidden="true" focusable="false"`)
+  .replace(/class="[^"]*"/, 'class="icono"');
+---
+<Fragment set:html={svg} />

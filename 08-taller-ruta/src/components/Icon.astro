@@ -1,0 +1,41 @@
+---
+import auto from 'lucide-static/icons/car-front.svg?raw';
+import suv from 'lucide-static/icons/car.svg?raw';
+import camioneta from 'lucide-static/icons/truck.svg?raw';
+import moto from 'lucide-static/icons/bike.svg?raw';
+import aceite from 'lucide-static/icons/droplets.svg?raw';
+import frenos from 'lucide-static/icons/disc.svg?raw';
+import afinamiento from 'lucide-static/icons/settings-2.svg?raw';
+import alineamiento from 'lucide-static/icons/gauge.svg?raw';
+import diagnostico from 'lucide-static/icons/scan-line.svg?raw';
+import preitv from 'lucide-static/icons/clipboard-check.svg?raw';
+import llave from 'lucide-static/icons/wrench.svg?raw';
+import calendario from 'lucide-static/icons/calendar.svg?raw';
+import reloj from 'lucide-static/icons/clock.svg?raw';
+import escudo from 'lucide-static/icons/shield-check.svg?raw';
+import ok from 'lucide-static/icons/check.svg?raw';
+import flechaDer from 'lucide-static/icons/arrow-right.svg?raw';
+import flechaIzq from 'lucide-static/icons/arrow-left.svg?raw';
+import mensaje from 'lucide-static/icons/message-circle.svg?raw';
+import pin from 'lucide-static/icons/map-pin.svg?raw';
+import buscar from 'lucide-static/icons/search.svg?raw';
+import alerta from 'lucide-static/icons/circle-alert.svg?raw';
+import imprimir from 'lucide-static/icons/printer.svg?raw';
+import libro from 'lucide-static/icons/book-open.svg?raw';
+import insignia from 'lucide-static/icons/badge-check.svg?raw';
+
+const mapa = {
+  auto, suv, camioneta, moto, aceite, frenos, afinamiento, alineamiento, diagnostico, preitv,
+  llave, calendario, reloj, escudo, ok, 'flecha-der': flechaDer, 'flecha-izq': flechaIzq, mensaje, pin, buscar, alerta, imprimir, insignia, libro,
+} as const;
+
+interface Props {
+  nombre: keyof typeof mapa;
+  tamano?: 20 | 24 | 32;
+}
+const { nombre, tamano = 24 } = Astro.props;
+const svg = mapa[nombre]
+  .replace(/<!--[\s\S]*?-->/, '')
+  .replace(/<svg[^>]*>/, (t) => t.replace(/\s(width|height)="\d+"/g, '').replace('<svg', '<svg aria-hidden="true" focusable="false"'));
+---
+<span class={`icono i${tamano}`} set:html={svg} />
