@@ -99,7 +99,7 @@ describe('WhatsApp', () => {
   });
   it('genera una URL wa.me con el texto codificado', () => {
     const u = construirUrlWhatsApp(r);
-    expect(u.startsWith('https://wa.me/51900000000?text=')).toBe(true);
+    expect(u.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     expect(u).not.toContain(' ');
     expect(decodeURIComponent(u.split('text=')[1])).toBe(construirMensajeWhatsApp(r));
   });

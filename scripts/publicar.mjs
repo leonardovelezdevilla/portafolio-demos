@@ -26,17 +26,28 @@ function archivos(dir) {
 
 // Antepone la base a las rutas absolutas que Astro no reescribe (enlaces escritos a mano).
 function reescribir(texto, base, tipo) {
-  const noBase = `(?!/|${base.slice(1)})`; // ni //host ni rutas ya con base
+  const noBase = `(?!/|${base.slice(1)}|portafolio/)`; // ni //host ni rutas ya con base
   if (tipo === 'html') {
     texto = texto.replace(new RegExp(`((?:href|src|content|action|poster)=["'])/${noBase}`, 'g'), `$1${base}`);
     texto = texto.replace(new RegExp(`(srcset=["'][^"']*?)(^|\\s|,)/${noBase}`, 'g'), `$1$2${base}`);
-    texto = texto.replace(new RegExp(`("(?:url|@id|item|image|logo|target|urlTemplate)"\\s*:\\s*")/${noBase}`, 'g'), `$1${base}`);
+    texto = texto.replace(new RegExp(`("(?:url|@id|item|image|logo|target|urlTemplate|menu|hasMenu)"\\s*:\\s*")/${noBase}`, 'g'), `$1${base}`);
   }
   if (tipo === 'html' || tipo === 'css') {
     texto = texto.replace(new RegExp(`url\\((['"]?)/${noBase}`, 'g'), `url($1${base}`);
   }
   if (tipo === 'js') {
     texto = texto.replace(new RegExp(`(['"\`])/(producto/|privacidad/|terminos/|libro-reclamaciones/|cambios/|#|\\?)`, 'g'), `$1${base}$2`);
+  }
+  if (tipo === 'html') {
+    // URLs absolutas para compartir (Open Graph, canonical) y JSON-LD.
+    texto = texto.replace(/((?:property|name)="(?:og:image|og:url|twitter:image)"\s+content=")\//g, `$1${SITE}/`);
+    texto = texto.replace(/(content=")(\/portafolio\/[^"]*"\s+(?:property|name)="(?:og:image|og:url|twitter:image)")/g, `$1${SITE}$2`);
+    texto = texto.replace(/(rel="canonical"\s+href=")\//g, `$1${SITE}/`);
+    texto = texto.replace(/(href=")(\/portafolio\/[^"]*"\s+rel="canonical")/g, `$1${SITE}$2`);
+    texto = texto.replace(/("(?:url|@id|image|logo|menu|hasMenu)"\s*:\s*")\/(?!\/)/g, `$1${SITE}/`);
+    // Franja común: aclara que es una demo y lleva de vuelta al portafolio.
+    texto = texto.replace('</head>', `<link rel="stylesheet" href="/portafolio/franja.css"></head>`);
+    texto = texto.replace(/(<body[^>]*>)/, `$1<div class="vdv-franja" role="note"><span>Demo de portafolio de <a href="/">Vélez De Villa</a> · marca ficticia · los mensajes de WhatsApp llegan a Vélez De Villa</span><a class="vdv-volver" href="/portafolio/">← Volver al portafolio</a></div>`);
   }
   return texto;
 }
@@ -61,4 +72,5 @@ for (const [carpeta, slug] of Object.entries(DEMOS)) {
   rmSync(join(dist, 'robots.txt'), { force: true });
   cpSync(dist, join(salida, slug), { recursive: true });
 }
+writeFileSync(join(salida, 'franja.css'), `.vdv-franja{position:relative;z-index:2147483000;display:flex;flex-wrap:wrap;gap:.25rem 1rem;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:#0F2430;color:#fff;font:500 13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}.vdv-franja a{color:#fff;text-decoration:underline;text-underline-offset:2px}.vdv-franja a:focus-visible{outline:3px solid #9FD0E3;outline-offset:2px}.vdv-volver{font-weight:700;min-height:24px;display:inline-flex;align-items:center}@media print{.vdv-franja{display:none}}\n`);
 console.log(`\nListo: ${salida}`);

@@ -1,7 +1,7 @@
 import { limpiarCelular, normalizarTexto, validarCelular, validarNombre } from './validar';
 
 export const ZONA = 'America/Lima';
-export const WHATSAPP = '51900000000';
+export const WHATSAPP = '51935852637';
 export const MAX_PERSONAS = 8;
 export const MAX_DIAS_ADELANTE = 90;
 /** La última reserva se toma 1 hora antes del cierre del turno. */

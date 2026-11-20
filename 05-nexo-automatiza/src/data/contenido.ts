@@ -1,7 +1,7 @@
 export const NEXO = {
   nombre: 'Nexo Automatiza',
-  telefonoVisible: '+51 900 000 000',
-  telefono: '51900000000',
+  telefonoVisible: '(demo)',
+  telefono: '51935852637',
   correo: 'hola@nexo-demo.ejemplo.invalid',
   ruc: '20000000001 (ficticio)',
   direccion: 'Av. Ejemplo 123, Miraflores, Lima (ficticia)',

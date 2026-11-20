@@ -88,7 +88,7 @@ describe('formato y WhatsApp', () => {
   it('arma un enlace wa.me codificado con el resumen', () => {
     const c = cotizar(base);
     const url = enlaceWhatsApp(mensajeWhatsApp(base, c));
-    expect(url.startsWith('https://wa.me/51900000000?text=')).toBe(true);
+    expect(url.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     const texto = decodeURIComponent(url.split('?text=')[1]);
     expect(texto).toContain('Tienda o comercio');
     expect(texto).toContain('Atención y avisos por WhatsApp');

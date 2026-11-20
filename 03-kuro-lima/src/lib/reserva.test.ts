@@ -125,7 +125,7 @@ describe('reserva completa y WhatsApp', () => {
   });
   it('arma wa.me codificado con los datos', () => {
     const url = urlWhatsApp(mensajeWhatsApp({ ...base, alergias: 'Alergia al maní' }));
-    expect(url.startsWith('https://wa.me/51900000000?text=')).toBe(true);
+    expect(url.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     const texto = decodeURIComponent(url.split('?text=')[1]);
     expect(texto).toContain('Lucía Paredes');
     expect(texto).toContain('martes 24 de noviembre de 2026');

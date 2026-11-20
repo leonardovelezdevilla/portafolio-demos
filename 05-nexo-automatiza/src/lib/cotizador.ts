@@ -60,7 +60,7 @@ export const formatoSoles = (n: number): string =>
   new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 })
     .format(n); // Intl ya usa espacio de no ruptura tras «S/»
 
-export const WHATSAPP_NEXO = '51900000000';
+export const WHATSAPP_NEXO = '51935852637';
 
 /** Mensaje prellenado para wa.me con el resumen de las respuestas. */
 export function mensajeWhatsApp(e: EntradaCotizador, c: Cotizacion, t: TablaPrecios = PRECIOS): string {

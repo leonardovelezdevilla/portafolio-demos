@@ -138,7 +138,7 @@ describe('mensaje de WhatsApp', () => {
   });
   it('la URL usa wa.me con el texto codificado y se puede decodificar', () => {
     const url = urlWhatsApp(msg);
-    expect(url.startsWith('https://wa.me/51900000000?text=')).toBe(true);
+    expect(url.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     expect(decodeURIComponent(url.split('?text=')[1])).toBe(msg);
     expect(url).not.toContain('\n');
   });

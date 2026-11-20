@@ -52,7 +52,7 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
         <Icon name="shield-check" size={32} />
         <h3 id="acc-ok-tit">Listo, así se vería tu confirmación</h3>
         <p id="acc-ok-txt"></p>
-        <a id="acc-wa" class="btn btn-primario" href="https://wa.me/51900000000" target="_blank" rel="noopener">Abrir WhatsApp con mi mensaje <span class="sr-only">(se abre en una pestaña nueva)</span></a>
+        <a id="acc-wa" class="btn btn-primario" href="https://wa.me/51935852637" target="_blank" rel="noopener">Abrir WhatsApp con mi mensaje <span class="sr-only">(se abre en una pestaña nueva)</span></a>
         <button type="button" class="btn btn-sec" id="acc-volver">Corregir datos</button>
         <p class="legal">Número de demo. Es una confirmación simulada: no se guardó ni se envió nada.</p>
       </div>
@@ -108,7 +108,7 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
       const [n, c, p] = campos.map((x) => x.value.trim());
       const pl = plan.value ? ` Me interesa el plan ${plan.selectedOptions[0].text}.` : '';
       const msg = `Hola, soy ${n} (${p}). Quiero acceso anticipado a Kipuflow.${pl} Mi correo: ${c}`;
-      (document.getElementById('acc-wa') as HTMLAnchorElement).href = `https://wa.me/51900000000?text=${encodeURIComponent(msg)}`;
+      (document.getElementById('acc-wa') as HTMLAnchorElement).href = `https://wa.me/51935852637?text=${encodeURIComponent(msg)}`;
       document.getElementById('acc-ok-txt')!.textContent = `Gracias, ${n.split(/\s+/)[0]}. Así se vería la respuesta a ${c}. Nada se ha enviado todavía.`;
       form.hidden = true;
       ok.hidden = false;

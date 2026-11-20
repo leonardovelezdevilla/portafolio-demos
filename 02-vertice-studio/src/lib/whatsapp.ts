@@ -1,7 +1,7 @@
 import { ENVIO, formatoSoles, totales, type Linea, type ProductoCarrito, type Zona } from './carrito';
 import type { DatosPedido } from './validacion';
 
-export const TELEFONO_DEMO = '51900000000';
+export const TELEFONO_DEMO = '51935852637';
 
 /** Quita espacios duros que mete Intl para que el mensaje sea limpio en WhatsApp. */
 const soles = (n: number) => formatoSoles(n).replace(/ /g, ' ');

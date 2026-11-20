@@ -2,8 +2,8 @@
 export const NEGOCIO = {
   nombre: 'Aura Derma',
   lema: 'Dermatología con calma',
-  whatsapp: '51900000000',
-  telefonoVisible: '+51 900 000 000',
+  whatsapp: '51935852637',
+  telefonoVisible: 'Escribir por WhatsApp',
   correo: 'hola@auraderma.ejemplo.invalid',
   direccion: 'Av. Ficticia 123, oficina 402',
   distrito: 'San Isidro, Lima',
