@@ -1,0 +1,186 @@
+---
+import Icon from './Icon.astro';
+import { CICLO, GRUPOS, etiquetaGrupo, textoDias, turnoDe } from '../data/horarios';
+import { docentePorId } from '../data/docentes';
+import { PRECIOS, soles } from '../data/precios';
+import { vacantesDe } from '../lib/vacantes';
+import { NIVELES } from '../lib/test-nivel';
+
+const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docente), turno: turnoDe(g.inicio), pub: g.publico.startsWith('Jóvenes') ? 'j' : 'a' }));
+---
+
+<section class="seccion seccion--papel2" id="horarios" aria-labelledby="hor-tit">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Horarios por nivel</p>
+      <h2 id="hor-tit">Elige el horario que <em>sí</em> puedes sostener</h2>
+      <p class="lead">{CICLO.nombre}: {CICLO.duracion}, inicio en la {CICLO.inicioTexto}. Horas de Lima. Las vacantes son simuladas para esta demo.</p>
+    </div>
+
+    <form class="filtros" id="hor-filtros" aria-label="Filtrar horarios">
+      <div class="campo">
+        <label for="f-nivel">Nivel</label>
+        <select id="f-nivel">
+          <option value="">Todos</option>
+          {NIVELES.map((n) => <option value={n}>{n}</option>)}
+        </select>
+      </div>
+      <div class="campo">
+        <label for="f-pub">Público</label>
+        <select id="f-pub">
+          <option value="">Todos</option>
+          <option value="j">Jóvenes (12 a 17)</option>
+          <option value="a">Adultos (18 o más)</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="f-mod">Modalidad</label>
+        <select id="f-mod">
+          <option value="">Todas</option>
+          <option value="Presencial">Presencial</option>
+          <option value="Virtual">Virtual</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="f-turno">Turno</label>
+        <select id="f-turno">
+          <option value="">Todos</option>
+          <option value="Mañana">Mañana (antes de 12:00)</option>
+          <option value="Tarde">Tarde (12:00 a 17:59)</option>
+          <option value="Noche">Noche (desde 18:00)</option>
+        </select>
+      </div>
+      <div class="check filtros__chk">
+        <input type="checkbox" id="f-vac" />
+        <label for="f-vac">Ocultar grupos sin vacantes</label>
+      </div>
+      <button type="button" class="btn btn--suave filtros__limpiar" id="f-limpiar">Quitar filtros</button>
+    </form>
+
+    <p class="hor__estado" id="hor-estado" role="status">Mostrando {filas.length} de {filas.length} grupos.</p>
+
+    <ul class="grupos" id="hor-lista">
+      {filas.map(({ g, v, d, turno, pub }) => (
+        <li class={`grupo grupo--${v.estado}`} data-nivel={g.nivel} data-mod={g.modalidad} data-turno={turno} data-pub={pub} data-libres={v.libres}>
+          <div class="grupo__cab">
+            <span class={`nivel nivel--${g.nivel}`}><span class="visually-hidden">Nivel </span>{g.nivel}</span>
+            <span class={`estado estado--${v.estado}`}>
+              <Icon name={v.estado === 'sin-vacantes' ? 'circle-slash' : v.estado === 'ultimas' ? 'timer' : 'circle-check'} />
+              {v.texto}
+            </span>
+          </div>
+          <h3 class="grupo__dias">{textoDias(g.dias)}</h3>
+          <p class="grupo__hora"><Icon name="clock" /> {g.inicio} a {g.fin}</p>
+          <p class="grupo__dato"><Icon name={g.modalidad === 'Virtual' ? 'monitor' : 'building-2'} /> {g.modalidad}{g.modalidad === 'Presencial' ? ' en Pueblo Libre' : ' por videollamada'}</p>
+          <p class="grupo__dato"><Icon name="users" /> {g.publico}</p>
+          <p class="grupo__dato"><Icon name="user-round" /> {d.nombre} (docente ficticio)</p>
+          <p class="grupo__precio">{soles(PRECIOS[g.modalidad].ciclo)} por ciclo <small>IGV incl. · materiales aparte</small></p>
+          {v.estado === 'sin-vacantes' ? (
+            <p class="grupo__cierre">
+              <span class="grupo__agotado">Este grupo no tiene vacantes.</span>
+              <a class="btn btn--suave" href="/#horarios" data-ver-nivel={g.nivel} data-ver-pub={pub}>Ver otros horarios de {g.nivel}<span class="visually-hidden"> para {g.publico}</span></a>
+            </p>
+          ) : (
+            <p class="grupo__cierre">
+              <a class="btn btn--suave" href="/#matricula" data-horario={g.id} aria-label={`Elegir este horario: ${etiquetaGrupo(g)}, ${g.publico}`}>Elegir este horario</a>
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <div class="hor__vacio" id="hor-vacio" hidden>
+      <p><strong>Ningún grupo cumple esos filtros.</strong> Prueba con otro turno, modalidad o público, o quita los filtros.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .filtros { display: grid; gap: 0 1rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); align-items: end; background: var(--blanco); border: 1.5px solid var(--linea); border-radius: var(--radio); padding: 1rem 1.1rem 0.5rem; margin-bottom: 1rem; }
+  .filtros__chk { align-self: center; margin-bottom: 1.1rem; min-height: 48px; align-items: center; }
+  .filtros__limpiar { margin-bottom: 1.1rem; }
+  .hor__estado { color: var(--tinta-suave); font-size: 0.95rem; margin-bottom: 1rem; }
+  .grupos { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+  .grupo { background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 16px; padding: 1.1rem 1.2rem 1.2rem; display: flex; flex-direction: column; gap: 0.15rem; }
+  .grupo--sin-vacantes { background: var(--papel); border-style: dashed; border-color: #6d7794; }
+  .grupo__cab { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+  .estado { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; font-size: 0.9rem; padding: 0.2rem 0.65rem; border-radius: 999px; }
+  .estado :global(.icono) { width: 1.05em; height: 1.05em; }
+  .estado--disponible { background: var(--ok-fondo); color: var(--ok); }
+  .estado--ultimas { background: var(--sol-100); color: var(--aviso-texto); border: 1px solid var(--sol); }
+  .estado--sin-vacantes { background: #e8e8ee; color: #3f4658; border: 1px dashed #6d7794; }
+  .grupo__dias { font-size: 1.55rem; margin: 0 0 0.35rem; }
+  .grupo__dias::first-letter { text-transform: uppercase; }
+  .grupo__hora { font-weight: 700; margin: 0 0 0.35rem; display: flex; gap: 0.5rem; align-items: center; }
+  .grupo__dato { margin: 0 0 0.2rem; display: flex; gap: 0.5rem; align-items: center; color: var(--tinta-suave); font-size: 0.98rem; }
+  .grupo__precio { margin: 0.5rem 0 0; font-weight: 700; color: var(--azul-900); }
+  .grupo__precio small { display: block; font-weight: 400; color: var(--tinta-suave); font-size: 0.85rem; }
+  .grupo__cierre { margin: 0; display: grid; gap: 0.5rem; margin-top: auto; padding-top: 0.8rem; }
+  .grupo__cierre :global(.btn) { width: 100%; }
+  .grupo__agotado { font-weight: 700; color: #3f4658; font-size: 0.95rem; }
+  .hor__vacio { background: var(--blanco); border: 1.5px dashed #6d7794; border-radius: var(--radio); padding: 1.25rem; }
+  .hor__vacio p { margin: 0; }
+</style>
+
+<script>
+  const lista = document.getElementById('hor-lista')!;
+  const items = Array.from(lista.querySelectorAll<HTMLElement>('.grupo'));
+  const nivel = document.getElementById('f-nivel') as HTMLSelectElement;
+  const pub = document.getElementById('f-pub') as HTMLSelectElement;
+  const mod = document.getElementById('f-mod') as HTMLSelectElement;
+  const turno = document.getElementById('f-turno') as HTMLSelectElement;
+  const vac = document.getElementById('f-vac') as HTMLInputElement;
+  const estado = document.getElementById('hor-estado')!;
+  const vacio = document.getElementById('hor-vacio')!;
+  document.getElementById('hor-filtros')!.addEventListener('submit', (e) => e.preventDefault());
+
+  function aplicar() {
+    let n = 0;
+    items.forEach((li) => {
+      const ok =
+        (!nivel.value || li.dataset.nivel === nivel.value) &&
+        (!pub.value || li.dataset.pub === pub.value) &&
+        (!mod.value || li.dataset.mod === mod.value) &&
+        (!turno.value || li.dataset.turno === turno.value) &&
+        (!vac.checked || Number(li.dataset.libres) > 0);
+      li.hidden = !ok;
+      if (ok) n++;
+    });
+    vacio.hidden = n > 0;
+    estado.textContent = `Mostrando ${n} de ${items.length} grupos.`;
+  }
+  [nivel, pub, mod, turno, vac].forEach((el) => el.addEventListener('change', aplicar));
+  document.getElementById('f-limpiar')!.addEventListener('click', () => {
+    nivel.value = pub.value = mod.value = turno.value = '';
+    vac.checked = false;
+    aplicar();
+  });
+  // Desde el resultado del test: filtra por el nivel obtenido.
+  window.addEventListener('lumen:nivel', (e) => {
+    const v = (e as CustomEvent<string>).detail;
+    if (v) {
+      nivel.value = v;
+      aplicar();
+    }
+  });
+  lista.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    // «Elegir este horario»: la matrícula lo preselecciona.
+    const a = t.closest<HTMLAnchorElement>('a[data-horario]');
+    if (a) {
+      window.dispatchEvent(new CustomEvent('lumen:horario', { detail: a.dataset.horario }));
+      return;
+    }
+    // Grupo sin vacantes: ver otros horarios del mismo nivel y público, solo con vacantes.
+    const o = t.closest<HTMLAnchorElement>('a[data-ver-nivel]');
+    if (o) {
+      e.preventDefault();
+      nivel.value = o.dataset.verNivel ?? '';
+      pub.value = o.dataset.verPub ?? '';
+      mod.value = turno.value = '';
+      vac.checked = true;
+      aplicar();
+      document.getElementById('hor-estado')!.scrollIntoView({ block: 'center' });
+    }
+  });
+</script>

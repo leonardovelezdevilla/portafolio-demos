@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import { NEGOCIO } from '../../lib/negocio';
+---
+
+<Base
+  titulo="Privacidad | Lumen (demo)"
+  descripcion="Política de privacidad de demostración de Lumen: datos de alumnos, menores de edad y WhatsApp, según la Ley 29733."
+  ruta="/privacidad/"
+>
+  <article class="contenedor legal">
+    <p class="sobretitulo">Documento de demostración</p>
+    <h1>Política de privacidad</h1>
+    <p class="aviso-legal">
+      Lumen es una marca ficticia creada para un portafolio. Este texto ilustra cómo se vería una política conforme a la Ley N.º 29733, Ley de Protección de Datos Personales, y su reglamento. No es asesoría legal.
+    </p>
+
+    <h2>1. Qué datos se piden y para qué</h2>
+    <ul>
+      <li>Nombre y apellido, fecha de nacimiento, celular y correo del alumno: para identificarlo, saber si es menor de edad y contactarlo sobre su matrícula.</li>
+      <li>Si el alumno es menor de 18 años: nombre, parentesco y celular de su padre, madre o apoderado, que autoriza la matrícula.</li>
+      <li>Horario elegido: para gestionar la vacante.</li>
+      <li>El test de nivel no pide datos personales y sus respuestas no se guardan.</li>
+    </ul>
+
+    <h2>2. Menores de edad</h2>
+    <p>
+      Por política de la academia, todo menor de 18 años necesita la autorización de su padre, madre o apoderado, que acepta esta política en su nombre (aunque la norma permita a algunos adolescentes consentir por sí mismos). En la demo, la casilla de autorización no se comprueba; en una academia real se verificaría la relación con el menor (por ejemplo, con el DNI) en la entrevista. Se piden solo los datos mínimos. La fecha de nacimiento sirve únicamente para verificar la edad y no se incluye en el mensaje de WhatsApp, donde el menor aparece solo con su nombre de pila y la inicial de su apellido.
+    </p>
+
+    <h2>3. Qué hace esta demo con tus datos</h2>
+    <p>
+      <strong>Nada se envía a ningún servidor ni se guarda.</strong> La validación ocurre en tu navegador. Al final, el sitio arma un mensaje y un enlace a WhatsApp. Si decides abrirlo y enviarlo, <strong>WhatsApp (Meta, empresa extranjera) pasa a tratar tu mensaje y tu número</strong> con sus propias condiciones, lo que implica un flujo de datos fuera del Perú. Los correos y direcciones de este sitio son ficticios; el WhatsApp es el de Vélez De Villa, autor de la demo. No envíes datos reales de menores de edad.
+    </p>
+
+    <h2>4. Consentimiento</h2>
+    <p>
+      La casilla del formulario de matrícula expresa tu consentimiento para tratar los datos con esa finalidad. Puedes revocarlo cuando quieras. En el Libro de Reclamaciones no hay casilla de autorización: los datos se usan solo para atender el reclamo.
+    </p>
+
+    <h2>5. En una academia real</h2>
+    <ul>
+      <li>El titular del banco de datos informaría su razón social, RUC y domicilio, y su inscripción en el Registro Nacional de Protección de Datos Personales cuando corresponda.</li>
+      <li>Plazo de conservación (ejemplo de demo): 2 años después del último ciclo cursado, con medidas de seguridad; luego se eliminarían.</li>
+      <li>Destinatarios y transferencia: la academia y, si envías el mensaje, WhatsApp (Meta), empresa extranjera.</li>
+      <li>En el formulario de matrícula, los campos con asterisco (*) son obligatorios para matricular; los demás son facultativos (por ejemplo, el celular del menor).</li>
+      <li>No se venderían tus datos ni se usarían para publicidad sin un consentimiento distinto.</li>
+    </ul>
+
+    <h2>6. Tus derechos</h2>
+    <p>
+      Puedes ejercer tus derechos de información, acceso, rectificación, cancelación, oposición y revocación escribiendo a <strong>{NEGOCIO.correo}</strong> (dirección ficticia). Si no recibes respuesta o no estás conforme, puedes acudir a la Autoridad Nacional de Protección de Datos Personales.
+    </p>
+
+    <h2>7. Cookies</h2>
+    <p>Este sitio no usa cookies de seguimiento ni analítica. WhatsApp es un tercero con su propia política.</p>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </article>
+</Base>

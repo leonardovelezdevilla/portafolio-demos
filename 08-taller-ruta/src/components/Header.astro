@@ -1,0 +1,37 @@
+---
+import { WA_BASE } from '../data/taller';
+import Icon from './Icon.astro';
+---
+<header class="cab oscuro">
+  <div class="wrap cab__in">
+    <a class="cab__logo" href="/" aria-label="Taller Ruta, inicio">
+      <span class="cab__sello" aria-hidden="true">R</span>
+      <span class="cab__nombre">Taller Ruta</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul class="cab__nav">
+        <li><a href="/#cotizador">Cotizar</a></li>
+        <li><a href="/#reserva">Reservar</a></li>
+        <li><a href="/#seguimiento">Seguimiento</a></li>
+        <li class="solo-ancho"><a href="/#garantias">Garantías</a></li>
+        <li class="solo-ancho"><a href="/#preguntas">Preguntas</a></li>
+      </ul>
+    </nav>
+    <a class="cab__wa" href={WA_BASE}><Icon nombre="mensaje" tamano={20} /> WhatsApp</a>
+  </div>
+</header>
+
+<style>
+  .cab { background: var(--asfalto); color: #fff; border-bottom: 1px solid var(--linea-oscura); }
+  .cab__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 24px; padding-block: 6px; }
+  .cab__logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; min-height: 48px; }
+  .cab__sello { display: grid; place-items: center; width: 36px; height: 36px; background: var(--senal); color: var(--asfalto); font-family: var(--f-titular); font-weight: 700; font-size: 1.6rem; line-height: 1; border-radius: 2px; }
+  .cab__nombre { font-family: var(--f-titular); font-weight: 700; font-size: 1.6rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .cab__nav { display: flex; flex-wrap: wrap; gap: 0 4px; }
+  .cab__nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; text-decoration: none; font-weight: 600; font-size: 0.98rem; }
+  .cab__nav a:hover { color: var(--senal); text-decoration: underline; }
+  .cab__wa { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; background: var(--senal); color: var(--asfalto); font-weight: 600; text-decoration: none; border-radius: 2px; order: 2; }
+  .cab nav { order: 3; flex-basis: 100%; }
+  .solo-ancho { display: none; }
+  @media (min-width: 720px) { .cab nav { order: 2; flex-basis: auto; } .cab__wa { order: 3; } .solo-ancho { display: block; } .cab__in { flex-wrap: nowrap; } }
+</style>

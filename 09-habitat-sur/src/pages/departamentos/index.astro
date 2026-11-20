@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tarjeta from '../../components/Tarjeta.astro';
+import { departamentos, DISTRITOS, ETAPAS } from '../../data/departamentos';
+const precios = [250000, 300000, 400000, 500000, 700000, 1000000];
+---
+<Base titulo="Departamentos en Lima Sur · Habitat Sur (demo)" descripcion="Filtra los departamentos de ejemplo por distrito, dormitorios, precio, área y etapa. La búsqueda queda en el enlace para compartirla." ruta="/departamentos/">
+  <section class="contenedor lista-cab">
+    <p class="sobretitulo">Listado de ejemplo</p>
+    <h1>Departamentos</h1>
+    <p class="lead">Filtra y ordena. Los resultados cambian al elegir y el enlace de la barra de direcciones recuerda tu búsqueda.</p>
+  </section>
+  <section class="contenedor" aria-label="Búsqueda y resultados">
+    <form class="filtros" data-filtros action="/departamentos/" method="get" role="search" aria-label="Filtrar departamentos">
+      <div class="f-base">
+        <div class="campo"><label for="f-distrito">Distrito</label>
+          <select id="f-distrito" name="distrito"><option value="">Todos</option>{DISTRITOS.map((d) => <option value={d}>{d}</option>)}</select></div>
+        <div class="campo"><label for="f-dorm">Dormitorios</label>
+          <select id="f-dorm" name="dormitorios"><option value="">Cualquiera</option><option value="1">1 o más</option><option value="2">2 o más</option><option value="3">3 o más</option></select></div>
+        <div class="campo"><label for="f-precio">Precio máximo</label>
+          <select id="f-precio" name="precioMax"><option value="">Sin tope</option>{precios.map((p) => <option value={p}>Hasta S/ {p.toLocaleString('es-PE')}</option>)}</select></div>
+      </div>
+      <details class="mas-filtros" data-mas>
+        <summary>Más filtros y orden</summary>
+        <div class="f-base">
+          <div class="campo"><label for="f-area">Área mínima</label>
+            <select id="f-area" name="areaMin"><option value="">Cualquiera</option><option value="40">40 m² o más</option><option value="60">60 m² o más</option><option value="80">80 m² o más</option><option value="100">100 m² o más</option></select></div>
+          <div class="campo"><label for="f-etapa">Etapa</label>
+            <select id="f-etapa" name="etapa"><option value="">Todas</option>{ETAPAS.map((e) => <option value={e}>{e[0].toUpperCase() + e.slice(1)}</option>)}</select></div>
+          <div class="campo"><label for="f-orden">Ordenar por</label>
+            <select id="f-orden" name="orden"><option value="relevancia">Destacados</option><option value="precio-asc">Precio, de menor a mayor</option><option value="precio-desc">Precio, de mayor a menor</option><option value="area-desc">Área, de mayor a menor</option></select></div>
+        </div>
+      </details>
+      <div class="f-acc">
+        <button type="submit" class="btn btn-primario" data-aplicar>Aplicar filtros</button>
+        <button type="button" class="btn" data-limpiar>Limpiar</button>
+        <button type="button" class="btn" data-copiar hidden>Copiar enlace de esta búsqueda</button>
+      </div>
+    </form>
+    <p class="cuenta" role="status" data-cuenta>{departamentos.length} departamentos</p>
+    <p class="copiado" role="status" data-copiado></p>
+    <ul class="grid" data-grid>
+      {departamentos.map((d, i) => <li data-slug={d.slug}><Tarjeta d={d} eager={i < 2} nivel={2} /></li>)}
+    </ul>
+    <div class="vacio" data-vacio hidden>
+      <h2 tabindex="-1" data-vacio-t>Ningún departamento coincide</h2>
+      <p>Quita uno de los filtros activos para ver más resultados:</p>
+      <ul class="chips" data-chips></ul>
+      <button type="button" class="btn btn-primario" data-limpiar>Limpiar todos los filtros</button>
+    </div>
+    <p class="nota">Precios de ejemplo como precio total, sin desglose de IGV ni gastos notariales y registrales. US$ referencial con tipo de cambio fijo de demo (S/ 3,75). Las fotos son referenciales y los datos de áreas, entregas y equipamiento son de ejemplo.</p>
+  </section>
+</Base>
+<style>
+  .lista-cab { padding-top: clamp(2.5rem, 6vw, 4rem); }
+  .filtros { display: grid; gap: 1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.2rem; margin-top: 1.2rem; }
+  .f-base { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  .mas-filtros summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; text-decoration: underline; }
+  .mas-filtros .f-base { margin-top: .5rem; }
+  .f-acc { display: flex; flex-wrap: wrap; gap: .7rem; align-items: end; }
+  @media (min-width: 700px) { .f-base { grid-template-columns: repeat(3, 1fr); } }
+  .cuenta { font: 700 1.3rem var(--f-titulo); margin: 1.6rem 0 .3rem; }
+  .copiado { min-height: 1.5rem; margin: 0 0 .8rem; color: var(--ok); font-weight: 600; }
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; }
+  @media (min-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .vacio { border: 2px dashed var(--tinta-2); padding: 2rem; margin-top: 1rem; }
+  .chips { list-style: none; padding: 0; margin: 0 0 1.2rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+  .chips :global(button) { min-height: 44px; padding: .4rem .9rem; border: 2px solid var(--tinta); background: var(--blanco); font: 600 .95rem var(--f-cuerpo); color: var(--tinta); cursor: pointer; }
+  .chips :global(button):hover { background: var(--tinta); color: var(--papel); }
+  .nota { font-size: .92rem; color: var(--tinta-2); margin: 2.5rem 0 4rem; max-width: 78ch; }
+</style>
+<script>
+  import { departamentos } from '../../data/departamentos';
+  import { CRITERIOS_VACIOS, aParametros, desdeParametros, filtrar, type Criterios } from '../../lib/filtros';
+  const form = document.querySelector<HTMLFormElement>('[data-filtros]')!;
+  const grid = document.querySelector<HTMLElement>('[data-grid]')!;
+  const cuenta = document.querySelector<HTMLElement>('[data-cuenta]')!;
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]')!;
+  const chips = document.querySelector<HTMLElement>('[data-chips]')!;
+  const copiado = document.querySelector<HTMLElement>('[data-copiado]')!;
+  const btnCopiar = document.querySelector<HTMLButtonElement>('[data-copiar]')!;
+  const mas = document.querySelector<HTMLDetailsElement>('[data-mas]')!;
+  const campos = { distrito: 'f-distrito', dormitorios: 'f-dorm', precioMax: 'f-precio', areaMin: 'f-area', etapa: 'f-etapa', orden: 'f-orden' } as const;
+  type K = keyof typeof campos;
+  const el = (k: K) => document.getElementById(campos[k]) as HTMLSelectElement;
+  const items = new Map([...grid.querySelectorAll<HTMLElement>('li[data-slug]')].map((li) => [li.dataset.slug!, li]));
+  const aplicarAForm = (c: Criterios) => { (Object.keys(campos) as K[]).forEach((k) => { el(k).value = c[k] ? String(c[k]) : k === 'orden' ? 'relevancia' : ''; }); };
+  const leerForm = (): Criterios => desdeParametros(new URLSearchParams(new FormData(form) as unknown as Record<string, string>));
+  const etiqueta = (k: K) => { const o = el(k).selectedOptions[0]; return o ? o.textContent!.trim() : ''; };
+  const pintar = (c: Criterios, url: boolean) => {
+    const r = filtrar(departamentos, c);
+    const vis = new Set(r.map((d) => d.slug));
+    r.forEach((d) => grid.appendChild(items.get(d.slug)!));
+    items.forEach((li, slug) => { li.hidden = !vis.has(slug); });
+    const orden = c.orden !== 'relevancia' ? `, ordenados por ${etiqueta('orden').toLowerCase()}` : '';
+    cuenta.textContent = (r.length === 1 ? '1 departamento' : `${r.length} departamentos`) + orden;
+    vacio.hidden = r.length > 0;
+    chips.replaceChildren();
+    if (!r.length) {
+      (Object.keys(campos) as K[]).filter((k) => k !== 'orden' && c[k]).forEach((k) => {
+        const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button';
+        b.textContent = `Quitar: ${etiqueta(k)}`;
+        b.addEventListener('click', () => { el(k).value = ''; pintar(leerForm(), true); (document.getElementById(campos[k]) as HTMLElement).focus(); });
+        li.append(b); chips.append(li);
+      });
+    }
+    if (url) { const q = aParametros(c).toString(); history.replaceState(null, '', location.pathname + (q ? `?${q}` : '')); }
+    copiado.textContent = '';
+  };
+  btnCopiar.hidden = false;
+  document.querySelector<HTMLElement>('[data-aplicar]')!.hidden = true;
+  const ancho = matchMedia('(min-width: 1000px)');
+  const params = desdeParametros(new URLSearchParams(location.search));
+  aplicarAForm(params);
+  mas.open = ancho.matches || !!(params.areaMin || params.etapa || params.orden !== 'relevancia');
+  pintar(leerForm(), false);
+  form.addEventListener('change', () => pintar(leerForm(), true));
+  form.addEventListener('submit', (e) => { e.preventDefault(); pintar(leerForm(), true); });
+  document.querySelectorAll('[data-limpiar]').forEach((b) => b.addEventListener('click', () => { aplicarAForm(CRITERIOS_VACIOS); pintar(CRITERIOS_VACIOS, true); (document.getElementById('f-distrito') as HTMLElement).focus(); }));
+  btnCopiar.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(location.href); copiado.textContent = 'Enlace copiado. Ya puedes pegarlo y compartirlo.'; }
+    catch { copiado.textContent = 'No se pudo copiar automáticamente: copia la dirección desde la barra del navegador.'; }
+  });
+</script>

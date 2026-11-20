@@ -1,0 +1,112 @@
+---
+import '../styles/global.css';
+import Icono from '../components/Icono.astro';
+import Pie from '../components/Pie.astro';
+import { TELEFONO_DEMO } from '../lib/config';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  ruta: string;
+  jsonLd?: object[];
+  sinCanonical?: boolean;
+}
+const { titulo, descripcion, ruta, jsonLd = [], sinCanonical = false } = Astro.props;
+const json = (o: unknown) => JSON.stringify(o).replace(/</g, '\u003c');
+const waUrgencia = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Casa Patas, tengo una urgencia con mi mascota (demo). Voy en camino.')}`;
+const waConsulta = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Casa Patas, quiero hacer una consulta (demo).')}`;
+const enlaces = [
+  { href: '/#servicios', t: 'Servicios' },
+  { href: '/#guia-vacunas', t: 'Guía de vacunas' },
+  { href: '/#reserva', t: 'Reservar cita' },
+  { href: '/#equipo', t: 'Equipo' },
+  { href: '/#preguntas', t: 'Preguntas' },
+];
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f8f4ec" />
+    {!sinCanonical && <link rel="canonical" href={ruta} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/literata-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/nunito-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Casa Patas (demo)" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    {!sinCanonical && <meta property="og:url" content={ruta} />}
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Casa Patas: veterinaria de barrio en Magdalena del Mar. Demo de portafolio." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content="/og.png" />
+    {jsonLd.map((o) => <script type="application/ld+json" set:html={json(o)} />)}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cabecera">
+      <div class="contenedor">
+        <div class="cabecera__fila">
+          <a class="logo" href="/" aria-label="Casa Patas, inicio"><span class="logo__marca" aria-hidden="true"><Icono nombre="huella" tamano={22} /></span>Casa Patas</a>
+          <nav class="nav" aria-label="Principal">
+            {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+          </nav>
+          <div class="cabecera__acc">
+            <a class="btn btn--urgencia cabecera__cta" href="/#urgencias"><Icono nombre="sirena" tamano={18} /> Urgencias</a>
+            <button type="button" class="btn-menu" data-menu aria-expanded="false" aria-controls="nav-movil" hidden>
+              <Icono nombre="menu" /> Menú
+            </button>
+          </div>
+        </div>
+      </div>
+      <nav class="nav-movil" id="nav-movil" aria-label="Secciones" data-nav-movil>
+        {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+        <a href="/#urgencias">Urgencias</a>
+      </nav>
+    </header>
+
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+
+    <Pie waConsulta={waConsulta} waUrgencia={waUrgencia} />
+
+    <div class="barra-movil" role="group" aria-label="Acciones rápidas">
+      <a class="btn btn--primario" href="/#reserva"><Icono nombre="calendario" tamano={18} /> Reservar</a>
+      <a class="btn btn--urgencia" href="/#urgencias"><Icono nombre="sirena" tamano={18} /> Urgencias</a>
+      <a class="btn" href={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" tamano={18} /> WhatsApp</a>
+    </div>
+
+    <script>
+      const btn = document.querySelector<HTMLButtonElement>('[data-menu]');
+      const nav = document.querySelector<HTMLElement>('[data-nav-movil]');
+      if (btn && nav) {
+        const cerrar = (devolverFoco = false) => {
+          nav.hidden = true;
+          btn.setAttribute('aria-expanded', 'false');
+          if (devolverFoco) btn.focus();
+        };
+        btn.hidden = false;
+        nav.hidden = true;
+        btn.addEventListener('click', () => {
+          if (btn.getAttribute('aria-expanded') === 'true') cerrar();
+          else { nav.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+        });
+        nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) cerrar(); });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') cerrar(true);
+        });
+      }
+    </script>
+  </body>
+</html>

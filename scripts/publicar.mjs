@@ -1,4 +1,4 @@
-// Construye las 5 demos para publicarlas en velezdevilla.com/portafolio/<demo>/
+// Construye las demos para publicarlas en velezdevilla.com/portafolio/<demo>/
 // y las deja juntas en salida/portafolio/. Uso: node scripts/publicar.mjs
 import { execSync } from 'node:child_process';
 import { readdirSync, statSync, readFileSync, writeFileSync, rmSync, mkdirSync, cpSync, existsSync } from 'node:fs';
@@ -11,6 +11,11 @@ const DEMOS = {
   '03-kuro-lima': 'kuro-lima',
   '04-aura-derma': 'aura-derma',
   '05-nexo-automatiza': 'nexo-automatiza',
+  '06-pulso-studio': 'pulso-studio',
+  '08-taller-ruta': 'taller-ruta',
+  '09-habitat-sur': 'habitat-sur',
+  '10-lumen-idiomas': 'lumen-idiomas',
+  '11-casa-patas': 'casa-patas',
 };
 const raiz = new URL('..', import.meta.url).pathname;
 const salida = join(raiz, 'salida', 'portafolio');
@@ -36,7 +41,7 @@ function reescribir(texto, base, tipo) {
     texto = texto.replace(new RegExp(`url\\((['"]?)/${noBase}`, 'g'), `url($1${base}`);
   }
   if (tipo === 'js') {
-    texto = texto.replace(new RegExp(`(['"\`])/(producto/|privacidad/|terminos/|libro-reclamaciones/|cambios/|#|\\?)`, 'g'), `$1${base}$2`);
+    texto = texto.replace(new RegExp(`(['"\`])/(producto/|departamento/|privacidad/|terminos/|libro-reclamaciones/|cambios/|#|\\?)`, 'g'), `$1${base}$2`);
   }
   if (tipo === 'html') {
     // URLs absolutas para compartir (Open Graph, canonical) y JSON-LD.
@@ -47,7 +52,7 @@ function reescribir(texto, base, tipo) {
     texto = texto.replace(/("(?:url|@id|image|logo|menu|hasMenu)"\s*:\s*")\/(?!\/)/g, `$1${SITE}/`);
     // Franja común: aclara que es una demo y lleva de vuelta al portafolio.
     texto = texto.replace('</head>', `<link rel="stylesheet" href="/portafolio/franja.css"></head>`);
-    texto = texto.replace(/(<body[^>]*>)/, `$1<div class="vdv-franja" role="note"><span>Demo de portafolio de <a href="/">Vélez De Villa</a> · marca ficticia · los mensajes de WhatsApp llegan a Vélez De Villa</span><a class="vdv-volver" href="/portafolio/">← Volver al portafolio</a></div>`);
+    texto = texto.replace(/(<body[^>]*>)/, `$1<div class="vdv-franja" role="note"><span>Demo de portafolio de <a href="/">Vélez De Villa</a> · marca ficticia · los mensajes de WhatsApp llegan a Vélez De Villa</span><a class="vdv-volver" href="/demos/">← Volver a las demos</a></div>`);
   }
   return texto;
 }

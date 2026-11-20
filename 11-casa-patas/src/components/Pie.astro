@@ -1,0 +1,48 @@
+---
+import Icono from './Icono.astro';
+import { NEGOCIO } from '../lib/config';
+interface Props { waConsulta: string; waUrgencia: string }
+const { waConsulta, waUrgencia } = Astro.props;
+---
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div>
+        <p class="pie__marca">Casa Patas</p>
+        <p>Veterinaria de barrio en Magdalena del Mar, Lima: consultorio, vacunas, baño y peluquería, farmacia y alimento.</p>
+        <p>{NEGOCIO.razonSocial} · RUC {NEGOCIO.ruc} · {NEGOCIO.direccion}.</p>
+      </div>
+      <div>
+        <h2>Atención</h2>
+        <ul>
+          <li><a href="/#servicios">Servicios y precios</a></li>
+          <li><a href="/#guia-vacunas">Guía de vacunación</a></li>
+          <li><a href="/#reserva">Reservar cita</a></li>
+          <li><a href="/#urgencias">Urgencias</a></li>
+          <li><a href="/#preguntas">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="/privacidad/">Privacidad</a></li>
+          <li><a href="/terminos/">Términos de demo</a></li>
+          <li><a href="/libro-reclamaciones/"><Icono nombre="libro" tamano={18} /> Libro de Reclamaciones (demo)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contacto</h2>
+        <ul>
+          <li><a href={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" tamano={16} /> WhatsApp (llega a Vélez De Villa)<span class="sr-only"> (se abre en una pestaña nueva)</span></a></li>
+          <li><a href={waUrgencia} target="_blank" rel="noopener"><Icono nombre="sirena" tamano={16} /> Urgencias por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span></a></li>
+          <li>Lun a sáb, 9:00 a 20:00</li>
+          <li>Dom, 9:00 a 13:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__legal">
+      <span>Demo de portafolio — Vélez De Villa. Marca, equipo, y precios son ficticios; no se atiende ni se cobra nada.</span>
+      <span>Fotos ilustrativas de Pexels (créditos en el repositorio): no corresponden a Casa Patas.</span>
+    </div>
+  </div>
+</footer>

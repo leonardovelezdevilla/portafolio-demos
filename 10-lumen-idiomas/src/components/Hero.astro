@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { NEGOCIO } from '../lib/negocio';
+const escalera = [
+  { n: 'A1', t: 'Hello, I’m Ana.' },
+  { n: 'A2', t: 'Last weekend I visited my aunt.' },
+  { n: 'B1', t: 'If I could, I would travel more.' },
+  { n: 'B2', t: 'I’d rather we postponed the meeting.' },
+  { n: 'C1', t: 'Had I known, I would have said so.' },
+];
+---
+
+<section class="hero">
+  <div class="contenedor hero__fila">
+    <div class="hero__texto">
+      <p class="sobretitulo">Academia de inglés en {NEGOCIO.distrito}</p>
+      <h1>Inglés que se <em>habla</em> desde la primera clase.</h1>
+      <p class="lead">Grupos para jóvenes y adultos, de A1 a C1, en horarios de mañana, tarde, noche y sábados. Presencial en Pueblo Libre o virtual.</p>
+      <div class="hero__acciones">
+        <a class="btn btn--coral" href="/#test">Hacer el test de nivel <Icon name="arrow-right" /></a>
+        <a class="btn btn--suave" href="/#horarios">Ver horarios</a>
+      </div>
+      <p class="hero__nota">El test dura unos 5 minutos y no pide datos personales.</p>
+    </div>
+    <ol class="escalera" aria-label="Ejemplos de frases por nivel, de A1 a C1">
+      {escalera.map((e) => (
+        <li class={`peldano peldano--${e.n}`}>
+          <span class={`nivel nivel--${e.n}`}>{e.n}</span>
+          <span class="peldano__frase" lang="en">{e.t}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 7vw, 5rem) clamp(3rem, 8vw, 5.5rem); overflow: hidden; }
+  .hero__fila { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 62rem) { .hero__fila { grid-template-columns: 1.15fr 1fr; gap: 3.5rem; } }
+  .hero__acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.75rem 0 0.9rem; }
+  .hero__nota { font-size: 0.95rem; color: var(--tinta-suave); }
+  .escalera { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+  .peldano { display: flex; align-items: center; gap: 0.8rem; background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 18px 18px 18px 4px; padding: 0.75rem 1rem; box-shadow: 4px 4px 0 var(--sol); font-family: var(--serif); font-size: 1.2rem; line-height: 1.25; color: var(--azul-900); }
+  .peldano__frase { font-style: italic; }
+  @media (min-width: 40rem) {
+    .peldano--A2 { margin-left: 1.5rem; }
+    .peldano--B1 { margin-left: 3rem; }
+    .peldano--B2 { margin-left: 4.5rem; }
+    .peldano--C1 { margin-left: 6rem; }
+  }
+  @media (max-width: 39.99rem) { .peldano { font-size: 1.1rem; } }
+</style>

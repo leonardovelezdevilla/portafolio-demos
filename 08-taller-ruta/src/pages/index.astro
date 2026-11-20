@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Servicios from '../components/Servicios.astro';
+import Cotizador from '../components/Cotizador.astro';
+import Reserva from '../components/Reserva.astro';
+import Seguimiento from '../components/Seguimiento.astro';
+import Garantias from '../components/Garantias.astro';
+import Faq from '../components/Faq.astro';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoRepair',
+  name: 'Taller Ruta (demo, marca ficticia)',
+  description: 'Taller mecánico ficticio en Los Olivos, Lima (demo, marca ficticia). Sin datos reales de contacto.',
+  url: '/',
+  image: '/og.png',
+  address: { '@type': 'PostalAddress', addressLocality: 'Los Olivos', addressRegion: 'Lima', addressCountry: 'PE' },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '17:30' },
+  ],
+};
+---
+<Base titulo="Taller Ruta | Taller mecánico en Los Olivos (demo)" descripcion="Cotiza tu mantenimiento en soles, reserva tu cita y sigue el estado de tu vehículo. Demo de portafolio de un taller mecánico ficticio en Los Olivos, Lima." ruta="/" jsonld={jsonld}>
+  <Hero />
+  <Servicios />
+  <Cotizador />
+  <Reserva />
+  <Seguimiento />
+  <Garantias />
+  <Faq />
+</Base>

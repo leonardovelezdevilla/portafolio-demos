@@ -1,0 +1,335 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { NEGOCIO } from '../../lib/negocio';
+---
+
+<Base
+  titulo="Libro de Reclamaciones de demo | Lumen"
+  descripcion="Libro de Reclamaciones de demostración de Lumen: hoja, constancia imprimible y plazo de 15 días hábiles. No envía datos."
+  ruta="/libro-reclamaciones/"
+>
+  <div class="contenedor legal">
+    <p class="sobretitulo">Documento de demostración</p>
+    <h1>Libro de Reclamaciones</h1>
+    <div class="aviso no-imprimir">
+      <Icon name="info" />
+      <p>
+        Formulario de demostración basado en el D.S. 011-2011-PCM y sus modificatorias: genera una hoja y una constancia imprimible, pero <strong>no envía ni guarda nada</strong>. En un negocio real, el proveedor responde en un máximo de <strong>15 días hábiles</strong> (prorrogable por otros 15 con aviso) y el consumidor recibe copia de la hoja en el acto y el libro se exhibe de forma visible en el local, con numeración correlativa.
+      </p>
+    </div>
+
+    <form id="lr-form" novalidate>
+      <div id="lr-resumen" class="resumen-errores" role="alert" tabindex="-1"></div>
+      <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio. El monto y los datos del padre, madre o apoderado (solo si eres menor de edad) tienen sus propias reglas.</p>
+
+      <fieldset class="proveedor">
+        <legend>Proveedor del servicio</legend>
+        <dl class="datos">
+          <dt>Razón social</dt><dd>{NEGOCIO.razonSocial}</dd>
+          <dt>RUC</dt><dd>{NEGOCIO.ruc} (ficticio)</dd>
+          <dt>Dirección</dt><dd>{NEGOCIO.direccion}, {NEGOCIO.distrito} (ficticia)</dd>
+        </dl>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="lr-fecha">Fecha del reclamo</label>
+            <input type="text" id="lr-fecha" readonly />
+          </div>
+          <div class="campo">
+            <label for="lr-hoja">Número de hoja de reclamación</label>
+            <input type="text" id="lr-hoja" readonly aria-describedby="ayuda-hoja" />
+            <p class="ayuda" id="ayuda-hoja">Se genera al cargar la página. Es solo de demostración; en un negocio real la numeración es correlativa.</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>1. Identificación del consumidor reclamante</legend>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="lr-nombre">Nombre y apellido <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-nombre" name="nombre" autocomplete="name" maxlength="80" required aria-required="true" aria-describedby="err-nombre" />
+            <p class="error" id="err-nombre" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-tipodoc">Tipo de documento <span class="req" aria-hidden="true">*</span></label>
+            <select id="lr-tipodoc" name="tipodoc">
+              <option value="DNI">DNI</option>
+              <option value="CE">Carné de extranjería</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="lr-doc">Número de documento <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-doc" name="doc" maxlength="12" required aria-required="true" aria-describedby="err-doc" />
+            <p class="error" id="err-doc" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-domicilio">Domicilio <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-domicilio" name="domicilio" autocomplete="street-address" maxlength="120" required aria-required="true" aria-describedby="err-domicilio" />
+            <p class="error" id="err-domicilio" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-celular">Teléfono celular, 9 dígitos <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="lr-celular" name="celular" inputmode="numeric" autocomplete="tel-national" maxlength="11" required aria-required="true" aria-describedby="err-celular" />
+            <p class="error" id="err-celular" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-correo">Correo electrónico <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="lr-correo" name="correo" autocomplete="email" maxlength="120" required aria-required="true" aria-describedby="err-correo" />
+            <p class="error" id="err-correo" hidden></p>
+          </div>
+        </div>
+        <div class="campo">
+          <div class="check">
+            <input type="checkbox" id="lr-menor" name="menor" />
+            <label for="lr-menor">El consumidor es menor de edad (se necesitan los datos del padre, madre o apoderado)</label>
+          </div>
+        </div>
+        <div id="lr-menor-set" hidden>
+          <div class="grid-2">
+            <div class="campo">
+              <label for="lr-padre">Padre, madre o apoderado (firmante) <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="lr-padre" name="padre" maxlength="80" aria-describedby="err-padre" />
+              <p class="error" id="err-padre" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="lr-docpadre">Documento (DNI) del padre, madre o apoderado <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="lr-docpadre" name="docpadre" inputmode="numeric" maxlength="8" aria-describedby="err-docpadre" />
+              <p class="error" id="err-docpadre" hidden></p>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Identificación del bien contratado</legend>
+        <div class="campo">
+          <span class="etiqueta" id="lr-bien-et">Tipo de bien <span class="req" aria-hidden="true">*</span></span>
+          <div class="opciones" role="radiogroup" aria-labelledby="lr-bien-et">
+            <div class="opcion">
+              <input type="radio" name="bien" id="lr-b-servicio" value="Servicio" checked />
+              <label for="lr-b-servicio"><span class="punto"></span><span>Servicio<small>Clases, matrícula, evaluación</small></span></label>
+            </div>
+            <div class="opcion">
+              <input type="radio" name="bien" id="lr-b-producto" value="Producto" />
+              <label for="lr-b-producto"><span class="punto"></span><span>Producto<small>Materiales o libros</small></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="lr-servicio">Descripción del bien contratado <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-servicio" name="servicio" maxlength="100" required aria-required="true" aria-describedby="err-servicio" />
+            <p class="error" id="err-servicio" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-monto">Monto reclamado en S/ (opcional)</label>
+            <input type="text" id="lr-monto" name="monto" inputmode="decimal" maxlength="9" aria-describedby="err-monto" />
+            <p class="error" id="err-monto" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Detalle de la reclamación y pedido del consumidor</legend>
+        <div class="campo">
+          <span class="etiqueta" id="lr-tipo-et">Tipo <span class="req" aria-hidden="true">*</span></span>
+          <div class="opciones" role="radiogroup" aria-labelledby="lr-tipo-et">
+            <div class="opcion">
+              <input type="radio" name="tipo" id="lr-t-reclamo" value="Reclamo" checked />
+              <label for="lr-t-reclamo"><span class="punto"></span><span>Reclamo<small>Disconformidad relacionada con los productos o servicios.</small></span></label>
+            </div>
+            <div class="opcion">
+              <input type="radio" name="tipo" id="lr-t-queja" value="Queja" />
+              <label for="lr-t-queja"><span class="punto"></span><span>Queja<small>Malestar o descontento por la atención al público, sin relación con la calidad del servicio.</small></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="lr-detalle">Detalle <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="lr-detalle" name="detalle" maxlength="1000" required aria-required="true" aria-describedby="err-detalle"></textarea>
+          <p class="error" id="err-detalle" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="lr-pedido">Pedido del consumidor <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="lr-pedido" name="pedido" maxlength="500" required aria-required="true" aria-describedby="err-pedido"></textarea>
+          <p class="error" id="err-pedido" hidden></p>
+        </div>
+        <p class="nota-sim"><strong>Observaciones y acciones adoptadas por el proveedor:</strong> las completa la academia al responder (en la demo queda en blanco).</p>
+        <p class="nota-sim">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI. Al registrar esta hoja das tu conformidad con su contenido, que hace las veces de firma del consumidor.</p>
+        <p class="nota-sim">Información sobre datos personales: los datos de esta hoja se usan solo para atender tu reclamo, según la <a href="/privacidad/">política de privacidad</a>. En esta demo no se envían ni se guardan.</p>
+      </fieldset>
+
+      <button type="submit" class="btn btn--coral">Registrar reclamación de demo</button>
+    </form>
+
+    <div id="lr-conf" class="constancia" tabindex="-1" hidden>
+      <span class="etiqueta-demo">Constancia de demo</span>
+      <h2>Hoja de reclamación registrada (simulación)</h2>
+      <p>Número de hoja: <strong id="lr-conf-num" class="num-hoja"></strong></p>
+      <dl id="lr-conf-datos" class="datos"></dl>
+      <p><strong>Plazo de respuesta:</strong> el proveedor debe responder en un máximo de <strong>15 días hábiles</strong>, prorrogable por otros 15 con aviso. Si no estás conforme con la respuesta, puedes acudir al INDECOPI.</p>
+      <p>No se envió ni se guardó ningún dato y no hay copia por correo. En un negocio real, la copia de la hoja se entrega al consumidor en papel o a su correo.</p>
+      <div class="acciones no-imprimir">
+        <button type="button" class="btn" id="lr-imprimir"><Icon name="printer" /> Imprimir constancia</button>
+        <a class="btn btn--suave" href="/">Volver al inicio</a>
+        <button type="button" class="btn btn--suave" id="lr-otra">Registrar otra de demo</button>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .legal :global(legend) { font: 600 1.6rem/1.2 var(--serif); margin-bottom: 1rem; }
+  .nota-req, .nota-sim { font-size: 0.93rem; color: var(--tinta-suave); }
+  .proveedor { background: var(--papel-2); border-radius: var(--radio); padding: 1rem 1.1rem 0.25rem; }
+  .datos { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; margin: 0 0 1rem; }
+  .datos :global(dt) { font-weight: 700; color: var(--azul-900); }
+  .datos :global(dd) { margin: 0; }
+  .num-hoja { font: 600 1.9rem var(--serif); color: var(--azul-900); }
+  .constancia { background: var(--blanco); border: 2px solid var(--azul-900); border-radius: 16px; padding: clamp(1rem, 4vw, 2rem); }
+  .acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+  #lr-form { margin-top: 1.5rem; }
+  @media (min-width: 40rem) { .opciones { grid-template-columns: 1fr 1fr; } }
+</style>
+
+<script>
+  import { formatearFecha, hoyLima, numeroHoja } from '../../lib/fechas';
+  import { validarCelular, validarCorreo, validarDocumento, validarMonto, validarNombre, validarTexto } from '../../lib/matricula';
+
+  const form = document.getElementById('lr-form') as HTMLFormElement;
+  const resumen = document.getElementById('lr-resumen')!;
+  const conf = document.getElementById('lr-conf')!;
+  const hoja = document.getElementById('lr-hoja') as HTMLInputElement;
+  const fechaEl = document.getElementById('lr-fecha') as HTMLInputElement;
+  const menor = document.getElementById('lr-menor') as HTMLInputElement;
+  const menorSet = document.getElementById('lr-menor-set')!;
+  let fechaHoja = '';
+  const nuevaHoja = () => {
+    hoja.value = numeroHoja(new Date(), Math.floor(Math.random() * 999999) + 1);
+    fechaHoja = formatearFecha(hoyLima());
+    fechaEl.value = fechaHoja;
+  };
+  nuevaHoja();
+
+  const ids: Record<string, string> = {
+    nombre: 'lr-nombre', doc: 'lr-doc', domicilio: 'lr-domicilio', celular: 'lr-celular', correo: 'lr-correo',
+    padre: 'lr-padre', docpadre: 'lr-docpadre', servicio: 'lr-servicio', monto: 'lr-monto', detalle: 'lr-detalle', pedido: 'lr-pedido',
+  };
+  const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+
+  menor.addEventListener('change', () => {
+    menorSet.hidden = !menor.checked;
+    ['lr-padre', 'lr-docpadre'].forEach((id) => document.getElementById(id)!.toggleAttribute('required', menor.checked));
+  });
+
+  function limpiar() {
+    Object.entries(ids).forEach(([k, id]) => {
+      const p = document.getElementById(`err-${k}`);
+      if (p) { p.hidden = true; p.textContent = ''; }
+      document.getElementById(id)?.removeAttribute('aria-invalid');
+    });
+    resumen.replaceChildren();
+  }
+  function resolver(k: string) {
+    const p = document.getElementById(`err-${k}`);
+    if (p) p.hidden = true;
+    document.getElementById(ids[k])?.removeAttribute('aria-invalid');
+    resumen.querySelector(`li[data-k="${k}"]`)?.remove();
+    if (!resumen.querySelector('li')) resumen.replaceChildren();
+  }
+  const alCambiar = (e: Event) => {
+    const t = e.target as HTMLInputElement;
+    if (ids[t.name] && t.getAttribute('aria-invalid') === 'true') resolver(t.name);
+  };
+  form.addEventListener('input', alCambiar);
+  form.addEventListener('change', alCambiar);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    limpiar();
+    const esMenor = menor.checked;
+    const err: Record<string, string> = {
+      nombre: validarNombre(val('nombre')),
+      doc: validarDocumento(val('tipodoc'), val('doc')),
+      domicilio: validarTexto(val('domicilio'), 5, 120, 'Domicilio'),
+      celular: validarCelular(val('celular')),
+      correo: validarCorreo(val('correo')),
+      padre: esMenor ? validarNombre(val('padre'), 'del padre, madre o apoderado') : '',
+      docpadre: esMenor ? validarDocumento('DNI', val('docpadre')) : '',
+      servicio: validarTexto(val('servicio'), 3, 100, 'Descripción del bien'),
+      monto: validarMonto(val('monto')),
+      detalle: validarTexto(val('detalle'), 20, 1000, 'Detalle'),
+      pedido: validarTexto(val('pedido'), 10, 500, 'Pedido'),
+    };
+    const claves = Object.keys(ids).filter((k) => err[k]);
+    if (claves.length) {
+      claves.forEach((k) => {
+        const p = document.getElementById(`err-${k}`)!;
+        p.textContent = err[k];
+        p.hidden = false;
+        document.getElementById(ids[k])?.setAttribute('aria-invalid', 'true');
+      });
+      const t = document.createElement('p');
+      t.textContent = `Revisa ${claves.length} ${claves.length === 1 ? 'dato' : 'datos'} antes de continuar:`;
+      const ul = document.createElement('ul');
+      claves.forEach((k) => {
+        const li = document.createElement('li');
+        li.dataset.k = k;
+        const a = document.createElement('a');
+        a.href = `#${ids[k]}`;
+        a.textContent = err[k];
+        a.addEventListener('click', (ev) => { ev.preventDefault(); document.getElementById(ids[k])?.focus(); });
+        li.append(a);
+        ul.append(li);
+      });
+      resumen.replaceChildren(t, ul);
+      resumen.scrollIntoView({ block: 'nearest' });
+      (form.querySelector<HTMLElement>('[aria-invalid="true"]') ?? resumen).focus();
+      return;
+    }
+    document.getElementById('lr-conf-num')!.textContent = hoja.value;
+    const dl = document.getElementById('lr-conf-datos')!;
+    dl.replaceChildren();
+    const filas: Array<[string, string]> = [
+      ['Proveedor', 'Lumen Idiomas S.A.C. (razón social ficticia)'],
+      ['RUC', '20000000001 (ficticio)'],
+      ['Dirección del proveedor', 'Av. Ficticia 456, piso 2, Pueblo Libre, Lima (ficticia)'],
+      ['Fecha del reclamo', fechaHoja],
+      [esMenor ? 'Consumidor (menor de edad)' : 'Consumidor', val('nombre').trim()],
+      ['Documento', `${val('tipodoc')} ${val('doc').trim()}`],
+      ['Domicilio', val('domicilio').trim()],
+      ['Teléfono', val('celular').trim()],
+      ['Correo', val('correo').trim()],
+    ];
+    if (esMenor) filas.push(['Padre, madre o apoderado (firmante por el menor)', `${val('padre').trim()} (DNI ${val('docpadre').trim()})`]);
+    filas.push([`Bien contratado (${val('bien').toLowerCase()})`, val('servicio').trim()]);
+    filas.push(['Monto reclamado', val('monto').trim() ? `S/ ${val('monto').trim()}` : 'No indicado']);
+    filas.push([`Tipo: ${val('tipo').toLowerCase()}`, val('tipo') === 'Reclamo' ? 'Disconformidad relacionada con los productos o servicios.' : 'Malestar o descontento por la atención al público, sin relación con la calidad del servicio.']);
+    filas.push(['Detalle', val('detalle').trim()]);
+    filas.push(['Pedido del consumidor', val('pedido').trim()]);
+    filas.push(['Observaciones y acciones del proveedor', '(a completar por el proveedor)']);
+    filas.forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    form.hidden = true;
+    conf.hidden = false;
+    conf.focus();
+  });
+
+  document.getElementById('lr-imprimir')!.addEventListener('click', () => window.print());
+  document.getElementById('lr-otra')!.addEventListener('click', () => {
+    form.reset();
+    menorSet.hidden = true;
+    limpiar();
+    nuevaHoja();
+    conf.hidden = true;
+    form.hidden = false;
+    const h1 = document.querySelector<HTMLElement>('h1')!;
+    h1.setAttribute('tabindex', '-1');
+    h1.focus();
+  });
+</script>

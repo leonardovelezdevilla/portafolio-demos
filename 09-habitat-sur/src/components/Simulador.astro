@@ -1,0 +1,149 @@
+---
+import Icon from './Icon.astro';
+import { departamentos } from '../data/departamentos';
+import { TEA_EJEMPLO, PLAZO_MIN, PLAZO_MAX } from '../lib/hipoteca';
+interface Props { precio?: number; selector?: boolean; id?: string; nivel?: 1 | 2; }
+const { precio = 400000, selector = false, id = 'sim', nivel = 2 } = Astro.props;
+const H = `h${nivel}` as 'h1' | 'h2';
+const inicial = Math.round((precio * 0.2) / 1000) * 1000;
+---
+<section class="sim" id={id} data-sim aria-labelledby={`${id}-t`}>
+  <H id={`${id}-t`}>Simulador de crédito hipotecario</H>
+  <div class="aviso-grande" role="note">
+    <Icon name="triangle-alert" size={34} />
+    <div>
+      <strong>No es una oferta de crédito ni reemplaza la evaluación de una entidad financiera.</strong>
+      <details>
+        <summary>Ver detalle del aviso</summary>
+        <p>Es un cálculo referencial con método francés (cuota fija) y una TEA de ejemplo que tú puedes cambiar. Habitat Sur no es una entidad financiera: tasas, seguros, comisiones, aprobación, cuota inicial mínima y plazos los define cada banco o caja tras evaluarte.</p>
+      </details>
+    </div>
+  </div>
+  <div class="sim-grid">
+    <form class="sim-form" novalidate data-form>
+      <div class="resumen-err" tabindex="-1" hidden data-resumen></div>
+      {selector && (
+        <div class="campo">
+          <label for={`${id}-depto`}>Departamento (opcional)</label>
+          <select id={`${id}-depto`} data-depto>
+            <option value="">Escribir un precio propio</option>
+            {departamentos.map((d) => <option value={d.precio}>{d.nombre}, {d.distrito}</option>)}
+          </select>
+        </div>
+      )}
+      <div class="campo">
+        <label for={`${id}-precio`}>Precio del departamento (S/)</label>
+        <input id={`${id}-precio`} name="precio" type="number" inputmode="numeric" min="50000" step="1000" value={precio} required aria-describedby={`${id}-precio-e`} data-campo="precio" />
+        <p class="err" id={`${id}-precio-e`}></p>
+      </div>
+      <div class="campo">
+        <label for={`${id}-inicial`}>Cuota inicial (S/)</label>
+        <input id={`${id}-inicial`} name="inicial" type="number" inputmode="numeric" min="0" step="1000" value={inicial} required aria-describedby={`${id}-inicial-a ${id}-inicial-e`} data-campo="inicial" />
+        <p class="ayuda" id={`${id}-inicial-a`}>Mínimo 10 % del precio (<strong data-minimo></strong>), solo como valor de ejemplo: cada entidad define su cuota inicial mínima.</p>
+        <p class="err" id={`${id}-inicial-e`}></p>
+      </div>
+      <div class="campo">
+        <label for={`${id}-plazo`}>Plazo (años enteros, de {PLAZO_MIN} a {PLAZO_MAX})</label>
+        <input id={`${id}-plazo`} name="plazo" type="number" inputmode="numeric" min={PLAZO_MIN} max={PLAZO_MAX} step="1" value="20" required aria-describedby={`${id}-plazo-a ${id}-plazo-e`} data-campo="plazo" />
+        <p class="ayuda" id={`${id}-plazo-a`}>Rango de ejemplo; cada entidad define sus plazos.</p>
+        <p class="err" id={`${id}-plazo-e`}></p>
+      </div>
+      <div class="campo">
+        <label for={`${id}-tea`}>TEA, tasa efectiva anual (%)</label>
+        <input id={`${id}-tea`} name="tea" type="number" inputmode="decimal" min="1" max="40" step="0.1" value={TEA_EJEMPLO} required aria-describedby={`${id}-tea-a ${id}-tea-e`} data-campo="tea" />
+        <p class="ayuda" id={`${id}-tea-a`}>{String(TEA_EJEMPLO)} % es solo un valor de ejemplo: no es la tasa de ninguna entidad. Reemplázalo por la que te informe tu banco.</p>
+        <p class="err" id={`${id}-tea-e`}></p>
+      </div>
+      <button type="submit" class="btn btn-primario">Calcular cuota referencial</button>
+    </form>
+    <div class="sim-res" data-res>
+      <p class="r-etq">Cuota mensual referencial</p>
+      <p class="r-cuota" data-cuota>—</p>
+      <dl class="r-det">
+        <div><dt>Monto a financiar</dt><dd data-financiado>—</dd></div>
+        <div><dt>Número de cuotas</dt><dd data-meses>—</dd></div>
+        <div><dt>Intereses totales (referencial)</dt><dd data-intereses>—</dd></div>
+        <div><dt>Total pagado al banco</dt><dd data-total>—</dd></div>
+        <div><dt>TCEA</dt><dd>No calculada</dd></div>
+      </dl>
+      <p class="ayuda">La TCEA incluiría seguros, comisiones y gastos que dependen de cada entidad; por eso no se calcula aquí. La cuota no incluye seguro de desgravamen ni de inmueble, y los gastos notariales y registrales van aparte.</p>
+    </div>
+  </div>
+  <p class="sim-mv"><Icon name="info" size={18} /> <span><strong>Fondo MiVivienda (solo información).</strong> Es un fondo del Estado que, a través de entidades financieras, ofrece programas de apoyo para comprar vivienda. Esta demo no simula bonos, montos ni requisitos: consulta las condiciones vigentes directamente con el Fondo MiVivienda o con tu entidad financiera.</span></p>
+  <p class="sr-only" role="status" data-anuncio></p>
+</section>
+<style>
+  .sim :global(h1), .sim :global(h2) { margin-bottom: 1rem; }
+  .sim :global(h1) { font-size: clamp(2rem, 6vw, 3rem); }
+  .aviso-grande summary { cursor: pointer; font-weight: 600; text-decoration: underline; min-height: 44px; display: flex; align-items: center; }
+  .aviso-grande details p { margin: .5rem 0 0; }
+  .sim-grid { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
+  .sim-form { display: grid; gap: 1.1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.3rem; align-content: start; }
+  .sim-res { background: var(--tinta); color: var(--papel); padding: 1.5rem; align-content: start; }
+  .sim-res .ayuda { color: #cfd7df; }
+  .r-etq { margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; font-size: .85rem; color: var(--sol-claro); }
+  .r-cuota { font: 700 clamp(2.4rem, 9vw, 3.6rem)/1.05 var(--f-titulo); margin: .3rem 0 1rem; }
+  .r-det { margin: 0 0 1rem; display: grid; gap: 0; }
+  .r-det div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-top: 1px solid #44566a; }
+  .r-det dt { color: #cfd7df; }
+  .r-det dd { margin: 0; font-weight: 600; text-align: right; }
+  .sim-mv { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; color: var(--tinta-2); font-size: .95rem; max-width: 80ch; }
+  .sim-mv :global(svg) { margin-top: .2rem; }
+  @media (min-width: 860px) { .sim-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
+  @media (max-width: 859px) { .sim-res { order: -1; } }
+</style>
+<script>
+  import { cuotaInicialMinima, simular, validarSimulador } from '../lib/hipoteca';
+  import { soles, solesDec } from '../lib/formato';
+  import { pintarResumen } from '../lib/resumen';
+  document.querySelectorAll<HTMLElement>('[data-sim]').forEach((sim) => {
+    const q = <T extends HTMLElement>(s: string) => sim.querySelector<T>(s)!;
+    const campo = (n: string) => q<HTMLInputElement>(`[data-campo="${n}"]`);
+    const form = q<HTMLFormElement>('[data-form]');
+    const resumen = q('[data-resumen]');
+    const anuncio = q('[data-anuncio]');
+    const leer = () => ({ precio: campo('precio').valueAsNumber, inicial: campo('inicial').valueAsNumber, plazoAnios: campo('plazo').valueAsNumber, teaPct: campo('tea').valueAsNumber });
+    const claves = ['precio', 'inicial', 'plazo', 'tea'];
+    const pintar = (mostrarErrores: boolean) => {
+      const e = leer();
+      q('[data-minimo]').textContent = Number.isFinite(e.precio) ? soles(cuotaInicialMinima(e.precio)) : '—';
+      const err = validarSimulador(e) as Record<string, string | undefined>;
+      for (const k of claves) {
+        const msg = err[k] ?? '';
+        const el = campo(k);
+        sim.querySelector<HTMLElement>(`#${el.id}-e`)!.textContent = mostrarErrores ? msg : '';
+        if (mostrarErrores && msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+      }
+      if (Object.keys(err).length) {
+        for (const s of ['cuota', 'financiado', 'meses', 'intereses', 'total']) q(`[data-${s}]`).textContent = '—';
+        return err;
+      }
+      const r = simular(e);
+      q('[data-cuota]').textContent = solesDec(r.cuota);
+      q('[data-financiado]').textContent = soles(r.financiado);
+      q('[data-meses]').textContent = `${r.meses} cuotas`;
+      q('[data-intereses]').textContent = soles(r.interesesTotales);
+      q('[data-total]').textContent = soles(r.totalPagado);
+      return err;
+    };
+    const decir = (t: string) => { anuncio.textContent = ''; requestAnimationFrame(() => { anuncio.textContent = t; }); };
+    form.addEventListener('input', () => { resumen.hidden = true; pintar(false); });
+    form.addEventListener('change', () => {
+      const err = pintar(true);
+      decir(Object.keys(err).length ? 'Revisa los datos: hay un error.' : `Cuota mensual referencial ${q('[data-cuota]').textContent}`);
+    });
+    q('[data-depto]')?.addEventListener('change', (ev) => {
+      const v = Number((ev.target as HTMLSelectElement).value);
+      if (v) { campo('precio').value = String(v); campo('inicial').value = String(Math.round((v * 0.2) / 1000) * 1000); pintar(false); }
+    });
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const err = pintar(true);
+      const ks = Object.keys(err);
+      if (!ks.length) { resumen.hidden = true; decir(`Cuota mensual referencial ${q('[data-cuota]').textContent}`); return; }
+      pintarResumen(resumen, ks.map((k) => ({ msg: err[k]!, enfocar: () => campo(k).focus() })));
+      campo(ks[0]).focus();
+    });
+    pintar(false);
+  });
+</script>

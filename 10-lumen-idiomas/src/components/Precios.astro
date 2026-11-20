@@ -1,0 +1,72 @@
+---
+import Icon from './Icon.astro';
+import { CICLO } from '../data/horarios';
+import { CONDICIONES, IGV_TEXTO, PRECIOS, soles } from '../data/precios';
+
+const planes = (['Presencial', 'Virtual'] as const).map((m) => ({
+  m,
+  ...PRECIOS[m],
+  total: PRECIOS[m].ciclo + PRECIOS[m].materiales,
+  icono: m === 'Virtual' ? 'monitor' : 'building-2',
+  incluye:
+    m === 'Virtual'
+      ? ['24 horas de clase en vivo por videollamada', 'Práctica en plataforma durante el ciclo', 'Una entrevista de ubicación sin costo']
+      : ['24 horas de clase en aulas de Pueblo Libre', 'Material de práctica en clase', 'Una entrevista de ubicación sin costo'],
+}));
+---
+
+<section class="seccion" id="precios" aria-labelledby="pre-tit">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Precios por ciclo</p>
+      <h2 id="pre-tit">Un precio claro por <em>ciclo</em></h2>
+      <p class="lead">{CICLO.nombre}: {CICLO.duracion}. El precio es el mismo para todos los niveles y horarios de la misma modalidad.</p>
+    </div>
+
+    <div class="planes">
+      {planes.map((p) => (
+        <article class="plan">
+          <h3><Icon name={p.icono} /> {p.m}</h3>
+          <p class="plan__precio"><span>{soles(p.ciclo)}</span> por ciclo <small>IGV incluido</small></p>
+          <ul class="plan__lista">
+            {p.incluye.map((i) => <li><Icon name="check" /> {i}</li>)}
+          </ul>
+          <p class="plan__mat"><strong>Materiales aparte:</strong> {soles(p.materiales)} por ciclo ({p.materialesDetalle}), IGV incluido.</p>
+          <p class="plan__total">Total del primer ciclo: <strong>{soles(p.total)}</strong></p>
+        </article>
+      ))}
+    </div>
+    <p class="precios__nota">{IGV_TEXTO}</p>
+
+    <div class="condiciones" aria-labelledby="cond-tit">
+      <h3 id="cond-tit">Condiciones del ciclo <span class="etiqueta-demo">Ficticias, de demo</span></h3>
+      <dl>
+        {CONDICIONES.map((c) => (
+          <div><dt>{c.titulo}</dt><dd>{c.texto}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .planes { display: grid; gap: 1.25rem; }
+  @media (min-width: 48rem) { .planes { grid-template-columns: 1.1fr 1fr; align-items: stretch; } }
+  .plan { background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 18px; padding: clamp(1.2rem, 3vw, 1.8rem); display: flex; flex-direction: column; gap: 0.5rem; }
+  .plan h3 { display: flex; align-items: center; gap: 0.6rem; margin: 0; }
+  .plan__precio { margin: 0; font-size: 1.05rem; color: var(--tinta-suave); }
+  .plan__precio span { font: 600 clamp(2.6rem, 8vw, 3.4rem)/1 var(--serif); color: var(--azul-900); margin-right: 0.3rem; }
+  .plan__precio small { display: inline-block; font-size: 0.85rem; font-weight: 700; color: var(--ok); background: var(--ok-fondo); padding: 0.1rem 0.5rem; border-radius: 6px; margin-left: 0.3rem; }
+  .plan__lista { list-style: none; margin: 0.5rem 0; padding: 0; display: grid; gap: 0.4rem; }
+  .plan__lista li { display: flex; gap: 0.55rem; align-items: flex-start; }
+  .plan__lista :global(.icono) { color: var(--ok); margin-top: 0.25rem; }
+  .plan__mat { margin: 0; padding: 0.7rem 0.9rem; background: var(--sol-100); border-radius: 10px; font-size: 0.97rem; color: var(--aviso-texto); }
+  .plan__total { margin: 0.4rem 0 0; padding-top: 0.6rem; border-top: 1px dashed var(--linea); }
+  .condiciones { margin-top: 2rem; background: var(--papel-2); border-radius: 16px; padding: clamp(1.1rem, 3vw, 1.8rem); }
+  .condiciones h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+  .condiciones dl { display: grid; gap: 0.9rem 2rem; margin: 0; }
+  @media (min-width: 52rem) { .condiciones dl { grid-template-columns: 1fr 1fr; } }
+  .condiciones dt { font-weight: 700; color: var(--azul-900); }
+  .condiciones dd { margin: 0; color: var(--tinta-suave); }
+  .precios__nota { margin-top: 1.25rem; font-size: 0.95rem; color: var(--tinta-suave); }
+</style>

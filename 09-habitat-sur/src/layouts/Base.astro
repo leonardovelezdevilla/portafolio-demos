@@ -1,0 +1,112 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+interface Props { titulo: string; descripcion: string; ruta?: string; jsonld?: object; }
+const { titulo, descripcion, ruta, jsonld } = Astro.props;
+const og = '/og.png';
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    {ruta && <link rel="canonical" href={ruta} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#16293a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Habitat Sur" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    {ruta && <meta property="og:url" content={ruta} />}
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Habitat Sur: departamentos en Chorrillos y Lima Sur (demo de portafolio)" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={og} />
+    <link rel="preload" href="/fonts/familjen-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/hanken-grotesk-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} is:inline />}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cab">
+      <div class="contenedor cab-in">
+        <a class="marca" href="/" aria-label="Habitat Sur, inicio">
+          <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" fill="#16293a"/><path d="M7 25V12l9-6 9 6v13" fill="none" stroke="#f6f3ec" stroke-width="2.4" stroke-linejoin="round"/><path d="M13 25v-7h6v7" fill="#f0aa66"/></svg>
+          <span>Habitat Sur</span>
+        </a>
+        <nav class="nav" aria-label="Principal">
+          <a href="/departamentos/">Departamentos</a>
+          <a href="/simulador/">Simulador de crédito</a>
+          <a href="/#proceso">Cómo trabajamos</a>
+        </nav>
+        <details class="menu-movil" id="menu-movil">
+          <summary aria-label="Menú"><Icon name="menu" size={24} /></summary>
+          <nav aria-label="Menú móvil">
+            <a href="/departamentos/">Departamentos</a>
+            <a href="/simulador/">Simulador de crédito</a>
+            <a href="/#proceso">Cómo trabajamos</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="contenido"><slot /></main>
+    <footer class="pie">
+      <div class="contenedor pie-in">
+        <div>
+          <p class="marca-pie">Habitat Sur</p>
+          <p class="pie-txt">Inmobiliaria ficticia de departamentos en Chorrillos y Lima Sur. Razón social ficticia: Habitat Sur S.A.C., RUC 20000000001 (ficticio).</p>
+          <p class="pie-txt">Las fotos son referenciales (fachadas y acabados de ejemplo) y no corresponden a los departamentos publicados. Precios de ejemplo, sin desglose de IGV ni gastos notariales y registrales.</p>
+        </div>
+        <nav aria-label="Legal" class="pie-nav">
+          <a href="/privacidad/">Privacidad</a>
+          <a href="/terminos/">Términos de demo</a>
+          <a href="/libro-reclamaciones/">Libro de Reclamaciones (demo)</a>
+        </nav>
+        <p class="pie-demo">Demo de portafolio — Vélez De Villa. Nada aquí se vende ni se envía a un servidor.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+<script>
+  const menu = document.getElementById('menu-movil') as HTMLDetailsElement | null;
+  if (menu) {
+    const cerrar = (foco: boolean) => { menu.open = false; if (foco) menu.querySelector('summary')?.focus(); };
+    menu.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => cerrar(false)));
+    menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.open) cerrar(true); });
+    menu.addEventListener('focusout', (e) => { if (menu.open && !menu.contains(e.relatedTarget as Node | null)) cerrar(false); });
+    document.addEventListener('click', (e) => { if (menu.open && !menu.contains(e.target as Node)) cerrar(false); });
+  }
+</script>
+<style is:global>
+  .cab { position: sticky; top: 0; z-index: 50; background: var(--papel); border-bottom: 2px solid var(--tinta); }
+  .cab-in { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 68px; }
+  .marca { display: inline-flex; align-items: center; gap: .65rem; color: var(--tinta); text-decoration: none; font: 700 1.35rem/1 var(--f-titulo); letter-spacing: -.01em; min-height: 44px; }
+  .marca:hover { color: var(--tinta); }
+  .nav { display: none; gap: .25rem; }
+  .nav a { color: var(--tinta); text-decoration: none; padding: .7rem .9rem; min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; border-bottom: 3px solid transparent; }
+  .nav a:hover { border-bottom-color: var(--sol); color: var(--tinta); }
+  .menu-movil { position: relative; }
+  .menu-movil summary { list-style: none; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--tinta); cursor: pointer; }
+  .menu-movil summary::-webkit-details-marker { display: none; }
+  .menu-movil[open] summary { background: var(--tinta); color: var(--papel); }
+  .menu-movil nav { position: absolute; right: 0; top: 56px; display: grid; width: min(80vw, 300px); padding: .4rem; background: var(--blanco); border: 2px solid var(--tinta); }
+  .menu-movil nav a { color: var(--tinta); text-decoration: none; padding: .8rem; min-height: 48px; display: flex; align-items: center; font-weight: 600; }
+  .menu-movil nav a:hover { background: var(--papel-2); }
+  @media (min-width: 860px) { .nav { display: flex; align-items: center; } .menu-movil { display: none; } }
+  .pie { background: var(--tinta); color: var(--papel); padding-block: 3rem; margin-top: 0; }
+  .pie a { color: var(--papel); }
+  .pie-in { display: grid; gap: 1.5rem; }
+  .marca-pie { font: 700 1.5rem var(--f-titulo); margin-bottom: .6rem; }
+  .pie-txt, .pie-demo { color: #cfd7df; font-size: .95rem; max-width: 62ch; margin-bottom: .6rem; }
+  .pie-nav { display: flex; flex-direction: column; gap: .2rem; align-items: flex-start; }
+  .pie-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  @media (min-width: 768px) { .pie-in { grid-template-columns: 1fr auto; } .pie-demo { grid-column: 1 / -1; border-top: 1px solid #44566a; padding-top: 1.2rem; } }
+</style>

@@ -1,0 +1,8 @@
+---
+// Íconos Lucide (ISC) en línea, decorativos.
+const archivos = import.meta.glob('/node_modules/lucide-static/icons/*.svg', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const { name, size = 20 } = Astro.props;
+const crudo = archivos[`/node_modules/lucide-static/icons/${name}.svg`] ?? '';
+const interior = crudo.replace(/<!--[\s\S]*?-->/g, '').replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+---
+<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={interior} />

@@ -1,0 +1,37 @@
+---
+const enInicio = Astro.url.pathname === '/';
+const base = enInicio ? '' : '/';
+---
+<header class="cabecera oscuro">
+  <div class="contenedor cabecera__in">
+    <a class="marca" href="/">Pulso<b>.</b> <small>Studio</small></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-principal" data-menu>Menú</button>
+    <nav class="nav" id="nav-principal" aria-label="Principal" data-nav>
+      <ul role="list">
+        <li><a href={`${base}#horario`}>Horario</a></li>
+        <li><a href={`${base}#reserva`}>Reservar</a></li>
+        <li><a href={`${base}#planes`}>Planes</a></li>
+        <li><a href={`${base}#faq`}>Preguntas</a></li>
+        <li><a href={`${base}#ubicacion`}>Ubicación</a></li>
+      </ul>
+    </nav>
+    <a class="boton boton--lima boton--chico" href={`${base}#reserva`}>Clase de prueba</a>
+  </div>
+</header>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-menu]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  if (btn && nav) {
+    const cerrar = (devolverFoco = false) => {
+      nav.classList.remove('abierto');
+      btn.setAttribute('aria-expanded', 'false');
+      if (devolverFoco) btn.focus();
+    };
+    btn.addEventListener('click', () => {
+      const abierto = nav.classList.toggle('abierto');
+      btn.setAttribute('aria-expanded', String(abierto));
+    });
+    nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) cerrar(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('abierto')) cerrar(true); });
+  }
+</script>

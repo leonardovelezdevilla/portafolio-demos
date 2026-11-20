@@ -1,0 +1,278 @@
+---
+import Icono from './Icono.astro';
+import { EDAD_MINIMA, PRECIO_PRUEBA, PRECIO_SUELTA } from '../data/planes';
+import { soles } from '../lib/precios';
+import { urlWhatsApp } from '../lib/horario';
+---
+<div class="reserva">
+  <div class="reserva__lado">
+    <p class="sobretitulo">Reserva de clase</p>
+    <h2 id="t-reserva">Elige tu clase y reserva en un minuto</h2>
+    <p class="bajada">Ves el horario de los próximos 7 días con los cupos. La reserva se cierra 1 hora antes de cada clase.</p>
+    <ul role="list">
+      <li><Icono nombre="sparkles" /> <span><strong>Primera vez:</strong> clase de prueba a {soles(PRECIO_PRUEBA)} (IGV incluido) en lugar de {soles(PRECIO_SUELTA)}. Solo en clases de nivel inicial (Reformer Base y Funcional Full Body).</span></li>
+      <li><Icono nombre="clock" /> <span>Llega 10 minutos antes para acomodar la máquina.</span></li>
+      <li><Icono nombre="user" /> <span>Desde los {EDAD_MINIMA} años. Si eres menor de 18, necesitas la autorización de tu padre, madre o apoderado (regla de demo).</span></li>
+      <li><Icono nombre="message-circle" /> <span>Al terminar, abres WhatsApp con el mensaje listo. La reserva queda confirmada cuando el estudio responde.</span></li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="sin-js aviso"><Icono nombre="info" /> <p>El formulario necesita JavaScript. Mientras tanto puedes reservar directo por <a href={urlWhatsApp('Hola Pulso Studio, quiero reservar una clase.')} target="_blank" rel="noopener noreferrer">WhatsApp<span class="solo-lector"> (se abre en una pestaña nueva)</span></a>. Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p></div>
+    <form class="form js-solo" id="form-reserva" novalidate aria-labelledby="t-reserva">
+      <div class="resumen-errores" data-resumen tabindex="-1" hidden></div>
+      <p class="ayuda ayuda--primera">Todos los campos son obligatorios.</p>
+
+      <p class="elegida" data-elegida hidden><Icono nombre="calendar-check" /> <span><strong>Clase elegida:</strong> <span data-elegida-texto></span></span> <button type="button" class="enlace-boton" data-cambiar>Cambiar</button></p>
+
+      <div class="campo">
+        <label for="ocurrencia">Clase</label>
+        <select id="ocurrencia" name="ocurrencia" required aria-describedby="ayuda-ocurrencia err-ocurrencia"></select>
+        <p class="ayuda" id="ayuda-ocurrencia" data-detalle>Las clases llenas aparecen marcadas y no se pueden elegir.</p>
+        <p class="error" id="err-ocurrencia" hidden></p>
+      </div>
+      <div class="campo">
+        <label for="nombre">Nombre y apellido</label>
+        <input type="text" id="nombre" name="nombre" autocomplete="name" maxlength="60" required aria-describedby="err-nombre" />
+        <p class="error" id="err-nombre" hidden></p>
+      </div>
+      <div class="campo">
+        <label for="celular">Celular</label>
+        <input type="tel" id="celular" name="celular" inputmode="numeric" autocomplete="tel-national" required aria-describedby="ayuda-celular err-celular" />
+        <p class="ayuda" id="ayuda-celular">9 dígitos que empiezan con 9. Ejemplo: 987 654 321.</p>
+        <p class="error" id="err-celular" hidden></p>
+      </div>
+      <div class="campo">
+        <fieldset aria-describedby="ayuda-prueba err-primeraVez">
+          <legend>¿Es tu primera vez en Pulso Studio?</legend>
+          <div class="radios">
+            <label><input type="radio" id="primeraVez" name="primeraVez" value="si" aria-required="true" /> Sí, quiero la clase de prueba</label>
+            <label><input type="radio" name="primeraVez" value="no" aria-required="true" /> No, ya he venido</label>
+          </div>
+          <p class="ayuda" id="ayuda-prueba" data-precio>Primera vez: {soles(PRECIO_PRUEBA)}, solo en clases de nivel inicial. Si ya vienes: clase suelta {soles(PRECIO_SUELTA)} o se descuenta de tu plan o paquete. Precios con IGV.</p>
+          <p class="error" id="err-primeraVez" hidden></p>
+        </fieldset>
+      </div>
+      <div class="campo">
+        <fieldset aria-describedby="aviso-lesion err-lesion">
+          <legend>¿Tienes alguna lesión o restricción médica que la instructora deba saber?</legend>
+          <div class="radios">
+            <label><input type="radio" id="lesion" name="lesion" value="no" aria-required="true" /> No</label>
+            <label><input type="radio" name="lesion" value="si" aria-required="true" /> Sí</label>
+          </div>
+          <p class="ayuda" id="aviso-lesion"><Icono nombre="shield-alert" /> Dato sensible (salud): solo pedimos sí o no. No escribas detalles de salud por WhatsApp; coméntalos en persona con la instructora y consulta antes con tu médico o fisioterapeuta.</p>
+          <p class="error" id="err-lesion" hidden></p>
+        </fieldset>
+      </div>
+      <div class="campo oculto" data-salud hidden>
+        <label class="check" for="consentimientoSalud">
+          <input type="checkbox" id="consentimientoSalud" name="consentimientoSalud" aria-required="true" aria-describedby="err-consentimientoSalud" />
+          <span>Consiento de forma expresa que Pulso Studio use mi respuesta «Sí» sobre lesiones o restricciones (dato de salud) solo para avisar a la instructora, según la <a href="/privacidad/">Política de Privacidad</a>. Esa respuesta no se envía por WhatsApp.</span>
+        </label>
+        <p class="error" id="err-consentimientoSalud" hidden></p>
+      </div>
+      <div class="campo">
+        <label class="check" for="consentimiento">
+          <input type="checkbox" id="consentimiento" name="consentimiento" aria-required="true" aria-describedby="err-consentimiento" />
+          <span>Acepto que Pulso Studio use mi nombre y celular para gestionar esta reserva, según la <a href="/privacidad/">Política de Privacidad</a>. Entiendo que es una demostración.</span>
+        </label>
+        <p class="error" id="err-consentimiento" hidden></p>
+      </div>
+      <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
+      <button class="boton boton--ancho" type="submit"><Icono nombre="calendar-check" /> Reservar clase (demo)</button>
+    </form>
+
+    <div class="exito" data-exito hidden>
+      <span class="sello">Confirmación de demo</span>
+      <h3 tabindex="-1" data-exito-titulo>Tu solicitud está lista</h3>
+      <p>No se reservó nada de verdad. Así se vería la confirmación; para enviarla al estudio, abre WhatsApp.</p>
+      <dl>
+        <dt>Clase</dt><dd data-e-clase></dd>
+        <dt>Instructora y nivel</dt><dd data-e-inst></dd>
+        <dt>Cupos de esa clase</dt><dd data-e-cupos></dd>
+        <dt>A nombre de</dt><dd data-e-nombre></dd>
+        <dt>Precio de la clase</dt><dd data-e-precio></dd>
+      </dl>
+      <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). El mensaje no incluye datos de salud: coméntalos en persona con la instructora.</p>
+      <div class="exito__acc">
+        <a class="boton" data-e-wa target="_blank" rel="noopener noreferrer" href={urlWhatsApp('Hola Pulso Studio')}>Enviar por WhatsApp<span class="solo-lector"> (se abre en una pestaña nueva)</span></a>
+        <button class="boton boton--linea sobre-claro" type="button" data-nueva>Reservar otra clase</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { fechaCorta, mensajeReserva, ocurrenciasReservables, precioReserva, programaDe, urlWhatsApp, validarReserva, ahoraLima, type DatosReserva } from '../lib/horario';
+  import { INSTRUCTORAS, NIVELES } from '../data/clases';
+  import { soles } from '../lib/precios';
+
+  const form = document.querySelector<HTMLFormElement>('#form-reserva');
+  if (form) {
+    const resumen = form.querySelector<HTMLElement>('[data-resumen]')!;
+    const exito = document.querySelector<HTMLElement>('[data-exito]')!;
+    const select = form.elements.namedItem('ocurrencia') as HTMLSelectElement;
+    const bloqueSalud = form.querySelector<HTMLElement>('[data-salud]')!;
+    const elegida = form.querySelector<HTMLElement>('[data-elegida]')!;
+    const detalle = form.querySelector<HTMLElement>('[data-detalle]')!;
+    const ORDEN = ['ocurrencia', 'nombre', 'celular', 'primeraVez', 'lesion', 'consentimientoSalud', 'consentimiento'];
+    const ETIQ: Record<string, string> = { ocurrencia: 'Clase', nombre: 'Nombre', celular: 'Celular', primeraVez: 'Primera vez', lesion: 'Lesiones', consentimientoSalud: 'Consentimiento de salud', consentimiento: 'Consentimiento' };
+    const primerControl = (n: string): HTMLElement => form.querySelector(`[name="${n}"]`) as HTMLElement;
+    const marcado = (n: string) => (form.querySelector(`input[name="${n}"]:checked`) as HTMLInputElement | null)?.value ?? '';
+    const AYUDA_BASE = 'Las clases llenas aparecen marcadas y no se pueden elegir.';
+
+    const llenarSelect = (seleccion = '') => {
+      const ahora = new Date();
+      const prueba = marcado('primeraVez') === 'si';
+      const lista = ocurrenciasReservables(ahora);
+      select.innerHTML = '';
+      select.append(new Option('Elige una clase…', ''));
+      let grupo: HTMLOptGroupElement | null = null;
+      let fecha = '';
+      const hoy = ahoraLima(ahora).fecha;
+      for (const o of lista) {
+        if (o.fecha !== fecha) {
+          fecha = o.fecha;
+          grupo = document.createElement('optgroup');
+          grupo.label = `${fechaCorta(o.fecha)}${o.fecha === hoy ? ' (hoy)' : ''}`;
+          select.append(grupo);
+        }
+        const p = programaDe(o.clase);
+        const noPrueba = prueba && p.nivel !== 'inicial';
+        const sufijo = o.cupos.estado === 'llena' ? 'Llena' : noPrueba ? 'no es de prueba' : o.cupos.texto;
+        const op = new Option(`${o.clase.hora} ${p.nombre} · ${sufijo}`, o.id);
+        if (o.cupos.estado === 'llena' || noPrueba) op.disabled = true;
+        grupo!.append(op);
+      }
+      const previo = seleccion || select.dataset.previo || '';
+      if (previo && [...select.options].some((x) => x.value === previo && !x.disabled)) select.value = previo;
+      actualizarElegida();
+    };
+
+    const actualizarElegida = () => {
+      const o = ocurrenciasReservables().find((x) => x.id === select.value);
+      select.dataset.previo = select.value;
+      if (!o) { elegida.hidden = true; detalle.textContent = AYUDA_BASE; return; }
+      const p = programaDe(o.clase);
+      const txt = `${p.nombre} · ${fechaCorta(o.fecha)} · ${o.clase.hora}`;
+      elegida.querySelector('[data-elegida-texto]')!.textContent = txt;
+      elegida.hidden = false;
+      detalle.textContent = `${INSTRUCTORAS[o.clase.instructora].nombre} · nivel ${NIVELES[p.nivel].toLowerCase()} · ${p.duracion} min · ${o.cupos.texto}.`;
+    };
+    llenarSelect();
+    select.addEventListener('change', actualizarElegida);
+    elegida.querySelector('[data-cambiar]')!.addEventListener('click', () => select.focus());
+
+    // «Reservar» del horario: elige la clase, lleva el foco al primer campo vacío y confirma la elección.
+    document.addEventListener('pulso:elegir', ((e: CustomEvent<string>) => {
+      llenarSelect(e.detail);
+      if (select.value !== e.detail) {
+        // La clase no vale para el caso actual (p. ej. prueba con clase avanzada): se avisa en el select.
+        select.dataset.previo = '';
+        detalle.textContent = 'Esa clase no está disponible para clase de prueba. Elige una de nivel inicial o cambia tu respuesta de primera vez.';
+        select.focus();
+        return;
+      }
+      mostrar('ocurrencia', null);
+      const vacio = (['nombre', 'celular'] as const).map(primerControl).find((c) => !(c as HTMLInputElement).value) ?? primerControl('primeraVez');
+      setTimeout(() => { form.scrollIntoView({ block: 'start' }); vacio.focus({ preventScroll: true }); }, 0);
+    }) as EventListener);
+
+    const leer = (): DatosReserva => ({
+      ocurrencia: select.value,
+      nombre: (form.elements.namedItem('nombre') as HTMLInputElement).value,
+      celular: (form.elements.namedItem('celular') as HTMLInputElement).value,
+      primeraVez: marcado('primeraVez') as DatosReserva['primeraVez'],
+      lesion: marcado('lesion') as DatosReserva['lesion'],
+      consentimiento: (form.elements.namedItem('consentimiento') as HTMLInputElement).checked,
+      consentimientoSalud: (form.elements.namedItem('consentimientoSalud') as HTMLInputElement).checked,
+    });
+
+    const mostrar = (n: string, msg: string | null) => {
+      const p = document.querySelector<HTMLElement>(`#err-${n}`)!;
+      const controles = form.querySelectorAll<HTMLElement>(`[name="${n}"]`);
+      if (msg) { p.textContent = msg; p.hidden = false; controles.forEach((c) => c.setAttribute('aria-invalid', 'true')); }
+      else { p.hidden = true; p.textContent = ''; controles.forEach((c) => c.removeAttribute('aria-invalid')); }
+    };
+
+    const pintar = (e: Record<string, string>) => {
+      ORDEN.forEach((n) => mostrar(n, e[n] ?? null));
+      const claves = ORDEN.filter((n) => e[n]);
+      resumen.innerHTML = '';
+      if (!claves.length) { resumen.hidden = true; return; }
+      const h = document.createElement('h3');
+      h.textContent = claves.length === 1 ? 'Revisa este dato:' : `Revisa estos ${claves.length} datos:`;
+      const ul = document.createElement('ul');
+      claves.forEach((n) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${primerControl(n).id}`;
+        a.textContent = ETIQ[n];
+        a.addEventListener('click', (ev) => { ev.preventDefault(); primerControl(n).focus(); });
+        li.append(a); ul.append(li);
+      });
+      resumen.append(h, ul);
+      resumen.hidden = false;
+    };
+
+    let intento = false;
+    const revisar = (ev: Event) => {
+      if (!intento) return;
+      const n = (ev.target as HTMLInputElement).name;
+      const e = validarReserva(leer());
+      if (ORDEN.includes(n)) mostrar(n, e[n] ?? null);
+      if (n === 'primeraVez') mostrar('ocurrencia', e.ocurrencia ?? null);
+    };
+    form.addEventListener('change', revisar);
+    form.addEventListener('input', revisar);
+
+    form.addEventListener('change', (ev) => {
+      const n = (ev.target as HTMLInputElement).name;
+      if (n === 'lesion') {
+        const si = marcado('lesion') === 'si';
+        bloqueSalud.hidden = !si;
+        if (!si) { (form.elements.namedItem('consentimientoSalud') as HTMLInputElement).checked = false; mostrar('consentimientoSalud', null); }
+      }
+      if (n === 'primeraVez') {
+        const si = marcado('primeraVez') === 'si';
+        form.querySelector('[data-precio]')!.textContent = si
+          ? `Clase de prueba: ${soles(precioReserva(true))} (IGV incluido), solo en clases de nivel inicial.`
+          : `Clase suelta: ${soles(precioReserva(false))} (IGV incluido), o se descuenta de tu plan o paquete.`;
+        llenarSelect();
+      }
+    });
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      intento = true;
+      const d = leer();
+      const e = validarReserva(d);
+      pintar(e);
+      const claves = ORDEN.filter((n) => e[n]);
+      if (claves.length) {
+        resumen.scrollIntoView({ block: 'center' });
+        primerControl(claves[0]).focus();
+        return;
+      }
+      const o = ocurrenciasReservables().find((x) => x.id === d.ocurrencia)!;
+      const p = programaDe(o.clase);
+      const set = (s: string, t: string) => { (exito.querySelector(s) as HTMLElement).textContent = t; };
+      set('[data-e-clase]', `${p.nombre} · ${fechaCorta(o.fecha)} a las ${o.clase.hora} (${p.duracion} min)`);
+      set('[data-e-inst]', `${INSTRUCTORAS[o.clase.instructora].nombre} · nivel ${NIVELES[p.nivel].toLowerCase()}`);
+      set('[data-e-cupos]', `${o.cupos.texto} de ${o.cupos.total} (ejemplo de demo)`);
+      set('[data-e-nombre]', d.nombre.replace(/\s+/g, ' ').trim());
+      set('[data-e-precio]', d.primeraVez === 'si' ? `${soles(precioReserva(true))} · clase de prueba, IGV incluido` : `${soles(precioReserva(false))} · clase suelta, IGV incluido (sin costo extra si usas un plan o paquete)`);
+      (exito.querySelector('[data-e-wa]') as HTMLAnchorElement).href = urlWhatsApp(mensajeReserva(d));
+      form.hidden = true; exito.hidden = false;
+      (exito.querySelector('[data-exito-titulo]') as HTMLElement).focus();
+      exito.scrollIntoView({ block: 'start' });
+    });
+
+    exito.querySelector('[data-nueva]')!.addEventListener('click', () => {
+      form.reset(); intento = false; pintar({}); select.dataset.previo = ''; bloqueSalud.hidden = true; llenarSelect();
+      form.querySelector('[data-precio]')!.textContent = `Primera vez: ${soles(precioReserva(true))}, solo en clases de nivel inicial. Si ya vienes: clase suelta ${soles(precioReserva(false))} o se descuenta de tu plan o paquete. Precios con IGV.`;
+      exito.hidden = true; form.hidden = false;
+      select.focus();
+    });
+  }
+</script>

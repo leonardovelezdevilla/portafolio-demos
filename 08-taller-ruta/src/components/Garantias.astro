@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import foto from '../assets/fotos/suspension-taller.jpg';
+import Icon from './Icon.astro';
+const reglas = [
+  { t: 'Presupuesto antes de trabajar', d: 'Si al revisar aparece algo más, te lo mostramos con el monto y no hacemos nada que no hayas aprobado.' },
+  { t: 'Mano de obra garantizada', d: '<span class="chip-demo">Ejemplo de demo</span> 30 días o 1 000 km, lo que ocurra primero, sobre el trabajo realizado.' },
+  { t: 'Repuestos con respaldo', d: 'Los repuestos tienen la garantía de su fabricante o proveedor; te la indicamos por escrito en la boleta o factura.' },
+  { t: 'Piezas cambiadas, a tu vista', d: 'Si lo pides al recibir tu vehículo, te devolvemos las piezas reemplazadas.' },
+];
+---
+<section class="seccion garantias" id="garantias" aria-labelledby="t-gar">
+  <div class="wrap gar">
+    <div class="gar__sello sobre-senal">
+      <p class="etiqueta">Garantías</p>
+      <h2 id="t-gar">Si algo no queda bien, vuelves y lo revisamos</h2>
+      <p class="gar__texto">La garantía cubre el trabajo hecho en el taller y no cubre desgaste normal, golpes ni fallas de piezas que no tocamos. Las condiciones completas constan por escrito al recibir tu vehículo y no reducen tus derechos legales.</p>
+      <p class="gar__legal"><strong>Tus derechos no cambian.</strong> Esta garantía no reemplaza ni reduce tu garantía legal e implícita según el Código de Protección y Defensa del Consumidor. Las exclusiones aplican solo si se demuestra la causa de la falla.</p>
+      <figure class="gar__foto">
+        <Image src={foto} alt="Mecánico bajo un vehículo levantado sobre soportes rojos, con un amortiguador y un rodamiento sobre el piso del taller" width={900} widths={[400, 640, 900]} sizes="(min-width: 960px) 440px, 100vw" format="webp" quality={70} loading="lazy" decoding="async" />
+        <figcaption class="gar__pie">Foto ilustrativa: Tahamie Farooqui, Unsplash.</figcaption>
+      </figure>
+    </div>
+    <ul class="gar__lista">
+      {reglas.map((r) => (
+        <li>
+          <span class="gar__ico"><Icon nombre="escudo" tamano={24} /></span>
+          <div>
+            <h3>{r.t}</h3>
+            <p set:html={r.d} />
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .gar__pie { font-size: 0.85rem; color: var(--asfalto); margin-top: 8px; }
+  .garantias { background: var(--hueso); }
+  .gar { display: grid; gap: 40px; }
+  @media (min-width: 960px) { .gar { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; } }
+  .gar__sello { background: var(--senal); color: var(--asfalto); padding: clamp(22px, 4vw, 40px); border-radius: var(--radio); }
+  .gar__sello .etiqueta { color: var(--asfalto); }
+  .gar__sello .etiqueta::before { background: repeating-linear-gradient(90deg, var(--asfalto) 0 12px, transparent 12px 18px); }
+  .gar__texto { font-size: 1.1rem; }
+  .gar__legal { font-size: 0.97rem; border-top: 2px solid var(--asfalto); padding-top: 12px; }
+  .gar__foto { margin: 24px 0 0; }
+  .gar__foto img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 2px; filter: grayscale(0.3) contrast(1.05); }
+  .gar__lista { display: grid; gap: 0; border-top: 3px solid var(--asfalto); }
+  .gar__lista li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding-block: 22px; border-bottom: 1px solid var(--linea); }
+  .gar__ico { display: grid; place-items: center; width: 48px; height: 48px; background: var(--asfalto); color: var(--senal); border-radius: 2px; }
+  .gar__lista h3 { font-size: 1.6rem; margin-bottom: 4px; }
+  .gar__lista p { margin: 0; color: var(--texto-suave); }
+</style>

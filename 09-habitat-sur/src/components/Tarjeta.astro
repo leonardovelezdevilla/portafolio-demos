@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { FOTOS } from '../data/fotos';
+import { TIPO_CAMBIO, type Departamento } from '../data/departamentos';
+import { soles, dolares } from '../lib/formato';
+interface Props { d: Departamento; grande?: boolean; eager?: boolean; nivel?: 2 | 3; }
+const { d, grande = false, eager = false, nivel = 3 } = Astro.props;
+const H = `h${nivel}` as 'h2' | 'h3';
+const foto = FOTOS[d.fotos[0]];
+const tc = String(TIPO_CAMBIO).replace('.', ',');
+---
+<article class:list={['tarjeta', { grande }]} data-slug={d.slug}>
+  <div class="t-foto">
+    <Image src={foto.src} alt="" width={grande ? 900 : 560} height={grande ? 620 : 420} format="webp" quality={72} widths={grande ? [560, 900] : [360, 560]} sizes={grande ? '(min-width: 900px) 55vw, 100vw' : '(min-width: 900px) 360px, 100vw'} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    <span class={`t-etapa e-${d.etapa.replace(/\s/g, '-')}`}>{d.etapa}</span>
+    <span class="t-sello">Foto referencial</span>
+  </div>
+  <div class="t-cuerpo">
+    <p class="t-lugar">{d.distrito} · {d.proyecto}</p>
+    <H><a href={`/departamento/${d.slug}/`}>{d.nombre}<span class="sr-only">, {d.dormitorios} {d.dormitorios === 1 ? 'dormitorio' : 'dormitorios'}, {d.area} metros cuadrados</span></a></H>
+    {grande && <p class="t-resumen">{d.resumen}</p>}
+    <ul class="t-datos" aria-label="Características">
+      <li><Icon name="bed-double" size={18} /> {d.dormitorios} {d.dormitorios === 1 ? 'dormitorio' : 'dormitorios'}</li>
+      <li><Icon name="bath" size={18} /> {d.banos} {d.banos === 1 ? 'baño' : 'baños'}</li>
+      <li><Icon name="ruler" size={18} /> {d.area} m²</li>
+      <li><Icon name="building-2" size={18} /> Piso {d.piso}</li>
+    </ul>
+    <p class="t-precio"><strong>{soles(d.precio)}</strong> <span>ref. {dolares(d.precio)} (TC demo {tc})</span></p>
+    {grande && <p class="t-cta" aria-hidden="true">Ver ficha <Icon name="arrow-right" size={18} /></p>}
+  </div>
+</article>
+<style>
+  .tarjeta { position: relative; display: grid; background: var(--blanco); border: 2px solid var(--tinta); height: 100%; grid-template-rows: auto 1fr; }
+  .tarjeta:hover { box-shadow: 6px 6px 0 var(--tinta); }
+  .t-foto { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--papel-2); border-bottom: 2px solid var(--tinta); }
+  .t-foto img { width: 100%; height: 100%; object-fit: cover; }
+  .t-etapa { position: absolute; left: 0; top: 0; padding: .35rem .7rem; font: 600 .82rem/1 var(--f-cuerpo); text-transform: uppercase; letter-spacing: .08em; background: var(--tinta); color: var(--papel); }
+  .t-sello { position: absolute; right: 0; bottom: 0; padding: .3rem .6rem; font: 600 .78rem/1.1 var(--f-cuerpo); background: var(--papel); color: var(--tinta); border-top: 2px solid var(--tinta); border-left: 2px solid var(--tinta); }
+  .e-entrega-inmediata { background: var(--sol); color: #fff; }
+  .t-cuerpo { padding: 1.1rem 1.2rem 1.3rem; display: grid; gap: .5rem; align-content: start; }
+  .t-lugar { margin: 0; color: var(--tinta-2); font-size: .95rem; }
+  .t-cuerpo :global(h2), .t-cuerpo :global(h3) { margin: 0; font-size: 1.5rem; }
+  .t-cuerpo :global(a) { color: var(--tinta); text-decoration: none; }
+  .t-cuerpo :global(a)::after { content: ''; position: absolute; inset: 0; }
+  .t-cuerpo :global(a):hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  .t-resumen { margin: 0; color: var(--tinta-2); }
+  .t-datos { list-style: none; margin: .2rem 0; padding: 0; display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .95rem; }
+  .t-datos li { display: inline-flex; align-items: center; gap: .35rem; }
+  .t-precio { margin: .3rem 0 0; display: grid; }
+  .t-precio strong { font: 700 1.6rem/1.1 var(--f-titulo); }
+  .t-precio span { font-size: .85rem; color: var(--tinta-2); }
+  .t-cta { margin: .5rem 0 0; font-weight: 600; display: inline-flex; gap: .4rem; align-items: center; color: var(--sol-osc); }
+  @media (min-width: 900px) { .grande { grid-template-columns: 1.3fr 1fr; grid-template-rows: auto; } .grande .t-foto { aspect-ratio: auto; min-height: 380px; border-bottom: 0; border-right: 2px solid var(--tinta); } .grande .t-cuerpo { align-content: center; padding: 1.8rem; } .grande .t-cuerpo :global(h2), .grande .t-cuerpo :global(h3) { font-size: 2.1rem; } }
+</style>

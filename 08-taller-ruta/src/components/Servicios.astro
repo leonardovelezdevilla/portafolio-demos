@@ -1,0 +1,45 @@
+---
+import { SERVICIOS, TARIFAS } from '../data/precios';
+import { soles } from '../lib/cotizador';
+import Icon from './Icon.astro';
+const desdeAuto = (id: (typeof SERVICIOS)[number]['id']) => TARIFAS[id].auto![0];
+---
+<section class="seccion seccion--papel" id="servicios" aria-labelledby="t-serv">
+  <div class="wrap">
+    <p class="etiqueta">Qué hacemos</p>
+    <h2 id="t-serv">Seis trabajos que cubren el mantenimiento de todos los días</h2>
+    <p class="intro">Todo con repuestos que te mostramos y precios con IGV incluido. El tarifario completo por tipo de vehículo está en el cotizador.</p>
+    <ol class="lista">
+      {SERVICIOS.map((s, i) => (
+        <li class="fila">
+          <span class="fila__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <span class="fila__ico"><Icon nombre={s.id} tamano={32} /></span>
+          <div class="fila__txt">
+            <h3>{s.nombre}</h3>
+            <p>{s.incluye}</p>
+          </div>
+          <p class="fila__precio"><span class="muted">Auto, desde</span> <strong>{soles(desdeAuto(s.id))}</strong></p>
+        </li>
+      ))}
+    </ol>
+    <p class="muted nota">Precios de ejemplo de demo, referenciales. El precio final requiere inspección.</p>
+  </div>
+</section>
+
+<style>
+  .lista { margin-top: 36px; border-top: 3px solid var(--asfalto); }
+  .fila { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: center; padding-block: 20px; border-bottom: 1px solid var(--linea); }
+  .fila__n { display: none; font-family: var(--f-titular); font-weight: 700; font-size: 1.6rem; color: var(--texto-suave); }
+  .fila__ico { grid-row: span 2; display: grid; place-items: center; width: 56px; height: 56px; background: var(--asfalto); color: var(--senal); border-radius: 2px; }
+  .fila__txt h3 { margin: 0 0 2px; font-size: 1.55rem; }
+  .fila__txt p { margin: 0; color: var(--texto-suave); }
+  .fila__precio { margin: 0; grid-column: 2; }
+  .fila__precio strong { font-family: var(--f-titular); font-size: 1.5rem; }
+  @media (min-width: 768px) {
+    .fila { grid-template-columns: 56px 64px 1fr auto; gap: 20px; }
+    .fila__n { display: block; }
+    .fila__ico { grid-row: auto; }
+    .fila__precio { grid-column: auto; text-align: right; }
+  }
+  .nota { margin-top: 16px; font-size: 0.95rem; }
+</style>

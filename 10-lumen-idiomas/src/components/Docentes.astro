@@ -1,0 +1,40 @@
+---
+import { DOCENTES } from '../data/docentes';
+---
+
+<section class="seccion seccion--blanca" id="docentes" aria-labelledby="doc-tit">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Docentes</p>
+      <h2 id="doc-tit">Quién te <em>acompaña</em> en clase</h2>
+      <p class="lead">Nombres y perfiles ficticios de demostración. Cada grupo muestra su docente en los horarios.</p>
+    </div>
+    <ul class="docentes">
+      {DOCENTES.map((d, i) => (
+        <li class={`docente docente--${i % 3}`}>
+          <span class="docente__inicial" aria-hidden="true">{d.nombre.split(' ').map((p) => p[0]).slice(0, 2).join('')}</span>
+          <div>
+            <h3>{d.nombre} <span class="docente__ficticio">(ficticio)</span></h3>
+            <p class="docente__enfoque">{d.enfoque}</p>
+            <p class="docente__desc">{d.descripcion}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="aviso-docentes">Perfil ficticio de demostración: no se indican títulos ni certificaciones.</p>
+  </div>
+</section>
+
+<style>
+  .docentes { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem 2.5rem; }
+  @media (min-width: 52rem) { .docentes { grid-template-columns: 1fr 1fr; } }
+  .docente { display: flex; gap: 1rem; align-items: flex-start; padding-bottom: 1.25rem; border-bottom: 1px solid var(--linea); }
+  .docente__inicial { flex: none; width: 3.6rem; height: 3.6rem; display: grid; place-items: center; border-radius: 50% 50% 50% 10px; font: 600 1.4rem var(--serif); background: var(--sol); color: var(--azul-900); }
+  .docente--1 .docente__inicial { background: var(--azul-900); color: #fff; }
+  .docente--2 .docente__inicial { background: var(--coral-100); color: var(--coral-700); }
+  .docente h3 { margin: 0; font-size: 1.45rem; }
+  .docente__ficticio { font: 400 0.9rem var(--sans); color: var(--tinta-suave); }
+  .docente__enfoque { margin: 0 0 0.3rem; font-weight: 700; color: var(--coral-700); font-size: 0.95rem; }
+  .docente__desc { margin: 0; color: var(--tinta-suave); }
+  .aviso-docentes { margin-top: 1.5rem; font-size: 0.92rem; color: var(--tinta-suave); }
+</style>

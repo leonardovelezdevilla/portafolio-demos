@@ -1,0 +1,37 @@
+---
+const preguntas = [
+  { p: '¿El test de nivel es definitivo?', r: 'No. Es una orientación rápida de gramática y vocabulario. La ubicación final se confirma con una entrevista breve de conversación y comprensión antes de iniciar el ciclo.' },
+  { p: '¿Qué pasa si mi hijo o hija es menor de edad?', r: 'La matrícula la hace su padre, madre o apoderado, que deja sus datos y autoriza. Los menores de 12 a 17 años estudian en grupos de jóvenes.' },
+  { p: '¿Los precios incluyen IGV?', r: 'Sí, los precios del ciclo y de los materiales están en soles e incluyen IGV. Los materiales se pagan aparte, una vez por ciclo. Todos los precios de esta demo son ficticios.' },
+  { p: '¿Cómo funcionan las vacantes?', r: 'Cada grupo tiene un cupo máximo. Cuando quedan pocas se muestra «Últimas N vacantes» y cuando se llenan, «Sin vacantes». En esta demo las vacantes son simuladas.' },
+  { p: '¿Qué datos se envían al matricularme?', r: 'Ninguno a un servidor: la demo valida en tu navegador y arma un mensaje de WhatsApp que tú decides enviar. Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).' },
+  { p: '¿Puedo cambiar de horario o nivel?', r: 'Sí: el cambio de grupo no tiene costo durante la primera semana, dentro del mismo nivel y público (jóvenes o adultos) y si hay vacantes. En esta demo no hay trámite real.' },
+  { p: '¿Puedo retirarme y pedir devolución?', r: 'En las condiciones ficticias de esta demo: hasta el último día de la primera semana se devuelve el 80 % del ciclo; después no hay devolución, pero el saldo puede usarse en un ciclo siguiente. Los materiales no se devuelven una vez entregados. Si el grupo no se abre, se devuelve el 100 %. Ver las condiciones completas en Precios.' },
+  { p: '¿Qué pasa si falto a clase?', r: 'Las clases perdidas no se devuelven, pero puedes recuperarlas en otro grupo de tu nivel si hay cupo.' },
+];
+---
+
+<section class="seccion seccion--papel2" id="preguntas" aria-labelledby="faq-tit">
+  <div class="contenedor faq">
+    <h2 id="faq-tit">Preguntas <em>frecuentes</em></h2>
+    <div class="faq__lista">
+      {preguntas.map((x) => (
+        <details>
+          <summary>{x.p}</summary>
+          <p>{x.r}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { max-width: 52rem; }
+  .faq__lista { display: grid; gap: 0.6rem; }
+  details { background: var(--blanco); border: 1.5px solid var(--linea); border-radius: var(--radio); }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; align-items: center; min-height: 56px; padding: 0.7rem 1.1rem; font-weight: 700; color: var(--azul-900); }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font: 600 1.6rem/1 var(--serif); color: var(--coral-700); flex: none; }
+  details[open] summary::after { content: '\2212'; }
+  details p { margin: 0; padding: 0 1.1rem 1.1rem; color: var(--tinta-suave); }
+</style>

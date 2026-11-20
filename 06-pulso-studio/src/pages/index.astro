@@ -1,0 +1,157 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import Horario from '../components/Horario.astro';
+import Reserva from '../components/Reserva.astro';
+import Planes from '../components/Planes.astro';
+import Faq from '../components/Faq.astro';
+import { PREGUNTAS } from '../data/faq';
+import { PROGRAMAS, NIVELES, TIPOS } from '../data/clases';
+import { PRECIO_PRUEBA } from '../data/planes';
+import { soles } from '../lib/precios';
+import fotoHero from '../assets/fotos/reformer-fring.jpg';
+import fotoA from '../assets/fotos/reformer-popovici-a.jpg';
+import fotoB from '../assets/fotos/reformer-popovici-b.jpg';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsActivityLocation',
+  name: 'Pulso Studio',
+  image: '/og.png',
+  url: '/',
+  description: 'Estudio ficticio de pilates reformer y funcional en Santiago de Surco, Lima.',
+  telephone: '+51900000000',
+  address: { '@type': 'PostalAddress', streetAddress: 'Av. Los Fresnos 482 (ficticia)', addressLocality: 'Santiago de Surco', addressRegion: 'Lima', addressCountry: 'PE' },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '06:00', closes: '21:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '07:30', closes: '12:30' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '09:30', closes: '12:30' },
+  ],
+  priceRange: 'S/ 35 - S/ 540',
+};
+const faqld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: PREGUNTAS.map((q) => ({ '@type': 'Question', name: q.p, acceptedAnswer: { '@type': 'Answer', text: q.r } })),
+};
+const programas = Object.values(PROGRAMAS);
+---
+<Base titulo="Pulso Studio · Pilates reformer y funcional en Surco" descripcion="Estudio ficticio de pilates reformer y funcional en Surco: horario con cupos, reserva de clase por WhatsApp y clase de prueba. Demo de portafolio." ruta="/" jsonld={jsonld}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqld)} />
+
+  <section class="hero oscuro" aria-labelledby="t-hero">
+    <div class="contenedor hero__grid">
+      <div>
+        <p class="sobretitulo">Pilates reformer y funcional · Surco</p>
+        <h1 id="t-hero">Mueve el cuerpo. <em>Siente el pulso.</em></h1>
+        <p class="bajada">Clases pequeñas de 8 a 12 personas, instructoras que te guían durante la clase y un horario que se adapta a tu semana. Tu primera clase cuesta {soles(PRECIO_PRUEBA)}.</p>
+        <div class="hero__acciones">
+          <a class="boton boton--lima" href="#reserva">Reservar clase de prueba</a>
+          <a class="boton boton--linea" href="#horario">Ver horario y cupos</a>
+        </div>
+        <ul class="hero__datos" role="list">
+          <li><Icono nombre="map-pin" /> Santiago de Surco, Lima</li>
+          <li><Icono nombre="users" /> Grupos de 8 a 12</li>
+          <li><Icono nombre="clock" /> Primera clase 6:30 a. m.</li>
+        </ul>
+        <svg class="pulso-linea" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 20h120l14-16 22 32 18-24 10 8h216" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" /></svg>
+      </div>
+      <figure class="hero__foto">
+        <Image src={fotoHero} alt="Dos mujeres entrenan acostadas sobre máquinas de pilates reformer, con las piernas extendidas hacia arriba, junto a grandes ventanales." widths={[480, 720, 960]} sizes="(min-width: 62rem) 40vw, 100vw" format="webp" loading="eager" fetchpriority="high" decoding="async" />
+        <figcaption>Foto ilustrativa de Pexels (no es el estudio ficticio).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" id="horario" aria-labelledby="t-horario">
+    <div class="contenedor">
+      <div class="seccion__cab">
+        <p class="sobretitulo">Horario semanal</p>
+        <h2 id="t-horario">Encuentra tu clase</h2>
+        <p class="bajada">Filtra por tipo, nivel o día. Los cupos mostrados corresponden a la próxima fecha de cada clase.</p>
+      </div>
+      <Horario />
+    </div>
+  </section>
+
+  <section class="banda lima-fondo" aria-label="Clase de prueba">
+    <div class="contenedor banda__in">
+      <p><strong>Primera vez en Pulso: clase de prueba a {soles(PRECIO_PRUEBA)}.</strong><br />IGV incluido. Una por persona, solo en clases de nivel inicial.</p>
+      <a class="boton" href="#reserva">Reservar mi prueba</a>
+    </div>
+  </section>
+
+  <section class="seccion oscuro" id="clases" aria-labelledby="t-clases">
+    <div class="contenedor">
+      <div class="seccion__cab">
+        <p class="sobretitulo">Nuestras clases</p>
+        <h2 id="t-clases">Seis programas, dos salas</h2>
+      </div>
+      <div class="tira">
+        <Image src={fotoA} alt="Mujer en una pose de pilates sobre una cama reformer, con una pierna extendida hacia arriba, en un salón claro con espejos en arco." widths={[360, 540]} sizes="(min-width: 48rem) 30vw, 50vw" format="webp" loading="lazy" decoding="async" />
+        <Image src={fotoB} alt="Mujer acostada sobre un reformer con las piernas elevadas y los pies en las correas, con aros y pelotas de pilates en estantes." widths={[360, 540]} sizes="(min-width: 48rem) 30vw, 50vw" format="webp" loading="lazy" decoding="async" />
+        <div class="tira__texto"><p>Reformer en sala de 8 camas y funcional en sala de 12 puestos. Fotos de Unsplash y Pexels, ilustrativas (créditos en CREDITOS.md).</p></div>
+      </div>
+      <div class="programas">
+        {programas.map((p) => (
+          <article class="programa">
+            <h3>{p.nombre}</h3>
+            <p>{p.resumen}</p>
+            <p class="programa__tags"><span>{TIPOS[p.tipo].nombre} · {p.duracion} min</span><span class="intensidad" aria-hidden="true">{[0, 1, 2].map((i) => <i class={i <= ['inicial', 'intermedio', 'avanzado'].indexOf(p.nivel) ? 'on' : ''}></i>)}</span><span>Nivel {NIVELES[p.nivel].toLowerCase()}</span></p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--arena" id="reserva" aria-labelledby="t-reserva">
+    <div class="contenedor">
+      <Reserva />
+    </div>
+  </section>
+
+  <section class="seccion oscuro" id="planes" aria-labelledby="t-planes">
+    <div class="contenedor">
+      <div class="seccion__cab">
+        <p class="sobretitulo">Planes y paquetes</p>
+        <h2 id="t-planes">Elige cómo quieres entrenar</h2>
+        <p class="bajada">Un plan mensual si vienes cada semana; un paquete si tu agenda cambia. Precios en soles, con IGV incluido.</p>
+      </div>
+      <Planes />
+    </div>
+  </section>
+
+  <section class="seccion" id="faq" aria-labelledby="t-faq">
+    <div class="contenedor">
+      <div class="seccion__cab">
+        <p class="sobretitulo">Preguntas frecuentes</p>
+        <h2 id="t-faq">Antes de tu primera clase</h2>
+      </div>
+      <Faq />
+    </div>
+  </section>
+
+  <section class="seccion seccion--arena" id="ubicacion" aria-labelledby="t-ubic">
+    <div class="contenedor ubic">
+      <div>
+        <p class="sobretitulo">Ubicación (ficticia)</p>
+        <h2 id="t-ubic">Estamos en Surco</h2>
+        <dl>
+          <div><dt><Icono nombre="map-pin" /> Dirección</dt><dd>Av. Los Fresnos 482, Santiago de Surco, Lima (dirección ficticia).</dd></div>
+          <div><dt><Icono nombre="clock" /> Atención</dt><dd>Lunes a viernes de 6:00 a 21:00 · sábados de 7:30 a 12:30 · domingos de 9:30 a 12:30.</dd></div>
+          <div><dt><Icono nombre="bike" /> Cómo llegar</dt><dd>Indicaciones de ejemplo (demo): paradero de transporte público cercano y biciparqueadero en la puerta.</dd></div>
+          <div><dt><Icono nombre="message-circle" /> WhatsApp</dt><dd>Escríbenos por WhatsApp (en esta demo, el mensaje llega a Vélez De Villa).</dd></div>
+        </dl>
+      </div>
+      <div class="mapa">
+        <svg viewBox="0 0 320 160" role="img" aria-label="Esquema ilustrativo de calles con un punto que marca Pulso Studio" focusable="false">
+          <path d="M0 110h320M0 50h320M80 0v160M200 0v160M260 0l-60 160" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="6" />
+          <circle cx="200" cy="50" r="12" fill="currentColor" />
+          <circle cx="200" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="3" />
+        </svg>
+        <p>Esquema ilustrativo: la dirección es ficticia y no hay mapa real. En un estudio real aquí iría un enlace a Google Maps.</p>
+      </div>
+    </div>
+  </section>
+</Base>

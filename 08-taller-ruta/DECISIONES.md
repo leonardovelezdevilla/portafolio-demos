@@ -1,0 +1,22 @@
+# Decisiones
+
+- **Identidad**: industrial y directa. Asfalto casi negro, amarillo de señal vial y hueso frío; la «raya de carretera» discontinua es el único motivo gráfico. Titulares en Barlow Condensed en mayúsculas, cuerpo en Barlow (no están en la lista de fuentes usadas ni de las muy vistas).
+- **Sin marcas de autos**: ni en fotos (se descartaron las que mostraban emblemas) ni como aliadas.
+- **Lógica pura y testeada** (`src/lib`, 40 pruebas Vitest): rangos por vehículo y kilometraje, validación de placa peruana (ABC-123, A1B-234, 1234-AB), celular, fechas y turnos en America/Lima, cupos simulados deterministas, búsqueda de seguimiento.
+- **Cotizador**: tarifa base por servicio y vehículo en `src/data/precios.ts`; el kilometraje solo sube el tope del rango (más probabilidad de piezas extra). Redondeo a múltiplos de S/ 5. Alineamiento y pre-ITV no se ofrecen para motos (se muestra el motivo, deshabilitado y con texto). Aviso fijo: IGV incluido y precio final sujeto a inspección.
+- **Reserva**: lunes a sábado, turnos mañana y tarde (sábado tarde más corta). Cupos simulados por hash de fecha y turno; mismo día cierra la mañana a las 7:00 y la tarde a las 12:00 (hora de Lima). Feriados solo de fecha fija (Semana Santa no incluida). Estados agotado/cerrado con texto y `disabled`, no solo color. Resumen de errores que mueve el foco al primer campo inválido.
+- **Consentimiento** sin marcar y obligatorio en cotizador (antes de WhatsApp) y reserva, con el aviso de que el mensaje y el número pasan a WhatsApp (Meta). No se piden datos sensibles.
+- **Libro de Reclamaciones** completo (DS 011-2011-PCM): proveedor, hoja, fecha, consumidor, menor con apoderado, bien, monto, reclamo/queja con definición, plazo de 15 días hábiles, constancia imprimible. Sin casilla de autorización condicionante.
+- **CSP estricta sin excepciones**: no hay scripts en línea; los de islas salen empaquetados en `/_astro`. Sin JS: se ve todo el contenido y el tarifario; los formularios muestran un aviso con enlace a WhatsApp.
+- **Sin menú hamburguesa**: cinco enlaces cortos que se acomodan en filas, sin riesgo de menú atrapado.
+- **Segunda ronda (revisión UX, accesibilidad, SEO y legal)**:
+  - Titular del hero sin prometer certeza: «Un rango en soles antes de abrir tu auto» más el aviso de inspección. Rangos base estrechados a 1,3-1,8 veces y el kilometraje sube menos el tope (1,03 / 1,07 / 1,12); el resultado explica de qué depende la parte alta.
+  - Cotizador: «Atrás» y «Cambiar servicios» mueven el foco al paso; indicador de pasos con texto «(completado)/(pendiente)»; panel lateral «De qué depende el precio» a 1100 px o más.
+  - Reserva: cupos por turno visibles en cada día, turnos agotados con `aria-disabled` y texto, anuncio de turnos con `role="status"`, resumen de errores que se actualiza y se oculta al corregir (con conteo en la descripción del primer campo), nota «datos tomados de tu cotización» y foco en Nombre. La confirmación se llama «Resumen de tu cita (demo)» y aclara que no está agendada hasta confirmar por WhatsApp. Casilla con nombre y placa explícitos.
+  - Seguimiento: placa oculta en parte, aviso de que el código se entrega en el taller y mensaje propio para `CITA-DEMO-…`.
+  - Privacidad con la estructura del art. 18 de la Ley 29733 (titular ficticio, finalidades alineadas con la casilla, destinatarios y WhatsApp/Meta, conservación, banco de datos y RNPDP, ARCO). Garantía y Términos aclaran que no reducen la garantía legal. Libro de Reclamaciones con botón visible en el pie, «copia para el consumidor» y fecha límite estimada en días hábiles.
+  - Formularios con `method="post" action="/404/"` por si falla JS (no ponen datos en la URL). CSP con `upgrade-insecure-requests`.
+  - Cabecera con botón WhatsApp y tres enlaces en móvil; «abierto ahora» calculado en hora de Lima.
+  - Fuentes: preload de los pesos 600 y fallbacks con `size-adjust` aproximado (no medidos con precisión).
+- **No aplicado**: menú móvil desplegable (se redujo a tres enlaces más WhatsApp); `aria-current` por sección visible; carga diferida de los scripts de islas (18 KB en total); el panel lateral de la sección de seguimiento a 1440 px.
+- **Pendientes de dominio**: `og:image`, `og:url` y canonical son relativos; `noindex` por meta mientras sea demo.

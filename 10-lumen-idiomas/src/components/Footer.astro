@@ -1,0 +1,54 @@
+---
+import Icon from './Icon.astro';
+import { NEGOCIO } from '../lib/negocio';
+---
+
+<footer class="pie">
+  <div class="contenedor pie__grid">
+    <div>
+      <p class="pie__marca">Lumen</p>
+      <p>{NEGOCIO.lema}. Academia de inglés ficticia en {NEGOCIO.distrito}, para jóvenes y adultos.</p>
+      <p class="pie__chico">{NEGOCIO.razonSocial} · RUC {NEGOCIO.ruc} (ficticio)</p>
+    </div>
+    <div>
+      <h2 class="pie__tit">Contacto</h2>
+      <ul class="pie__lista">
+        <li><Icon name="map-pin" /> {NEGOCIO.direccion}, {NEGOCIO.distrito} (dirección ficticia)</li>
+        <li><Icon name="clock" /> {NEGOCIO.atencion}</li>
+        <li>
+          <Icon name="phone" />
+          <a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible}</a>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="pie__tit">Información legal</h2>
+      <ul class="pie__lista pie__lista--enlaces">
+        <li><a href="/privacidad/">Privacidad</a></li>
+        <li><a href="/terminos/">Términos de demo</a></li>
+        <li><a href="/libro-reclamaciones/">Libro de Reclamaciones de demo</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="contenedor pie__base">
+    <p>Demo de portafolio — <a href="https://velezdevilla.com" rel="noopener">Vélez De Villa</a>. {NEGOCIO.nombre} es una marca ficticia; ningún dato se envía ni se guarda. © 2026</p>
+  </div>
+</footer>
+
+<style>
+  .pie { background: var(--azul-900); color: #dbe2f3; padding-top: 3.5rem; font-size: 0.97rem; }
+  .pie a { color: #fff; }
+  .pie a:hover { color: var(--sol); }
+  .pie__grid { display: grid; gap: 2rem; }
+  @media (min-width: 52rem) { .pie__grid { grid-template-columns: 1.2fr 1.3fr 1fr; } }
+  .pie__marca { font: 600 2rem/1.1 var(--serif); color: #fff; margin-bottom: 0.5rem; }
+  .pie__tit { font: 700 0.8rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--sol); margin-bottom: 0.9rem; }
+  .pie__chico { font-size: 0.88rem; color: #b6c1de; }
+  .pie__lista { list-style: none; margin: 0; padding: 0; }
+  .pie__lista li { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; align-items: flex-start; }
+  .pie__lista :global(.icono) { margin-top: 0.3rem; color: var(--sol); }
+  .pie__lista--enlaces li { margin-bottom: 0; }
+  .pie__lista--enlaces a { display: inline-flex; align-items: center; min-height: 44px; }
+  .pie__base { margin-top: 2rem; padding-block: 1.25rem 2rem; border-top: 1px solid rgb(255 255 255 / 0.18); font-size: 0.88rem; color: #b6c1de; }
+  .pie__base p { margin: 0; }
+</style>

@@ -1,0 +1,124 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Tarjeta from '../components/Tarjeta.astro';
+import { FOTOS } from '../data/fotos';
+import { departamentos, DISTRITOS } from '../data/departamentos';
+const destacados = departamentos.filter((d) => d.etapa === 'entrega inmediata');
+const porDistrito = DISTRITOS.map((n) => ({ n, c: departamentos.filter((d) => d.distrito === n).length }));
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: 'Habitat Sur (marca ficticia, demo de portafolio)',
+  description: 'Inmobiliaria ficticia de departamentos en Chorrillos y Lima Sur.',
+  areaServed: [...DISTRITOS],
+  address: { '@type': 'PostalAddress', addressLocality: 'Lima', addressCountry: 'PE' },
+  telephone: '+51900000000',
+};
+const foto = FOTOS['ext-a'];
+---
+<Base titulo="Habitat Sur · Departamentos en Lima Sur (demo)" descripcion="Demo de inmobiliaria: departamentos de ejemplo en Chorrillos y Lima Sur con filtros, simulador referencial de crédito y agenda de visita por WhatsApp." ruta="/" jsonld={jsonld}>
+  <section class="hero">
+    <div class="contenedor hero-in">
+      <div class="hero-txt">
+        <p class="sobretitulo">Chorrillos y Lima Sur</p>
+        <h1>Departamentos con la cuenta clara desde el primer día.</h1>
+        <p class="lead">Compara, simula una cuota referencial y agenda tu visita sin dar vueltas. Diez departamentos de ejemplo en cinco distritos del sur de Lima, desde planos hasta entrega inmediata.</p>
+        <p class="acc"><a class="btn btn-primario" href="/departamentos/">Ver departamentos</a> <a class="btn" href="/simulador/">Simular una cuota</a></p>
+      </div>
+      <figure class="hero-foto">
+        <div class="hf-w">
+          <Image src={foto.src} alt={foto.alt} width={720} height={1080} widths={[420, 720]} sizes="(min-width: 900px) 420px, 90vw" format="webp" quality={74} loading="eager" fetchpriority="high" decoding="async" />
+          <span class="sello">Foto referencial, no es el proyecto</span>
+        </div>
+        <figcaption>Foto de {foto.autor}.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion zonas" aria-labelledby="zon-t">
+    <div class="contenedor">
+      <p class="sobretitulo">Dónde buscamos</p>
+      <h2 id="zon-t">Cinco distritos del sur de Lima</h2>
+      <ul class="zonas-lista">
+        {porDistrito.map((z) => (
+          <li><a href={`/departamentos/?distrito=${encodeURIComponent(z.n)}`}><span class="z-n">{z.n}</span><span class="z-c">{z.c} {z.c === 1 ? 'departamento' : 'departamentos'}</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="dest-t">
+    <div class="contenedor">
+      <p class="sobretitulo">Para mudarte ya</p>
+      <h2 id="dest-t">Entrega inmediata</h2>
+      <div class="dest-grid">
+        {destacados.map((d, i) => <Tarjeta d={d} grande={i === 0} nivel={3} />)}
+      </div>
+      <p class="mas"><a href="/departamentos/">Ver los 10 departamentos y filtrar</a></p>
+      <p class="nota">Precios de ejemplo expresados como precio total, sin desglose de IGV ni gastos notariales y registrales. Equivalente en dólares con un tipo de cambio fijo de demo (S/ 3,75 por US$), no de mercado. Áreas, entregas y equipamiento son referenciales.</p>
+    </div>
+  </section>
+
+  <section class="seccion proceso" id="proceso" aria-labelledby="pro-t">
+    <div class="contenedor">
+      <p class="sobretitulo">Cómo trabajamos</p>
+      <h2 id="pro-t">Tres pasos, sin letra chica escondida</h2>
+      <ol class="pasos">
+        <li><span class="num" aria-hidden="true">01</span><div><h3>Filtra y compara</h3><p>Por distrito, dormitorios, precio, área y etapa. La búsqueda queda en el enlace para que la compartas.</p></div></li>
+        <li><span class="num" aria-hidden="true">02</span><div><h3>Simula tu cuota</h3><p>Cuota mensual referencial con tu propia TEA. Dejamos claro lo que el cálculo no incluye.</p></div></li>
+        <li><span class="num" aria-hidden="true">03</span><div><h3>Agenda la visita</h3><p>Eliges día y franja y el mensaje sale listo por WhatsApp. No guardamos nada en esta demo.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion oscuro" aria-labelledby="sim-t">
+    <div class="contenedor sim-banda">
+      <div>
+        <p class="sobretitulo">Simulador referencial</p>
+        <h2 id="sim-t">Una cuota de ejemplo antes de ir al banco</h2>
+        <p class="lead">Método francés y TEA que tú editas. No es una oferta ni reemplaza la evaluación de una entidad financiera.</p>
+      </div>
+      <p><a class="btn btn-primario" href="/simulador/">Abrir el simulador <Icon name="arrow-right" size={20} /></a></p>
+    </div>
+  </section>
+</Base>
+<style>
+  .hero { border-bottom: 2px solid var(--tinta); }
+  .hero-in { display: grid; gap: 2.5rem; padding-block: clamp(2.5rem, 7vw, 5rem); align-items: center; }
+  .hero-txt h1 { margin-bottom: .5em; }
+  .acc { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
+  .hero-foto { margin: 0; }
+  .hf-w { position: relative; }
+  .hf-w::before { content: ''; position: absolute; inset: 14px -14px -14px 14px; border: 2px solid var(--sol); }
+  .hf-w img { width: 100%; max-height: 520px; object-fit: cover; border: 2px solid var(--tinta); position: relative; z-index: 1; background: var(--papel-2); }
+  .sello { position: absolute; z-index: 2; left: 0; bottom: 0; padding: .4rem .7rem; font: 600 .85rem/1.1 var(--f-cuerpo); background: var(--papel); color: var(--tinta); border-top: 2px solid var(--tinta); border-right: 2px solid var(--tinta); }
+  .hero-foto figcaption { font-size: .85rem; color: var(--tinta-2); margin-top: 1.4rem; }
+  @media (min-width: 900px) { .hero-in { grid-template-columns: 1.15fr .85fr; } .hf-w img { max-height: 600px; aspect-ratio: 2 / 3; } }
+  .zonas { padding-block: clamp(2rem, 5vw, 3.5rem); border-bottom: 2px solid var(--tinta); background: var(--papel-2); }
+  .zonas h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
+  .zonas-lista { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); border: 2px solid var(--tinta); background: var(--blanco); }
+  .zonas-lista li { border-bottom: 2px solid var(--tinta); }
+  .zonas-lista li:last-child { border-bottom: 0; }
+  @media (min-width: 900px) { .zonas-lista li { border-bottom: 0; border-right: 2px solid var(--tinta); } .zonas-lista li:last-child { border-right: 0; } }
+  .zonas-lista a { display: grid; gap: .1rem; padding: 1rem 1.2rem; min-height: 64px; color: var(--tinta); text-decoration: none; }
+  .zonas-lista a:hover { background: var(--tinta); color: var(--papel); }
+  .z-n { font: 700 1.2rem/1.2 var(--f-titulo); }
+  .z-c { font-size: .9rem; }
+  .dest-grid { display: grid; gap: 1.5rem; margin-top: 2rem; }
+  @media (min-width: 900px) { .dest-grid { grid-template-columns: 1fr 1fr; } .dest-grid :global(.grande) { grid-column: 1 / -1; } }
+  .mas { margin-top: 2rem; font-weight: 600; }
+  .nota { font-size: .92rem; color: var(--tinta-2); max-width: 78ch; }
+  .proceso { background: var(--papel-2); border-block: 2px solid var(--tinta); }
+  .pasos { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 0; }
+  .pasos li { align-content: start; display: grid; grid-template-columns: 4.2rem 1fr; gap: 1rem; padding: 1.5rem 0; border-top: 2px solid var(--tinta); }
+  .pasos li:last-child { border-bottom: 2px solid var(--tinta); }
+  .num { font: 700 clamp(2.2rem, 7vw, 3.4rem)/1 var(--f-titulo); color: var(--sol-osc); }
+  .pasos h3 { margin-bottom: .3rem; }
+  .pasos p { margin: 0; color: var(--tinta-2); max-width: 56ch; }
+  @media (min-width: 860px) { .pasos { grid-template-columns: repeat(3, 1fr); gap: 2rem; } .pasos li { grid-template-columns: 1fr; border-bottom: 0 !important; } }
+  .sim-banda { display: grid; gap: 2rem; align-items: center; }
+  .sim-banda h2 { margin-bottom: .5em; }
+  @media (min-width: 860px) { .sim-banda { grid-template-columns: 1fr auto; } }
+</style>
