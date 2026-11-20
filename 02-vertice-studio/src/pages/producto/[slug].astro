@@ -1,0 +1,188 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Icono from '../../components/Icono.astro';
+import TablaTallas from '../../components/TablaTallas.astro';
+import { nombreCategoria, productos, tallasDisponibles, type Producto } from '../../data/productos';
+import { foto } from '../../data/fotos';
+import { ENVIO, formatoSoles } from '../../lib/carrito';
+import { TELEFONO_DEMO } from '../../lib/whatsapp';
+
+export function getStaticPaths() {
+  return productos.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Producto };
+const disponibles = tallasDisponibles(p);
+const relacionados = productos
+  .filter((x) => x.slug !== p.slug)
+  .sort((a, b) => Number(b.categoria === p.categoria) - Number(a.categoria === p.categoria))
+  .slice(0, 3);
+const grande = await getImage({ src: foto(p.foto), width: 900, height: 1125, format: 'webp', fit: 'cover', position: p.posicion });
+const wa = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent(`Hola Vértice Studio, quiero consultar por ${p.nombre} (demo).`)}`;
+
+const ruta = `/producto/${p.slug}/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${p.nombre} (demo)`,
+  description: `${p.resumen} Producto ficticio de una demo de portafolio.`,
+  image: grande.src,
+  category: nombreCategoria(p.categoria),
+  color: p.colores.map((c) => c.nombre).join(' / '),
+  brand: { '@type': 'Brand', name: 'Vértice Studio' },
+  sku: `VS-${p.slug.toUpperCase()}`,
+  url: ruta,
+  offers: {
+    '@type': 'Offer',
+    url: ruta,
+    priceCurrency: 'PEN',
+    price: p.precio.toFixed(2),
+    availability: disponibles.length ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    itemCondition: 'https://schema.org/NewCondition',
+    seller: { '@type': 'Store', name: 'Vértice Studio (demo)' },
+  },
+};
+---
+<Base
+  titulo={`${p.nombre} · ${nombreCategoria(p.categoria)} | Vértice Studio (demo)`}
+  tipoOg="product"
+  descripcion={`${p.nombre}, zapatillas de ${nombreCategoria(p.categoria).toLowerCase()} por ${formatoSoles(p.precio)} (IGV incluido). Tallas EU con stock: ${disponibles.join(', ')}. Guía de tallas y pedido por WhatsApp. Producto ficticio de demo.`}
+  ruta={`/producto/${p.slug}/`}
+  jsonLd={[jsonLd]}
+>
+  <div class="contenedor">
+    <nav class="migas" aria-label="Ruta de navegación">
+      <a href="/">Inicio</a> <span aria-hidden="true">/</span>
+      <a href={`/?categoria=${p.categoria}#catalogo`}>{nombreCategoria(p.categoria)}</a> <span aria-hidden="true">/</span>
+      <span aria-current="page">{p.nombre}</span>
+    </nav>
+  </div>
+
+  <section class="producto contenedor" aria-labelledby="prod-titulo">
+    <figure class="producto__foto">
+      <Image
+        src={foto(p.foto)} alt={p.alt} width={900} height={1125} fit="cover" position={p.posicion} format="webp" quality={75}
+        widths={[480, 720, 900]} sizes="(min-width: 900px) 48vw, 100vw" loading="eager" fetchpriority="high" decoding="async"
+      />
+    </figure>
+
+    <div class="producto__info">
+      <p class="etiqueta">{nombreCategoria(p.categoria)}</p>
+      <h1 id="prod-titulo">{p.nombre}</h1>
+      <p class="precio">{formatoSoles(p.precio)} <span class="igv">IGV incluido</span></p>
+      <p>{p.resumen}</p>
+      <ul class="detalle">{p.detalle.map((d) => <li>{d}</li>)}</ul>
+      <ul class="swatches" aria-label="Colores del modelo">
+        {p.colores.map((c) => <li><i class="sw" data-hex={c.hex}></i>{c.nombre}</li>)}
+      </ul>
+
+      <form novalidate data-form-producto data-slug={p.slug}>
+        <fieldset class="campo" aria-describedby="prod-talla-error">
+          <legend>Talla EU</legend>
+          <div class="opciones">
+            {Object.entries(p.tallas).map(([t, stock]) => (
+              <label class="opcion">
+                <input type="radio" name="talla" value={t} disabled={stock <= 0} />
+                <span class="opcion__talla"><b>{t}</b>{stock <= 0 && <small>Agotada</small>}{stock > 0 && stock <= 2 && <small>Últ. {stock}</small>}</span>
+              </label>
+            ))}
+          </div>
+          <p class="campo__ayuda">Las tallas marcadas «Agotada» no tienen stock; «Últ.» indica pocas unidades. El stock es de demo y se confirma por WhatsApp.</p>
+          <p class="error" id="prod-talla-error" data-error="talla" role="alert" hidden></p>
+        </fieldset>
+        <p class="campo__ayuda" data-stock-aviso role="status" aria-live="polite"></p>
+        <div class="producto__acciones">
+          <button type="submit" class="btn btn--primario" data-agregar hidden><Icono nombre="bolsa" /> Agregar al carrito</button>
+          <a class="btn" href={wa}><Icono nombre="mensaje" /> Consultar por WhatsApp</a>
+        </div>
+      </form>
+
+      <p class="nota nota--envio"><Icono nombre="camion" tamano={16} /> Envío: Lima {formatoSoles(ENVIO.lima.tarifa)} (gratis desde {formatoSoles(ENVIO.lima.gratisDesde)}), provincias {formatoSoles(ENVIO.provincias.tarifa)} (gratis desde {formatoSoles(ENVIO.provincias.gratisDesde)}). <a href="/cambios/">Cambios y devoluciones</a>.</p>
+      <p class="nota">Foto ilustrativa de terceros; el par real puede variar levemente.</p>
+
+      <details class="guia">
+        <summary><Icono nombre="regla" /> Guía de tallas</summary>
+        <TablaTallas titulo={`Guía de tallas de ${p.nombre}`} />
+      </details>
+    </div>
+  </section>
+
+  <section class="seccion relacionados" aria-labelledby="rel-titulo">
+    <div class="contenedor">
+      <h2 class="seccion__titulo" id="rel-titulo">También te puede <mark>gustar</mark></h2>
+      <ul class="rel">
+        {relacionados.map((r) => (
+          <li>
+            <a href={`/producto/${r.slug}/`}>
+              <Image src={foto(r.foto)} alt="" width={400} height={500} widths={[240, 400, 560]} sizes="(min-width: 700px) 30vw, 46vw" fit="cover" position={r.posicion} format="webp" quality={70} loading="lazy" decoding="async" />
+              <span class="rel__n">{r.nombre}</span>
+              <span>{formatoSoles(r.precio)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <script>
+    import { mostrarErrores } from '../../scripts/formularios';
+
+    // Colores por CSSOM (la CSP no admite atributos style en el HTML).
+    document.querySelectorAll<HTMLElement>('.sw[data-hex]').forEach((el) => (el.style.background = el.dataset.hex!));
+
+    const form = document.querySelector<HTMLFormElement>('[data-form-producto]');
+    const datos = document.getElementById('datos-tienda');
+    if (form && datos) {
+      const catalogo: { slug: string; tallas: Record<string, number> }[] = JSON.parse(datos.textContent || '[]');
+      const p = catalogo.find((x) => x.slug === form.dataset.slug);
+      const aviso = form.querySelector<HTMLElement>('[data-stock-aviso]')!;
+      form.querySelector<HTMLElement>('[data-agregar]')!.hidden = false;
+      form.addEventListener('change', () => {
+        mostrarErrores(form, {});
+        const sel = form.querySelector<HTMLInputElement>('input[name="talla"]:checked');
+        const stock = sel && p ? p.tallas[sel.value] : 0;
+        aviso.textContent = sel ? (stock <= 2 ? `Talla ${sel.value}: quedan ${stock} ${stock === 1 ? 'unidad' : 'unidades'}.` : `Talla ${sel.value} disponible.`) : '';
+      });
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const sel = form.querySelector<HTMLInputElement>('input[name="talla"]:checked');
+        if (!sel) {
+          mostrarErrores(form, { talla: 'Elige una talla para continuar.' })?.focus();
+          return;
+        }
+        document.dispatchEvent(
+          new CustomEvent('vertice:agregar', {
+            detail: { slug: form.dataset.slug, talla: Number(sel.value) },
+          }),
+        );
+      });
+    }
+  </script>
+</Base>
+
+<style>
+  .migas { padding-block: 18px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 8px; }
+  .producto { display: grid; gap: 28px; padding-bottom: 56px; }
+  .producto__foto { margin: 0; border: var(--borde); box-shadow: var(--sombra); background: var(--gris); align-self: start; margin-right: 6px; }
+  .producto__foto :global(img) { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+  .producto__info { background: var(--blanco); border: var(--borde); padding: 20px; box-shadow: var(--sombra); margin-right: 6px; }
+  .producto h1 { font-size: clamp(56px, 12vw, 104px); margin: 12px 0 8px; }
+  .detalle { padding-left: 1.2em; margin: 0 0 16px; }
+  .sw { width: 18px; height: 18px; border: 2px solid var(--negro); display: block; }
+  .producto__acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .igv { font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: .06em; margin-left: 6px; }
+  .nota--envio { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 16px; color: var(--negro); }
+  .guia { margin-top: 24px; border: var(--borde); }
+  .guia summary { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; background: var(--naranja); }
+  .guia[open] summary { border-bottom: var(--borde); }
+  .guia :global(.guia-tallas) { padding: 14px; }
+  .relacionados { border-top: var(--borde); background: var(--blanco); }
+  .rel { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 20px; grid-template-columns: repeat(2, 1fr); }
+  .rel a { display: flex; flex-direction: column; gap: 4px; text-decoration: none; border: var(--borde); padding: 0 0 10px; background: var(--blanco); font-weight: 700; box-shadow: var(--sombra-chica); height: 100%; }
+  .rel a:hover { background: var(--naranja); }
+  .rel :global(img) { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-bottom: var(--borde); margin-bottom: 8px; }
+  .rel a > span { padding-inline: 10px; }
+  .rel__n { font: 400 24px/1 var(--fuente-titulo); text-transform: uppercase; }
+  @media (min-width: 700px) { .rel { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .producto { grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; } .producto__info { padding: 28px; } }
+</style>

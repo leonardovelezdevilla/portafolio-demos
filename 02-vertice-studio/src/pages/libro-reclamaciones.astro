@@ -1,0 +1,233 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  titulo="Libro de Reclamaciones (demo) | Vértice Studio"
+  descripcion="Libro de Reclamaciones de demo de Vértice Studio: hoja de reclamación validada con número de confirmación. No envía datos ni tiene valor legal."
+  ruta="/libro-reclamaciones/"
+>
+  <header class="pagina-cab"><div class="contenedor"><h1>Libro de Reclamaciones</h1><p>Hoja de reclamación de demostración, con el contenido que pide el modelo del Reglamento del Libro de Reclamaciones.</p></div></header>
+  <div class="contenedor seccion">
+    <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> Este formulario no envía nada, no se guarda en ningún servidor y no tiene valor legal. Solo ilustra cómo sería una hoja de reclamación con número de confirmación.</p>
+
+    <div class="rec">
+      <form novalidate data-form-reclamo aria-label="Hoja de reclamación (demo)">
+        <h2 class="rec__h">Datos del proveedor (ficticios)</h2>
+        <dl class="rec__prov">
+          <div><dt>Razón social</dt><dd>Vértice Studio S.A.C. (ficticia)</dd></div>
+          <div><dt>RUC</dt><dd>20000000000 (ficticio, no válido)</dd></div>
+          <div><dt>Domicilio del establecimiento</dt><dd>Av. Ejemplo 123, Lima (ficticia). Venta virtual por WhatsApp.</dd></div>
+        </dl>
+
+        <h2 class="rec__h">1. Identificación del consumidor</h2>
+        <div class="campo">
+          <label for="r-nombre">Nombres y apellidos</label>
+          <input id="r-nombre" name="nombre" type="text" autocomplete="name" aria-describedby="r-nombre-e" required />
+          <p class="error" id="r-nombre-e" data-error="nombre" role="alert" hidden></p>
+        </div>
+        <div class="rec__fila">
+          <div class="campo">
+            <label for="r-dni">DNI</label>
+            <input id="r-dni" name="dni" type="text" inputmode="numeric" maxlength="8" autocomplete="off" aria-describedby="r-dni-e" required />
+            <p class="error" id="r-dni-e" data-error="dni" role="alert" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="r-tel">Celular</label>
+            <input id="r-tel" name="telefono" type="tel" autocomplete="tel" aria-describedby="r-tel-a r-tel-e" required />
+            <p class="campo__ayuda" id="r-tel-a">9 dígitos, empieza con 9.</p>
+            <p class="error" id="r-tel-e" data-error="telefono" role="alert" hidden></p>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="r-email">Correo electrónico</label>
+          <input id="r-email" name="email" type="email" autocomplete="email" aria-describedby="r-email-e" required />
+          <p class="error" id="r-email-e" data-error="email" role="alert" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="r-dom">Domicilio</label>
+          <input id="r-dom" name="domicilio" type="text" autocomplete="street-address" aria-describedby="r-dom-e" required />
+          <p class="error" id="r-dom-e" data-error="domicilio" role="alert" hidden></p>
+        </div>
+        <div class="campo campo--check">
+          <label class="check">
+            <input type="checkbox" name="menor" value="si" data-menor />
+            <span>Soy menor de edad y presento esta hoja con mi padre, madre o apoderado.</span>
+          </label>
+        </div>
+        <div class="campo" data-apoderado hidden>
+          <label for="r-apo">Padre, madre o apoderado (nombres y apellidos)</label>
+          <input id="r-apo" name="apoderado" type="text" autocomplete="off" aria-describedby="r-apo-e" />
+          <p class="error" id="r-apo-e" data-error="apoderado" role="alert" hidden></p>
+        </div>
+
+        <h2 class="rec__h">2. Identificación del bien contratado</h2>
+        <fieldset class="campo" aria-describedby="r-bien-e">
+          <legend>Tipo</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="bien" value="producto" aria-required="true" /><span>Producto</span></label>
+            <label class="opcion"><input type="radio" name="bien" value="servicio" aria-required="true" /><span>Servicio</span></label>
+          </div>
+          <p class="error" id="r-bien-e" data-error="bien" role="alert" hidden></p>
+        </fieldset>
+        <div class="campo">
+          <label for="r-desc">Descripción del bien contratado</label>
+          <input id="r-desc" name="descripcionBien" type="text" autocomplete="off" aria-describedby="r-desc-e" required />
+          <p class="error" id="r-desc-e" data-error="descripcionBien" role="alert" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="r-monto">Monto reclamado en S/ (opcional)</label>
+          <input id="r-monto" name="monto" type="text" inputmode="decimal" autocomplete="off" aria-describedby="r-monto-e" />
+          <p class="error" id="r-monto-e" data-error="monto" role="alert" hidden></p>
+        </div>
+
+        <h2 class="rec__h">3. Detalle de la reclamación y pedido del consumidor</h2>
+        <fieldset class="campo" aria-describedby="r-tipo-e">
+          <legend>Tipo de reclamación</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="tipo" value="reclamo" aria-required="true" /><span>Reclamo</span></label>
+            <label class="opcion"><input type="radio" name="tipo" value="queja" aria-required="true" /><span>Queja</span></label>
+          </div>
+          <p class="campo__ayuda">Reclamo: disconformidad con el producto o servicio. Queja: malestar por la atención al cliente, sin relación con el producto.</p>
+          <p class="error" id="r-tipo-e" data-error="tipo" role="alert" hidden></p>
+        </fieldset>
+        <div class="campo">
+          <label for="r-detalle">Detalle de lo ocurrido</label>
+          <textarea id="r-detalle" name="detalle" aria-describedby="r-detalle-e" required></textarea>
+          <p class="error" id="r-detalle-e" data-error="detalle" role="alert" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="r-pedido">Pedido del consumidor</label>
+          <textarea id="r-pedido" name="pedido" aria-describedby="r-pedido-e" required></textarea>
+          <p class="error" id="r-pedido-e" data-error="pedido" role="alert" hidden></p>
+        </div>
+
+        <h2 class="rec__h">4. Observaciones y acciones del proveedor</h2>
+        <p class="nota">Este recuadro lo completa el proveedor al responder. En esta demo quedará en blanco: no hay proveedor real.</p>
+
+        <div class="campo campo--check">
+          <label class="check">
+            <input type="checkbox" name="acepta" value="si" aria-describedby="r-acepta-e" required />
+            <span>He leído la <a href="/privacidad/">Política de privacidad</a> y autorizo el uso de estos datos para registrar esta hoja (demo).</span>
+          </label>
+          <p class="error" id="r-acepta-e" data-error="acepta" role="alert" hidden></p>
+        </div>
+        <p class="nota">Plazo de respuesta en esta demo: hasta 15 días hábiles (ejemplo; en una tienda real se aplica el plazo de la norma vigente). Al registrar, el consumidor recibe una copia de la hoja.</p>
+        <button type="submit" class="btn btn--primario">Registrar hoja (demo)</button>
+      </form>
+
+      <section class="rec__ok" data-confirmacion tabindex="-1" aria-labelledby="rec-ok-t" hidden>
+        <p class="etiqueta">Registrada en la demo</p>
+        <h2 id="rec-ok-t">Hoja <span data-hoja></span></h2>
+        <p>Guarda este número como constancia de ejemplo. <strong>No se envió nada</strong> a ningún servidor ni a ningún correo. Esta es tu copia: puedes imprimirla o guardarla en PDF.</p>
+        <dl class="rec__resumen" data-resumen></dl>
+        <p class="nota">En una tienda real recibirías la copia en tu correo y la respuesta dentro del plazo que fije la norma vigente.</p>
+        <div class="rec__acciones">
+          <button type="button" class="btn btn--primario" data-imprimir>Imprimir o guardar PDF</button>
+          <button type="button" class="btn" data-nueva>Registrar otra hoja</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    import { validarReclamo, numeroHoja, type DatosReclamo } from '../lib/validacion';
+    import { leerForm, mostrarErrores } from '../scripts/formularios';
+
+    const form = document.querySelector<HTMLFormElement>('[data-form-reclamo]')!;
+    const ok = document.querySelector<HTMLElement>('[data-confirmacion]')!;
+    const apoBloque = form.querySelector<HTMLElement>('[data-apoderado]')!;
+    const menor = form.querySelector<HTMLInputElement>('[data-menor]')!;
+
+    menor.addEventListener('change', () => {
+      apoBloque.hidden = !menor.checked;
+      if (!menor.checked) {
+        form.querySelector<HTMLInputElement>('[name="apoderado"]')!.value = '';
+        mostrarErrores(form, {});
+      }
+    });
+
+    form.addEventListener('input', (e) => {
+      const t = e.target as HTMLInputElement;
+      const p = t.name ? form.querySelector<HTMLElement>(`[data-error="${t.name}"]`) : null;
+      if (p) {
+        p.hidden = true;
+        form.querySelectorAll(`[name="${t.name}"]`).forEach((c) => c.removeAttribute('aria-invalid'));
+      }
+    });
+
+    const fila = (k: string, v: string) => {
+      const d = document.createElement('div');
+      const dt = document.createElement('dt');
+      const dd = document.createElement('dd');
+      dt.textContent = k;
+      dd.textContent = v || '—';
+      d.append(dt, dd);
+      return d;
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = leerForm(form);
+      const datos: DatosReclamo = {
+        nombre: d.nombre ?? '', dni: d.dni ?? '', email: d.email ?? '', telefono: d.telefono ?? '', domicilio: d.domicilio ?? '',
+        menor: d.menor ?? '', apoderado: d.apoderado ?? '', bien: d.bien ?? '', descripcionBien: d.descripcionBien ?? '',
+        monto: d.monto ?? '', tipo: d.tipo ?? '', detalle: d.detalle ?? '', pedido: d.pedido ?? '', acepta: d.acepta ?? '',
+      };
+      const primero = mostrarErrores(form, validarReclamo(datos));
+      if (primero) {
+        primero.focus();
+        return;
+      }
+      const ahora = new Date();
+      ok.querySelector('[data-hoja]')!.textContent = numeroHoja(ahora);
+      const r = ok.querySelector<HTMLElement>('[data-resumen]')!;
+      r.replaceChildren(
+        fila('Fecha', new Intl.DateTimeFormat('es-PE', { dateStyle: 'long', timeStyle: 'short' }).format(ahora)),
+        fila('Proveedor', 'Vértice Studio S.A.C. (ficticia), RUC 20000000000 (ficticio)'),
+        fila('Consumidor', datos.nombre.trim()),
+        fila('DNI', datos.dni.trim()),
+        fila('Celular', datos.telefono.trim()),
+        fila('Correo', datos.email.trim()),
+        fila('Domicilio', datos.domicilio.trim()),
+        fila('Apoderado (menor de edad)', datos.menor === 'si' ? datos.apoderado.trim() : 'No aplica'),
+        fila('Bien contratado', `${datos.bien === 'servicio' ? 'Servicio' : 'Producto'}: ${datos.descripcionBien.trim()}`),
+        fila('Monto reclamado', datos.monto.trim() ? `S/ ${datos.monto.trim()}` : 'No indicado'),
+        fila('Tipo', datos.tipo === 'queja' ? 'Queja' : 'Reclamo'),
+        fila('Detalle', datos.detalle.trim()),
+        fila('Pedido del consumidor', datos.pedido.trim()),
+        fila('Observaciones y acciones del proveedor', '(a completar por el proveedor; demo sin respuesta)'),
+      );
+      form.hidden = true;
+      ok.hidden = false;
+      ok.focus();
+    });
+
+    ok.querySelector('[data-imprimir]')!.addEventListener('click', () => window.print());
+    ok.querySelector('[data-nueva]')!.addEventListener('click', () => {
+      form.reset();
+      apoBloque.hidden = true;
+      mostrarErrores(form, {});
+      ok.hidden = true;
+      form.hidden = false;
+      form.querySelector<HTMLElement>('input')?.focus();
+    });
+  </script>
+</Base>
+
+<style>
+  .rec { max-width: 760px; margin-top: 28px; }
+  .rec form, .rec__ok { background: var(--blanco); border: var(--borde); box-shadow: var(--sombra); padding: 20px; margin-right: 6px; }
+  .rec__h { font-size: 30px; margin: 8px 0 16px; padding-bottom: 8px; border-bottom: var(--borde); }
+  .rec__h:not(:first-child) { margin-top: 28px; }
+  .rec__fila { display: grid; gap: 0 16px; }
+  @media (min-width: 600px) { .rec__fila { grid-template-columns: 1fr 1fr; } }
+  .rec__ok h2 { font-size: clamp(36px, 8vw, 64px); margin: 12px 0 14px; }
+  .rec__ok h2 span { background: var(--naranja); padding: 0 0.15em; display: inline-block; }
+  .rec__resumen, .rec__prov { border: var(--borde); margin: 0 0 16px; }
+  .rec__resumen :global(div), .rec__prov div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 8px 12px; border-bottom: var(--borde-fino); }
+  .rec__resumen :global(div:last-child), .rec__prov div:last-child { border-bottom: 0; }
+  .rec__resumen :global(dt), .rec__resumen :global(dd), .rec__prov dt, .rec__prov dd { margin: 0; }
+  .rec__resumen :global(dt), .rec__prov dt { font-weight: 700; text-transform: uppercase; font-size: 12px; }
+  .rec__resumen :global(dd) { max-width: 100%; overflow-wrap: anywhere; }
+  .rec__acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+</style>

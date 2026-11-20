@@ -1,0 +1,78 @@
+---
+import Icon from './Icon.astro';
+import { NEGOCIO } from '../lib/negocio';
+---
+
+<section class="seccion seccion--crema" id="ubicacion" aria-labelledby="ubi-titulo">
+  <div class="contenedor ubi">
+    <div>
+      <p class="sobretitulo">Ubicación</p>
+      <h2 id="ubi-titulo">Visítanos en San Isidro</h2>
+      <p class="lead">Una dirección ficticia, en una zona tranquila y bien conectada, con ascensor y atención en un solo piso.</p>
+      <ul class="ubi__lista">
+        <li><Icon name="map-pin" /> <span><strong>{NEGOCIO.direccion}</strong><br />{NEGOCIO.distrito} <em>(dirección ficticia)</em></span></li>
+        <li><Icon name="bus" /> <span>Cerca de paraderos y de una estación de transporte público (referencia ficticia).</span></li>
+        <li><Icon name="phone" /> <span><a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible}</a> (WhatsApp de demo)</span></li>
+      </ul>
+    </div>
+    <div class="ubi__horario">
+      <h3><Icon name="clock" /> Horario de atención</h3>
+      <dl>
+        {NEGOCIO.horario.map((h) => (<><dt>{h.dias}</dt><dd>{h.horas}</dd></>))}
+      </dl>
+      <p class="nota-sim">Hora de Lima (UTC-5). Atención con cita previa.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ubi {
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 52rem) {
+    .ubi {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+  .ubi__lista {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .ubi__lista li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .ubi__lista :global(.icono) {
+    margin-top: 0.25rem;
+    color: var(--salvia-700);
+  }
+  .ubi__horario {
+    background: var(--blanco);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-lg);
+    padding: 1.75rem;
+  }
+  .ubi__horario h3 {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  dl {
+    margin: 0 0 1rem;
+  }
+  dt {
+    font-weight: 600;
+    color: var(--salvia-900);
+  }
+  dd {
+    margin: 0 0 0.75rem;
+    color: var(--tinta-suave);
+  }
+</style>

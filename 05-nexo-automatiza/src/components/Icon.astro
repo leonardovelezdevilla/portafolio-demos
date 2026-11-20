@@ -1,0 +1,42 @@
+---
+import mensaje from 'lucide-static/icons/message-circle.svg?raw';
+import tabla from 'lucide-static/icons/table-2.svg?raw';
+import recibo from 'lucide-static/icons/receipt.svg?raw';
+import paquete from 'lucide-static/icons/package.svg?raw';
+import grafico from 'lucide-static/icons/chart-column.svg?raw';
+import flechaDer from 'lucide-static/icons/arrow-right.svg?raw';
+import flechaIzq from 'lucide-static/icons/arrow-left.svg?raw';
+import flechaArriba from 'lucide-static/icons/arrow-up-right.svg?raw';
+import cerrar from 'lucide-static/icons/x.svg?raw';
+import ok from 'lucide-static/icons/check.svg?raw';
+import reloj from 'lucide-static/icons/clock.svg?raw';
+import rayo from 'lucide-static/icons/zap.svg?raw';
+import escudo from 'lucide-static/icons/shield-check.svg?raw';
+
+const mapa = {
+  'message-circle': mensaje,
+  'table-2': tabla,
+  receipt: recibo,
+  package: paquete,
+  'chart-column': grafico,
+  'arrow-right': flechaDer,
+  'arrow-left': flechaIzq,
+  'arrow-up-right': flechaArriba,
+  x: cerrar,
+  check: ok,
+  clock: reloj,
+  zap: rayo,
+  'shield-check': escudo,
+} as const;
+
+interface Props {
+  nombre: keyof typeof mapa;
+  tamano?: number;
+}
+const { nombre, tamano = 24 } = Astro.props;
+const svg = mapa[nombre]
+  .replace(/<!--[\s\S]*?-->/, '')
+  .replace(/\s(width|height)="\d+"/g, '')
+  .replace('<svg', '<svg aria-hidden="true" focusable="false"');
+---
+<span class={`icono i${tamano}`} set:html={svg} />

@@ -1,0 +1,107 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import foto from '../assets/fotos/pexels-7446660.jpg';
+
+const pasos = [
+  { icono: 'message-circle', t: 'Conversamos', d: 'Cuéntanos qué te preocupa, desde cuándo y qué productos usas. Sin prisa.' },
+  { icono: 'scan-search', t: 'Revisamos tu piel', d: 'El especialista examina la zona y, si hace falta, usa un dermatoscopio, que es una lente de aumento con luz.' },
+  { icono: 'clipboard-list', t: 'Te explicamos el plan', d: 'Te contamos las opciones, los cuidados y qué controles podrías necesitar. Tú decides.' },
+  { icono: 'calendar-days', t: 'Definimos el seguimiento', d: 'Si corresponde, agendamos un control. Nada se indica sin evaluarte antes.' },
+];
+---
+
+<section class="seccion seccion--blanca" id="primera-consulta" aria-labelledby="pc-titulo">
+  <div class="contenedor pc">
+    <div>
+      <div class="seccion__cabecera">
+        <p class="sobretitulo">Tu primera consulta</p>
+        <h2 id="pc-titulo">Qué esperar cuando llegues</h2>
+        <p class="lead">Dura entre 30 y 40 minutos. Llega 10 minutos antes y trae tus productos y exámenes anteriores.</p>
+      </div>
+      <ol class="pasos">
+        {
+          pasos.map((p) => (
+            <li>
+              <span class="pasos__ic"><Icon name={p.icono} /></span>
+              <div>
+                <h3>{p.t}</h3>
+                <p>{p.d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <figure class="pc__foto">
+      <Image
+        src={foto}
+        alt="Detalle de una paciente que mira por un dermatoscopio acoplado a una tableta que sostiene una mano enguantada."
+        widths={[420, 640, 800]}
+        sizes="(min-width: 62rem) 40vw, 100vw"
+        format="webp"
+        quality={72}
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>Foto: Gustavo Fring / Pexels.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .pc {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .pc {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4rem;
+    }
+  }
+  .pasos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .pasos li {
+    display: flex;
+    gap: 1rem;
+  }
+  .pasos__ic {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--salvia-100);
+    color: var(--salvia-900);
+  }
+  .pasos h3 {
+    margin-bottom: 0.15rem;
+  }
+  .pasos p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  .pc__foto {
+    margin: 0;
+  }
+  .pc__foto :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 4.2;
+    object-fit: cover;
+    border-radius: var(--radio-lg);
+  }
+  .pc__foto figcaption {
+    font-size: 0.82rem;
+    color: var(--tinta-suave);
+    margin-top: 0.6rem;
+  }
+</style>

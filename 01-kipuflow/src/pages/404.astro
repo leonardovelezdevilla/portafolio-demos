@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Página no encontrada · Kipuflow" descripcion="La página que buscas no existe en esta demo.">
+  <section class="contenedor nf">
+    <p class="sobretitulo">Error 404</p>
+    <h1>Esta página no existe.</h1>
+    <p class="lead">Quizá el enlace cambió. Vuelve al inicio o prueba la calculadora.</p>
+    <p class="acc"><a class="btn btn-primario" href="/">Ir al inicio</a> <a class="btn btn-sec" href="/#calculadora">Calculadora</a></p>
+  </section>
+</Base>
+<style>
+  .nf { padding-block: 6rem; }
+  .acc { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 2rem; }
+</style>

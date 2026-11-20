@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'Cormorant Garamond'; font-weight: 500; src: url('../public/fonts/cormorant-garamond-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Cormorant Garamond'; font-weight: 400; font-style: italic; src: url('../public/fonts/cormorant-garamond-latin-400-italic.woff2') format('woff2'); }
+  @font-face { font-family: 'Figtree'; font-weight: 600; src: url('../public/fonts/figtree-latin-600-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1200px; height: 630px; background: #16130f; color: #efe6d6; display: grid; grid-template-columns: 1fr 480px; overflow: hidden; }
+  .izq { padding: 56px 64px; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid #4a3f31; }
+  .ficha { font: 600 18px 'Figtree', sans-serif; letter-spacing: .22em; text-transform: uppercase; color: #b9ab95; display: flex; justify-content: space-between; border-bottom: 1px solid #4a3f31; padding-bottom: 18px; }
+  h1 { font: 500 230px/0.85 'Cormorant Garamond', serif; letter-spacing: .02em; }
+  p { font: italic 400 38px/1.2 'Cormorant Garamond', serif; color: #c9a35a; }
+  .demo { font: 600 16px 'Figtree', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #b9ab95; }
+  .foto { background: url('../src/assets/fotos/nigiri-ruales.jpg') 38% 50% / cover; }
+</style>
+</head>
+<body>
+  <div class="izq">
+    <div class="ficha"><span>Cocina nikkei</span><span>Barranco · Lima</span></div>
+    <div><h1>Kuro</h1><p>Lo negro, lo hondo, lo bien hecho.</p></div>
+    <div class="demo">Demo de portafolio — Vélez De Villa</div>
+  </div>
+  <div class="foto"></div>
+</body>
+</html>

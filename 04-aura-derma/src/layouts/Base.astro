@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { NEGOCIO } from '../lib/negocio';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  ruta?: string;
+  jsonld?: object;
+}
+const { titulo, descripcion, ruta, jsonld } = Astro.props;
+const ogImagen = '/og.png';
+---
+
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f7f3ea" />
+    {ruta && <link rel="canonical" href={ruta} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/albert-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/albert-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content={NEGOCIO.nombre} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    {ruta && <meta property="og:url" content={ruta} />}
+    <meta property="og:image" content={ogImagen} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Aura Derma, dermatología con calma. Clínica ficticia de demostración." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={ogImagen} />
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld).replace(/</g, '\\u003c')} />}
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Ir al contenido</a>
+    <p class="franja-demo">Demo de portafolio: Aura Derma es una clínica ficticia.</p>
+    <Header />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <div class="barra-movil"><a class="btn" href="/#agenda">Reservar cita</a></div>
+  </body>
+</html>

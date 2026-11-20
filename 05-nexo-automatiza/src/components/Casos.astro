@@ -1,0 +1,233 @@
+---
+import { CASOS, SECTORES } from '../data/casos';
+import Icon from './Icon.astro';
+const nombreSector = Object.fromEntries(SECTORES.map((s) => [s.id, s.etiqueta]));
+---
+<section class="seccion casos" id="casos" aria-labelledby="h-casos">
+  <div class="wrap">
+    <div class="casos__cab">
+      <p class="etiqueta" data-reveal>Casos de automatización</p>
+      <h2 class="h2" id="h-casos" data-reveal data-delay="1">Problemas reales, flujos que los resuelven</h2>
+      <p class="lead muted" data-reveal data-delay="2">
+        Ocho casos <strong>ficticios</strong> para mostrar cómo pensamos. Clientes, nombres y cifras son
+        <span class="badge-demo">Ejemplo de demo</span>
+      </p>
+    </div>
+
+    <div class="filtro solo-js" role="group" aria-label="Filtrar casos por sector">
+      {SECTORES.map((s) => (
+        <button type="button" class="chip" data-sector={s.id} aria-pressed={s.id === 'todos' ? 'true' : 'false'}>
+          {s.etiqueta}
+        </button>
+      ))}
+    </div>
+    <p class="conteo solo-js" id="conteo-casos" role="status">Mostrando {CASOS.length} de {CASOS.length} casos</p>
+
+    <ul class="casos__lista" id="lista-casos">
+      {CASOS.map((c, i) => (
+        <li class={`caso${c.id === 'marea-alta' ? ' caso--lima' : ''}`} data-sector={c.sector} data-reveal data-delay={String((i % 3) + 1)}>
+          <article aria-labelledby={`t-${c.id}`}>
+            <p class="caso__sector">{nombreSector[c.sector]}</p>
+            <h3 id={`t-${c.id}`}>{c.titulo}</h3>
+            <p class="caso__cli">{c.cliente}</p>
+            <p class="caso__cifra solo-js">
+              <strong>{c.resultado[0].cifra}</strong> {c.resultado[0].texto}
+              <span class="badge-demo">Ejemplo de demo</span>
+            </p>
+            <div class="caso__det" data-det>
+              <dl>
+                <dt>Problema</dt>
+                <dd>{c.problema}</dd>
+                <dt>Solución</dt>
+                <dd>{c.solucion}</dd>
+                <dt>Herramientas</dt>
+                <dd>
+                  <ul class="herr">
+                    {c.herramientas.map((h) => <li>{h}</li>)}
+                    </ul>
+                </dd>
+                <dt>Resultado</dt>
+                <dd>
+                  <ul class="res">
+                    {c.resultado.map((r) => (
+                      <li><strong>{r.cifra}</strong> <span>{r.texto}</span></li>
+                    ))}
+                  </ul>
+                  <span class="badge-demo">Ejemplo de demo</span>
+                </dd>
+              </dl>
+            </div>
+            <button type="button" class="btn btn--borde solo-js" data-abrir>
+              Ver caso completo <span class="sr-only">: {c.titulo}</span>
+              <Icon nombre="arrow-up-right" tamano={20} />
+            </button>
+          </article>
+        </li>
+      ))}
+      <li class="caso caso--cta" id="caso-cta">
+        <article aria-labelledby="t-cta">
+          <p class="caso__sector">¿Tu rubro no está?</p>
+          <h3 id="t-cta">Cuéntanos qué te quita tiempo</h3>
+          <a class="btn" href="#cotizador">Cotizar mi caso <Icon nombre="arrow-right" tamano={20} /></a>
+        </article>
+      </li>
+    </ul>
+  </div>
+
+  <dialog class="modal" id="modal-caso" aria-labelledby="modal-titulo">
+    <div class="modal__caja">
+      <button type="button" class="modal__x" data-cerrar aria-label="Cerrar caso">
+        <Icon nombre="x" tamano={24} />
+      </button>
+      <p class="caso__sector" id="modal-sector"></p>
+      <h3 id="modal-titulo" tabindex="-1"></h3>
+      <p class="caso__cli" id="modal-cliente"></p>
+      <div id="modal-cuerpo" class="caso__det"></div>
+      <div class="modal__pie">
+        <a class="btn" href="#cotizador" data-cerrar>Cotizar algo parecido <Icon nombre="arrow-right" tamano={20} /></a>
+        <button type="button" class="btn btn--borde" data-cerrar>Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  const lista = document.getElementById('lista-casos') as HTMLElement;
+  const casos = Array.from(lista.querySelectorAll<HTMLElement>('.caso[data-sector]'));
+  const cta = document.getElementById('caso-cta')!;
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+  const conteo = document.getElementById('conteo-casos')!;
+  const total = casos.length;
+
+  // ---- Filtro por sector ----
+  function filtrar(sector: string) {
+    let visibles = 0;
+    for (const c of casos) {
+      const ver = sector === 'todos' || c.dataset.sector === sector;
+      c.hidden = !ver;
+      if (ver) {
+        visibles++;
+        c.classList.add('is-in'); // evita que un caso reaparezca invisible
+      }
+    }
+    cta.hidden = sector !== 'todos';
+    for (const b of chips) b.setAttribute('aria-pressed', String(b.dataset.sector === sector));
+    const nombre = chips.find((b) => b.dataset.sector === sector)?.textContent?.trim() ?? '';
+    conteo.textContent =
+      sector === 'todos'
+        ? `Mostrando ${total} de ${total} casos`
+        : `Mostrando ${visibles} de ${total} casos del sector ${nombre}`;
+    if (visibles === 0) conteo.textContent = `No hay casos en el sector ${nombre} todavía.`;
+  }
+  chips.forEach((b) => b.addEventListener('click', () => filtrar(b.dataset.sector!)));
+
+  // ---- Modal con <dialog> (showModal atrapa el foco y cierra con Escape) ----
+  const modal = document.getElementById('modal-caso') as HTMLDialogElement;
+  const m = {
+    sector: document.getElementById('modal-sector')!,
+    titulo: document.getElementById('modal-titulo')!,
+    cliente: document.getElementById('modal-cliente')!,
+    cuerpo: document.getElementById('modal-cuerpo')!,
+  };
+  let disparador: HTMLElement | null = null;
+  let sectorActual = '';
+  const tipoDeSector: Record<string, string> = { retail: 'retail', salud: 'salud', restaurantes: 'restaurante', servicios: 'servicios' };
+
+  function abrir(caso: HTMLElement, origen: HTMLElement) {
+    disparador = origen;
+    sectorActual = caso.dataset.sector ?? '';
+    m.sector.textContent = caso.querySelector('.caso__sector')!.textContent;
+    m.titulo.textContent = caso.querySelector('h3')!.textContent;
+    m.cliente.textContent = caso.querySelector('.caso__cli')!.textContent;
+    m.cuerpo.replaceChildren(...Array.from(caso.querySelector('[data-det]')!.children).map((n) => n.cloneNode(true)));
+    document.body.classList.add('modal-open');
+    modal.showModal();
+    modal.scrollTop = 0;
+    m.titulo.focus();
+  }
+  lista.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-abrir]');
+    if (btn) abrir(btn.closest<HTMLElement>('.caso')!, btn);
+  });
+  modal.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    // clic en el fondo (fuera de la caja) o en un control de cierre
+    if (t.closest('a[data-cerrar]')) {
+      // el enlace lleva al cotizador: precarga el tipo de negocio y mueve el foco allí (no vuelve a la tarjeta)
+      disparador = null;
+      const radio = document.querySelector<HTMLInputElement>(`input[name="tipo"][value="${tipoDeSector[sectorActual] ?? ''}"]`);
+      if (radio) radio.checked = true;
+      setTimeout(() => document.getElementById('h-cotiz')?.focus({ preventScroll: true }), 0);
+    }
+    if (t === modal || t.closest('[data-cerrar]')) modal.close();
+  });
+  modal.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+    // Si cerró para ir al cotizador, el enlace hace el desplazamiento; si no, devolvemos el foco.
+    disparador?.focus();
+    disparador = null;
+  });
+</script>
+
+<style>
+  .casos { background: var(--paper-2); }
+  .casos__cab { max-width: 44rem; margin-bottom: 40px; }
+  @media (min-width: 900px) { .casos__cab { margin-left: 16.66%; } }
+  .casos__cab .lead { margin-top: 16px; }
+  .filtro { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { min-height: 44px; padding: 8px 18px; border: 2px solid var(--ink); border-radius: 999px; background: transparent; color: var(--ink); font: 700 0.95rem/1 var(--f-body); cursor: pointer; }
+  .chip:hover { background: var(--paper); }
+  .chip[aria-pressed='true'] { background: var(--ink); color: var(--lima); }
+  .conteo { font-size: 0.95rem; color: var(--muted); margin-bottom: 32px; min-height: 1.6em; }
+  .casos__vacio { padding: 24px 0; font-weight: 600; }
+
+  .casos__lista { display: grid; gap: 20px; }
+  .caso { background: var(--paper); border: 2px solid var(--ink); border-radius: 4px; padding: 24px; display: flex; }
+  .caso[hidden] { display: none; }
+  .caso article { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .caso__sector { font-family: var(--f-display); font-weight: 600; font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brasa); }
+  .caso h3 { font-size: 1.2rem; line-height: 1.2; }
+  .caso__cli { color: var(--muted); font-size: 0.95rem; }
+  .caso__cifra { font-size: 1rem; }
+  .caso__cifra strong { font-family: var(--f-display); font-weight: 800; font-size: 1.6rem; display: block; letter-spacing: -0.03em; line-height: 1.1; }
+  .caso .btn { margin-top: auto; align-self: flex-start; }
+  .caso--lima { background: var(--lima); }
+  .caso--lima .caso__sector, .caso--lima .caso__cli { color: var(--ink); }
+  .caso--cta { background: var(--ink); color: var(--paper); }
+  .caso--cta .caso__sector { color: var(--lima); }
+  .caso--cta .btn { background: var(--lima); color: var(--ink); border-color: var(--lima); align-self: flex-start; }
+  .caso--cta .btn:hover { background: var(--paper); }
+  .caso--cta :focus-visible { outline-color: var(--lima); }
+  .caso__cifra .badge-demo { display: block; width: fit-content; margin-top: 6px; }
+  @media (min-width: 700px) {
+    .casos__lista { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  }
+  @media (min-width: 1100px) {
+    .casos__lista { grid-template-columns: repeat(3, 1fr); }
+    .caso:nth-child(3n + 2) { margin-top: 48px; }
+  }
+
+  /* detalle (visible sin JS dentro de la tarjeta; con JS vive solo en el modal) */
+  :global(.js) .caso > article > .caso__det { display: none; }
+  :global(.caso__det dl) { margin: 0; display: grid; gap: 4px; }
+  :global(.caso__det dt) { font-weight: 700; font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+  :global(.caso__det dd) { margin: 0; }
+  :global(.herr) { display: flex; flex-wrap: wrap; gap: 8px; }
+  :global(.herr li) { border: 1.5px solid currentColor; border-radius: 999px; padding: 4px 12px; font-size: 0.9rem; font-weight: 600; }
+  :global(.res) { display: grid; gap: 8px; margin-bottom: 10px; }
+  :global(.res strong) { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.03em; margin-right: 6px; }
+
+  /* modal */
+  .modal { border: 2px solid var(--ink); border-radius: 6px; padding: 0; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); background: var(--paper); color: var(--ink); box-shadow: 10px 10px 0 var(--lima); overflow: auto; }
+  .modal::backdrop { background: rgb(18 17 15 / 0.72); }
+  .modal__caja { padding: 56px 20px 24px; position: relative; display: grid; gap: 8px; }
+  @media (min-width: 640px) { .modal__caja { padding: 48px 36px 32px; } }
+  .modal h3 { font-size: clamp(1.4rem, 5vw, 2rem); outline-offset: 6px; }
+  .modal__x { position: absolute; top: 8px; right: 8px; width: 48px; height: 48px; display: grid; place-items: center; background: var(--ink); color: var(--lima); border: 0; border-radius: 4px; cursor: pointer; }
+  .modal__x:hover { background: var(--brasa); color: #fff; }
+  .modal__pie { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .modal[open] { animation: entra 0.25s ease-out; }
+    @keyframes entra { from { opacity: 0; transform: translateY(16px); } }
+  }
+</style>

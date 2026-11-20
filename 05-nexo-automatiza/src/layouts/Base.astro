@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  ruta: string;
+  jsonld?: object;
+  sinCanonical?: boolean;
+}
+const { titulo, descripcion, ruta, jsonld, sinCanonical = false } = Astro.props;
+const completo = titulo.includes('Nexo') ? titulo : `${titulo} | Nexo Automatiza`;
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{completo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#12110f" />
+    {!sinCanonical && <link rel="canonical" href={ruta} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/unbounded-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/bricolage-grotesque-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Nexo Automatiza (demo)" />
+    <meta property="og:title" content={completo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={ruta} />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nexo Automatiza: menos digitar, más vender" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={completo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content="/og.png" />
+    <script is:inline set:html={`document.documentElement.classList.add("js");setTimeout(function(){var d=document.documentElement;if(!d.classList.contains("reveal-ok"))d.classList.add("reveal-off")},3000)`}></script>
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+  </head>
+  <body>
+    <a class="salto" href="#contenido">Saltar al contenido</a>
+    <Header />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Animación al hacer scroll: se desactiva con prefers-reduced-motion y sin JS todo queda visible.
+      document.documentElement.classList.add('reveal-ok');
+      const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (quieto || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const obs = new IntersectionObserver(
+          (entradas) => {
+            for (const e of entradas) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                obs.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+        );
+        items.forEach((el) => obs.observe(el));
+      }
+    </script>
+  </body>
+</html>

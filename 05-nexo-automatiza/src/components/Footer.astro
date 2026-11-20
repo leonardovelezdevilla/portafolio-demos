@@ -1,0 +1,43 @@
+---
+import { NEXO } from '../data/contenido';
+---
+<footer class="pie sobre-tinta">
+  <div class="wrap pie__grid">
+    <div class="pie__marca">
+      <p class="pie__logo">nexo<span>.</span></p>
+      <p class="muted">Automatización para pymes de Lima: WhatsApp, Google Sheets, facturación, inventario y reportes.</p>
+    </div>
+    <div>
+      <h2 class="pie__h">Contacto</h2>
+      <ul class="pie__lista">
+        <li><a href={`https://wa.me/${NEXO.telefono}`}>WhatsApp {NEXO.telefonoVisible}</a></li>
+        <li><span class="muted">{NEXO.correo}</span></li>
+        <li><span class="muted">{NEXO.direccion}</span></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="pie__h">Legal (de demo)</h2>
+      <ul class="pie__lista">
+        <li><a href="/privacidad/">Política de privacidad</a></li>
+        <li><a href="/terminos/">Términos de uso</a></li>
+        <li><a href="/libro-reclamaciones/">Libro de Reclamaciones</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap pie__fin">
+    <p>Demo de portafolio — Vélez De Villa. Nexo Automatiza es una marca ficticia; RUC {NEXO.ruc}. Casos, cifras y testimonios son «Ejemplo de demo».</p>
+  </div>
+</footer>
+
+<style>
+  .pie { padding-top: 64px; border-top: 4px solid var(--lima); }
+  .pie__grid { display: grid; gap: 40px; padding-bottom: 48px; }
+  @media (min-width: 768px) { .pie__grid { grid-template-columns: 1.4fr 1fr 1fr; } }
+  .pie__logo { font-family: var(--f-display); font-weight: 800; font-size: 2rem; letter-spacing: -0.04em; margin-bottom: 12px; }
+  .pie__logo span { color: var(--lima); }
+  .pie__h { font-family: var(--f-body); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-ink); margin-bottom: 12px; }
+  .pie__lista { display: grid; gap: 4px; }
+  .pie__lista a { display: inline-flex; align-items: center; min-height: 44px; }
+  .pie__lista li > span { display: block; padding-block: 6px; }
+  .pie__fin { border-top: 1px solid var(--linea-ink); padding-block: 24px; font-size: 0.875rem; color: var(--muted-ink); }
+</style>

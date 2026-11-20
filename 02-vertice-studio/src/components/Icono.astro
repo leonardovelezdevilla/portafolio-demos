@@ -1,0 +1,30 @@
+---
+import bolsa from 'lucide-static/icons/shopping-bag.svg?raw';
+import cerrar from 'lucide-static/icons/x.svg?raw';
+import mas from 'lucide-static/icons/plus.svg?raw';
+import menos from 'lucide-static/icons/minus.svg?raw';
+import basura from 'lucide-static/icons/trash-2.svg?raw';
+import ojo from 'lucide-static/icons/eye.svg?raw';
+import mensaje from 'lucide-static/icons/message-circle.svg?raw';
+import camion from 'lucide-static/icons/truck.svg?raw';
+import regla from 'lucide-static/icons/ruler.svg?raw';
+import flecha from 'lucide-static/icons/arrow-up-right.svg?raw';
+import abajo from 'lucide-static/icons/arrow-down.svg?raw';
+import escudo from 'lucide-static/icons/shield-check.svg?raw';
+import cambio from 'lucide-static/icons/repeat.svg?raw';
+import libro from 'lucide-static/icons/book-open.svg?raw';
+import tarjeta from 'lucide-static/icons/credit-card.svg?raw';
+
+interface Props {
+  nombre: keyof typeof iconos;
+  tamano?: number;
+}
+const iconos = { bolsa, cerrar, mas, menos, basura, ojo, mensaje, camion, regla, flecha, abajo, escudo, cambio, tarjeta, libro };
+const { nombre, tamano = 20 } = Astro.props;
+const svg = iconos[nombre]
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/\s(width|height)="24"/g, '')
+  .replace('<svg', `<svg width="${tamano}" height="${tamano}" aria-hidden="true" focusable="false"`)
+  .replace(/class="[^"]*"/, 'class="icono"');
+---
+<Fragment set:html={svg} />

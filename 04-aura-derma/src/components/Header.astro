@@ -1,0 +1,177 @@
+---
+import Icon from './Icon.astro';
+import { NAV, NEGOCIO } from '../lib/negocio';
+---
+
+<header class="cab">
+  <div class="contenedor cab__fila">
+    <a class="marca" href="/" aria-label={`${NEGOCIO.nombre}, inicio`}>
+      <span class="marca__sello"><Icon name="leaf" /></span>
+      <span class="marca__txt">Aura <em>Derma</em></span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Principal">
+      <ul>
+        {NAV.map((n) => <li><a href={n.href}>{n.texto}</a></li>)}
+      </ul>
+    </nav>
+
+    <a class="btn cab__cta" href="/#agenda">Reservar cita</a>
+
+    <details class="menu-movil">
+      <summary>
+        <Icon name="menu" class="icono ic-abrir" />
+        <span class="visually-hidden">Menú</span>
+      </summary>
+      <nav aria-label="Principal móvil">
+        <ul>
+          {NAV.map((n) => <li><a href={n.href}>{n.texto}</a></li>)}
+          <li><a class="btn" href="/#agenda">Reservar cita</a></li>
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<style>
+  .cab {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(247 243 234 / 0.96);
+    border-bottom: 1px solid var(--linea);
+  }
+  .cab__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.25rem;
+    position: relative;
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--salvia-900);
+    font: 400 1.5rem/1 var(--serif);
+    min-height: 44px;
+  }
+  .marca em {
+    font-style: normal;
+    color: var(--salvia-700);
+  }
+  .marca__sello {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--salvia-700);
+    color: var(--blanco);
+  }
+  .marca__sello :global(.icono) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  .nav-desktop,
+  .cab__cta {
+    display: none;
+  }
+  .nav-desktop ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-desktop a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.8rem;
+    color: var(--tinta);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+  .nav-desktop a:hover {
+    background: var(--salvia-100);
+  }
+  .menu-movil summary {
+    list-style: none;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid var(--salvia-500);
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--salvia-900);
+  }
+  .menu-movil summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu-movil nav {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.25rem);
+    width: min(100%, 20rem);
+    background: var(--blanco);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 0.5rem;
+  }
+  .menu-movil ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu-movil li a:not(.btn) {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 0.9rem;
+    color: var(--tinta);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  .menu-movil li a:not(.btn):hover {
+    background: var(--salvia-100);
+  }
+  .menu-movil .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  @media (min-width: 62rem) {
+    .nav-desktop,
+    .cab__cta {
+      display: block;
+    }
+    .cab__cta {
+      display: inline-flex;
+    }
+    .menu-movil {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('.menu-movil');
+  if (menu) {
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) menu.open = false;
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  }
+</script>

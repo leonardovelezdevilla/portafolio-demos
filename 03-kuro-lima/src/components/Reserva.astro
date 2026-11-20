@@ -1,0 +1,326 @@
+---
+import Icono from './Icono.astro';
+import { MAX_PERSONAS, MENSAJE_GRUPOS, OMAKASE_ASIENTOS, urlWhatsApp } from '../lib/reserva';
+
+const grupos = urlWhatsApp(MENSAJE_GRUPOS);
+const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
+---
+<section class="seccion" id="reserva" aria-labelledby="reserva-titulo">
+  <div class="contenedor reserva__grid">
+    <div class="reserva__lado">
+      <p class="sobretitulo">Reserva</p>
+      <h2 class="titulo-seccion" id="reserva-titulo">Tu mesa, <em>sin apuro</em></h2>
+      <p class="bajada">Cuéntanos cuándo vienes y te armamos la mesa. Confirmamos por WhatsApp.</p>
+      <ul>
+        <li><Icono nombre="clock" /><span><strong>Mar a sáb:</strong> 12:30 a 16:00 y 19:00 a 23:00<br /><strong>Dom:</strong> 12:30 a 17:00. Lunes cerrado.</span></li>
+        <li><Icono nombre="calendar" /><span>Última reserva: 1 hora antes del cierre de cada turno.</span></li>
+        <li><Icono nombre="utensils" /><span>Omakase: {OMAKASE_ASIENTOS} asientos, 19:00 y 21:30, de martes a sábado y con 48 horas de anticipación.</span></li>
+        <li><Icono nombre="users" /><span>De 1 a 8 personas aquí. Para grupos más grandes, <a href={grupos} target="_blank" rel="noopener noreferrer">escríbenos por WhatsApp<span class="solo-lectores"> (se abre en una pestaña nueva)</span></a>.</span></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="aviso-sin-js">
+        <p><strong>Para reservar desde esta página necesitas JavaScript.</strong> Mientras tanto, escríbenos directo:</p>
+        <p><a class="boton boton--oro" href={urlWhatsApp('Hola Kuro, quisiera reservar una mesa.')}>Reservar por WhatsApp</a></p>
+      </div>
+
+      <div class="form-js">
+        <form class="form" id="form-reserva" novalidate aria-labelledby="reserva-titulo">
+          <div class="resumen-errores" data-resumen tabindex="-1" hidden></div>
+          <p class="ayuda ayuda--primera">Todos los campos son obligatorios salvo los marcados como opcionales.</p>
+
+          <div class="campo">
+            <label for="tipo">Qué quieres reservar</label>
+            <select id="tipo" name="tipo">
+              <option value="mesa">Mesa en el salón (carta)</option>
+              <option value="omakase">Omakase en la barra (S/ 320 por persona)</option>
+            </select>
+            <p class="ayuda" id="ayuda-tipo" data-ayuda-tipo>Mesa: de martes a domingo, hasta 1 hora antes del cierre.</p>
+          </div>
+
+          <div class="form__fila">
+            <div class="campo">
+              <label for="fecha">Fecha</label>
+              <input type="date" id="fecha" name="fecha" required aria-describedby="ayuda-fecha err-fecha" />
+              <p class="ayuda" id="ayuda-fecha">Desde hoy (hora de Lima), de martes a domingo.</p>
+              <p class="error" id="err-fecha" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="hora">Hora</label>
+              <select id="hora" name="hora" required aria-describedby="ayuda-hora err-hora" disabled>
+                <option value="">Primero elige la fecha</option>
+              </select>
+              <p class="ayuda" id="ayuda-hora">Se muestran solo las horas disponibles para esa fecha.</p>
+              <p class="error" id="err-hora" hidden></p>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="personas">Personas</label>
+            <select id="personas" name="personas" required aria-describedby="err-personas">
+              <option value="">Elige</option>
+              {opciones.map((n) => <option value={n}>{n} {n === 1 ? 'persona' : 'personas'}</option>)}
+              <option value="9">Más de 8 personas</option>
+            </select>
+            <p class="error" id="err-personas" hidden></p>
+            <div class="grupos" data-grupos hidden>
+              <p><strong>Para grupos de más de 8 personas armamos la mesa a medida.</strong> Cuéntanos fecha y número de personas por WhatsApp y te respondemos con una propuesta.</p>
+              <a class="boton boton--oro" href={grupos} target="_blank" rel="noopener noreferrer"><Icono nombre="message-circle" /> Cotizar por WhatsApp<span class="solo-lectores"> (se abre en una pestaña nueva)</span></a>
+            </div>
+          </div>
+
+          <div class="form__fila">
+            <div class="campo">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" autocomplete="name" required maxlength="60" aria-describedby="err-nombre" />
+              <p class="error" id="err-nombre" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="celular">Celular</label>
+              <input type="tel" id="celular" name="celular" inputmode="numeric" autocomplete="tel-national" required placeholder="987 654 321" aria-describedby="ayuda-celular err-celular" />
+              <p class="ayuda" id="ayuda-celular">9 dígitos, empieza con 9.</p>
+              <p class="error" id="err-celular" hidden></p>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="ocasion">Ocasión <span class="opcional">(opcional)</span></label>
+            <input type="text" id="ocasion" name="ocasion" maxlength="60" placeholder="Cumpleaños, aniversario, trabajo…" aria-describedby="err-ocasion" />
+            <p class="error" id="err-ocasion" hidden></p>
+          </div>
+
+          <div class="campo">
+            <label for="alergias">Alergias o restricciones <span class="opcional">(opcional)</span></label>
+            <textarea id="alergias" name="alergias" maxlength="300" aria-describedby="ayuda-alergias err-alergias"></textarea>
+            <p class="ayuda" id="ayuda-alergias">Mariscos, maní, soya, gluten, sésamo… Es un dato de salud, por eso pedimos tu autorización abajo. La cocina no puede garantizar ausencia de trazas: consulta al personal al ordenar.</p>
+            <p class="error" id="err-alergias" hidden></p>
+          </div>
+
+          <div class="campo campo--consentimiento">
+            <label class="check" for="consentimiento">
+              <input type="checkbox" id="consentimiento" name="consentimiento" aria-describedby="err-consentimiento" />
+              <span>Autorizo el tratamiento de mis datos (nombre, celular y, si las escribo, mis alergias, que son datos sensibles) para gestionar esta reserva, según la <a href="/privacidad/">Política de Privacidad</a>.</span>
+            </label>
+            <p class="error" id="err-consentimiento" hidden></p>
+          </div>
+
+          <button class="boton" type="submit"><Icono nombre="send" /> Solicitar reserva</button>
+        </form>
+
+        <div class="exito" data-exito role="status" hidden>
+          <h3 tabindex="-1" data-exito-titulo>Falta un paso, <span data-e-nombre></span>: envía tu solicitud por WhatsApp</h3>
+          <p>Tu mesa <strong>no está confirmada</strong> hasta que el restaurante te responda. Esto es una demostración: no se guardó nada ni se envió a ningún restaurante real.</p>
+          <dl>
+            <dt>Reserva</dt><dd data-e-tipo></dd>
+            <dt>Fecha</dt><dd data-e-fecha></dd>
+            <dt>Hora</dt><dd data-e-hora></dd>
+            <dt>Personas</dt><dd data-e-personas></dd>
+            <dt>A nombre de</dt><dd data-e-nombre-completo></dd>
+            <dt>Celular</dt><dd data-e-celular></dd>
+            <dt>Ocasión</dt><dd data-e-ocasion></dd>
+            <dt>Alergias</dt><dd data-e-alergias></dd>
+          </dl>
+          <p class="ayuda">Al pulsar el botón, este mensaje (con tu nombre, celular y alergias) se transmite a WhatsApp, un servicio de Meta con servidores fuera del Perú. Revisa la <a href="/privacidad/">Política de Privacidad</a>.</p>
+          <div class="exito__acciones">
+            <a class="boton" data-e-wa href="https://wa.me/51900000000" target="_blank" rel="noopener noreferrer"><Icono nombre="message-circle" /> Enviar por WhatsApp<span class="solo-lectores"> (se abre en una pestaña nueva)</span></a>
+            <button class="boton boton--linea" type="button" data-nueva>Hacer otra reserva</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import {
+    MAX_PERSONAS, OMAKASE_ANTICIPACION_HORAS, fechaMaxima, fechaMinima, formatearFecha, horasDisponibles,
+    mensajeWhatsApp, urlWhatsApp, validarFecha, validarHora, validarReserva, validarPersonas,
+  } from '../lib/reserva';
+  import type { Errores, TipoReserva } from '../lib/reserva';
+  import { limpiarCelular, normalizarTexto } from '../lib/validar';
+
+  const form = document.querySelector<HTMLFormElement>('#form-reserva');
+  if (form) {
+    const resumen = document.querySelector<HTMLElement>('[data-resumen]')!;
+    const exito = document.querySelector<HTMLElement>('[data-exito]')!;
+    const grupos = document.querySelector<HTMLElement>('[data-grupos]')!;
+    const ayudaTipo = document.querySelector<HTMLElement>('[data-ayuda-tipo]')!;
+    const enviar = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const el = <T extends HTMLElement>(n: string) => form.elements.namedItem(n) as unknown as T;
+    const fecha = el<HTMLInputElement>('fecha');
+    const hora = el<HTMLSelectElement>('hora');
+    const tipoSel = el<HTMLSelectElement>('tipo');
+    const personas = el<HTMLSelectElement>('personas');
+    const ETIQ: Record<string, string> = { fecha: 'Fecha', hora: 'Hora', personas: 'Personas', nombre: 'Nombre', celular: 'Celular', ocasion: 'Ocasión', alergias: 'Alergias', consentimiento: 'Autorización' };
+    const ORDEN = Object.keys(ETIQ);
+    const tipo = (): TipoReserva => (tipoSel.value === 'omakase' ? 'omakase' : 'mesa');
+
+    const actualizarLimites = () => {
+      fecha.min = fechaMinima(tipo());
+      fecha.max = fechaMaxima();
+    };
+
+    const llenarHoras = () => {
+      const previa = hora.value;
+      const horas = horasDisponibles(fecha.value, new Date(), tipo());
+      hora.innerHTML = '';
+      const op = (v: string, t: string) => { const o = document.createElement('option'); o.value = v; o.textContent = t; return o; };
+      if (!fecha.value) {
+        hora.disabled = true; hora.append(op('', 'Primero elige la fecha'));
+      } else if (horas.length === 0) {
+        hora.disabled = true; hora.append(op('', 'Sin horas disponibles ese día'));
+      } else {
+        hora.disabled = false; hora.append(op('', 'Elige una hora'));
+        horas.forEach((h) => hora.append(op(h, h)));
+        if (horas.includes(previa)) hora.value = previa;
+      }
+    };
+
+    const mostrarError = (n: string, msg: string | null) => {
+      const p = document.querySelector<HTMLElement>(`#err-${n}`)!;
+      const c = el<HTMLElement>(n);
+      p.textContent = '';
+      if (msg) {
+        p.textContent = msg;
+        p.hidden = false;
+        c.setAttribute('aria-invalid', 'true');
+      } else {
+        p.hidden = true;
+        c.removeAttribute('aria-invalid');
+      }
+    };
+
+    const leer = () => ({
+      tipo: tipo(),
+      fecha: fecha.value, hora: hora.value,
+      personas: personas.value,
+      nombre: el<HTMLInputElement>('nombre').value,
+      celular: el<HTMLInputElement>('celular').value,
+      ocasion: el<HTMLInputElement>('ocasion').value,
+      alergias: el<HTMLTextAreaElement>('alergias').value,
+      consentimiento: el<HTMLInputElement>('consentimiento').checked,
+    });
+
+    const aplicarTipo = () => {
+      const o = tipo() === 'omakase';
+      ayudaTipo.textContent = o
+        ? `Omakase: martes a sábado, 19:00 o 21:30, con ${OMAKASE_ANTICIPACION_HORAS} horas de anticipación. Solo 8 asientos en la barra.`
+        : 'Mesa: de martes a domingo, hasta 1 hora antes del cierre.';
+      document.querySelector('#ayuda-fecha')!.textContent = o
+        ? 'Desde dentro de 48 horas, de martes a sábado.'
+        : 'Desde hoy (hora de Lima), de martes a domingo.';
+      actualizarLimites();
+      llenarHoras();
+    };
+
+    const actualizarGrupos = () => {
+      const grande = Number(personas.value) > MAX_PERSONAS;
+      grupos.hidden = !grande;
+      enviar.disabled = grande;
+      if (grande) mostrarError('personas', null);
+    };
+
+    // Validación por campo (se corrige el campo que se acaba de tocar, sin reanunciar todo el resumen).
+    let intento = false;
+    const campoNuevo = (n: string) => {
+      const d = leer();
+      const now = new Date();
+      let m: string | null = null;
+      if (n === 'fecha') m = validarFecha(d.fecha, now, d.tipo);
+      else if (n === 'hora') m = validarHora(d.fecha, d.hora, now, d.tipo);
+      else if (n === 'personas') m = Number(d.personas) > MAX_PERSONAS ? null : validarPersonas(d.personas);
+      else m = validarReserva(d, now).errores[n as keyof Errores] ?? null;
+      mostrarError(n, m);
+    };
+
+    fecha.addEventListener('change', () => {
+      llenarHoras();
+      // Aviso inmediato, p. ej. los lunes cerrados.
+      mostrarError('fecha', fecha.value ? validarFecha(fecha.value, new Date(), tipo()) : null);
+      mostrarError('hora', null);
+    });
+    fecha.addEventListener('input', llenarHoras);
+    tipoSel.addEventListener('change', () => {
+      aplicarTipo();
+      if (fecha.value) mostrarError('fecha', validarFecha(fecha.value, new Date(), tipo()));
+    });
+    personas.addEventListener('change', actualizarGrupos);
+    form.addEventListener('focusout', (ev) => {
+      const t = ev.target as HTMLElement;
+      const n = (t as HTMLInputElement).name;
+      if (intento && n && ORDEN.includes(n)) campoNuevo(n);
+    });
+    form.addEventListener('change', (ev) => {
+      const n = ((ev.target as HTMLInputElement).name) as string;
+      if (intento && n && ORDEN.includes(n)) campoNuevo(n);
+    });
+
+    const pintarResumen = (errores: Errores) => {
+      ORDEN.forEach((n) => mostrarError(n, errores[n as keyof Errores] ?? null));
+      const claves = ORDEN.filter((n) => errores[n as keyof Errores]);
+      resumen.innerHTML = '';
+      if (!claves.length) { resumen.hidden = true; return; }
+      const h = document.createElement('h3');
+      h.textContent = claves.length === 1 ? 'Revisa 1 dato antes de continuar' : `Revisa ${claves.length} datos antes de continuar`;
+      const ul = document.createElement('ul');
+      claves.forEach((n) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${n}`;
+        a.textContent = `${ETIQ[n]}: ${errores[n as keyof Errores]}`;
+        a.addEventListener('click', (ev) => { ev.preventDefault(); el<HTMLElement>(n).focus(); });
+        li.append(a); ul.append(li);
+      });
+      resumen.append(h, ul);
+      resumen.hidden = false;
+    };
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      intento = true;
+      const datos = leer();
+      const r = validarReserva(datos, new Date());
+      if (Number(datos.personas) > MAX_PERSONAS) { actualizarGrupos(); return; }
+      pintarResumen(r.errores);
+      if (!r.ok) {
+        resumen.focus();
+        resumen.scrollIntoView({ block: 'center' });
+        return;
+      }
+      const set = (s: string, t: string) => { (exito.querySelector(s) as HTMLElement).textContent = t; };
+      set('[data-e-nombre]', datos.nombre.trim().split(/\s+/)[0]);
+      set('[data-e-tipo]', datos.tipo === 'omakase' ? 'Omakase en la barra' : 'Mesa en el salón');
+      set('[data-e-fecha]', formatearFecha(datos.fecha));
+      set('[data-e-hora]', `${datos.hora} h`);
+      set('[data-e-personas]', String(datos.personas));
+      set('[data-e-nombre-completo]', normalizarTexto(datos.nombre));
+      set('[data-e-celular]', limpiarCelular(datos.celular));
+      set('[data-e-ocasion]', normalizarTexto(datos.ocasion) || '—');
+      set('[data-e-alergias]', normalizarTexto(datos.alergias) || 'Ninguna indicada');
+      (exito.querySelector('[data-e-wa]') as HTMLAnchorElement).href = urlWhatsApp(mensajeWhatsApp({ ...datos, celular: limpiarCelular(datos.celular) }));
+      form.hidden = true;
+      exito.hidden = false;
+      (exito.querySelector('[data-exito-titulo]') as HTMLElement).focus();
+      exito.scrollIntoView({ block: 'center' });
+    });
+
+    exito.querySelector('[data-nueva]')!.addEventListener('click', () => {
+      form.reset(); intento = false; pintarResumen({}); aplicarTipo(); actualizarGrupos();
+      exito.hidden = true; form.hidden = false;
+      fecha.focus();
+    });
+
+    // Enlaces «Reservar omakase» (u otros) con data-reservar-tipo, y ?tipo=omakase en la URL.
+    const fijarTipo = (t: string | null | undefined) => {
+      if (t === 'omakase' || t === 'mesa') { tipoSel.value = t; aplicarTipo(); }
+    };
+    document.querySelectorAll<HTMLElement>('[data-reservar-tipo]').forEach((a) =>
+      a.addEventListener('click', () => fijarTipo(a.dataset.reservarTipo)));
+    fijarTipo(new URLSearchParams(location.search).get('tipo'));
+
+    aplicarTipo();
+    // Si la página queda abierta pasada la medianoche de Lima, se refresca el mínimo.
+    setInterval(actualizarLimites, 60_000);
+  }
+</script>

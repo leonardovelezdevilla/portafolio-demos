@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', minimumFractionDigits: 0 });
+// mensual = precio pagando mes a mes; anualMes = equivalente mensual pagando el año
+const planes = [
+  { id: 'esencial', nombre: 'Esencial', para: 'Si recién emites tus primeros recibos.', mensual: 19, anualMes: 15, items: ['Hasta 30 recibos al mes', 'Cálculo de retención', 'Recordatorios de pagos a cuenta'] },
+  { id: 'pro', nombre: 'Pro', para: 'Para quien vive de sus honorarios.', mensual: 39, anualMes: 31, destacado: true, items: ['Recibos sin límite', 'Gastos con categorías', 'Reportes y proyección anual', 'Exportación para contador'] },
+  { id: 'estudio', nombre: 'Estudio', para: 'Dos o tres socios compartiendo cuenta.', mensual: 79, anualMes: 63, items: ['Hasta 3 personas', 'Todo lo de Pro', 'Reportes por cliente y por socio', 'Soporte prioritario'] },
+];
+---
+<section class="seccion" id="precios" aria-labelledby="t-pre">
+  <div class="contenedor">
+    <div class="cabecera-sec">
+      <p class="sobretitulo">Precios</p>
+      <h2 id="t-pre">Elige cómo pagar. Cambia cuando quieras.</h2>
+      <p class="lead">Precios de demostración en soles. Pagando el año completo ahorras cerca de 20 % frente al pago mensual. Precios en S/ con IGV incluido (ejemplo de demo).</p>
+    </div>
+
+    <div class="precios" id="precios-bloque">
+      <fieldset class="interruptor">
+        <legend class="sr-only">Periodo de facturación</legend>
+        <input type="radio" name="periodo" id="p-mensual" value="mensual" checked />
+        <label for="p-mensual">Mensual</label>
+        <input type="radio" name="periodo" id="p-anual" value="anual" />
+        <label for="p-anual">Anual <span class="chip">≈ 20 % menos</span></label>
+      </fieldset>
+
+      <div class="planes">
+        {planes.map((p) => (
+          <article class:list={['plan', 'vidrio', { destacado: p.destacado }]}>
+            {p.destacado && <p class="recomendado">Recomendado</p>}
+            <h3>{p.nombre}</h3>
+            <p class="para">{p.para}</p>
+            <div class="monto">
+              <p class="v-mensual"><span class="num precio">{sol.format(p.mensual)}</span> <span class="por">al mes</span></p>
+              <p class="v-anual"><s class="tachado"><span class="sr-only">Precio mensual: </span>{sol.format(p.mensual)}</s> <span class="num precio">{sol.format(p.anualMes)}</span> <span class="por">al mes, cobrado al año ({sol.format(p.anualMes * 12)})</span>
+                <span class="ahorro">Ahorras {sol.format((p.mensual - p.anualMes) * 12)} al año</span></p>
+            </div>
+            <ul>
+              {p.items.map((i) => <li><Icon name="check" size={18} />{i}</li>)}
+            </ul>
+            <a class={p.destacado ? 'btn btn-primario' : 'btn btn-sec'} href={`/?plan=${p.id}#acceso`}>Quiero acceso al plan {p.nombre}</a>
+          </article>
+        ))}
+      </div>
+      <p class="pie-precios">Ejemplo de demo: precios en S/ con IGV incluido; no se cobra nada.</p>
+      <p class="sr-only" role="status" id="precios-status"></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .interruptor { display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 1.6rem; border: 1px solid var(--borde); border-radius: 14px; background: rgba(5,9,14,.6); position: relative; }
+  .interruptor input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .interruptor label { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--texto-2); }
+  .interruptor input:checked + label { background: var(--verde); color: var(--verde-osc); }
+  .interruptor input:focus-visible + label { outline: 3px solid var(--azul); outline-offset: 2px; }
+  .chip { font-size: .85rem; font-weight: 600; padding: .2rem .45rem; border-radius: 99px; background: rgba(4,40,27,.16); }
+  .interruptor input:not(:checked) + label .chip { background: rgba(62,230,162,.16); color: var(--verde); }
+  .planes { display: grid; gap: 1rem; align-items: start; }
+  .plan { padding: 1.6rem; display: grid; gap: 1rem; }
+  .plan.destacado { border-color: rgba(62,230,162,.55); background: linear-gradient(170deg, rgba(62,230,162,.14), rgba(22,32,44,.78) 50%); }
+  .recomendado { font: 600 .8rem var(--f-texto); text-transform: uppercase; letter-spacing: .08em; color: var(--verde); }
+  .plan h3 { font-size: 1.5rem; font-weight: 700; }
+  .para { color: var(--texto-2); }
+  .precio { font-size: 2.6rem; font-weight: 700; line-height: 1; }
+  .por { color: var(--texto-2); font-size: .95rem; }
+  .ahorro { display: block; margin-top: .5rem; color: var(--verde); font-weight: 600; }
+  .v-anual { display: none; }
+  .tachado { color: var(--texto-2); font-size: 1.05rem; margin-right: .3rem; }
+  .precios:has(#p-anual:checked) .v-anual { display: block; }
+  .precios:has(#p-anual:checked) .v-mensual { display: none; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+  li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
+  li svg { color: var(--verde); margin-top: 3px; }
+  .pie-precios { margin-top: 1.2rem; color: var(--texto-2); font-size: .92rem; }
+  @media (min-width: 720px) { .planes { grid-template-columns: repeat(3, 1fr); } .plan { padding: 1.3rem; } }
+  @media (min-width: 1000px) {
+    .plan { padding: 1.6rem; }
+    .plan.destacado { padding-block: 2.4rem; margin-top: -1rem; }
+  }
+</style>
+<script>
+  const st = document.getElementById('precios-status');
+  document.querySelectorAll<HTMLInputElement>('input[name="periodo"]').forEach((r) =>
+    r.addEventListener('change', () => { if (st && r.checked) st.textContent = r.value === 'anual' ? 'Mostrando precios anuales' : 'Mostrando precios mensuales'; }),
+  );
+</script>

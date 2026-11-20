@@ -1,0 +1,169 @@
+---
+import Icon from './Icon.astro';
+import { TRATAMIENTOS, formatoPEN } from '../lib/tratamientos';
+import { AVISO_MEDICO } from '../lib/negocio';
+
+const precio = (n: number) => `Desde ${formatoPEN.format(n).replace(/\s+/g, ' ')}`;
+const FILAS = [
+  { k: 'sirve', t: 'Para qué sirve' },
+  { k: 'duracion', t: 'Duración de la sesión' },
+  { k: 'sesiones', t: 'Sesiones habituales' },
+  { k: 'molestias', t: 'Molestias' },
+  { k: 'cuidados', t: 'Cuidados posteriores' },
+] as const;
+---
+
+<section class="seccion seccion--blanca" id="tratamientos" aria-labelledby="trat-titulo">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Tratamientos</p>
+      <h2 id="trat-titulo">Compara con calma lo que te interesa</h2>
+      <p class="lead">
+        Elige dos o tres opciones para ver, lado a lado, para qué sirven, cuánto duran, qué molestias pueden dar y qué cuidados piden después.
+      </p>
+    </div>
+
+    <div class="aviso" role="note">
+      <Icon name="info" />
+      <p><strong>Aviso:</strong> {AVISO_MEDICO}</p>
+    </div>
+
+    <div id="comparador" class="comparador" data-max="3" data-inicial="consulta,acne">
+      <fieldset class="comp-fieldset">
+        <legend>Elige 2 o 3 tratamientos para comparar</legend>
+        <p class="comp-motivo" id="comp-estado" role="status" aria-live="polite"></p>
+        <div class="comp-opciones">
+          {
+            TRATAMIENTOS.map((t) => (
+              <div class="comp-opcion">
+                <input type="checkbox" id={`comp-${t.id}`} name="tratamiento" value={t.id} aria-describedby="comp-estado" />
+                <label for={`comp-${t.id}`}>
+                  <Icon name={t.icono} />
+                  <span>{t.nombre}</span>
+                  <span class="marca"><Icon name="check" class="icono" /></span>
+                </label>
+              </div>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div id="comp-resultado">
+        <div class="comp-scroll" tabindex="0" role="region" aria-label="Tabla comparativa de tratamientos">
+          <table class="comp-tabla">
+            <caption>Comparación de tratamientos. Precios referenciales ficticios en soles, IGV incluido.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Característica</th>
+                {TRATAMIENTOS.map((t) => <th scope="col" data-id={t.id}>{t.nombre}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                FILAS.map((f) => (
+                  <tr>
+                    <th scope="row">{f.t}</th>
+                    {TRATAMIENTOS.map((t) => <td data-id={t.id}>{t[f.k]}</td>)}
+                  </tr>
+                ))
+              }
+              <tr>
+                <th scope="row">Precio referencial</th>
+                {
+                  TRATAMIENTOS.map((t) => (
+                    <td data-id={t.id} class="precio">
+                      {precio(t.desde)}
+                      <small>IGV incluido</small>
+                    </td>
+                  ))
+                }
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="comp-cards">
+          {
+            TRATAMIENTOS.map((t) => (
+              <article class="comp-card" data-id={t.id}>
+                <h3>{t.nombre}</h3>
+                <dl>
+                  {FILAS.map((f) => (<><dt>{f.t}</dt><dd>{t[f.k]}</dd></>))}
+                  <dt>Precio referencial</dt>
+                  <dd class="precio">{precio(t.desde)} (IGV incluido)</dd>
+                </dl>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+      <p class="comp-vacio" id="comp-vacio" hidden>Marca al menos dos tratamientos para ver la comparación.</p>
+
+      <p class="nota-sim comp-nota-pie">
+        Precios referenciales y ficticios, en soles e IGV incluido. La cantidad de sesiones es una referencia habitual y no un compromiso: el especialista la define tras evaluarte.
+      </p>
+      <div class="aviso" role="note">
+        <Icon name="info" />
+        <p>{AVISO_MEDICO}</p>
+      </div>
+      <p class="comp-cta"><a class="btn" id="comp-reservar" href="#agenda"><Icon name="calendar-days" /> Reservar una consulta de evaluación</a></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comparador {
+    margin-top: 1.75rem;
+  }
+  .comp-fieldset {
+    margin-bottom: 1rem;
+  }
+  .comp-cta {
+    margin-top: 1.5rem;
+  }
+</style>
+
+<script>
+  const raiz = document.getElementById('comparador');
+  if (raiz) {
+    const max = Number(raiz.dataset.max ?? 3);
+    const cajas = Array.from(raiz.querySelectorAll<HTMLInputElement>('input[name="tratamiento"]'));
+    const resultado = raiz.querySelector<HTMLElement>('#comp-resultado')!;
+    const vacio = raiz.querySelector<HTMLElement>('#comp-vacio')!;
+    const estado = raiz.querySelector<HTMLElement>('#comp-estado')!;
+    const inicial = (raiz.dataset.inicial ?? '').split(',');
+    cajas.forEach((c) => (c.checked = inicial.includes(c.value)));
+    const marcadas = () => cajas.filter((c) => c.checked).map((c) => c.value);
+
+    const actualizar = () => {
+      const sel = marcadas();
+      const lleno = sel.length >= max;
+      // aria-disabled: siguen en el orden de tabulación y explican por qué no se pueden marcar.
+      cajas.forEach((c) => c.setAttribute('aria-disabled', String(lleno && !c.checked)));
+      raiz.querySelectorAll<HTMLElement>('[data-id]').forEach((el) => (el.hidden = !sel.includes(el.dataset.id ?? '')));
+      const suficiente = sel.length >= 2;
+      resultado.hidden = !suficiente;
+      vacio.hidden = suficiente;
+      estado.textContent = lleno
+        ? `Ya elegiste ${max} tratamientos, que es el máximo. Desmarca uno para elegir otro.`
+        : `Comparando ${sel.length} tratamiento${sel.length === 1 ? '' : 's'}. Puedes elegir hasta ${max}.`;
+    };
+
+    raiz.addEventListener('click', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.matches?.('input[aria-disabled="true"]')) {
+        e.preventDefault();
+        estado.textContent = `Ya elegiste ${max} tratamientos, que es el máximo. Desmarca uno para elegir otro.`;
+      }
+    });
+    cajas.forEach((c) => c.addEventListener('change', actualizar));
+    actualizar();
+
+    // El tratamiento elegido pasa al campo "Tratamiento de interés" de la agenda.
+    document.getElementById('comp-reservar')?.addEventListener('click', () => {
+      const sel = marcadas()[0];
+      const campo = document.getElementById('ag-tratamiento') as HTMLSelectElement | null;
+      if (campo && sel) campo.value = sel;
+    });
+  }
+</script>

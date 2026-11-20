@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Anton'; src: url('../public/fonts/anton-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Space Mono'; src: url('../public/fonts/space-mono-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1200px; height: 630px; background: #fff; font-family: 'Space Mono', monospace; color: #0b0b0b; position: relative; overflow: hidden;
+    background-image: linear-gradient(to right, rgba(11,11,11,.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(11,11,11,.1) 1px, transparent 1px); background-size: 40px 40px; }
+  .marco { position: absolute; inset: 24px; border: 8px solid #0b0b0b; }
+  .texto { position: absolute; left: 64px; top: 64px; width: 600px; }
+  .tag { display: inline-block; border: 4px solid #0b0b0b; padding: 8px 14px; font-weight: 700; font-size: 22px; text-transform: uppercase; background: #fff; letter-spacing: .06em; }
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; font-size: 172px; line-height: .86; margin-top: 28px; }
+  h1 mark { background: #ff5b14; color: #0b0b0b; padding: 0 .08em; box-shadow: 10px 10px 0 #0b0b0b; }
+  .pie { position: absolute; left: 64px; bottom: 56px; font-weight: 700; font-size: 24px; text-transform: uppercase; background: #0b0b0b; color: #fff; padding: 10px 18px; letter-spacing: .04em; }
+  .foto { position: absolute; right: 64px; top: 64px; width: 420px; height: 502px; border: 8px solid #0b0b0b; box-shadow: 14px 14px 0 #0b0b0b; background: url('../src/assets/fotos/zapatillas-fondo-naranja.jpg') center/cover; }
+  .sello { position: absolute; right: 40px; bottom: 40px; background: #0b0b0b; color: #ff5b14; font-family: 'Anton'; font-size: 34px; padding: 6px 16px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <div class="marco"></div>
+  <div class="texto">
+    <span class="tag">Lima · Pedido por WhatsApp</span>
+    <h1>Vértice<br><mark>Studio</mark></h1>
+  </div>
+  <div class="pie">Zapatillas urbanas · Demo de portafolio</div>
+  <div class="foto"></div>
+  <div class="sello">Demo</div>
+</body>
+</html>

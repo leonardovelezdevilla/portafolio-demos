@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Libro de Reclamaciones de demo · Kipuflow" descripcion="Libro de Reclamaciones de demostración: muestra el formulario y el número de hoja, sin enviar ni guardar nada." ruta="/libro-reclamaciones/">
+  <article class="contenedor texto">
+    <p class="sobretitulo">Documento de demo</p>
+    <h1>Libro de Reclamaciones</h1>
+    <p>Kipuflow es ficticio. Este formulario solo enseña cómo sería: valida en tu navegador y genera un número de hoja de ejemplo. No se envía ni se guarda nada.</p>
+    <form id="lr-form" class="vidrio lr" novalidate>
+      <div class="campo"><label for="lr-nombre">Nombre completo</label><input id="lr-nombre" type="text" autocomplete="name" aria-required="true" aria-describedby="lr-nombre-err" /><p class="err" id="lr-nombre-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-doc">DNI (8 dígitos)</label><input id="lr-doc" type="text" inputmode="numeric" maxlength="8" aria-required="true" aria-describedby="lr-doc-err" /><p class="err" id="lr-doc-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-tipo">Tipo</label><select id="lr-tipo" aria-required="true" aria-describedby="lr-tipo-err"><option value="">Elige una opción</option><option>Reclamo (disconformidad con el servicio)</option><option>Queja (malestar sin relación al servicio)</option></select><p class="err" id="lr-tipo-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-detalle">Detalle</label><textarea id="lr-detalle" rows="4" aria-required="true" aria-describedby="lr-detalle-err"></textarea><p class="err" id="lr-detalle-err" role="alert"></p></div>
+      <button class="btn btn-primario" type="submit">Generar hoja de ejemplo</button>
+    </form>
+    <div id="lr-ok" class="vidrio lr" role="status" hidden tabindex="-1">
+      <h2>Hoja de reclamación de ejemplo</h2>
+      <p>Número de hoja: <strong class="num" id="lr-num"></strong></p>
+      <p>Es una confirmación simulada. No se envió nada.</p>
+    </div>
+    <p><a href="/">Volver al inicio</a></p>
+  </article>
+</Base>
+<style is:global>
+  .lr { padding: 1.5rem; display: grid; gap: 1rem; }
+  .lr .campo { display: grid; gap: .4rem; }
+  .lr label { font-weight: 600; }
+  .lr input, .lr select, .lr textarea { font: inherit; min-height: 48px; padding: .6rem .9rem; border-radius: 10px; color: var(--texto); background: rgba(5,9,14,.7); border: 1px solid rgba(190,220,245,.35); width: 100%; }
+  .lr [aria-invalid='true'] { border-color: var(--error); }
+  .lr .err { color: var(--error); font-size: .92rem; }
+  .lr[hidden] { display: none; }
+</style>
+<script>
+  const f = document.getElementById('lr-form') as HTMLFormElement;
+  const ok = document.getElementById('lr-ok')!;
+  const reglas: Record<string, [(v: string) => boolean, string]> = {
+    'lr-nombre': [(v) => v.length >= 3 && /\s/.test(v), 'Escribe tu nombre y apellido.'],
+    'lr-doc': [(v) => /^\d{8}$/.test(v), 'El DNI debe tener 8 números.'],
+    'lr-tipo': [(v) => v !== '', 'Elige si es un reclamo o una queja.'],
+    'lr-detalle': [(v) => v.length >= 10, 'Cuéntanos el detalle (mínimo 10 caracteres).'],
+  };
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let primero: HTMLElement | null = null;
+    for (const [id, [valido, msg]] of Object.entries(reglas)) {
+      const el = document.getElementById(id) as HTMLInputElement;
+      const bien = valido(el.value.trim());
+      document.getElementById(id + '-err')!.textContent = bien ? '' : msg;
+      el.setAttribute('aria-invalid', bien ? 'false' : 'true');
+      if (!bien && !primero) primero = el;
+    }
+    if (primero) { primero.focus(); return; }
+    document.getElementById('lr-num')!.textContent = `HR-DEMO-${String(Math.floor(Math.random() * 900000) + 100000)}`;
+    f.hidden = true; ok.hidden = false; ok.focus();
+  });
+</script>

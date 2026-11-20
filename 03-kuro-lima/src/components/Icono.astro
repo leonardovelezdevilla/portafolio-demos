@@ -1,0 +1,17 @@
+---
+// Íconos Lucide (ISC) incrustados como SVG en línea.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+interface Props { nombre: string; titulo?: string }
+const { nombre, titulo } = Astro.props;
+const crudo = readFileSync(join(process.cwd(), 'node_modules/lucide-static/icons', `${nombre}.svg`), 'utf8');
+const cuerpo = crudo
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/<svg[^>]*>/, '')
+  .replace('</svg>', '')
+  .trim();
+const atributos = titulo ? `role="img" aria-label="${titulo}"` : 'aria-hidden="true" focusable="false"';
+const svg = `<svg class="icono" ${atributos} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${cuerpo}</svg>`;
+---
+<Fragment set:html={svg} />

@@ -1,0 +1,26 @@
+{
+  "name": "kuro-lima",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Demo de portafolio de Vélez De Villa: restaurante nikkei ficticio en Barranco, Lima.",
+  "scripts": {
+    "dev": "astro dev --port 4333",
+    "build": "astro build",
+    "preview": "astro preview --port 4333",
+    "test": "vitest run",
+    "capturas": "node scripts/capturas.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/figtree": "^5.3.0",
+    "astro": "^7.4.13",
+    "lucide-static": "^1.77.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1",
+    "vitest": "^5.1.1"
+  },
+  "license": "UNLICENSED"
+}

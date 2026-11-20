@@ -1,0 +1,18 @@
+---
+const enInicio = Astro.url.pathname === '/';
+const base = enInicio ? '' : '/';
+---
+<header class="cabecera">
+  <div class="contenedor cabecera__in">
+    <a class="marca" href="/">Kuro <small>Barranco</small></a>
+    <nav class="nav" aria-label="Principal">
+      <ul>
+        <li><a href={`${base}#historia`}>Historia</a></li>
+        <li><a href={`${base}#carta`}>Carta</a></li>
+        <li><a href={`${base}#omakase`}>Omakase</a></li>
+        <li><a href={`${base}#visitanos`}>Visítanos</a></li>
+      </ul>
+    </nav>
+    <a class="boton boton--oro" href={`${base}#reserva`}>Reservar</a>
+  </div>
+</header>

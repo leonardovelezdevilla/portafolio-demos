@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+---
+<section class="seccion" id="funciones" aria-labelledby="t-fun">
+  <div class="contenedor">
+    <div class="cabecera-sec">
+      <p class="sobretitulo">Qué hace por ti</p>
+      <h2 id="t-fun">Todo el ciclo del recibo, en un solo lugar.</h2>
+    </div>
+    <div class="bento">
+      <article class="vidrio b-recibos">
+        <Icon name="receipt" size={26} />
+        <h3>Recibos por honorarios que se arman solos</h3>
+        <p>Cliente, concepto y monto: Kipuflow calcula la retención de 8 % cuando corresponde y te dice cuánto te llegará a la cuenta. Tú emites en SUNAT; aquí queda todo ordenado.</p>
+        <div class="mini" aria-hidden="true">
+          <span>Bruto <b class="num">S/ 3 200</b></span>
+          <span>Retención <b class="num">−S/ 256</b></span>
+          <span>Te llega <b class="num ok">S/ 2 944</b></span>
+        </div>
+      </article>
+      <article class="vidrio b-recordatorios">
+        <Icon name="bell-ring" size={24} />
+        <h3>Recordatorios de pagos a cuenta</h3>
+        <p>Un aviso antes de cada vencimiento mensual y otro cuando tus ingresos se acercan al tope para suspender retenciones.</p>
+      </article>
+      <article class="vidrio b-gastos">
+        <Icon name="wallet" size={24} />
+        <h3>Gastos</h3>
+        <p>Registra boletas y facturas por categoría y sepas qué parte cuenta para tu declaración.</p>
+      </article>
+      <article class="vidrio b-reportes">
+        <Icon name="chart-column" size={24} />
+        <h3>Reportes que se entienden</h3>
+        <p>Ingresos por cliente, mes contra mes y proyección anual con la escala del impuesto a la renta.</p>
+      </article>
+      <article class="vidrio b-contador">
+        <Icon name="file-spreadsheet" size={24} />
+        <h3>Exportación para tu contador</h3>
+        <p>Un solo archivo con recibos, retenciones y gastos del periodo. Sin pedir capturas por WhatsApp.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento { display: grid; gap: 1rem; }
+  article { padding: 1.5rem; display: grid; gap: .7rem; align-content: start; }
+  article > svg { color: var(--verde); }
+  article p { color: var(--texto-2); }
+  .b-recibos { background: linear-gradient(160deg, rgba(62,230,162,.14), rgba(22,32,44,.7) 55%); }
+  .b-recibos h3 { font-size: 1.6rem; font-weight: 700; max-width: 18ch; }
+  .b-reportes > svg, .b-contador > svg { color: var(--azul); }
+  .mini { display: grid; gap: .5rem; margin-top: .8rem; padding: 1rem; border-radius: 12px; background: rgba(0,0,0,.3); }
+  .mini span { display: flex; justify-content: space-between; color: var(--texto-2); }
+  .mini b { color: var(--texto); font-weight: 500; }
+  .mini .ok { color: var(--verde); font-weight: 700; }
+  @media (min-width: 768px) {
+    .bento { grid-template-columns: repeat(6, 1fr); }
+    .b-recibos { grid-column: 1 / 5; grid-row: span 2; padding: 2rem; }
+    .b-recordatorios { grid-column: 5 / 7; }
+    .b-gastos { grid-column: 5 / 7; }
+    .b-reportes { grid-column: 1 / 4; }
+    .b-contador { grid-column: 4 / 7; }
+  }
+</style>

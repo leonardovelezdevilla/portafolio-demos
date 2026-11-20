@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Demos de portafolio · Vélez De Villa</title>
+  <meta name="description" content="Cinco demos de sistemas web para negocios en Lima: SaaS, tienda, restaurante, clínica y agencia de automatización. Marcas ficticias.">
+  <style>
+    :root {
+      --fondo: #f6f4ef;
+      --superficie: #ffffff;
+      --texto: #1c1b19;
+      --texto-2: #57534c;
+      --borde: #d9d4c9;
+      --acento: #1f5f4a;
+      --foco: #1f5f4a;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fondo: #151513;
+        --superficie: #1f1e1b;
+        --texto: #f1eee7;
+        --texto-2: #b9b3a7;
+        --borde: #3a3832;
+        --acento: #8fd3b6;
+        --foco: #8fd3b6;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--fondo);
+      color: var(--texto);
+      font: 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    a { color: var(--acento); }
+    a:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; border-radius: 4px; }
+    .envoltura { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+    header { padding: 56px 0 32px; }
+    .marca { font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-2); margin: 0 0 12px; }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.1; margin: 0 0 16px; max-width: 18ch; }
+    .bajada { color: var(--texto-2); max-width: 62ch; margin: 0; }
+    .grilla { list-style: none; padding: 0; margin: 0 0 48px; display: grid; gap: 24px; grid-template-columns: 1fr; }
+    @media (min-width: 760px) { .grilla { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .grilla { grid-template-columns: repeat(3, 1fr); } .grilla li:first-child { grid-column: span 2; }
+      .grilla li:nth-child(2) figure { aspect-ratio: auto; flex: 1; min-height: 0; }
+      .grilla li:nth-child(2) img { object-position: left top; }
+      .grilla li:nth-child(2) .cuerpo { flex: 0 0 auto; } }
+    .demo { background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+    .demo figure { margin: 0; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--borde); background: var(--borde); }
+    .demo img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .cuerpo { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .num { font-variant-numeric: tabular-nums; color: var(--texto-2); font-size: .85rem; margin: 0; }
+    h2 { margin: 0; font-size: 1.35rem; line-height: 1.2; }
+    .caso { margin: 0; color: var(--texto-2); }
+    .muestra { margin: 0; padding-left: 1.1rem; }
+    .acciones { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    .acciones a { min-height: 44px; display: inline-flex; align-items: center; }
+    code { font-size: .9em; background: var(--fondo); border: 1px solid var(--borde); border-radius: 6px; padding: 1px 6px; }
+    .como { border-top: 1px solid var(--borde); padding: 32px 0 56px; color: var(--texto-2); }
+    .como h2 { color: var(--texto); margin-bottom: 8px; }
+    .como pre code { border: 0; background: none; padding: 0; font-size: .95rem; }
+    .como pre { background: var(--superficie); border: 1px solid var(--borde); border-radius: 10px; padding: 14px; overflow-x: auto; color: var(--texto); }
+  </style>
+</head>
+<body>
+  <div class="envoltura">
+    <header>
+      <p class="marca">Vélez De Villa · Sistemas y automatización para negocios</p>
+      <h1>Cinco demos para negocios de Lima</h1>
+      <p class="bajada">Cada demo resuelve un caso real —reservar, pedir, cotizar o calcular— con una identidad propia. Todas las marcas, personas, cifras y testimonios son ficticios y están marcados como «Ejemplo de demo».</p>
+    </header>
+
+    <main>
+      <ul class="grilla">
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/01-kipuflow.webp" alt="Página de inicio de Kipuflow: titular sobre recibos por honorarios y panel oscuro con recibos de ejemplo" width="960" height="600" loading="eager"></figure>
+            <div class="cuerpo">
+              <p class="num">01</p>
+              <h2>Kipuflow</h2>
+              <p class="caso">SaaS de finanzas para freelancers peruanos. Oscuro con vidrio, acentos verde y azul.</p>
+              <ul class="muestra">
+                <li>Calculadora referencial de renta de 4.ª categoría</li>
+                <li>Precios mensual/anual, bento de funciones y FAQ</li>
+              </ul>
+              <div class="acciones"><a href="01-kipuflow/README.md">Ficha (README)</a><a href="01-kipuflow/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/02-vertice-studio.webp" alt="Inicio de Vértice Studio: diseño brutalista en blanco, negro y naranja con catálogo de zapatillas" width="960" height="600" loading="lazy"></figure>
+            <div class="cuerpo">
+              <p class="num">02</p>
+              <h2>Vértice Studio</h2>
+              <p class="caso">Tienda de zapatillas que vende por WhatsApp. Brutalista en blanco, negro y naranja.</p>
+              <ul class="muestra">
+                <li>Filtro por categoría y talla, vista rápida</li>
+                <li>Carrito lateral y pedido por WhatsApp</li>
+              </ul>
+              <div class="acciones"><a href="02-vertice-studio/README.md">Ficha (README)</a><a href="02-vertice-studio/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/03-kuro-lima.webp" alt="Inicio de Kuro: diseño editorial en carbón y dorado con fotografía de cocina nikkei" width="960" height="600" loading="lazy"></figure>
+            <div class="cuerpo">
+              <p class="num">03</p>
+              <h2>Kuro</h2>
+              <p class="caso">Restaurante nikkei en Barranco. Editorial en tierra, carbón y dorado.</p>
+              <ul class="muestra">
+                <li>Carta filtrable por tiempos y etiquetas</li>
+                <li>Reserva de mesa y omakase validada</li>
+              </ul>
+              <div class="acciones"><a href="03-kuro-lima/README.md">Ficha (README)</a><a href="03-kuro-lima/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/04-aura-derma.webp" alt="Inicio de Aura Derma: clínica dermatológica en tonos salvia y crema" width="960" height="600" loading="lazy"></figure>
+            <div class="cuerpo">
+              <p class="num">04</p>
+              <h2>Aura Derma</h2>
+              <p class="caso">Clínica dermatológica en San Isidro. Salvia, crema y blanco.</p>
+              <ul class="muestra">
+                <li>Comparador de tratamientos</li>
+                <li>Agenda con horarios ocupados simulados</li>
+              </ul>
+              <div class="acciones"><a href="04-aura-derma/README.md">Ficha (README)</a><a href="04-aura-derma/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/05-nexo-automatiza.webp" alt="Inicio de Nexo: composición asimétrica con diagrama de automatización" width="960" height="600" loading="lazy"></figure>
+            <div class="cuerpo">
+              <p class="num">05</p>
+              <h2>Nexo</h2>
+              <p class="caso">Agencia de automatización para pymes. Asimétrica, con animación al hacer scroll.</p>
+              <ul class="muestra">
+                <li>Casos con filtro y modal</li>
+                <li>Cotizador por pasos con rango de precio</li>
+              </ul>
+              <div class="acciones"><a href="05-nexo-automatiza/README.md">Ficha (README)</a><a href="05-nexo-automatiza/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </main>
+
+    <section class="como" aria-labelledby="como-titulo">
+      <h2 id="como-titulo">Cómo ver una demo en vivo</h2>
+      <p>Cada demo es un proyecto Astro independiente con su propio repositorio. Desde la carpeta de la demo:</p>
+      <pre><code>npm install
+npm run dev</code></pre>
+      <p>Hecho con Astro, CSS propio y JavaScript mínimo. Fotos de Unsplash y Pexels con créditos en cada <code>CREDITOS.md</code>.</p>
+    </section>
+  </div>
+</body>
+</html>

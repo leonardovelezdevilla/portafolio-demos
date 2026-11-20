@@ -1,0 +1,214 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import Icono from '../components/Icono.astro';
+import Pie from '../components/Pie.astro';
+import { productos } from '../data/productos';
+import { foto } from '../data/fotos';
+import { TELEFONO_DEMO } from '../lib/whatsapp';
+import { ENVIO, formatoSoles } from '../lib/carrito';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  ruta: string;
+  jsonLd?: object[];
+  /** og:type (website por defecto, product en las fichas). */
+  tipoOg?: 'website' | 'product';
+  /** La 404 no debe declarar canonical ni og:url. */
+  sinCanonical?: boolean;
+}
+const { titulo, descripcion, ruta, jsonLd = [], tipoOg = 'website', sinCanonical = false } = Astro.props;
+
+// Datos del catálogo para las islas JS (miniaturas y fotos medianas optimizadas en build).
+const datos = await Promise.all(
+  productos.map(async (p) => {
+    const f = foto(p.foto);
+    const mini = await getImage({ src: f, width: 144, height: 180, format: 'webp', fit: 'cover', position: p.posicion });
+    const medio = await getImage({ src: f, width: 720, height: 900, format: 'webp', fit: 'cover', position: p.posicion });
+    return {
+      slug: p.slug, nombre: p.nombre, categoria: p.categoria, precio: p.precio, colores: p.colores,
+      tallas: p.tallas, resumen: p.resumen, alt: p.alt, mini: mini.src, medio: medio.src,
+    };
+  }),
+);
+const json = (o: unknown) => JSON.stringify(o).replace(/</g, '\\u003c');
+const wa = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Vértice Studio, quiero hacer una consulta (demo).')}`;
+const enlaces = [
+  { href: '/#catalogo', t: 'Catálogo' },
+  { href: '/#como-comprar', t: 'Cómo comprar' },
+  { href: '/#tallas', t: 'Tallas' },
+];
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#ff5b14" />
+    {!sinCanonical && <link rel="canonical" href={ruta} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/space-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content={tipoOg} />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Vértice Studio (demo)" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    {!sinCanonical && <meta property="og:url" content={ruta} />}
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vértice Studio: zapatillas urbanas, pedido por WhatsApp. Demo de portafolio." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content="/og.png" />
+    {jsonLd.map((o) => <script type="application/ld+json" set:html={json(o)} />)}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cabecera">
+      <div class="contenedor">
+        <div class="cabecera__fila">
+          <a class="logo" href="/" aria-label="Vértice Studio, inicio">
+            <span class="logo__marca" aria-hidden="true">
+              <svg viewBox="0 0 64 64"><path d="M10 14h14l8 24 8-24h14L36 52H28z" fill="#ff5b14" /></svg>
+            </span>
+            Vértice
+          </a>
+          <nav class="nav" aria-label="Principal">
+            {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+          </nav>
+          <button type="button" class="btn-carrito" data-abrir-carrito aria-haspopup="dialog" hidden>
+            <Icono nombre="bolsa" />
+            <span>Carrito</span>
+            <span class="btn-carrito__n" aria-hidden="true" data-conteo-carrito>0</span>
+            <span class="sr-only" data-conteo-texto>, 0 productos</span>
+          </button>
+          <noscript>
+            <a class="btn-carrito" href={wa}><Icono nombre="mensaje" /> <span>Pedir por WhatsApp</span></a>
+          </noscript>
+        </div>
+      </div>
+      <nav class="nav-movil" aria-label="Secciones">
+        {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+      </nav>
+    </header>
+
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+
+    <Pie />
+
+    <!-- Aviso breve al agregar (no interrumpe el catálogo) -->
+    <div class="toast" data-toast hidden>
+      <p role="status" data-toast-texto></p>
+      <button type="button" class="btn btn--negro" data-toast-ver>Ver carrito</button>
+      <button type="button" class="btn-cerrar btn-cerrar--chico" data-toast-cerrar aria-label="Cerrar aviso"><Icono nombre="cerrar" tamano={18} /></button>
+    </div>
+
+    <!-- Carrito lateral (modal nativo: foco atrapado, Escape y retorno de foco) -->
+    <dialog id="carrito" class="carrito" aria-labelledby="carrito-titulo">
+      <div class="carrito__cab">
+        <h2 id="carrito-titulo">Tu carrito</h2>
+        <button type="button" class="btn-cerrar" data-cerrar-carrito aria-label="Cerrar carrito"><Icono nombre="cerrar" /></button>
+      </div>
+      <div class="carrito__cuerpo">
+        <p class="sr-only" role="status" aria-live="polite" data-anuncio></p>
+        <div class="carrito__vacio" data-vacio>
+          <p><strong>Tu carrito está vacío.</strong></p>
+          <p class="nota">Elige una talla en cualquier modelo y suma tu primer par.</p>
+          <button type="button" class="btn btn--primario" data-cerrar-carrito>Seguir mirando</button>
+        </div>
+
+        <section class="confirmacion" data-confirmacion tabindex="-1" aria-labelledby="conf-titulo" hidden>
+          <p class="etiqueta">Pedido armado</p>
+          <h3 id="conf-titulo">Se abrió WhatsApp</h3>
+          <p>Tu pedido quedó escrito en un mensaje. <strong>Aún no está enviado</strong>: envíalo desde WhatsApp para que el vendedor lo reciba. Ahí se confirma el stock y se acuerda el pago.</p>
+          <p>Si no se abrió nada (a veces el navegador bloquea la ventana), usa este enlace:</p>
+          <p><a class="btn btn--primario btn--bloque" data-enlace-wa href="https://wa.me/51900000000" target="_blank" rel="noopener noreferrer"><Icono nombre="mensaje" /> Abrir WhatsApp con mi pedido</a></p>
+          <p class="nota">Demo: el número es ficticio, no habrá respuesta.</p>
+          <div class="confirmacion__acciones">
+            <button type="button" class="btn" data-volver-carrito>Volver al carrito</button>
+            <button type="button" class="btn btn--negro" data-vaciar>Vaciar carrito</button>
+          </div>
+        </section>
+
+        <div data-contenido hidden>
+          <ul class="lineas" data-lineas></ul>
+
+          <fieldset class="campo envio">
+            <legend>Zona de envío</legend>
+            <div class="opciones">
+              <label class="opcion"><input type="radio" name="zona" value="lima" checked /><span>Lima Metropolitana</span></label>
+              <label class="opcion"><input type="radio" name="zona" value="provincias" /><span>Provincias</span></label>
+            </div>
+            <p class="campo__ayuda">
+              Lima: {formatoSoles(ENVIO.lima.tarifa)}, gratis desde {formatoSoles(ENVIO.lima.gratisDesde)}.
+              Provincias: {formatoSoles(ENVIO.provincias.tarifa)}, gratis desde {formatoSoles(ENVIO.provincias.gratisDesde)}.
+            </p>
+          </fieldset>
+
+          <dl class="resumen">
+            <div><dt>Subtotal</dt><dd data-subtotal>S/ 0.00</dd></div>
+            <div><dt>Envío</dt><dd data-envio>S/ 0.00</dd></div>
+            <div class="total"><dt>Total (IGV incluido)</dt><dd data-total>S/ 0.00</dd></div>
+          </dl>
+          <p class="aviso-envio" data-aviso-envio></p>
+
+          <form novalidate data-form-pedido aria-labelledby="titulo-pedido">
+            <h3 id="titulo-pedido" class="form-titulo">Pide por WhatsApp</h3>
+            <p class="nota">Escribirás desde tu propio WhatsApp, así que no pedimos tu número. El pago por Yape o Plin se acuerda en ese chat, después de confirmar el stock.</p>
+            <p class="error error--resumen" data-resumen-errores role="alert" hidden></p>
+            <div class="campo">
+              <label for="ped-nombre">Nombre completo</label>
+              <input id="ped-nombre" name="nombre" type="text" autocomplete="name" aria-describedby="ped-nombre-error" required />
+              <p class="error" id="ped-nombre-error" data-error="nombre" role="alert" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="ped-distrito">Distrito o ciudad</label>
+              <input id="ped-distrito" name="distrito" type="text" autocomplete="address-level2" aria-describedby="ped-distrito-error" required />
+              <p class="error" id="ped-distrito-error" data-error="distrito" role="alert" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="ped-referencia">Dirección de referencia</label>
+              <input id="ped-referencia" name="referencia" type="text" autocomplete="street-address" aria-describedby="ped-referencia-ayuda ped-referencia-error" required />
+              <p class="campo__ayuda" id="ped-referencia-ayuda">Calle, número y un punto de referencia.</p>
+              <p class="error" id="ped-referencia-error" data-error="referencia" role="alert" hidden></p>
+            </div>
+            <fieldset class="campo" aria-describedby="ped-pago-error">
+              <legend>Método de pago (obligatorio)</legend>
+              <div class="opciones">
+                <label class="opcion"><input type="radio" name="pago" value="Yape" aria-required="true" /><span>Yape</span></label>
+                <label class="opcion"><input type="radio" name="pago" value="Plin" aria-required="true" /><span>Plin</span></label>
+                <label class="opcion"><input type="radio" name="pago" value="Contraentrega" aria-required="true" /><span>Contraentrega</span></label>
+              </div>
+              <p class="error" id="ped-pago-error" data-error="pago" role="alert" hidden></p>
+            </fieldset>
+            <div class="campo campo--check">
+              <label class="check">
+                <input type="checkbox" name="acepta" value="si" aria-describedby="ped-acepta-ayuda ped-acepta-error" required />
+                <span>He leído la <a href="/privacidad/">Política de privacidad</a> y autorizo el uso de estos datos para gestionar mi pedido (demo).</span>
+              </label>
+              <p class="campo__ayuda" id="ped-acepta-ayuda">Al continuar, tu mensaje se abre en WhatsApp (Meta), que lo procesa según su propia política y puede transferirlo fuera del Perú.</p>
+              <p class="error" id="ped-acepta-error" data-error="acepta" role="alert" hidden></p>
+            </div>
+            <button type="submit" class="btn btn--primario btn--bloque"><Icono nombre="mensaje" /> Enviar pedido por WhatsApp</button>
+            <p class="nota nota--sep">Demo: el número de WhatsApp es ficticio. Se abre WhatsApp con tu pedido ya escrito; tú decides si lo envías. El stock se confirma por ese chat.</p>
+          </form>
+        </div>
+        <p class="nota nota--sep"><a href="/libro-reclamaciones/"><Icono nombre="libro" tamano={16} /> Libro de Reclamaciones (demo)</a> · <a href="/cambios/">Cambios y devoluciones</a></p>
+      </div>
+    </dialog>
+
+    <script type="application/json" id="datos-tienda" set:html={json(datos)} />
+    <script>
+      import '../scripts/carritoUI';
+    </script>
+  </body>
+</html>

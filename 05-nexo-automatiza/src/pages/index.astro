@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Servicios from '../components/Servicios.astro';
+import Casos from '../components/Casos.astro';
+import Proceso from '../components/Proceso.astro';
+import Cotizador from '../components/Cotizador.astro';
+import Testimonios from '../components/Testimonios.astro';
+import { NEXO } from '../data/contenido';
+import { cotizar, formatoSoles } from '../lib/cotizador';
+
+const minimo = cotizar({ tipo: 'restaurante', procesos: ['sheets'], volumen: 'bajo', integraciones: [], urgencia: 'normal' }).min;
+const maximo = cotizar({ tipo: 'salud', procesos: ['whatsapp', 'sheets', 'facturacion', 'inventario', 'reportes'], volumen: 'alto', integraciones: ['ose', 'pagos', 'crm', 'agenda'], urgencia: 'urgente' }).max;
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Nexo Automatiza (marca ficticia de demo)',
+  description:
+    'Agencia ficticia de automatización para pymes de Lima: WhatsApp, Google Sheets, facturación, inventario y reportes.',
+  url: '/',
+  telephone: `+${NEXO.telefono}`,
+  image: '/og.png',
+  areaServed: { '@type': 'City', name: 'Lima' },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Av. Ejemplo 123',
+    addressLocality: 'Miraflores',
+    addressRegion: 'Lima',
+    addressCountry: 'PE',
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '09:00',
+    closes: '18:00',
+  },
+  priceRange: `${formatoSoles(minimo)} - ${formatoSoles(maximo)} (referencial, sin IGV)`,
+  knowsAbout: ['Automatización de procesos', 'WhatsApp Business', 'Google Sheets', 'Facturación electrónica', 'Inventario'],
+};
+---
+<Base
+  titulo="Nexo Automatiza | Automatización para pymes de Lima"
+  descripcion="Demo de portafolio: agencia ficticia que conecta WhatsApp, Google Sheets, facturación e inventario. Casos de ejemplo y cotizador con rango en soles."
+  ruta="/"
+  jsonld={jsonld}
+>
+  <Hero />
+  <Servicios />
+  <Casos />
+  <Proceso />
+  <Cotizador />
+  <Testimonios />
+</Base>

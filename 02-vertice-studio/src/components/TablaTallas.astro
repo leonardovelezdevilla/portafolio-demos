@@ -1,0 +1,24 @@
+---
+const filas = [
+  [36, 22.8], [37, 23.5], [38, 24.1], [39, 24.8], [40, 25.4],
+  [41, 26.0], [42, 26.7], [43, 27.3], [44, 27.9], [45, 28.6],
+];
+const { titulo = 'Guía de tallas' } = Astro.props;
+---
+<div class="guia-tallas">
+  <table class="tabla">
+    <caption class="sr-only">{titulo}: talla EU y largo del pie en centímetros</caption>
+    <thead>
+      <tr><th scope="col">Talla EU</th><th scope="col">Largo del pie (cm)</th></tr>
+    </thead>
+    <tbody>
+      {filas.map(([t, cm]) => <tr><th scope="row" class="guia-tallas__t">{t}</th><td>{cm.toFixed(1)}</td></tr>)}
+    </tbody>
+  </table>
+  <p class="nota">Medidas referenciales de demo. Apoya el talón en una pared, marca la punta del dedo más largo y mide hasta la pared. Si estás entre dos tallas, elige la mayor.</p>
+</div>
+
+<style>
+  .guia-tallas__t { background: var(--naranja); color: var(--negro); text-transform: none; font-size: 15px; width: 40%; }
+  .guia-tallas :global(table) { max-width: 420px; }
+</style>

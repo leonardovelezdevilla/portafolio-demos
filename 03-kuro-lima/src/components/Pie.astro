@@ -1,0 +1,36 @@
+---
+import Icono from './Icono.astro';
+import { urlWhatsApp } from '../lib/reserva';
+---
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div>
+        <a class="marca" href="/">Kuro <small>Barranco</small></a>
+        <p>Cocina nikkei en Barranco.<br />Jr. Los Cedros 245, Barranco, Lima (dirección ficticia).</p>
+        <p>Reservas por WhatsApp: <a href={urlWhatsApp('Hola Kuro, tengo una consulta.')}>+51 900 000 000</a></p>
+      </div>
+      <nav aria-label="Secciones">
+        <h2>Explora</h2>
+        <ul>
+          <li><a href="/#carta">Carta</a></li>
+          <li><a href="/#omakase">Omakase</a></li>
+          <li><a href="/#reserva">Reservar mesa</a></li>
+          <li><a href="/#visitanos">Visítanos</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Legal">
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="/privacidad/">Privacidad</a></li>
+          <li><a href="/terminos/">Términos de demo</a></li>
+          <li><a href="/libro-reclamaciones/"><Icono nombre="book-open" />&nbsp;Libro de Reclamaciones (demo)</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="pie__legal">
+      <p><strong>Demo de portafolio — Vélez De Villa.</strong> Kuro es una marca ficticia: el restaurante, el chef, la dirección, el RUC 20000000001 (ficticio), los precios y los testimonios no son reales.</p>
+      <p>Fotografías de Unsplash y Pexels; créditos en el repositorio (CREDITOS.md).</p>
+    </div>
+  </div>
+</footer>

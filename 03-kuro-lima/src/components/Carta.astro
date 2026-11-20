@@ -1,0 +1,136 @@
+---
+import { Image } from 'astro:assets';
+import { carta, ETIQUETAS, precio, todosLosPlatos } from '../data/carta';
+import type { Etiqueta } from '../data/carta';
+import Icono from './Icono.astro';
+import tiradito from '../assets/fotos/tiradito-erdozain.jpg';
+import copa from '../assets/fotos/ceviche-copa-erdozain.jpg';
+import frito from '../assets/fotos/ceviche-frito-erdozain.jpg';
+
+const iconos: Record<Etiqueta, string> = { vegetariano: 'leaf', picante: 'flame', mariscos: 'shell', singluten: 'wheat-off' };
+---
+<section class="seccion tierra" id="carta" aria-labelledby="carta-titulo">
+  <div class="contenedor">
+    <div class="carta__intro">
+      <div>
+        <p class="sobretitulo">La carta</p>
+        <h2 class="titulo-seccion" id="carta-titulo">Seis tiempos, <em>un mismo mar</em></h2>
+        <p class="bajada">Pescado del día, ají amarillo y la disciplina del corte japonés. Pide por tiempos, comparte, y deja el postre para el final.</p>
+      </div>
+      <div class="carta__fotos">
+        <figure>
+          <Image src={tiradito} alt="Copa con salsa amarilla de mango y ají sobre un plato azul, acompañada de choclo, cancha y mariscos fritos" width={480} widths={[320, 480]} sizes="(min-width: 72rem) 20rem, 45vw" format="webp" quality={72} loading="lazy" decoding="async" />
+        </figure>
+        <figure>
+          <Image src={frito} alt="Tenedor levantando un ceviche de pescado con cebolla morada, camote, choclo y cancha en un plato azul" width={480} widths={[320, 480]} sizes="(min-width: 72rem) 20rem, 45vw" format="webp" quality={72} loading="lazy" decoding="async" />
+        </figure>
+        <figure class="ancha">
+          <Image src={copa} alt="Ceviche en copa con leche de tigre cremosa, ají en rodajas y trozos de camote, junto a choclo, cancha y pescado frito" width={720} widths={[480, 720]} sizes="(min-width: 72rem) 20rem, 92vw" format="webp" quality={72} loading="lazy" decoding="async" />
+        </figure>
+      </div>
+    </div>
+
+    <div class="filtros" data-filtros hidden>
+      <fieldset>
+        <legend>Tiempo</legend>
+        <div class="chips">
+          <button type="button" class="chip" data-tiempo="todos" aria-pressed="true">Todos</button>
+          {carta.map((t) => <button type="button" class="chip" data-tiempo={t.id} aria-pressed="false">{t.nombre}</button>)}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Preferencias</legend>
+        <div class="chips">
+          {(Object.keys(ETIQUETAS) as Etiqueta[]).map((e) => (
+            <label class="chip"><input type="checkbox" value={e} data-etiqueta /> <Icono nombre={iconos[e]} /> {ETIQUETAS[e].texto}</label>
+          ))}
+        </div>
+      </fieldset>
+      <p class="filtros__estado">
+        <span role="status" aria-live="polite" data-estado>Mostrando {todosLosPlatos.length} platos</span>
+        <button type="button" class="enlace-boton" data-limpiar hidden>Quitar filtros</button>
+      </p>
+    </div>
+
+    <div data-carta>
+      {carta.map((t) => (
+        <section class="tiempo" data-seccion={t.id} aria-labelledby={`t-${t.id}`}>
+          <div class="tiempo__cab">
+            <span class="tiempo__num" aria-hidden="true">{t.numero}</span>
+            <div>
+              <h3 id={`t-${t.id}`}>{t.nombre}</h3>
+              <p>{t.bajada}</p>
+            </div>
+          </div>
+          <ul class="platos">
+            {t.platos.map((p) => (
+              <li class="plato" data-tags={p.etiquetas.join(' ')}>
+                <div class="plato__linea">
+                  <h4 class="plato__nombre">{p.nombre}</h4>
+                  <span class="plato__puntos" aria-hidden="true"></span>
+                  <span class="plato__precio">{precio(p.precio)}</span>
+                </div>
+                <p class="plato__desc">{p.descripcion}</p>
+                {p.etiquetas.length > 0 && (
+                  <ul class="sellos" aria-label="Etiquetas del plato">
+                    {p.etiquetas.map((e) => <li class="sello"><Icono nombre={iconos[e]} />{ETIQUETAS[e].texto}</li>)}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <div class="carta__vacia" data-vacia hidden><p>Ningún plato reúne todo eso. Prueba quitando alguna preferencia.</p><button type="button" class="enlace-boton" data-limpiar-vacia>Quitar filtros</button></div>
+    </div>
+    <p class="carta__nota">Precios en soles (S/), con IGV incluido. No se cobra cargo por servicio; la propina es voluntaria. Carta de demostración con platos ficticios. Consulta al personal sobre alérgenos antes de pedir: la cocina trabaja con mariscos, soya, sésamo, maní y gluten y no podemos garantizar la ausencia de trazas.</p>
+  </div>
+</section>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-filtros]');
+  if (raiz) {
+    const secciones = [...document.querySelectorAll<HTMLElement>('[data-seccion]')];
+    const botones = [...raiz.querySelectorAll<HTMLButtonElement>('[data-tiempo]')];
+    const checks = [...raiz.querySelectorAll<HTMLInputElement>('[data-etiqueta]')];
+    const estado = raiz.querySelector<HTMLElement>('[data-estado]')!;
+    const limpiar = raiz.querySelector<HTMLButtonElement>('[data-limpiar]')!;
+    const vacia = document.querySelector<HTMLElement>('[data-vacia]')!;
+    let tiempo = 'todos';
+
+    const aplicar = () => {
+      const pedidas = checks.filter((c) => c.checked).map((c) => c.value);
+      let total = 0;
+      for (const s of secciones) {
+        const coincideTiempo = tiempo === 'todos' || s.dataset.seccion === tiempo;
+        let visibles = 0;
+        s.querySelectorAll<HTMLElement>('.plato').forEach((li) => {
+          const tags = (li.dataset.tags ?? '').split(' ').filter(Boolean);
+          const ok = coincideTiempo && pedidas.every((t) => tags.includes(t));
+          li.hidden = !ok;
+          if (ok) visibles++;
+        });
+        s.hidden = visibles === 0;
+        total += visibles;
+      }
+      botones.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tiempo === tiempo)));
+      vacia.hidden = total !== 0;
+      limpiar.hidden = tiempo === 'todos' && pedidas.length === 0;
+      estado.textContent = total === 0 ? 'No hay platos con esos filtros' : `Mostrando ${total} ${total === 1 ? 'plato' : 'platos'}`;
+    };
+
+    botones.forEach((b) => b.addEventListener('click', () => { tiempo = b.dataset.tiempo ?? 'todos'; aplicar(); }));
+    checks.forEach((c) => c.addEventListener('change', aplicar));
+    const quitar = () => {
+      tiempo = 'todos';
+      checks.forEach((c) => (c.checked = false));
+      aplicar();
+      // El botón se oculta al limpiar: el foco pasa al primer filtro para no perderlo.
+      botones[0].focus();
+    };
+    limpiar.addEventListener('click', quitar);
+    document.querySelector('[data-limpiar-vacia]')?.addEventListener('click', quitar);
+    raiz.hidden = false;
+    aplicar();
+  }
+</script>

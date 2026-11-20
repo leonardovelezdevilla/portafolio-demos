@@ -1,0 +1,169 @@
+---
+import Base from '../layouts/Base.astro';
+import { NEXO } from '../data/contenido';
+const fecha = new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(new Date());
+---
+<Base titulo="Libro de Reclamaciones (demo)" descripcion="Libro de Reclamaciones de demo de Nexo Automatiza: hoja con los campos de la norma, validada, que no envía datos." ruta="/libro-reclamaciones/">
+  <section class="legal">
+    <div class="wrap legal__in">
+      <h1>Libro de Reclamaciones</h1>
+      <p class="aviso-demo">Demostración: este formulario no envía ni guarda nada. Nexo vende a empresas, pero se incluye el libro de ejemplo por precaución. Reproduce los campos de la hoja prevista en el reglamento del Código de Protección y Defensa del Consumidor (DS 011-2011-PCM); en un servicio real, valida el formato y los plazos vigentes.</p>
+
+      <form id="form-lr" novalidate>
+        <h2>Datos del proveedor</h2>
+        <ul class="prov">
+          <li><strong>Razón social:</strong> Nexo Automatiza S.A.C. (ficticia)</li>
+          <li><strong>RUC:</strong> {NEXO.ruc}</li>
+          <li><strong>Domicilio del establecimiento:</strong> {NEXO.direccion}</li>
+          <li><strong>Fecha del registro:</strong> {fecha}</li>
+        </ul>
+
+        <h2>1. Identificación del consumidor</h2>
+        <div class="campo">
+          <label for="lr-nombre">Nombre completo</label>
+          <input id="lr-nombre" name="nombre" autocomplete="name" aria-describedby="e-nombre" />
+          <p class="err" id="e-nombre" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-domicilio">Domicilio</label>
+          <input id="lr-domicilio" name="domicilio" autocomplete="street-address" aria-describedby="e-domicilio" />
+          <p class="err" id="e-domicilio" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-tdoc">Tipo de documento</label>
+          <select id="lr-tdoc" name="tdoc">
+            <option value="dni">DNI</option>
+            <option value="ce">Carné de extranjería</option>
+            <option value="pas">Pasaporte</option>
+            <option value="ruc">RUC</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="lr-doc">Número de documento</label>
+          <input id="lr-doc" name="doc" inputmode="numeric" maxlength="12" aria-describedby="e-doc" />
+          <p class="err" id="e-doc" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-tel">Teléfono (9 dígitos)</label>
+          <input id="lr-tel" name="tel" type="tel" inputmode="numeric" maxlength="9" autocomplete="tel-national" aria-describedby="e-tel" />
+          <p class="err" id="e-tel" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-correo">Correo electrónico</label>
+          <input id="lr-correo" name="correo" type="email" autocomplete="email" aria-describedby="e-correo" />
+          <p class="err" id="e-correo" role="alert"></p>
+        </div>
+
+        <h2>2. Identificación del servicio contratado</h2>
+        <fieldset class="campo" aria-describedby="e-bien">
+          <legend>Tipo</legend>
+          <label class="inline"><input type="radio" name="bien" value="servicio" /> Servicio</label>
+          <label class="inline"><input type="radio" name="bien" value="producto" /> Producto</label>
+          <p class="err" id="e-bien" role="alert"></p>
+        </fieldset>
+        <div class="campo">
+          <label for="lr-monto">Monto reclamado en S/ (0 si no aplica)</label>
+          <input id="lr-monto" name="monto" inputmode="decimal" aria-describedby="e-monto" />
+          <p class="err" id="e-monto" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-desc">Descripción del servicio (mínimo 10 caracteres)</label>
+          <input id="lr-desc" name="desc" aria-describedby="e-desc" />
+          <p class="err" id="e-desc" role="alert"></p>
+        </div>
+
+        <h2>3. Detalle de la reclamación y pedido del consumidor</h2>
+        <fieldset class="campo" aria-describedby="e-tipo">
+          <legend>Tipo</legend>
+          <label class="inline"><input type="radio" name="tipo" value="reclamo" /> Reclamo (disconformidad con el servicio)</label>
+          <label class="inline"><input type="radio" name="tipo" value="queja" /> Queja (malestar no relacionado con el servicio)</label>
+          <p class="err" id="e-tipo" role="alert"></p>
+        </fieldset>
+        <div class="campo">
+          <label for="lr-detalle">Detalle (mínimo 20 caracteres)</label>
+          <textarea id="lr-detalle" name="detalle" rows="5" aria-describedby="e-detalle"></textarea>
+          <p class="err" id="e-detalle" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="lr-pedido">Pedido del consumidor (mínimo 10 caracteres)</label>
+          <textarea id="lr-pedido" name="pedido" rows="3" aria-describedby="e-pedido"></textarea>
+          <p class="err" id="e-pedido" role="alert"></p>
+        </div>
+
+        <h2>4. Observaciones y acciones adoptadas por el proveedor</h2>
+        <p class="muted">Espacio a cargo del proveedor; en esta demo permanece vacío.</p>
+
+        <div class="campo">
+          <label class="inline">
+            <input type="checkbox" name="acepto" id="lr-acepto" aria-describedby="e-acepto" />
+            <span>Acepto el tratamiento de mis datos para atender este reclamo, según la <a href="/privacidad/">política de privacidad</a>. En esta demo no se almacena nada.</span>
+          </label>
+          <p class="err" id="e-acepto" role="alert"></p>
+        </div>
+        <p class="muted">Declaro que la información es veraz. Firma del consumidor: se agregaría en la copia impresa o con firma digital.</p>
+        <button class="btn" type="submit">Registrar (demo)</button>
+      </form>
+
+      <div id="lr-ok" class="aviso-demo" role="status" hidden>
+        <p><strong>Hoja de reclamación de demo: <span id="lr-hoja"></span></strong></p>
+        <p>No se envió ni guardó ningún dato. En un servicio real recibirías una copia en tu correo y la respuesta dentro del plazo legal vigente.</p>
+      </div>
+      <p><a href="/">Volver al inicio</a></p>
+    </div>
+  </section>
+
+  <script>
+    const f = document.getElementById('form-lr') as HTMLFormElement;
+    const err = (id: string, msg: string) => {
+      document.getElementById('e-' + id)!.textContent = msg;
+      return msg === '';
+    };
+    const orden = ['nombre', 'domicilio', 'doc', 'tel', 'correo', 'bien', 'monto', 'desc', 'tipo', 'detalle', 'pedido', 'acepto'];
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = new FormData(f);
+      const v = (k: string) => String(d.get(k) ?? '').trim();
+      const tdoc = v('tdoc');
+      const docOk = tdoc === 'dni' ? /^\d{8}$/.test(v('doc')) : tdoc === 'ruc' ? /^\d{11}$/.test(v('doc')) : /^[A-Za-z0-9]{6,12}$/.test(v('doc'));
+      const docMsg = tdoc === 'dni' ? 'El DNI debe tener 8 dígitos.' : tdoc === 'ruc' ? 'El RUC debe tener 11 dígitos.' : 'Escribe un número de documento válido (6 a 12 caracteres).';
+      err('nombre', v('nombre').length >= 3 ? '' : 'Escribe tu nombre completo.');
+      err('domicilio', v('domicilio').length >= 5 ? '' : 'Escribe tu domicilio.');
+      err('doc', docOk ? '' : docMsg);
+      err('tel', /^9\d{8}$/.test(v('tel')) ? '' : 'El teléfono debe tener 9 dígitos y empezar con 9.');
+      err('correo', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('correo')) ? '' : 'Escribe un correo válido.');
+      err('bien', v('bien') ? '' : 'Indica si es un servicio o un producto.');
+      err('monto', /^\d+([.,]\d{1,2})?$/.test(v('monto')) ? '' : 'Escribe un monto en soles (0 si no aplica).');
+      err('desc', v('desc').length >= 10 ? '' : 'Describe el servicio con al menos 10 caracteres.');
+      err('tipo', v('tipo') ? '' : 'Elige reclamo o queja.');
+      err('detalle', v('detalle').length >= 20 ? '' : 'Cuéntanos con al menos 20 caracteres.');
+      err('pedido', v('pedido').length >= 10 ? '' : 'Indica qué solicitas, con al menos 10 caracteres.');
+      err('acepto', d.get('acepto') ? '' : 'Marca la casilla para continuar.');
+      const primero = orden.find((k) => document.getElementById('e-' + k)!.textContent);
+      if (primero) {
+        const e0 = document.getElementById('e-' + primero)!;
+        (e0.parentElement!.querySelector('input,textarea') as HTMLElement | null)?.focus();
+        return;
+      }
+      const hoja = `LR-DEMO-${String(Date.now()).slice(-6)}`;
+      document.getElementById('lr-hoja')!.textContent = hoja;
+      f.hidden = true;
+      const ok = document.getElementById('lr-ok')!;
+      ok.hidden = false;
+      ok.setAttribute('tabindex', '-1');
+      ok.focus();
+    });
+  </script>
+
+  <style>
+    h2 { margin-top: 28px; }
+    .prov { list-style: none; padding: 0; display: grid; gap: 4px; margin-bottom: 8px; }
+    .campo { margin-bottom: 20px; border: 0; padding: 0; }
+    label, legend { display: block; font-weight: 700; margin-bottom: 6px; padding: 0; }
+    .inline { display: flex; gap: 10px; font-weight: 400; min-height: 44px; align-items: center; }
+    input:not([type='radio']):not([type='checkbox']), textarea, select { width: 100%; min-height: 48px; padding: 10px 12px; font: inherit; border: 2px solid var(--ink); border-radius: 4px; background: #fff; color: var(--ink); }
+    input[type='radio'], input[type='checkbox'] { width: 22px; height: 22px; accent-color: var(--ink); flex: none; }
+    .err { color: var(--brasa); font-weight: 700; margin: 6px 0 0; }
+    .err:empty { display: none; }
+    [hidden] { display: none !important; }
+  </style>
+</Base>

@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { NEGOCIO } from '../lib/negocio';
+import foto from '../assets/fotos/pexels-7446684.jpg';
+---
+
+<section class="hero" aria-labelledby="hero-titulo">
+  <div class="contenedor hero__grid">
+    <div class="hero__texto">
+      <p class="sobretitulo">Dermatología en San Isidro</p>
+      <h1 id="hero-titulo">Cuidar tu piel, con calma y con un especialista.</h1>
+      <p class="lead">
+        En Aura Derma te escuchamos primero. Evaluamos tu piel, te explicamos las opciones con claridad y decides con información, sin apuros.
+      </p>
+      <div class="hero__acciones">
+        <a class="btn" href="#agenda"><Icon name="calendar-days" /> Reservar una cita</a>
+        <a class="btn btn--suave" href="#tratamientos">Comparar tratamientos</a>
+      </div>
+      <ul class="hero__datos">
+        <li><Icon name="map-pin" /> San Isidro, Lima · Lunes a sábado</li>
+        <li><Icon name="message-circle" /> <a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">WhatsApp de demo</a></li>
+      </ul>
+    </div>
+    <figure class="hero__foto">
+      <Image
+        src={foto}
+        alt="Una dermatóloga con mascarilla muestra una tableta a una paciente sentada en un consultorio blanco y luminoso."
+        widths={[480, 720, 960, 1280]}
+        sizes="(min-width: 62rem) 45vw, 100vw"
+        format="webp"
+        quality={72}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>Foto: Gustavo Fring / Pexels. Aura Derma es una clínica ficticia.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 8vw, 5.5rem);
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, var(--salvia-100), transparent 70%),
+      var(--crema);
+  }
+  .hero__grid {
+    display: grid;
+    gap: 2.25rem;
+    align-items: center;
+  }
+  @media (min-width: 62rem) {
+    .hero__grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 4rem;
+    }
+  }
+  .hero__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.75rem 0 1.5rem;
+  }
+  .hero__datos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+  }
+  .hero__datos li {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .hero__datos :global(.icono) {
+    color: var(--salvia-700);
+  }
+  .hero__foto {
+    margin: 0;
+  }
+  .hero__foto :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3.4;
+    object-fit: cover;
+    border-radius: 12rem 12rem var(--radio-lg) var(--radio-lg);
+    box-shadow: var(--sombra);
+  }
+  .hero__foto figcaption {
+    font-size: 0.82rem;
+    color: var(--tinta-suave);
+    margin-top: 0.6rem;
+    text-align: center;
+  }
+</style>

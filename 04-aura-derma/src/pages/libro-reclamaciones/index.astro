@@ -1,0 +1,331 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { NEGOCIO } from '../../lib/negocio';
+---
+
+<Base
+  titulo="Libro de Reclamaciones de demo | Aura Derma"
+  descripcion="Libro de Reclamaciones de demostración de Aura Derma: formulario validado con número de hoja y constancia, sin envío de datos."
+  ruta="/libro-reclamaciones/"
+>
+  <div class="contenedor legal">
+    <p class="sobretitulo">Documento de demostración</p>
+    <h1>Libro de Reclamaciones</h1>
+    <div class="aviso">
+      <Icon name="info" />
+      <p>
+        Formulario de demostración basado en el D.S. 011-2011-PCM y sus modificatorias: genera una hoja y una constancia pero <strong>no envía ni guarda nada</strong>. En un negocio real, el proveedor debe responder en un plazo máximo de <strong>15 días hábiles</strong>, prorrogable por otros 15 con aviso, y el consumidor recibe copia de la hoja.
+      </p>
+    </div>
+    <p>
+      <strong>Proveedor:</strong> {NEGOCIO.nombre} (marca ficticia) · RUC {NEGOCIO.ruc} (ficticio) · {NEGOCIO.direccion}, {NEGOCIO.distrito}
+    </p>
+    <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio. Monto, madre/padre/apoderado son opcionales.</p>
+
+    <form id="lr-form" class="agenda-form" novalidate>
+      <div id="lr-resumen" class="resumen-errores" tabindex="-1" hidden></div>
+
+      <fieldset>
+        <legend>1. Identificación del consumidor reclamante</legend>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="lr-fecha">Fecha del reclamo</label>
+            <input type="text" id="lr-fecha" readonly />
+          </div>
+          <div class="campo">
+            <label for="lr-hoja">Número de hoja de reclamación</label>
+            <input type="text" id="lr-hoja" readonly aria-describedby="ayuda-hoja" />
+            <p class="ayuda" id="ayuda-hoja">Se genera al cargar la página. Es solo de demostración.</p>
+          </div>
+          <div class="campo">
+            <label for="lr-nombre">Nombre y apellido <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-nombre" name="nombre" autocomplete="name" maxlength="80" required aria-required="true" aria-describedby="err-nombre" />
+            <p class="error" id="err-nombre" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-tipodoc">Tipo de documento <span class="req" aria-hidden="true">*</span></label>
+            <select id="lr-tipodoc" name="tipodoc">
+              <option value="DNI">DNI</option>
+              <option value="CE">Carné de extranjería</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="lr-doc">Número de documento <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-doc" name="doc" maxlength="12" required aria-required="true" aria-describedby="err-doc" />
+            <p class="error" id="err-doc" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-domicilio">Domicilio <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-domicilio" name="domicilio" autocomplete="street-address" maxlength="120" required aria-required="true" aria-describedby="err-domicilio" />
+            <p class="error" id="err-domicilio" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-correo">Correo electrónico <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="lr-correo" name="correo" autocomplete="email" maxlength="120" required aria-required="true" aria-describedby="err-correo" />
+            <p class="error" id="err-correo" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-celular">Teléfono celular, 9 dígitos <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="lr-celular" name="celular" inputmode="numeric" autocomplete="tel-national" maxlength="11" required aria-required="true" aria-describedby="err-celular" />
+            <p class="error" id="err-celular" hidden></p>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="lr-padre">Padre, madre o apoderado (opcional, si eres menor de edad)</label>
+          <input type="text" id="lr-padre" name="padre" maxlength="80" aria-describedby="err-padre" />
+          <p class="error" id="err-padre" hidden></p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Identificación del bien contratado</legend>
+        <div class="campo">
+          <span class="etiqueta" id="lr-bien-et">Tipo de bien <span class="req" aria-hidden="true">*</span></span>
+          <div class="esp-lista" role="radiogroup" aria-labelledby="lr-bien-et">
+            <div class="opcion">
+              <input type="radio" name="bien" id="lr-b-servicio" value="Servicio" checked />
+              <label for="lr-b-servicio">Servicio<small>Consulta, procedimiento, control</small></label>
+            </div>
+            <div class="opcion">
+              <input type="radio" name="bien" id="lr-b-producto" value="Producto" />
+              <label for="lr-b-producto">Producto<small>Bien entregado al paciente</small></label>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="lr-servicio">Descripción del bien contratado <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="lr-servicio" name="servicio" maxlength="100" required aria-required="true" aria-describedby="err-servicio" />
+            <p class="error" id="err-servicio" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="lr-monto">Monto reclamado en S/ (opcional)</label>
+            <input type="text" id="lr-monto" name="monto" inputmode="decimal" maxlength="9" aria-describedby="err-monto" />
+            <p class="error" id="err-monto" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Detalle de la reclamación y pedido del consumidor</legend>
+        <div class="campo">
+          <span class="etiqueta" id="lr-tipo-et">Tipo <span class="req" aria-hidden="true">*</span></span>
+          <div class="esp-lista" role="radiogroup" aria-labelledby="lr-tipo-et">
+            <div class="opcion">
+              <input type="radio" name="tipo" id="lr-t-reclamo" value="Reclamo" checked />
+              <label for="lr-t-reclamo">Reclamo<small>Disconformidad con los productos o servicios</small></label>
+            </div>
+            <div class="opcion">
+              <input type="radio" name="tipo" id="lr-t-queja" value="Queja" />
+              <label for="lr-t-queja">Queja<small>Malestar no relacionado con el servicio, o sobre la atención al público</small></label>
+            </div>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="lr-detalle">Detalle <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="lr-detalle" name="detalle" maxlength="1000" required aria-required="true" aria-describedby="ayuda-detalle err-detalle"></textarea>
+          <p class="ayuda" id="ayuda-detalle">Evita incluir datos clínicos innecesarios.</p>
+          <p class="error" id="err-detalle" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="lr-pedido">Pedido del consumidor <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="lr-pedido" name="pedido" maxlength="500" required aria-required="true" aria-describedby="err-pedido"></textarea>
+          <p class="error" id="err-pedido" hidden></p>
+        </div>
+        <div class="firma-prov">
+          <strong>Observaciones y acciones adoptadas por el proveedor:</strong> este espacio lo completa la clínica al responder (demo: queda en blanco).
+        </div>
+        <div class="campo">
+          <div class="check">
+            <input type="checkbox" id="lr-consentimiento" name="consentimiento" required aria-required="true" aria-describedby="err-consentimiento" />
+            <label for="lr-consentimiento">
+              <span class="req" aria-hidden="true">*</span> Doy mi conformidad a esta hoja (cumple el papel de firma del consumidor) y acepto el tratamiento de mis datos personales, incluidos los de salud que pueda mencionar (sensibles), según la{' '}
+              <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad<span class="visually-hidden"> (se abre en otra pestaña)</span></a>.
+            </label>
+          </div>
+          <p class="error" id="err-consentimiento" hidden></p>
+        </div>
+        <p class="nota-sim">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI.</p>
+      </fieldset>
+
+      <button type="submit" class="btn">Registrar reclamación de demo</button>
+    </form>
+
+    <div id="lr-conf" class="confirmacion constancia" tabindex="-1" hidden>
+      <span class="sello-demo">Constancia de demo</span>
+      <h2>Hoja registrada (simulación)</h2>
+      <p>Número de hoja: <strong id="lr-conf-num" class="num-hoja"></strong></p>
+      <dl id="lr-conf-datos"></dl>
+      <p>
+        <strong>Plazo de respuesta:</strong> el proveedor debe responder en un máximo de 15 días hábiles (prorrogable por otros 15 con aviso).
+        Si no estás conforme con la respuesta, puedes acudir al INDECOPI.
+      </p>
+      <p>No se envió ni se guardó ningún dato, y no hay copia por correo. En un negocio real, la copia de esta hoja se entrega al consumidor (en papel o a su correo).</p>
+      <div class="acciones">
+        <a class="btn" href="/">Volver al inicio</a>
+        <button type="button" class="btn btn--suave" id="lr-otra">Registrar otra de demo</button>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .legal :global(.agenda-form) {
+    margin-top: 2rem;
+  }
+  .legal :global(.agenda-form legend) {
+    font: 400 1.7rem var(--serif);
+    margin-bottom: 1rem;
+  }
+  .num-hoja {
+    font: 400 1.9rem var(--serif);
+    color: var(--salvia-900);
+  }
+  .aviso {
+    margin-bottom: 1.25rem;
+  }
+</style>
+
+<script>
+  import {
+    formatearFecha,
+    ahoraLima,
+  } from '../../lib/horarios';
+  import {
+    numeroHoja,
+    validarCelular,
+    validarConsentimiento,
+    validarCorreo,
+    validarDocumento,
+    validarMonto,
+    validarNombre,
+    validarTexto,
+  } from '../../lib/validaciones';
+
+  const form = document.getElementById('lr-form') as HTMLFormElement;
+  const resumen = document.getElementById('lr-resumen')!;
+  const conf = document.getElementById('lr-conf')!;
+  const hoja = document.getElementById('lr-hoja') as HTMLInputElement;
+  const fechaEl = document.getElementById('lr-fecha') as HTMLInputElement;
+  let fechaHoja = '';
+  const nuevaHoja = () => {
+    const t = new Date();
+    hoja.value = numeroHoja(t, Math.floor(Math.random() * 999999) + 1);
+    fechaHoja = formatearFecha(ahoraLima(t).fecha);
+    fechaEl.value = fechaHoja;
+  };
+  nuevaHoja();
+
+  const ids: Record<string, string> = {
+    nombre: 'lr-nombre', doc: 'lr-doc', domicilio: 'lr-domicilio', correo: 'lr-correo', celular: 'lr-celular', padre: 'lr-padre',
+    servicio: 'lr-servicio', monto: 'lr-monto', detalle: 'lr-detalle', pedido: 'lr-pedido', consentimiento: 'lr-consentimiento',
+  };
+  const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+
+  function limpiar() {
+    Object.entries(ids).forEach(([k, id]) => {
+      const p = document.getElementById(`err-${k}`);
+      if (p) { p.hidden = true; p.textContent = ''; }
+      document.getElementById(id)?.removeAttribute('aria-invalid');
+    });
+    resumen.hidden = true;
+    resumen.textContent = '';
+  }
+  function resolver(k: string) {
+    const p = document.getElementById(`err-${k}`);
+    if (p) p.hidden = true;
+    document.getElementById(ids[k])?.removeAttribute('aria-invalid');
+    resumen.querySelector(`li[data-k="${k}"]`)?.remove();
+    if (!resumen.querySelector('li')) resumen.hidden = true;
+  }
+  form.addEventListener('input', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (ids[t.name] && t.getAttribute('aria-invalid') === 'true') resolver(t.name);
+  });
+  form.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (ids[t.name] && t.getAttribute('aria-invalid') === 'true') resolver(t.name);
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    limpiar();
+    const padre = val('padre').trim();
+    const err: Record<string, string> = {
+      nombre: validarNombre(val('nombre')),
+      doc: validarDocumento(val('tipodoc'), val('doc')),
+      domicilio: validarTexto(val('domicilio'), 5, 120, 'Domicilio'),
+      correo: validarCorreo(val('correo')),
+      celular: validarCelular(val('celular')),
+      padre: padre ? validarNombre(padre) : '',
+      servicio: validarTexto(val('servicio'), 3, 100, 'Descripción del bien'),
+      monto: validarMonto(val('monto')),
+      detalle: validarTexto(val('detalle'), 20, 1000, 'Detalle'),
+      pedido: validarTexto(val('pedido'), 10, 500, 'Pedido'),
+      consentimiento: validarConsentimiento((form.elements.namedItem('consentimiento') as HTMLInputElement).checked),
+    };
+    const claves = Object.keys(ids).filter((k) => err[k]);
+    if (claves.length) {
+      claves.forEach((k) => {
+        const p = document.getElementById(`err-${k}`)!;
+        p.textContent = err[k];
+        p.hidden = false;
+        document.getElementById(ids[k])?.setAttribute('aria-invalid', 'true');
+      });
+      const t = document.createElement('p');
+      t.textContent = `Revisa ${claves.length} ${claves.length === 1 ? 'dato' : 'datos'} antes de continuar:`;
+      const ul = document.createElement('ul');
+      claves.forEach((k) => {
+        const li = document.createElement('li');
+        li.dataset.k = k;
+        const a = document.createElement('a');
+        a.href = `#${ids[k]}`;
+        a.textContent = err[k];
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          document.getElementById(ids[k])?.focus();
+        });
+        li.append(a);
+        ul.append(li);
+      });
+      resumen.replaceChildren(t, ul);
+      resumen.hidden = false;
+      resumen.focus();
+      return;
+    }
+    document.getElementById('lr-conf-num')!.textContent = hoja.value;
+    const dl = document.getElementById('lr-conf-datos')!;
+    dl.replaceChildren();
+    const filas: Array<[string, string]> = [
+      ['Fecha', fechaHoja],
+      ['Consumidor', val('nombre').trim()],
+      ['Documento', `${val('tipodoc')} ${val('doc').trim()}`],
+      ['Tipo', val('tipo')],
+      [val('bien'), val('servicio').trim()],
+    ];
+    if (val('monto').trim()) filas.push(['Monto reclamado', `S/ ${val('monto').trim()}`]);
+    filas.push(['Pedido', val('pedido').trim()]);
+    filas.forEach(([k, v]) => {
+      const dt = document.createElement('dt');
+      dt.textContent = k;
+      const dd = document.createElement('dd');
+      dd.textContent = v;
+      dl.append(dt, dd);
+    });
+    form.hidden = true;
+    conf.hidden = false;
+    conf.focus();
+  });
+
+  document.getElementById('lr-otra')!.addEventListener('click', () => {
+    form.reset();
+    limpiar();
+    nuevaHoja();
+    conf.hidden = true;
+    form.hidden = false;
+    document.querySelector<HTMLElement>('h1')?.setAttribute('tabindex', '-1');
+    document.querySelector<HTMLElement>('h1')?.focus();
+  });
+</script>

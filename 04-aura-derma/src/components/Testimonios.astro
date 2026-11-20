@@ -1,0 +1,82 @@
+---
+const [grande, ...otros] = [
+  { t: 'Me explicaron todo con paciencia y no sentí presión por contratar nada.', q: 'Paciente 1, Miraflores' },
+  { t: 'Pude elegir un horario cómodo y la espera fue corta.', q: 'Paciente 2, Surco' },
+  { t: 'Salí con una rutina clara y con una fecha para mi control.', q: 'Paciente 3, San Borja' },
+];
+---
+
+<section class="seccion seccion--salvia" aria-labelledby="test-titulo">
+  <div class="contenedor">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Experiencias</p>
+      <h2 id="test-titulo">Lo que valoran quienes nos visitan</h2>
+      <p class="sello"><span class="sello-demo">Ejemplo de demo</span> Testimonios ficticios, escritos para esta demostración.</p>
+    </div>
+    <div class="tests">
+      <blockquote class="tests__grande">
+        <p>«{grande.t}»</p>
+        <footer>{grande.q} · <span class="sello-demo">Ejemplo de demo</span></footer>
+      </blockquote>
+      <div class="tests__otros">
+        {
+          otros.map((i) => (
+            <blockquote>
+              <p>«{i.t}»</p>
+              <footer>{i.q} · <span class="sello-demo">Ejemplo de demo</span></footer>
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sello {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+    color: var(--tinta-suave);
+  }
+  .sello :global(.sello-demo),
+  .tests :global(.sello-demo) {
+    margin: 0;
+  }
+  .tests {
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 62rem) {
+    .tests {
+      grid-template-columns: 1.4fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+  }
+  blockquote {
+    margin: 0;
+  }
+  .tests__grande p {
+    font: 400 clamp(1.8rem, 4.2vw, 2.8rem) / 1.2 var(--serif);
+    color: var(--salvia-900);
+  }
+  .tests__otros blockquote {
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--salvia-500);
+  }
+  .tests__otros p {
+    font-size: 1.1rem;
+    color: var(--salvia-900);
+    margin-bottom: 0.5rem;
+  }
+  footer {
+    font-size: 0.92rem;
+    color: var(--tinta-suave);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    align-items: center;
+  }
+</style>

@@ -1,0 +1,109 @@
+---
+import Icon from './Icon.astro';
+---
+<section class="hero" aria-labelledby="h-hero">
+  <div class="wrap hero__grid">
+    <div class="hero__texto">
+      <p class="etiqueta">Automatización para pymes de Lima</p>
+      <h1 id="h-hero">
+        Menos <s class="hero__tacha">digitar.<span class="sr-only"> (tachado)</span></s>
+        <span class="hero__linea">Más <mark>vender.</mark></span>
+      </h1>
+      <p class="lead hero__lead">
+        Para tiendas, consultorios, restaurantes y estudios de Lima: conectamos WhatsApp, Google Sheets, facturación e
+        inventario para que tu negocio funcione sin que alguien copie y pegue todo el día.
+      </p>
+      <div class="hero__acciones">
+        <a class="btn" href="#cotizador">Cotiza en pocos minutos <Icon nombre="arrow-right" tamano={20} /></a>
+        <a class="btn btn--borde" href="#casos">Ver casos de demo</a>
+      </div>
+    </div>
+
+    <figure class="hero__fig">
+      <ol class="flujo">
+        <li><b>01</b> Mensaje por WhatsApp</li>
+        <li><b>02</b> Fila nueva en Sheets</li>
+        <li><b>03</b> Boleta electrónica</li>
+        <li><b>04</b> Reporte al correo</li>
+      </ol>
+      <svg viewBox="0 0 520 460" role="img" aria-labelledby="t-diag d-diag" class="diag">
+        <title id="t-diag">Diagrama de un flujo automatizado</title>
+        <desc id="d-diag">Un mensaje de WhatsApp llega a Google Sheets, de ahí se genera la boleta electrónica y finalmente un reporte llega al correo del dueño.</desc>
+        <path class="diag__cable" d="M150 78 C 260 78, 260 150, 340 150" />
+        <path class="diag__cable" d="M390 196 C 390 250, 150 230, 150 290" />
+        <path class="diag__cable" d="M200 336 C 300 336, 300 392, 340 392" />
+        <g class="diag__nodo diag__nodo--a">
+          <rect x="30" y="38" width="240" height="80" rx="6" />
+          <text x="52" y="72" class="diag__n">01</text>
+          <text x="52" y="100" class="diag__t">Mensaje por WhatsApp</text>
+        </g>
+        <g class="diag__nodo diag__nodo--b">
+          <rect x="250" y="110" width="240" height="86" rx="6" />
+          <text x="272" y="144" class="diag__n">02</text>
+          <text x="272" y="174" class="diag__t">Fila nueva en Sheets</text>
+        </g>
+        <g class="diag__nodo diag__nodo--c">
+          <rect x="30" y="290" width="240" height="86" rx="6" />
+          <text x="52" y="324" class="diag__n">03</text>
+          <text x="52" y="354" class="diag__t">Boleta electrónica</text>
+        </g>
+        <g class="diag__nodo diag__nodo--d">
+          <rect x="270" y="352" width="220" height="80" rx="6" />
+          <text x="292" y="386" class="diag__n">04</text>
+          <text x="292" y="414" class="diag__t">Reporte al correo</text>
+        </g>
+        <circle class="diag__punto" cx="150" cy="78" r="6" />
+        <circle class="diag__punto" cx="390" cy="196" r="6" />
+        <circle class="diag__punto" cx="150" cy="290" r="6" />
+      </svg>
+      <figcaption class="hero__pie">Un pedido, cuatro pasos, cero digitación. Diagrama ilustrativo.</figcaption>
+    </figure>
+  </div>
+  <div class="hero__cinta" aria-hidden="true">
+    <span>WhatsApp</span><span>Google Sheets</span><span>Facturación</span><span>Inventario</span><span>Reportes</span><span>WhatsApp</span><span>Google Sheets</span>
+  </div>
+</section>
+
+<style>
+  .hero { padding-top: 56px; position: relative; background: var(--paper); }
+  .hero__grid { display: grid; gap: 48px; align-items: start; }
+  @media (min-width: 960px) {
+    .hero { padding-top: 96px; }
+    .hero__grid { grid-template-columns: 1.15fr 0.85fr; gap: 24px; }
+    .hero__fig { margin-top: 120px; margin-right: -24px; }
+  }
+  h1 { font-size: clamp(2.35rem, 11.4vw, 6.4rem); line-height: 0.98; letter-spacing: -0.035em; margin-bottom: 28px; }
+  .hero__tacha { display: inline-block; text-decoration: line-through; text-decoration-thickness: 0.07em; text-decoration-color: var(--brasa); color: var(--muted); }
+  .hero__linea { display: block; margin-left: 0; }
+  @media (min-width: 640px) { .hero__linea { margin-left: 0.9em; } }
+  mark { background: var(--lima); color: var(--ink); padding: 0 0.08em; }
+  .hero__lead { margin-bottom: 32px; }
+  @media (min-width: 960px) { .hero__lead { margin-left: 3.2rem; } .hero__acciones { margin-left: 3.2rem; } }
+  .hero__acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .hero__fig { margin: 0; background: var(--ink); color: var(--paper); padding: 20px 16px 16px; border-radius: 6px; box-shadow: 10px 10px 0 var(--lima); transform: translateX(-4px); }
+  .diag { width: 100%; height: auto; display: none; }
+  .flujo { display: grid; gap: 14px; }
+  .flujo li { font-weight: 700; font-size: 1.2rem; display: flex; gap: 14px; align-items: baseline; border-bottom: 1px dashed var(--muted-ink); padding-bottom: 12px; }
+  .flujo li:last-child { border: 0; }
+  .flujo b { font-family: var(--f-display); font-weight: 800; color: var(--lima); font-size: 0.9rem; }
+  @media (min-width: 640px) { .diag { display: block; } .flujo { display: none; } }
+  .diag__cable { fill: none; stroke: var(--muted-ink); stroke-width: 2; stroke-dasharray: 6 8; }
+  .diag__nodo rect { fill: var(--ink-2); stroke: var(--paper); stroke-width: 1.5; }
+  .diag__nodo--a rect { fill: var(--lima); stroke: var(--lima); }
+  .diag__nodo--a text { fill: var(--ink); }
+  .diag__n { font-family: var(--f-display); font-weight: 800; font-size: 14px; fill: var(--lima); }
+  .diag__t { font-family: var(--f-body); font-weight: 700; font-size: 20px; fill: var(--paper); }
+  .diag__nodo--a .diag__n { fill: var(--ink); }
+  .diag__punto { fill: var(--lima); }
+  .hero__pie { font-size: 0.85rem; color: var(--muted-ink); margin-top: 12px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .diag__cable { animation: fluye 1.6s linear 3; } /* finita: 4,8 s (WCAG 2.2.2) */
+    .diag__punto { animation: pulso 2s ease-in-out 2; transform-box: fill-box; transform-origin: center; }
+    @keyframes fluye { to { stroke-dashoffset: -28; } }
+    @keyframes pulso { 50% { transform: scale(1.7); opacity: 0.5; } }
+  }
+
+  .hero__cinta { margin-top: 72px; background: var(--lima); color: var(--ink); border-block: 2px solid var(--ink); display: flex; gap: 40px; padding: 14px var(--gutter); overflow: hidden; white-space: nowrap; font-family: var(--f-display); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.02em; transform: rotate(-1.2deg) scale(1.03); }
+  .hero__cinta span::after { content: '✦'; margin-left: 40px; }
+</style>

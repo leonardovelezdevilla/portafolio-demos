@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import { NEGOCIO } from '../../lib/negocio';
+---
+
+<Base
+  titulo="Privacidad | Aura Derma (demo)"
+  descripcion="Política de privacidad de demostración de Aura Derma: datos personales y datos de salud (sensibles) según la Ley 29733."
+  ruta="/privacidad/"
+>
+  <article class="contenedor legal">
+    <p class="sobretitulo">Documento de demostración</p>
+    <h1>Política de privacidad</h1>
+    <p class="aviso-legal">
+      Aura Derma es una marca ficticia creada para un portafolio. Este texto ilustra cómo se vería una política conforme a la Ley N.º 29733, Ley de Protección de Datos Personales, y su reglamento. No es asesoría legal.
+    </p>
+
+    <h2>1. Datos de salud: datos sensibles</h2>
+    <p>
+      Los datos relacionados con tu salud (por ejemplo, el motivo de tu consulta, tus antecedentes o cualquier información sobre tu piel) son <strong>datos personales sensibles</strong>. Su tratamiento requiere tu consentimiento expreso, que aparece como una casilla aparte en el formulario de la agenda. Sin ese consentimiento no se continúa con la solicitud.
+    </p>
+
+    <h2>2. Qué datos se piden y para qué</h2>
+    <ul>
+      <li>Nombre y apellido, celular y, de forma opcional, DNI: para identificarte y contactarte por tu cita.</li>
+      <li>Motivo de la consulta (dato de salud): para asignarte al especialista adecuado. Resúmelo y evita diagnósticos o datos de terceros.</li>
+      <li>Fecha, hora y especialista elegidos: para gestionar la agenda.</li>
+    </ul>
+
+    <h2>3. Qué hace esta demo con tus datos</h2>
+    <p>
+      <strong>Nada se envía a ningún servidor ni se guarda.</strong> La validación ocurre en tu navegador. Al final, el sitio arma un mensaje y un enlace a WhatsApp. Si decides abrirlo y enviarlo, <strong>WhatsApp (Meta, empresa extranjera) pasa a tratar ese mensaje</strong> con sus propias condiciones, lo que implica un flujo de datos fuera del Perú. Por eso el formulario te pide no escribir diagnósticos ni detalles clínicos, y el DNI no se incluye en el mensaje. Los números y direcciones de este sitio son ficticios.
+    </p>
+
+    <h2>4. Consentimiento expreso</h2>
+    <p>
+      Para tratar datos de salud se requiere tu consentimiento expreso y por escrito. En la demo, la casilla del formulario cumple el papel de firma electrónica y detalla la finalidad (gestionar tu cita y evaluar tu motivo de consulta) y los destinatarios (la clínica, por WhatsApp). En una clínica real, el consentimiento por escrito se formalizaría además en la primera consulta. Puedes revocarlo cuando quieras.
+    </p>
+
+    <h2>5. En una clínica real</h2>
+    <ul>
+      <li>El titular del banco de datos informaría su razón social, RUC y domicilio, y su inscripción en el Registro Nacional de Protección de Datos Personales cuando corresponda.</li>
+      <li>La historia clínica se conservaría según las normas sanitarias vigentes, con medidas de seguridad y acceso restringido. Los datos de contacto de una solicitud sin cita se conservarían solo el tiempo necesario para atenderla.</li>
+      <li>No se venderían tus datos ni se usarían para publicidad sin un consentimiento distinto.</li>
+    </ul>
+
+    <h2>6. Tus derechos</h2>
+    <p>
+      Puedes ejercer tus derechos de información, acceso, rectificación, cancelación, oposición y revocación escribiendo a <strong>{NEGOCIO.correo}</strong> (dirección ficticia). El reglamento de la Ley 29733 fija plazos de respuesta: 8 días hábiles para información, 20 para acceso y 10 para rectificación, cancelación y oposición (referencia de demo). Si no recibes respuesta o no estás conforme, puedes presentar un reclamo ante la Autoridad Nacional de Protección de Datos Personales.
+    </p>
+
+    <h2>7. Cookies</h2>
+    <p>Este sitio no usa cookies de seguimiento ni herramientas de analítica. WhatsApp es un tercero con su propia política.</p>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </article>
+</Base>

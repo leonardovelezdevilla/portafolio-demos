@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Comparador from '../components/Comparador.astro';
+import Especialistas from '../components/Especialistas.astro';
+import PrimeraConsulta from '../components/PrimeraConsulta.astro';
+import Agenda from '../components/Agenda.astro';
+import Testimonios from '../components/Testimonios.astro';
+import Faq from '../components/Faq.astro';
+import Ubicacion from '../components/Ubicacion.astro';
+import { NEGOCIO } from '../lib/negocio';
+
+// Datos ficticios: dirección, teléfono y RUC no existen.
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': ['MedicalClinic', 'Dermatology'],
+  name: 'Aura Derma (clínica ficticia de demostración)',
+  description: 'Clínica dermatológica ficticia en San Isidro, Lima. Demo de portafolio de Vélez De Villa.',
+  medicalSpecialty: 'Dermatology',
+  telephone: '+51900000000',
+  email: NEGOCIO.correo,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: NEGOCIO.direccion,
+    addressLocality: 'San Isidro',
+    addressRegion: 'Lima',
+    addressCountry: 'PE',
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '13:00' },
+  ],
+  priceRange: 'S/ 150 - S/ 220 (referencial, ficticio)',
+};
+---
+
+<Base
+  titulo="Aura Derma | Dermatología con calma en San Isidro (demo)"
+  descripcion="Clínica dermatológica ficticia en San Isidro: compara tratamientos, conoce a los especialistas y reserva tu cita por WhatsApp. Demo de portafolio."
+  ruta="/"
+  jsonld={jsonld}
+>
+  <Hero />
+  <Comparador />
+  <Especialistas />
+  <PrimeraConsulta />
+  <Agenda />
+  <Testimonios />
+  <Faq />
+  <Ubicacion />
+</Base>

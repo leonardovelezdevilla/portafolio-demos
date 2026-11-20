@@ -1,0 +1,311 @@
+---
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+---
+<Base titulo="Libro de Reclamaciones (demo) · Kuro" descripcion="Libro de Reclamaciones de demostración de Kuro: hoja completa con número, validada y sin envío." ruta="/libro-reclamaciones/">
+  <div class="contenedor pagina">
+    <p class="sobretitulo">Legal</p>
+    <h1>Libro de Reclamaciones</h1>
+    <div class="aviso-demo"><strong>Demostración.</strong> Este formulario sigue la estructura de la hoja de reclamación del Código de Protección y Defensa del Consumidor (Ley 29571) y su reglamento (DS 011-2011-PCM, modificado por DS 006-2014-PCM), pero <strong>no se envía a nadie</strong>.</div>
+
+    <p class="hoja">Hoja N.º <strong data-hoja>0001-2026</strong></p>
+
+    <div class="aviso-sin-js"><p>El formulario necesita JavaScript para validarse. En un servicio real habría una alternativa física o por correo.</p></div>
+
+    <div class="form-js">
+      <form class="form" id="form-reclamo" novalidate aria-label="Hoja de reclamación">
+        <div class="resumen-errores" data-resumen tabindex="-1" hidden></div>
+
+        <div class="dato-proveedor">
+          <h2>Proveedor</h2>
+          <p><strong>Kuro Gastronomía S.A.C.</strong> (razón social ficticia) · RUC 20000000001 (ficticio)<br />Jr. Los Cedros 245, Barranco, Lima (dirección ficticia)</p>
+          <p class="ayuda">Fecha de la hoja (Lima): <strong data-fecha-hoja></strong></p>
+        </div>
+        <p class="ayuda ayuda--primera">Todos los campos son obligatorios salvo los marcados como opcionales.</p>
+
+        <fieldset class="grupo">
+          <legend>1. Identificación del consumidor</legend>
+          <div class="campo">
+            <label for="nombre">Nombres y apellidos</label>
+            <input type="text" id="nombre" name="nombre" autocomplete="name" maxlength="60" required aria-describedby="err-nombre" />
+            <p class="error" id="err-nombre" hidden></p>
+          </div>
+          <div class="form__fila">
+            <div class="campo">
+              <label for="tipodoc">Tipo de documento</label>
+              <select id="tipodoc" name="tipodoc">
+                <option value="DNI">DNI</option>
+                <option value="CE">Carné de extranjería</option>
+                <option value="PAS">Pasaporte</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="documento">Número de documento</label>
+              <input type="text" id="documento" name="documento" inputmode="numeric" required aria-describedby="err-documento" />
+              <p class="error" id="err-documento" hidden></p>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="domicilio">Domicilio</label>
+            <input type="text" id="domicilio" name="domicilio" autocomplete="street-address" maxlength="120" required aria-describedby="err-domicilio" />
+            <p class="error" id="err-domicilio" hidden></p>
+          </div>
+          <div class="form__fila">
+            <div class="campo">
+              <label for="correo">Correo electrónico</label>
+              <input type="email" id="correo" name="correo" autocomplete="email" maxlength="120" required placeholder="nombre@ejemplo.invalid" aria-describedby="err-correo" />
+              <p class="error" id="err-correo" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="celular">Celular</label>
+              <input type="tel" id="celular" name="celular" inputmode="numeric" autocomplete="tel-national" required aria-describedby="ayuda-celular err-celular" />
+              <p class="ayuda" id="ayuda-celular">9 dígitos, empieza con 9.</p>
+              <p class="error" id="err-celular" hidden></p>
+            </div>
+          </div>
+          <div class="campo">
+            <label class="check" for="menor">
+              <input type="checkbox" id="menor" name="menor" />
+              <span>El consumidor es menor de edad (se registra a su padre, madre o representante).</span>
+            </label>
+          </div>
+          <div class="campo--oculto" data-menor hidden>
+            <div class="campo">
+              <label for="representante">Nombres y apellidos del padre, madre o representante</label>
+              <input type="text" id="representante" name="representante" maxlength="60" aria-describedby="err-representante" />
+              <p class="error" id="err-representante" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="grupo">
+          <legend>2. Identificación del bien contratado</legend>
+          <div class="campo">
+            <span class="etiqueta" id="et-bien">Tipo</span>
+            <div class="radios" role="radiogroup" aria-labelledby="et-bien">
+              <label><input type="radio" name="bien" value="producto" checked /> Producto (platos o bebidas)</label>
+              <label><input type="radio" name="bien" value="servicio" /> Servicio (atención, reserva)</label>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="descripcionbien">Descripción del producto o servicio</label>
+            <input type="text" id="descripcionbien" name="descripcionbien" maxlength="120" required placeholder="Ej.: Tiradito Kuro y chilcano de shiso" aria-describedby="err-descripcionbien" />
+            <p class="error" id="err-descripcionbien" hidden></p>
+          </div>
+          <div class="form__fila">
+            <div class="campo">
+              <label for="monto">Monto reclamado en S/ <span class="opcional">(opcional)</span></label>
+              <input type="text" id="monto" name="monto" inputmode="decimal" aria-describedby="err-monto" />
+              <p class="error" id="err-monto" hidden></p>
+            </div>
+            <div class="campo">
+              <label for="fechaincidente">Fecha del incidente</label>
+              <input type="date" id="fechaincidente" name="fechaincidente" required aria-describedby="err-fechaincidente" />
+              <p class="error" id="err-fechaincidente" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="grupo">
+          <legend>3. Detalle del reclamo o queja</legend>
+          <div class="campo">
+            <span class="etiqueta" id="et-tipo">Tipo de solicitud</span>
+            <div class="radios" role="radiogroup" aria-labelledby="et-tipo">
+              <label><input type="radio" name="tipo" value="reclamo" checked /> Reclamo (disconformidad con el producto o servicio)</label>
+              <label><input type="radio" name="tipo" value="queja" /> Queja (malestar sin relación directa con el producto)</label>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="detalle">Detalle</label>
+            <textarea id="detalle" name="detalle" maxlength="800" required aria-describedby="ayuda-detalle err-detalle"></textarea>
+            <p class="ayuda" id="ayuda-detalle">Cuéntanos qué pasó y dónde (entre 15 y 800 caracteres).</p>
+            <p class="error" id="err-detalle" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="pedido">Pedido del consumidor</label>
+            <textarea id="pedido" name="pedido" maxlength="400" required aria-describedby="err-pedido"></textarea>
+            <p class="error" id="err-pedido" hidden></p>
+          </div>
+        </fieldset>
+
+        <div class="campo">
+          <label class="check" for="acepto">
+            <input type="checkbox" id="acepto" name="acepto" aria-describedby="err-acepto" />
+            <span>Declaro que los datos consignados son verdaderos (firma del consumidor, demo). Autorizo el uso de mis datos solo para tramitar este reclamo, según la <a href="/privacidad/">Política de Privacidad</a>. Entiendo que esta es una demostración y que no se envía.</span>
+          </label>
+          <p class="error" id="err-acepto" hidden></p>
+        </div>
+
+        <button class="boton" type="submit"><Icono nombre="send" /> Generar constancia (demo)</button>
+      </form>
+
+      <div class="exito" data-exito role="status" hidden>
+        <h2 tabindex="-1" data-exito-titulo>Constancia de demostración</h2>
+        <p>No se envió nada. Así se vería la copia de una hoja de reclamación:</p>
+        <dl>
+          <dt>Hoja N.º</dt><dd data-c-hoja></dd>
+          <dt>Fecha de la hoja (Lima)</dt><dd data-c-fecha></dd>
+          <dt>Proveedor</dt><dd>Kuro Gastronomía S.A.C. (ficticia) · RUC 20000000001 (ficticio) · Jr. Los Cedros 245, Barranco</dd>
+          <dt>Consumidor</dt><dd data-c-nombre></dd>
+          <dt>Documento</dt><dd data-c-documento></dd>
+          <dt>Representante</dt><dd data-c-representante></dd>
+          <dt>Contacto</dt><dd data-c-contacto></dd>
+          <dt>Bien contratado</dt><dd data-c-bien></dd>
+          <dt>Monto reclamado</dt><dd data-c-monto></dd>
+          <dt>Fecha del incidente</dt><dd data-c-incidente></dd>
+          <dt>Tipo</dt><dd data-c-tipo></dd>
+          <dt>Detalle</dt><dd data-c-detalle></dd>
+          <dt>Pedido del consumidor</dt><dd data-c-pedido></dd>
+        </dl>
+        <p>La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI (art. 5 del DS 011-2011-PCM).</p>
+        <p>En un servicio real, el proveedor respondería por escrito, al correo indicado, en un máximo de 15 días hábiles, prorrogables por otros 15 (Ley 29571 y DS 011-2011-PCM, modificado por DS 006-2014-PCM).</p>
+        <div class="exito__acciones">
+          <button class="boton boton--linea" type="button" data-nueva>Llenar otra hoja</button>
+          <a class="boton boton--linea" href="/">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import { validarCelular, validarCorreo, validarDocumento, validarNombre, validarTextoLargo, normalizarTexto } from '../lib/validar';
+  import { esFechaValida, hoyLima, sumarDias } from '../lib/reserva';
+
+  const form = document.querySelector<HTMLFormElement>('#form-reclamo');
+  if (form) {
+    const resumen = document.querySelector<HTMLElement>('[data-resumen]')!;
+    const exito = document.querySelector<HTMLElement>('[data-exito]')!;
+    const hojaEl = document.querySelector<HTMLElement>('[data-hoja]')!;
+    const bloqueMenor = document.querySelector<HTMLElement>('[data-menor]')!;
+    const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+    const campo = (n: string) => form.elements.namedItem(n) as HTMLElement;
+    const ETIQ: Record<string, string> = {
+      nombre: 'Nombre', documento: 'Documento', domicilio: 'Domicilio', correo: 'Correo', celular: 'Celular',
+      representante: 'Representante', descripcionbien: 'Descripción del bien', monto: 'Monto', fechaincidente: 'Fecha del incidente',
+      detalle: 'Detalle', pedido: 'Pedido', acepto: 'Declaración',
+    };
+    const ORDEN = Object.keys(ETIQ);
+
+    const anio = Number(hoyLima().slice(0, 4));
+    const leerContador = (): number => {
+      try { return Number(localStorage.getItem('kuro-hoja') ?? '0') || 0; } catch { return 0; }
+    };
+    const formatoHoja = (n: number) => `${String(n).padStart(4, '0')}-${anio}`;
+    const fechaLima = () => new Intl.DateTimeFormat('es-PE', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date());
+    const refrescarCabecera = () => {
+      hojaEl.textContent = formatoHoja(leerContador() + 1);
+      document.querySelector('[data-fecha-hoja]')!.textContent = fechaLima();
+      (campo('fechaincidente') as HTMLInputElement).max = hoyLima();
+      (campo('fechaincidente') as HTMLInputElement).min = sumarDias(hoyLima(), -365);
+    };
+    refrescarCabecera();
+
+    const esMenor = () => (campo('menor') as HTMLInputElement).checked;
+    (campo('menor') as HTMLInputElement).addEventListener('change', () => { bloqueMenor.hidden = !esMenor(); });
+
+    const validarUno = (n: string): string | null => {
+      switch (n) {
+        case 'nombre': return validarNombre(val('nombre'));
+        case 'documento': return validarDocumento(val('tipodoc'), val('documento'));
+        case 'domicilio': return normalizarTexto(val('domicilio')) ? validarTextoLargo(val('domicilio'), 8, 120, '') : 'Escribe tu domicilio.';
+        case 'correo': return validarCorreo(val('correo'));
+        case 'celular': return validarCelular(val('celular'));
+        case 'representante': return esMenor() ? validarNombre(val('representante')) : null;
+        case 'descripcionbien': return validarTextoLargo(val('descripcionbien'), 3, 120, 'qué producto o servicio fue');
+        case 'monto': {
+          const m = normalizarTexto(val('monto')).replace(',', '.');
+          return m && !/^\d{1,6}(\.\d{1,2})?$/.test(m) ? 'Escribe un monto válido, por ejemplo 85.50.' : null;
+        }
+        case 'fechaincidente': {
+          const f = val('fechaincidente');
+          if (!f) return 'Indica la fecha del incidente.';
+          if (!esFechaValida(f)) return 'La fecha no es válida.';
+          if (f > hoyLima()) return 'La fecha del incidente no puede ser futura.';
+          return null;
+        }
+        case 'detalle': return validarTextoLargo(val('detalle'), 15, 800, 'qué ocurrió');
+        case 'pedido': return validarTextoLargo(val('pedido'), 5, 400, 'qué solicitas');
+        case 'acepto': return (campo('acepto') as HTMLInputElement).checked ? null : 'Marca la declaración para continuar.';
+      }
+      return null;
+    };
+
+    const mostrar = (n: string, msg: string | null) => {
+      const p = document.querySelector<HTMLElement>(`#err-${n}`)!;
+      const c = campo(n);
+      if (msg) { p.textContent = msg; p.hidden = false; c.setAttribute('aria-invalid', 'true'); }
+      else { p.hidden = true; p.textContent = ''; c.removeAttribute('aria-invalid'); }
+    };
+
+    const validar = (): Record<string, string> => {
+      const e: Record<string, string> = {};
+      ORDEN.forEach((n) => { const m = validarUno(n); if (m) e[n] = m; });
+      return e;
+    };
+
+    const pintar = (e: Record<string, string>) => {
+      ORDEN.forEach((n) => mostrar(n, e[n] ?? null));
+      const claves = ORDEN.filter((n) => e[n]);
+      resumen.innerHTML = '';
+      if (!claves.length) { resumen.hidden = true; return; }
+      const h = document.createElement('h2');
+      h.textContent = claves.length === 1 ? 'Revisa 1 dato antes de continuar' : `Revisa ${claves.length} datos antes de continuar`;
+      const ul = document.createElement('ul');
+      claves.forEach((n) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${n}`;
+        a.textContent = `${ETIQ[n]}: ${e[n]}`;
+        a.addEventListener('click', (ev) => { ev.preventDefault(); campo(n).focus(); });
+        li.append(a); ul.append(li);
+      });
+      resumen.append(h, ul);
+      resumen.hidden = false;
+    };
+
+    // Tras un primer intento, solo se revalida el campo tocado (el resumen se actualiza al enviar).
+    let intento = false;
+    const revisar = (ev: Event) => {
+      const n = (ev.target as HTMLInputElement).name;
+      if (intento && ORDEN.includes(n)) mostrar(n, validarUno(n));
+    };
+    form.addEventListener('change', revisar);
+    form.addEventListener('focusout', revisar);
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      intento = true;
+      const e = validar();
+      pintar(e);
+      if (Object.keys(e).length) { resumen.focus(); resumen.scrollIntoView({ block: 'center' }); return; }
+      const n = leerContador() + 1;
+      try { localStorage.setItem('kuro-hoja', String(n)); } catch { /* sin almacenamiento: el número es solo de demo */ }
+      const set = (s: string, t: string) => { (exito.querySelector(s) as HTMLElement).textContent = t; };
+      const tipodoc = (campo('tipodoc') as HTMLSelectElement).selectedOptions[0].textContent ?? '';
+      const bien = (form.querySelector('input[name="bien"]:checked') as HTMLInputElement).value === 'servicio' ? 'Servicio' : 'Producto';
+      const monto = normalizarTexto(val('monto')).replace(',', '.');
+      set('[data-c-hoja]', formatoHoja(n));
+      set('[data-c-fecha]', fechaLima());
+      set('[data-c-nombre]', normalizarTexto(val('nombre')));
+      set('[data-c-documento]', `${tipodoc} ${val('documento').trim()}`);
+      set('[data-c-representante]', esMenor() ? normalizarTexto(val('representante')) : 'No aplica (mayor de edad)');
+      set('[data-c-contacto]', `${val('correo').trim()} · ${val('celular').trim()} · ${normalizarTexto(val('domicilio'))}`);
+      set('[data-c-bien]', `${bien}: ${normalizarTexto(val('descripcionbien'))}`);
+      set('[data-c-monto]', monto ? `S/ ${monto}` : 'No indicado');
+      set('[data-c-incidente]', val('fechaincidente'));
+      set('[data-c-tipo]', (form.querySelector('input[name="tipo"]:checked') as HTMLInputElement).value === 'queja' ? 'Queja' : 'Reclamo');
+      set('[data-c-detalle]', normalizarTexto(val('detalle')));
+      set('[data-c-pedido]', normalizarTexto(val('pedido')));
+      form.hidden = true; exito.hidden = false;
+      (exito.querySelector('[data-exito-titulo]') as HTMLElement).focus();
+    });
+
+    exito.querySelector('[data-nueva]')!.addEventListener('click', () => {
+      form.reset(); intento = false; pintar({}); bloqueMenor.hidden = true;
+      refrescarCabecera();
+      exito.hidden = true; form.hidden = false;
+      (campo('nombre') as HTMLElement).focus();
+    });
+  }
+</script>

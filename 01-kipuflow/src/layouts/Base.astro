@@ -1,0 +1,111 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+interface Props { titulo: string; descripcion: string; ruta?: string; jsonld?: object; }
+const { titulo, descripcion, ruta, jsonld } = Astro.props;
+const og = '/og.png';
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="robots" content="noindex" />
+    {ruta && <link rel="canonical" href={ruta} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#060a0f" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:site_name" content="Kipuflow" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Kipuflow: finanzas claras para freelancers peruanos" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={og} />
+    <link rel="preload" href="/fonts/schibsted-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/onest-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} is:inline />}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cab">
+      <div class="contenedor cab-in">
+        <a class="marca" href="/" aria-label="Kipuflow, inicio">
+          <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#3ee6a2"/><path d="M9 22V10m0 7 8-7m-5 5 6 7" stroke="#04281b" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Kipuflow</span>
+        </a>
+        <nav class="nav" aria-label="Principal">
+          <a href="/#calculadora">Calculadora</a>
+          <a href="/#funciones">Funciones</a>
+          <a href="/#precios">Precios</a>
+          <a href="/#faq">Preguntas</a>
+        </nav>
+        <a class="btn btn-primario cab-cta" href="/#acceso">Acceso anticipado</a>
+        <details class="menu-movil" id="menu-movil">
+          <summary aria-label="Abrir menú"><Icon name="menu" size={22} /></summary>
+          <nav aria-label="Menú móvil" class="vidrio">
+            <a href="/#calculadora">Calculadora</a>
+            <a href="/#funciones">Funciones</a>
+            <a href="/#precios">Precios</a>
+            <a href="/#faq">Preguntas</a>
+            <a href="/#acceso">Acceso anticipado</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="contenido"><slot /></main>
+    <footer class="pie">
+      <div class="contenedor pie-in">
+        <div>
+          <p class="marca-pie">Kipuflow</p>
+          <p class="pie-txt">Finanzas para freelancers peruanos. Marca ficticia con RUC 20000000001 (ficticio).</p>
+        </div>
+        <nav aria-label="Legal" class="pie-nav">
+          <a href="/privacidad/">Privacidad</a>
+          <a href="/terminos/">Términos de demo</a>
+          <a href="/libro-reclamaciones/">Libro de Reclamaciones (demo)</a>
+        </nav>
+        <p class="pie-demo">Demo de portafolio — Vélez De Villa. Lima, Perú. Nada aquí se vende ni se envía a un servidor.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+<script>
+  const menu = document.getElementById('menu-movil') as HTMLDetailsElement | null;
+  if (menu) {
+    const cerrar = (foco: boolean) => { menu.open = false; if (foco) menu.querySelector('summary')?.focus(); };
+    menu.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => cerrar(false)));
+    menu.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.open) cerrar(true); });
+  }
+</script>
+<style is:global>
+  .cab { position: sticky; top: 0; z-index: 50; background: rgba(6,10,15,.78); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--borde); }
+  .cab-in { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 64px; }
+  .marca { display: inline-flex; align-items: center; gap: .6rem; color: var(--texto); text-decoration: none; font: 700 1.25rem/1 var(--f-titulo); min-height: 44px; }
+  .marca:hover { color: var(--texto); }
+  .nav { display: none; gap: .4rem; }
+  .nav a { color: var(--texto-2); text-decoration: none; padding: .7rem .8rem; border-radius: 8px; min-height: 44px; }
+  .nav a:hover { color: var(--texto); background: rgba(255,255,255,.06); }
+  .cab-cta { display: none; min-height: 44px; padding: .6rem 1.1rem; }
+  .menu-movil { position: relative; }
+  .menu-movil summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--borde); border-radius: 12px; cursor: pointer; }
+  .menu-movil summary::-webkit-details-marker { display: none; }
+  .menu-movil nav { position: absolute; right: 0; top: 52px; display: grid; width: min(78vw, 280px); padding: .5rem; background: rgba(14,22,32,.96); }
+  .menu-movil nav a { color: var(--texto); text-decoration: none; padding: .8rem; border-radius: 8px; min-height: 44px; }
+  .menu-movil nav a:hover { background: rgba(255,255,255,.08); }
+  @media (min-width: 900px) { .nav, .cab-cta { display: flex; align-items: center; } .menu-movil { display: none; } }
+  .pie { border-top: 1px solid var(--borde); padding-block: 2.5rem; background: rgba(0,0,0,.25); }
+  .pie-in { display: grid; gap: 1.5rem; }
+  .marca-pie { font: 700 1.3rem var(--f-titulo); }
+  .pie-txt, .pie-demo { color: var(--texto-2); font-size: .95rem; max-width: 60ch; }
+  .pie-nav { display: flex; gap: 1.2rem; align-items: flex-start; flex-wrap: wrap; }
+  .pie-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  @media (min-width: 768px) { .pie-in { grid-template-columns: 1fr auto; } .pie-demo { grid-column: 1 / -1; } }
+</style>

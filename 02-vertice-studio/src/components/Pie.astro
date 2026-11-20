@@ -1,0 +1,44 @@
+---
+import Icono from './Icono.astro';
+import { TELEFONO_DEMO } from '../lib/whatsapp';
+const wa = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Vértice Studio, quiero hacer una consulta (demo).')}`;
+---
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div>
+        <p class="pie__marca">Vértice<br />Studio</p>
+        <p>Zapatillas urbanas. Venta por WhatsApp. Lima, Perú.</p>
+        <p>Razón social ficticia: Vértice Studio S.A.C. · RUC 20000000000 (ficticio, no válido) · Av. Ejemplo 123, Lima (ficticia).</p>
+      </div>
+      <div>
+        <h2>Tienda</h2>
+        <ul>
+          <li><a href="/#catalogo">Catálogo</a></li>
+          <li><a href="/#como-comprar">Cómo comprar</a></li>
+          <li><a href="/#tallas">Guía de tallas</a></li>
+          <li><a href="/cambios/">Política de cambios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="/privacidad/">Privacidad</a></li>
+          <li><a href="/terminos/">Términos de demo</a></li>
+          <li><a class="pie__libro" href="/libro-reclamaciones/"><Icono nombre="libro" tamano={18} /> Libro de Reclamaciones (demo)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contacto</h2>
+        <ul>
+          <li><a href={wa}><Icono nombre="mensaje" tamano={16} /> WhatsApp (número de demo)</a></li>
+          <li>Lun a sáb, 10:00 a 19:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__legal">
+      <span>Demo de portafolio — Vélez De Villa. Marca, productos, precios y stock son ficticios; no se vende nada.</span>
+      <span>Fotos ilustrativas de Unsplash y Pexels (ver créditos en el repositorio). Los modelos son ficticios.</span>
+    </div>
+  </div>
+</footer>

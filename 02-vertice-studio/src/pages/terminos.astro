@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import { ENVIO, formatoSoles } from '../lib/carrito';
+---
+<Base
+  titulo="Términos de demo | Vértice Studio (demo)"
+  descripcion="Términos de uso de la demo de Vértice Studio: tienda ficticia, sin ventas reales, con reglas de ejemplo de envío, pago y stock."
+  ruta="/terminos/"
+>
+  <header class="pagina-cab"><div class="contenedor"><h1>Términos de demo</h1><p>Condiciones de ejemplo de una tienda que vende por WhatsApp.</p></div></header>
+  <div class="contenedor seccion">
+    <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> No se vende ni se entrega ningún producto. Marca, precios, stock y teléfono son ficticios.</p>
+    <div class="prosa">
+      <h2>1. Naturaleza del sitio</h2>
+      <p>Este sitio muestra cómo funcionaría una tienda de zapatillas con catálogo, carrito y pedido por WhatsApp. No existe una empresa detrás: «Vértice Studio S.A.C.» y el RUC 20000000000 (no válido) son ficticios.</p>
+      <h2>2. Fotografías</h2>
+      <p>Las fotos provienen de Unsplash y Pexels y se usan solo con fines de ilustración. Son ilustrativas: los modelos, nombres y precios de esta tienda son ficticios y no se corresponden con productos de ninguna marca.</p>
+      <h2>3. Precios y stock (reglas de ejemplo)</h2>
+      <ul>
+        <li>Los precios están en soles (S/) e incluyen IGV en este ejemplo y se muestran como precio final.</li>
+        <li>El stock se muestra por talla. El carrito no permite pedir más unidades que las que hay.</li>
+        <li>Envío en Lima Metropolitana: {formatoSoles(ENVIO.lima.tarifa)}, gratis desde {formatoSoles(ENVIO.lima.gratisDesde)}.</li>
+        <li>Envío a provincias: {formatoSoles(ENVIO.provincias.tarifa)}, gratis desde {formatoSoles(ENVIO.provincias.gratisDesde)}.</li>
+      </ul>
+      <h2>4. Cómo se cierra un pedido</h2>
+      <p>El botón «Enviar pedido por WhatsApp» abre WhatsApp con un mensaje ya escrito. El pedido solo se consideraría confirmado cuando el vendedor lo acepte por ese canal y se acuerde el pago por Yape, Plin o contraentrega. En esta demo el número no existe, así que no hay confirmación posible.</p>
+      <h2>5. Cambios y reclamos</h2>
+      <p>Revisa la <a href="/cambios/">política de cambios</a>. Para reclamos y quejas, usa el <a href="/libro-reclamaciones/">Libro de Reclamaciones de demo</a>.</p>
+      <h2>6. Privacidad</h2>
+      <p>Consulta la <a href="/privacidad/">política de privacidad</a>.</p>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
+const f = (n: number) => sol.format(n);
+---
+<section class="hero">
+  <div class="contenedor hero-in">
+    <div class="hero-txt">
+      <p class="sobretitulo">Para freelancers en Perú</p>
+      <h1>Tus recibos por honorarios, sin sustos en el Excel.</h1>
+      <p class="lead">Kipuflow emite, ordena y proyecta lo que te retienen y lo que te toca pagar a SUNAT, para que sepas cuánto es realmente tuyo antes de que llegue la declaración anual.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primario" href="/#acceso">Solicitar acceso anticipado <Icon name="arrow-right" /></a>
+        <a class="btn btn-sec" href="/#calculadora">Probar la calculadora</a>
+      </div>
+      <p class="hero-sin">Sin tarjeta para pedir acceso.</p>
+      <p class="hero-nota">Demo de portafolio: no hay producto real detrás.</p>
+    </div>
+
+    <div class="panel vidrio">
+      <div class="panel-cab">
+        <h2 class="panel-tit">Noviembre · recibos</h2>
+        <span class="etiqueta-demo">Ejemplo de demo</span>
+      </div>
+      <ul class="panel-lista">
+        <li><span>E000-41 · Estudio Brisa</span><span class="num">{f(3200)}</span><span class="ret">−{f(256)}</span></li>
+        <li><span>E000-42 · Taller Pampa</span><span class="num">{f(1400)}</span><span class="ret ret-no">sin retención</span></li>
+        <li><span>E000-43 · Agencia Faro</span><span class="num">{f(2800)}</span><span class="ret">−{f(224)}</span></li>
+      </ul>
+      <div class="panel-neto">
+        <p>Neto estimado del mes</p>
+        <p class="num neto">{f(6920)}</p>
+      </div>
+      <div class="barra" aria-hidden="true"><span></span></div>
+      <p class="panel-pie">Ingresos al 62 % del tope anual para pedir suspensión de pagos a cuenta</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem); }
+  .hero-in { display: grid; gap: 2.4rem; align-items: center; }
+  .hero-txt h1 { max-width: 15ch; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+  .hero-sin { margin-top: 1.2rem; font-weight: 600; color: var(--verde); }
+  .hero-nota { margin-top: .3rem; font-size: .92rem; color: var(--texto-2); }
+  .panel { padding: 1.3rem; display: grid; gap: 1rem; transform: rotate(-1.2deg); }
+  .panel-cab { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .panel-tit { font: 500 1rem var(--f-titulo); letter-spacing: 0; }
+  .panel-lista { list-style: none; margin: 0; padding: 0; display: grid; }
+  .panel-lista li { display: grid; grid-template-columns: 1fr auto; gap: .1rem .8rem; padding: .75rem 0; border-top: 1px solid var(--borde); font-size: .95rem; }
+  .panel-lista li > span:first-child { grid-column: 1 / -1; color: var(--texto-2); font-size: .88rem; }
+  .ret { color: var(--alerta); text-align: right; font-size: .92rem; }
+  .ret-no { color: var(--verde); }
+  .panel-neto { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-top: .8rem; border-top: 1px solid var(--borde); }
+  .panel-neto p:first-child { color: var(--texto-2); }
+  .neto { white-space: nowrap; font-size: clamp(1.7rem, 7vw, 2.2rem); font-weight: 700; color: var(--verde); line-height: 1; }
+  .barra { height: 8px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .barra span { display: block; height: 100%; width: 62%; background: linear-gradient(90deg, var(--verde), var(--azul)); border-radius: 99px; }
+  .panel-pie { font-size: .88rem; color: var(--texto-2); }
+  @media (min-width: 900px) {
+    .hero-in { grid-template-columns: 1.15fr .85fr; gap: 4rem; }
+    .panel { padding: 1.8rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .panel { transform: none; } }
+</style>

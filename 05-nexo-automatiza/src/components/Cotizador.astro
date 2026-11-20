@@ -1,0 +1,303 @@
+---
+import { TIPOS_NEGOCIO, PROCESOS, VOLUMENES, INTEGRACIONES, URGENCIAS, NOTA_IGV } from '../data/precios';
+import { NEXO } from '../data/contenido';
+import Icon from './Icon.astro';
+
+const pasos = [
+  { n: 1, leyenda: '¿Qué tipo de negocio tienes?', tipo: 'radio', name: 'tipo', ops: TIPOS_NEGOCIO },
+  { n: 2, leyenda: '¿Qué procesos quieres automatizar?', ayuda: 'Marca todos los que apliquen; al menos uno.', tipo: 'checkbox', name: 'procesos', ops: PROCESOS },
+  { n: 3, leyenda: '¿Cuántas operaciones tienes al mes?', ayuda: 'Pedidos, citas, comprobantes o movimientos, lo que más repitas.', tipo: 'radio', name: 'volumen', ops: VOLUMENES },
+  { n: 4, leyenda: '¿Necesitas conectar otras herramientas? (opcional)', ayuda: 'Marca las que apliquen. Si no necesitas ninguna por ahora, pulsa Siguiente.', tipo: 'checkbox', name: 'integraciones', ops: INTEGRACIONES },
+  { n: 5, leyenda: '¿Qué tan urgente es?', ayuda: 'Elige una opción.', tipo: 'radio', name: 'urgencia', ops: URGENCIAS },
+];
+---
+<section class="seccion cotiz sobre-tinta" id="cotizador" aria-labelledby="h-cotiz">
+  <div class="wrap cotiz__grid">
+    <div class="cotiz__intro">
+      <p class="etiqueta" data-reveal>Cotizador</p>
+      <h2 class="h2" id="h-cotiz" tabindex="-1" data-reveal data-delay="1">¿Cuánto costaría automatizar tu negocio?</h2>
+      <p class="lead muted" data-reveal data-delay="2">Cinco preguntas cortas y obtienes un rango en soles. Es referencial: el precio final se define tras un diagnóstico.</p>
+      <p class="solo-sin-js sin-js">El cotizador necesita JavaScript. Mientras tanto, <a href={`https://wa.me/${NEXO.telefono}`}>escríbenos por WhatsApp</a> y te orientamos.</p>
+    </div>
+
+    <div class="cotiz__panel" data-reveal data-delay="2">
+      <form id="form-cotiz" novalidate aria-labelledby="h-cotiz">
+        <div class="prog solo-js">
+          <p id="prog-txt" class="prog__txt">Paso 1 de 5: Tu negocio</p>
+          <progress id="prog" max="5" value="1" aria-labelledby="prog-txt">Paso 1 de 5</progress>
+        </div>
+
+        {pasos.map((p) => (
+          <fieldset class="paso" data-paso={p.n} aria-describedby={`err-${p.n}`}>
+            <legend tabindex="-1">{p.leyenda}</legend>
+            {p.ayuda && <p class="ayuda muted">{p.ayuda}</p>}
+            <div class="ops">
+              {p.ops.map((o) => (
+                <label class="op">
+                  <input type={p.tipo} name={p.name} value={o.id} />
+                  <span class="op__txt"><strong>{o.etiqueta}</strong>{o.detalle && <small>{o.detalle}</small>}</span>
+                </label>
+              ))}
+            </div>
+            <p class="error" id={`err-${p.n}`} role="alert"></p>
+          </fieldset>
+        ))}
+
+        <div class="acciones solo-js">
+          <button type="button" class="btn btn--borde" id="btn-atras" hidden><Icon nombre="arrow-left" tamano={20} /> Atrás</button>
+          <button type="button" class="btn btn--lima" id="btn-sig">Siguiente <Icon nombre="arrow-right" tamano={20} /></button>
+        </div>
+      </form>
+
+      <div class="resultado" id="resultado" hidden>
+        <h3 id="res-tit" tabindex="-1" class="res-etq">Tu rango referencial</h3>
+        <p class="rango" id="res-rango"></p>
+        <p class="res-nota">{NOTA_IGV}</p>
+        <p class="res-nota" id="res-influye"></p>
+        <p class="res-nota" id="res-plazo"></p>
+        <p class="res-nota" id="res-soporte"></p>
+        <p class="aviso"><Icon nombre="shield-check" tamano={24} /> <span>Rango referencial; la cotización final requiere diagnóstico. Cifras de demo.</span></p>
+        <h4>Tu resumen</h4>
+        <ul class="res-lista" id="res-lista"></ul>
+
+        <div class="consent">
+          <label class="op op--simple">
+            <input type="checkbox" id="res-consent" aria-describedby="res-consent-ayuda err-consent" />
+            <span class="op__txt"><strong>Acepto que se abra WhatsApp con este resumen.</strong></span>
+          </label>
+          <p class="res-nota" id="res-consent-ayuda">
+            Al enviarlo, tu mensaje y tu número pasan a WhatsApp (Meta), que los trata según sus propias políticas.
+            Nexo no recibe nada hasta que tú lo envíes. Más en la <a href="/privacidad/">política de privacidad</a>.
+          </p>
+          <p class="error" id="err-consent" role="alert"></p>
+        </div>
+
+        <div class="acciones">
+          <a class="btn btn--lima" id="res-wa" href={`https://wa.me/${NEXO.telefono}`} aria-disabled="true">Enviar resumen por WhatsApp <span class="sr-only">(abre WhatsApp)</span> <Icon nombre="arrow-up-right" tamano={20} /></a>
+          <button type="button" class="btn btn--borde" id="btn-editar">Editar respuestas</button>
+        </div>
+        <p><button type="button" class="enlace" id="btn-reiniciar">Empezar de nuevo</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { cotizar, enlaceWhatsApp, formatoSoles, mensajeWhatsApp, type EntradaCotizador } from '../lib/cotizador';
+  import { PRECIOS } from '../data/precios';
+
+  const TOTAL = 5;
+  const form = document.getElementById('form-cotiz') as HTMLFormElement;
+  const pasos = Array.from(form.querySelectorAll<HTMLFieldSetElement>('fieldset.paso'));
+  const nombres = ['Tu negocio', 'Procesos', 'Volumen', 'Integraciones', 'Urgencia'];
+  const prog = document.getElementById('prog') as HTMLProgressElement;
+  const progTxt = document.getElementById('prog-txt')!;
+  const atras = document.getElementById('btn-atras') as HTMLButtonElement;
+  const sig = document.getElementById('btn-sig') as HTMLButtonElement;
+  const res = document.getElementById('resultado')!;
+  const wa = document.getElementById('res-wa') as HTMLAnchorElement;
+  const consent = document.getElementById('res-consent') as HTMLInputElement;
+  const errConsent = document.getElementById('err-consent')!;
+  let actual = 1;
+
+  function leer(): EntradaCotizador {
+    const d = new FormData(form);
+    return {
+      tipo: String(d.get('tipo') ?? ''),
+      procesos: d.getAll('procesos').map(String),
+      volumen: String(d.get('volumen') ?? ''),
+      integraciones: d.getAll('integraciones').map(String),
+      urgencia: String(d.get('urgencia') ?? ''),
+    };
+  }
+
+  const mensajes: Record<number, string> = {
+    1: 'Elige el tipo de negocio para continuar.',
+    2: 'Marca al menos un proceso para continuar.',
+    3: 'Elige un volumen mensual para continuar.',
+    4: '',
+    5: 'Elige la urgencia para ver tu rango.',
+  };
+  function valido(n: number): boolean {
+    const e = leer();
+    if (n === 1) return !!e.tipo;
+    if (n === 2) return e.procesos.length > 0;
+    if (n === 3) return !!e.volumen;
+    if (n === 4) return true; // opcional
+    return !!e.urgencia;
+  }
+  function mostrarError(n: number, ver: boolean) {
+    const fs = pasos[n - 1];
+    fs.querySelector<HTMLElement>('.error')!.textContent = ver ? mensajes[n] : '';
+    fs.toggleAttribute('data-invalido', ver);
+    fs.querySelectorAll('input').forEach((i) => (ver ? i.setAttribute('aria-invalid', 'true') : i.removeAttribute('aria-invalid')));
+  }
+
+  function ir(n: number, enfocar = true) {
+    actual = n;
+    pasos.forEach((fs, i) => fs.classList.toggle('activo', i + 1 === n));
+    prog.value = n;
+    progTxt.textContent = `Paso ${n} de ${TOTAL}: ${nombres[n - 1]}`;
+    atras.hidden = n === 1;
+    sig.firstChild!.textContent = n === TOTAL ? 'Ver mi rango ' : 'Siguiente ';
+    if (enfocar) pasos[n - 1].querySelector<HTMLElement>('legend')!.focus();
+  }
+
+  sig.addEventListener('click', () => {
+    if (!valido(actual)) {
+      mostrarError(actual, true);
+      pasos[actual - 1].querySelector<HTMLInputElement>('input')!.focus(); // cada paso tiene un solo grupo
+      return;
+    }
+    mostrarError(actual, false);
+    if (actual < TOTAL) ir(actual + 1);
+    else mostrarResultado();
+  });
+  atras.addEventListener('click', () => {
+    mostrarError(actual, false);
+    if (actual > 1) ir(actual - 1); // las respuestas se conservan: los inputs no se reinician
+  });
+  form.addEventListener('change', () => mostrarError(actual, false));
+  form.addEventListener('submit', (e) => e.preventDefault());
+
+  const nombresDe = (lista: { id: string; etiqueta: string }[], ids: string[]) =>
+    ids.map((id) => lista.find((i) => i.id === id)?.etiqueta ?? id);
+
+  let urlWa = '';
+  function mostrarResultado() {
+    const e = leer();
+    const c = cotizar(e);
+    const urg = PRECIOS.urgencias.find((u) => u.id === e.urgencia)!;
+    document.getElementById('res-rango')!.textContent = `${formatoSoles(c.min)} a ${formatoSoles(c.max)}`;
+    document.getElementById('res-influye')!.textContent =
+      'Qué lo mueve: los procesos elegidos, el volumen mensual, la urgencia' +
+      (c.descuento > 0 ? ` y un ${Math.round(c.descuento * 100)} % de descuento por paquete.` : ' (desde 3 procesos hay descuento por paquete).');
+    document.getElementById('res-plazo')!.textContent =
+      `Plazo referencial de construcción: ${urg.plazo}, después del diagnóstico (3 a 5 días hábiles) y de aprobar la propuesta.`;
+    document.getElementById('res-soporte')!.textContent =
+      `Pasados los 30 días de soporte incluidos, el plan mensual opcional sería de ${formatoSoles(c.soporteMin)} a ${formatoSoles(c.soporteMax)}.`;
+    const filas: [string, string][] = [
+      ['Negocio', nombresDe(PRECIOS.tipos, [e.tipo]).join(', ')],
+      ['Procesos', nombresDe(PRECIOS.procesos, e.procesos).join(', ')],
+      ['Volumen', nombresDe(PRECIOS.volumenes, [e.volumen]).join(', ')],
+      ['Integraciones', nombresDe(PRECIOS.integraciones, e.integraciones).join(', ') || 'Ninguna'],
+      ['Urgencia', nombresDe(PRECIOS.urgencias, [e.urgencia]).join(', ')],
+    ];
+    document.getElementById('res-lista')!.replaceChildren(
+      ...filas.map(([k, v]) => {
+        const li = document.createElement('li');
+        const b = document.createElement('strong');
+        b.textContent = k + ': ';
+        li.append(b, v);
+        return li;
+      }),
+    );
+    urlWa = enlaceWhatsApp(mensajeWhatsApp(e, c));
+    consent.checked = false;
+    errConsent.textContent = '';
+    wa.setAttribute('aria-disabled', 'true');
+    wa.removeAttribute('href');
+    form.hidden = true;
+    res.hidden = false;
+    document.getElementById('res-tit')!.focus();
+  }
+
+  // Consentimiento expreso: el enlace a wa.me solo existe cuando la casilla está marcada.
+  consent.addEventListener('change', () => {
+    errConsent.textContent = '';
+    if (consent.checked) {
+      wa.href = urlWa;
+      wa.setAttribute('aria-disabled', 'false');
+    } else {
+      wa.removeAttribute('href');
+      wa.setAttribute('aria-disabled', 'true');
+    }
+  });
+  wa.addEventListener('click', (ev) => {
+    if (!consent.checked) {
+      ev.preventDefault();
+      errConsent.textContent = 'Marca la casilla para abrir WhatsApp con tu resumen.';
+      consent.focus();
+    }
+  });
+
+  document.getElementById('btn-editar')!.addEventListener('click', () => {
+    res.hidden = true;
+    form.hidden = false;
+    ir(1);
+  });
+  document.getElementById('btn-reiniciar')!.addEventListener('click', () => {
+    form.reset();
+    pasos.forEach((_, i) => mostrarError(i + 1, false));
+    res.hidden = true;
+    form.hidden = false;
+    ir(1);
+  });
+
+  ir(1, false);
+</script>
+
+<style>
+  .cotiz { overflow: hidden; }
+  .cotiz__grid { display: grid; gap: 40px; }
+  @media (min-width: 960px) {
+    .cotiz__grid { grid-template-columns: 4fr 7fr; gap: 64px; align-items: start; }
+    .cotiz__intro { position: sticky; top: 100px; }
+  }
+  .cotiz__intro .lead { margin-top: 16px; }
+  .cotiz__intro h2 { outline-offset: 6px; }
+  .sin-js { margin-top: 16px; padding: 12px; border: 1.5px dashed var(--lima); }
+
+  .cotiz__panel { background: var(--paper); color: var(--ink); border-radius: 6px; padding: 24px 16px; box-shadow: 10px 10px 0 var(--lima); min-width: 0; }
+  @media (min-width: 640px) { .cotiz__panel { padding: 36px; } }
+  :global(.sobre-tinta) .cotiz__panel a { color: var(--cobalto); }
+  .cotiz__panel .muted { color: var(--muted); }
+
+  .prog { margin-bottom: 24px; }
+  .prog__txt { font-weight: 700; margin-bottom: 8px; }
+  progress { width: 100%; height: 12px; appearance: none; -webkit-appearance: none; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper-2); overflow: hidden; display: block; }
+  progress::-webkit-progress-bar { background: var(--paper-2); }
+  progress::-webkit-progress-value { background: var(--ink); }
+  progress::-moz-progress-bar { background: var(--ink); }
+  @media (prefers-reduced-motion: no-preference) { progress::-webkit-progress-value { transition: width 0.3s; } }
+
+  fieldset { border: 0; margin: 0 0 24px; padding: 0; min-width: 0; }
+  :global(.js) fieldset.paso { display: none; }
+  :global(.js) fieldset.paso.activo { display: block; }
+  legend { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.15rem, 4.6vw, 1.6rem); line-height: 1.2; letter-spacing: -0.02em; padding: 0; margin-bottom: 8px; outline-offset: 6px; }
+  .ayuda { margin-bottom: 12px; font-size: 0.95rem; }
+  .ops { display: grid; gap: 10px; }
+  @media (min-width: 640px) { .ops { grid-template-columns: repeat(2, 1fr); } }
+  .op { display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper); cursor: pointer; }
+  .op:hover { background: var(--paper-2); }
+  .op:has(input:checked) { background: var(--ink); color: var(--paper); }
+  .op:has(input:focus-visible) { outline: 3px solid var(--cobalto); outline-offset: 3px; }
+  .op input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--lima); }
+  .op__txt { display: grid; gap: 2px; min-width: 0; }
+  .op small { font-size: 0.85rem; opacity: 0.85; }
+  .error { min-height: 1.5em; margin-top: 12px; color: var(--brasa); font-weight: 700; }
+  .error:empty { min-height: 0; margin: 0; }
+  fieldset[data-invalido] .op { border-color: var(--brasa); border-style: dashed; }
+
+  .cotiz__panel .btn--borde { color: var(--ink); border-color: var(--ink); background: transparent; }
+  .cotiz__panel .btn--borde:hover { background: var(--ink); color: var(--paper); }
+  .cotiz__panel .acciones a.btn { color: var(--lima); }
+  .cotiz__panel .acciones a.btn:hover { color: var(--ink); }
+  .acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+  .acciones .btn--lima { background: var(--ink); color: var(--lima); border-color: var(--ink); }
+  .acciones .btn--lima:hover { background: var(--lima); color: var(--ink); }
+  #btn-sig { margin-left: auto; }
+  #res-wa[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+
+  .resultado[hidden] { display: none; }
+  .resultado { display: grid; gap: 12px; }
+  .res-etq { font-family: var(--f-body); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); outline-offset: 6px; }
+  .rango { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.7rem, 8vw, 3rem); line-height: 1.05; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+  .res-nota { color: var(--muted); font-size: 0.95rem; }
+  .aviso { display: flex; gap: 10px; align-items: flex-start; background: var(--lima); border: 2px solid var(--ink); padding: 12px 14px; font-weight: 600; border-radius: 4px; }
+  .resultado h4 { font-family: var(--f-body); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .res-lista { display: grid; gap: 6px; }
+  .consent { display: grid; gap: 8px; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--linea); }
+  .op--simple { min-height: 48px; }
+  .enlace { background: none; border: 0; padding: 12px 0; min-height: 44px; font: 600 1rem var(--f-body); color: var(--cobalto); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; }
+</style>

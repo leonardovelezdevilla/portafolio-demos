@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import { AVISO_MEDICO } from '../../lib/negocio';
+---
+
+<Base
+  titulo="Términos de demo | Aura Derma"
+  descripcion="Términos de uso de demostración del sitio de Aura Derma, una clínica ficticia de portafolio."
+  ruta="/terminos/"
+>
+  <article class="contenedor legal">
+    <p class="sobretitulo">Documento de demostración</p>
+    <h1>Términos de demo</h1>
+
+    <h2>1. Qué es este sitio</h2>
+    <p>
+      Aura Derma es una clínica <strong>ficticia</strong>, creada por Vélez De Villa como demostración de portafolio. No presta servicios médicos, no existe en San Isidro y sus especialistas, precios, teléfonos y direcciones son inventados.
+    </p>
+
+    <h2>2. Información médica</h2>
+    <p>{AVISO_MEDICO} Ante cualquier duda sobre tu salud, consulta a un médico colegiado. En una emergencia acude a un servicio de urgencias.</p>
+
+    <h2>3. Agenda y precios</h2>
+    <ul>
+      <li>Los horarios ocupados son simulados y se calculan de forma fija a partir de la fecha; no reflejan una agenda real.</li>
+      <li>Los precios «desde S/» son referenciales y ficticios, en soles e IGV incluido. No constituyen una oferta.</li>
+      <li>La solicitud termina en un mensaje de WhatsApp prellenado. La demo no reserva ni confirma nada.</li>
+    </ul>
+
+    <h2>4. Fotografías</h2>
+    <p>Las imágenes son de archivo (Pexels) de Gustavo Fring y se acreditan también en el repositorio. Las personas que aparecen no tienen relación con esta marca ficticia.</p>
+
+    <h2>5. Testimonios</h2>
+    <p>Los testimonios son escritos para la demo y están marcados con «Ejemplo de demo».</p>
+
+    <h2>6. Responsabilidad</h2>
+    <p>El sitio se ofrece «tal cual», solo para mostrar diseño y funcionamiento. No debe usarse para decisiones de salud.</p>
+
+    <p><a href="/">Volver al inicio</a></p>
+  </article>
+</Base>

@@ -1,0 +1,76 @@
+---
+import { TESTIMONIOS, FAQ, NEXO } from '../data/contenido';
+import Icon from './Icon.astro';
+---
+<section class="seccion testimonios" aria-labelledby="h-test">
+  <div class="wrap">
+    <p class="etiqueta" data-reveal>Lo que dicen</p>
+    <h2 class="h2" id="h-test" data-reveal data-delay="1">Voces de clientes <span class="badge-demo">Ejemplo de demo</span></h2>
+    <div class="citas">
+      {TESTIMONIOS.map((t, i) => (
+        <figure class={`cita cita--${i + 1}`} data-reveal data-delay={String(i + 1)}>
+          <blockquote><p>«{t.texto}»</p></blockquote>
+          <figcaption>{t.quien}, {t.lugar} <span class="badge-demo">Ejemplo de demo</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="seccion faq sobre-tinta" id="faq" aria-labelledby="h-faq">
+  <div class="wrap faq__grid">
+    <div data-reveal>
+      <p class="etiqueta">Preguntas frecuentes</p>
+      <h2 class="h2" id="h-faq">Antes de escribirnos</h2>
+    </div>
+    <div class="faq__lista">
+      {FAQ.map((f) => (
+        <details>
+          <summary>{f.p}</summary>
+          <p>{f.r}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="contacto" id="contacto" aria-labelledby="h-cont">
+  <div class="wrap contacto__in" data-reveal>
+    <h2 class="h2" id="h-cont">¿Hablamos de tu negocio?</h2>
+    <p class="lead">Cuéntanos qué te quita más tiempo. Te respondemos por WhatsApp en horario de oficina (lunes a viernes, 9:00 a 18:00).</p>
+    <a class="btn" href={`https://wa.me/${NEXO.telefono}?text=${encodeURIComponent('Hola Nexo, quiero conversar sobre automatizar mi negocio.')}`}>
+      Escribir por WhatsApp <span class="sr-only">(abre WhatsApp)</span> <Icon nombre="arrow-up-right" tamano={20} />
+    </a>
+  </div>
+</section>
+
+<style>
+  .testimonios h2 { max-width: 20ch; margin-bottom: 48px; }
+  .testimonios h2 .badge-demo { font-family: var(--f-body); vertical-align: middle; margin-left: 4px; }
+  .citas { display: grid; gap: 24px; }
+  .cita { margin: 0; padding: 28px 24px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper-2); display: grid; gap: 16px; align-content: space-between; }
+  blockquote { margin: 0; font-size: 1.15rem; font-weight: 600; line-height: 1.45; }
+  figcaption { font-size: 0.9rem; color: var(--muted); display: grid; gap: 8px; justify-items: start; }
+  @media (min-width: 900px) {
+    .citas { grid-template-columns: repeat(3, 1fr); align-items: start; }
+    .cita--2 { margin-top: 56px; background: var(--lima); }
+    .cita--2 figcaption { color: var(--ink); }
+    .cita--3 { margin-top: 24px; }
+  }
+
+  .faq__grid { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .faq__grid { grid-template-columns: 5fr 7fr; gap: 80px; } .faq__lista { margin-top: 64px; } }
+  details { border-top: 1px solid var(--linea-ink); }
+  details:last-child { border-bottom: 1px solid var(--linea-ink); }
+  summary { cursor: pointer; padding: 18px 40px 18px 0; min-height: 44px; font-weight: 700; font-size: 1.1rem; list-style: none; position: relative; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; position: absolute; right: 4px; top: 12px; font-size: 1.6rem; color: var(--lima); }
+  details[open] summary::after { content: '−'; }
+  details p { padding: 0 0 20px; color: var(--muted-ink); max-width: 56ch; }
+
+  .contacto { background: var(--lima); padding-block: 80px; border-block: 2px solid var(--ink); }
+  .contacto__in { display: grid; gap: 20px; justify-items: start; }
+  .contacto h2 { max-width: 14ch; }
+  @media (min-width: 900px) { .contacto__in { margin-left: 8.33%; } }
+  .contacto .btn:hover { background: var(--paper); color: var(--ink); }
+</style>

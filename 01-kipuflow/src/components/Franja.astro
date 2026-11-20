@@ -1,0 +1,17 @@
+---
+---
+<section class="franja" aria-label="Cómo funciona en tres pasos">
+  <div class="contenedor pasos">
+    <div><span class="n num">1</span><p><strong>Emites</strong> tu recibo en SUNAT como siempre.</p></div>
+    <div><span class="n num">2</span><p><strong>Registras</strong> el monto y Kipuflow separa la retención.</p></div>
+    <div><span class="n num">3</span><p><strong>Decides</strong> cuánto apartar antes de la declaración anual.</p></div>
+  </div>
+</section>
+<style>
+  .franja { background: linear-gradient(100deg, rgba(62,230,162,.14), rgba(93,180,255,.14)); border-block: 1px solid var(--borde); }
+  .pasos { display: grid; gap: 1.2rem; padding-block: 1.8rem; }
+  .pasos > div { display: grid; grid-template-columns: auto 1fr; gap: .9rem; align-items: center; }
+  .n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--verde); color: var(--verde-osc); font-weight: 700; font-size: 1.2rem; }
+  p { margin: 0; }
+  @media (min-width: 800px) { .pasos { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; padding-block: 2.2rem; } }
+</style>

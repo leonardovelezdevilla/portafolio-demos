@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Página no encontrada | Vértice Studio (demo)" descripcion="La página que buscas no existe en esta demo de Vértice Studio." ruta="/404/" sinCanonical>
+  <section class="contenedor seccion">
+    <p class="etiqueta">Error 404</p>
+    <h1 class="grande">Pisaste<br />el vacío.</h1>
+    <p class="lead">Esa página no existe. Vuelve al catálogo y sigue caminando.</p>
+    <p><a class="btn btn--primario" href="/#catalogo">Ir al catálogo</a></p>
+  </section>
+</Base>
+
+<style>
+  .grande { font-size: clamp(64px, 16vw, 160px); margin: 16px 0 20px; line-height: 0.88; }
+</style>

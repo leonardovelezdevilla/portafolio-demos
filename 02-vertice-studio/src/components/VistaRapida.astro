@@ -1,0 +1,149 @@
+---
+import Icono from './Icono.astro';
+---
+<dialog id="vista-rapida" class="vr" aria-labelledby="vr-titulo">
+  <div class="vr__cab">
+    <p>Vista rápida</p>
+    <button type="button" class="btn-cerrar" data-cerrar-vr aria-label="Cerrar vista rápida"><Icono nombre="cerrar" /></button>
+  </div>
+  <div class="vr__cuerpo">
+    <div class="vr__foto"><img data-vr-foto src="data:," alt="" width="720" height="900" /></div>
+    <div class="vr__info">
+      <p class="etiqueta" data-vr-cat></p>
+      <h2 id="vr-titulo" data-vr-nombre></h2>
+      <p class="precio" data-vr-precio></p>
+      <p class="nota nota--igv">IGV incluido</p>
+      <p data-vr-resumen></p>
+      <ul class="swatches" data-vr-colores aria-label="Colores del modelo"></ul>
+      <form novalidate data-vr-form>
+        <fieldset class="campo" aria-describedby="vr-talla-error">
+          <legend>Elige tu talla (EU)</legend>
+          <div class="opciones" data-vr-tallas></div>
+          <p class="campo__ayuda">Las tallas marcadas «Agotada» no tienen stock; «Últ.» indica pocas unidades.</p>
+          <p class="campo__ayuda campo__ayuda--fuerte" data-vr-stock role="status" aria-live="polite"></p>
+          <p class="error" id="vr-talla-error" data-error="talla" role="alert" hidden></p>
+        </fieldset>
+        <button type="submit" class="btn btn--primario btn--bloque"><Icono nombre="bolsa" /> Agregar al carrito</button>
+        <p class="nota nota--sep">Stock de demo: se confirma por WhatsApp al pedir.</p>
+        <p class="nota"><a data-vr-enlace href="/">Ver página completa y guía de tallas</a></p>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { abrirModal, cerrarModal, iniciarModal } from '../scripts/dialogos';
+  import { mostrarErrores } from '../scripts/formularios';
+  import { leerParams } from '../lib/filtros';
+
+  interface P {
+    slug: string; nombre: string; categoria: string; precio: number; resumen: string; alt: string; medio: string;
+    tallas: Record<string, number>; colores: { nombre: string; hex: string }[];
+  }
+  const nombresCat: Record<string, string> = { running: 'Running', urbana: 'Urbana', skate: 'Skate', basquet: 'Básquet' };
+  const soles = (n: number) => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(n);
+
+  const dlg = document.getElementById('vista-rapida') as HTMLDialogElement | null;
+  const datos = document.getElementById('datos-tienda');
+  const catalogo: P[] = datos ? JSON.parse(datos.textContent || '[]') : [];
+
+  if (dlg && catalogo.length) {
+    const $ = <T extends HTMLElement>(s: string) => dlg.querySelector<T>(s)!;
+    const form = $<HTMLFormElement>('[data-vr-form]');
+    let actual: P | null = null;
+    let origen: HTMLElement | null = null;
+
+    iniciarModal(dlg);
+    dlg.querySelector('[data-cerrar-vr]')!.addEventListener('click', () => cerrarModal(dlg));
+
+    function abrir(slug: string, disparador: HTMLElement) {
+      const p = catalogo.find((x) => x.slug === slug);
+      if (!p) return;
+      actual = p;
+      origen = disparador;
+      const img = $<HTMLImageElement>('[data-vr-foto]');
+      img.src = p.medio;
+      img.alt = p.alt;
+      $('[data-vr-cat]').textContent = nombresCat[p.categoria] ?? p.categoria;
+      $('[data-vr-nombre]').textContent = p.nombre;
+      $('[data-vr-precio]').textContent = soles(p.precio);
+      $('[data-vr-resumen]').textContent = p.resumen;
+      const sw = $('[data-vr-colores]');
+      sw.replaceChildren(
+        ...p.colores.map((c) => {
+          const li = document.createElement('li');
+          const i = document.createElement('i');
+          i.style.background = c.hex; // asignación por CSSOM: permitida por la CSP
+          li.append(i, c.nombre);
+          return li;
+        }),
+      );
+      const cont = $('[data-vr-tallas]');
+      cont.replaceChildren(
+        ...Object.keys(p.tallas).map((t) => {
+          const stock = p.tallas[t];
+          const label = document.createElement('label');
+          label.className = 'opcion';
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = 'talla';
+          input.value = t;
+          input.disabled = stock <= 0;
+          const span = document.createElement('span');
+          span.className = 'opcion__talla';
+          const num = document.createElement('b');
+          num.textContent = t;
+          span.append(num);
+          if (stock <= 0 || stock <= 2) {
+            const small = document.createElement('small');
+            small.textContent = stock <= 0 ? 'Agotada' : `Últ. ${stock}`;
+            span.append(small);
+          }
+          label.append(input, span);
+          return label;
+        }),
+      );
+      form.reset();
+      mostrarErrores(form, {});
+      const stockEl = $('[data-vr-stock]');
+      stockEl.textContent = '';
+      const filtrada = leerParams(location.search).talla;
+      if (filtrada && (p.tallas[String(filtrada)] ?? 0) > 0) {
+        const r = form.querySelector<HTMLInputElement>(`input[name="talla"][value="${filtrada}"]`);
+        if (r) {
+          r.checked = true;
+          stockEl.textContent = `Talla ${filtrada} preseleccionada según tu filtro.`;
+        }
+      }
+      $<HTMLAnchorElement>('[data-vr-enlace]').href = `/producto/${p.slug}/`;
+      abrirModal(dlg!, disparador);
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-vista-rapida]').forEach((b) => {
+      b.hidden = false;
+      b.addEventListener('click', () => abrir(b.dataset.vistaRapida!, b));
+    });
+
+    form.addEventListener('change', () => {
+      mostrarErrores(form, {});
+      const sel = form.querySelector<HTMLInputElement>('input[name="talla"]:checked');
+      const st = sel && actual ? actual.tallas[sel.value] : 0;
+      $('[data-vr-stock]').textContent = sel
+        ? st <= 2 ? `Talla ${sel.value}: quedan ${st} ${st === 1 ? 'unidad' : 'unidades'}.` : `Talla ${sel.value} disponible.`
+        : '';
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sel = form.querySelector<HTMLInputElement>('input[name="talla"]:checked');
+      if (!sel) {
+        const primero = mostrarErrores(form, { talla: 'Elige una talla para continuar.' });
+        primero?.focus();
+        return;
+      }
+      const slug = actual!.slug;
+      const talla = Number(sel.value);
+      cerrarModal(dlg);
+      document.dispatchEvent(new CustomEvent('vertice:agregar', { detail: { slug, talla } }));
+    });
+  }
+</script>

@@ -1,0 +1,358 @@
+---
+import Icon from './Icon.astro';
+import { ESPECIALISTAS } from '../lib/especialistas';
+import { TRATAMIENTOS } from '../lib/tratamientos';
+import { NEGOCIO } from '../lib/negocio';
+---
+
+<section class="seccion seccion--salvia" id="agenda" aria-labelledby="ag-titulo">
+  <div class="contenedor ag">
+    <div class="seccion__cabecera">
+      <p class="sobretitulo">Agenda</p>
+      <h2 id="ag-titulo" tabindex="-1">Reserva tu cita en 4 pasos</h2>
+      <p class="lead">
+        Elige especialista, día y hora. Al final se abre WhatsApp con tu solicitud ya escrita para que la clínica la confirme.
+      </p>
+      <p class="nota-sim">
+        Demo: los horarios <strong>ocupados son simulados</strong> y se calculan siempre igual para cada fecha. No se reserva nada real. Hora de Lima.
+      </p>
+      <p class="salida-wa">
+        ¿Prefieres escribirnos directo? <a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">Abrir WhatsApp ({NEGOCIO.telefonoVisible})<span class="visually-hidden">, se abre en otra pestaña o aplicación</span></a>
+      </p>
+    </div>
+
+    <noscript>
+      <div class="aviso">
+        <Icon name="info" />
+        <p>El calendario de la agenda necesita JavaScript. Mientras tanto, usa el enlace de WhatsApp de arriba.</p>
+      </div>
+    </noscript>
+
+    <form id="agenda-form" class="agenda-form" novalidate hidden>
+      <div id="ag-resumen" class="resumen-errores" tabindex="-1" hidden></div>
+      <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio. El DNI y el tratamiento de interés son opcionales.</p>
+
+      <fieldset class="agenda-paso" id="ag-esp-grupo">
+        <legend><span class="num-paso" aria-hidden="true">1</span> Elige especialista</legend>
+        <div class="esp-lista">
+          {
+            ESPECIALISTAS.map((e, i) => (
+              <div class="opcion">
+                <input type="radio" name="especialista" id={`ag-esp-${e.id}`} value={e.id} checked={i === 0} />
+                <label for={`ag-esp-${e.id}`}>
+                  {e.nombre}
+                  <small>{e.enfoque}</small>
+                </label>
+              </div>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="agenda-paso" id="ag-fecha-grupo" aria-describedby="err-fecha">
+        <legend><span class="num-paso" aria-hidden="true">2</span> Elige el día (próximos 14 días) <span class="req" aria-hidden="true">*</span></legend>
+        <p class="nota-sim" id="ag-dias-ayuda" role="status"></p>
+        <div class="dias-grid" id="ag-dias"></div>
+        <p class="error" id="err-fecha" hidden></p>
+      </fieldset>
+
+      <fieldset class="agenda-paso" id="ag-hora-grupo" aria-describedby="err-hora">
+        <legend><span class="num-paso" aria-hidden="true">3</span> Elige la hora (cada 30 minutos) <span class="req" aria-hidden="true">*</span></legend>
+        <p class="nota-sim" id="ag-hora-ayuda" role="status">Primero elige un día.</p>
+        <div class="horas-grid" id="ag-horas"></div>
+        <ul class="leyenda">
+          <li><i></i> Libre</li>
+          <li><i class="oc"></i> <s>Ocupado</s> o no disponible</li>
+          <li><i class="sel"></i> Elegido</li>
+        </ul>
+        <p class="error" id="err-hora" hidden></p>
+      </fieldset>
+
+      <fieldset class="agenda-paso">
+        <legend><span class="num-paso" aria-hidden="true">4</span> Tus datos</legend>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="ag-nombre">Nombre y apellido <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="ag-nombre" name="nombre" autocomplete="name" maxlength="80" required aria-required="true" aria-describedby="err-nombre" />
+            <p class="error" id="err-nombre" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="ag-celular">Celular, 9 dígitos <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="ag-celular" name="celular" inputmode="numeric" autocomplete="tel-national" maxlength="11" required aria-required="true" aria-describedby="ayuda-celular err-celular" />
+            <p class="ayuda" id="ayuda-celular">Ejemplo: 987 654 321</p>
+            <p class="error" id="err-celular" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="ag-dni">DNI (opcional)</label>
+            <input type="text" id="ag-dni" name="dni" inputmode="numeric" maxlength="8" aria-describedby="ayuda-dni err-dni" />
+            <p class="ayuda" id="ayuda-dni">8 números. Solo sirve para agilizar tu registro en la clínica; no se incluye en el mensaje de WhatsApp.</p>
+            <p class="error" id="err-dni" hidden></p>
+          </div>
+          <div class="campo">
+            <label for="ag-tratamiento">Tratamiento de interés (opcional)</label>
+            <select id="ag-tratamiento" name="tratamiento">
+              <option value="">Aún no lo sé</option>
+              {TRATAMIENTOS.map((t) => <option value={t.id}>{t.nombre}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="ag-motivo">Motivo de la consulta, breve <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="ag-motivo" name="motivo" maxlength="200" required aria-required="true" aria-describedby="ayuda-motivo err-motivo"></textarea>
+          <p class="ayuda" id="ayuda-motivo">Máximo 200 caracteres, en términos generales (por ejemplo, «control de acné» o «revisión de lunares»).</p>
+          <p class="aviso-wa">
+            <strong>No escribas diagnósticos ni detalles clínicos.</strong> Este texto viajará por WhatsApp, que pertenece a Meta. Los detalles de tu salud se conversan en la consulta.
+          </p>
+          <p class="error" id="err-motivo" hidden></p>
+        </div>
+        <div class="campo">
+          <div class="check">
+            <input type="checkbox" id="ag-consentimiento" name="consentimiento" required aria-required="true" aria-describedby="ayuda-consent err-consentimiento" />
+            <label for="ag-consentimiento">
+              <span class="req" aria-hidden="true">*</span> Doy mi consentimiento expreso para que Aura Derma trate mis datos personales y mis <strong>datos de salud (sensibles)</strong> para gestionar mi cita y evaluar mi motivo de consulta, y para enviarlos a la clínica por WhatsApp (Meta).
+            </label>
+          </div>
+          <p class="ayuda" id="ayuda-consent">
+            Puedes revocarlo cuando quieras. Esta casilla vale como firma electrónica de demo; en una clínica real el consentimiento por escrito se formaliza en la consulta. Lee la <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad<span class="visually-hidden"> (se abre en otra pestaña)</span></a> (Ley 29733).
+          </p>
+          <p class="error" id="err-consentimiento" hidden></p>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn"><Icon name="message-circle" /> Continuar a WhatsApp</button>
+    </form>
+
+    <div id="ag-conf" class="confirmacion" tabindex="-1" hidden>
+      <span class="sello-demo">Confirmación de demo</span>
+      <h3>Falta un paso: envía el mensaje por WhatsApp</h3>
+      <p>Aún no se ha reservado nada. Abre WhatsApp y envía el mensaje para que la clínica confirme tu cita.</p>
+      <dl id="ag-conf-datos"></dl>
+      <p class="aviso-wa"><strong>Recuerda:</strong> no agregues diagnósticos ni detalles clínicos al mensaje; WhatsApp pertenece a Meta.</p>
+      <div class="acciones">
+        <a class="btn" id="ag-wa" href="https://wa.me/51900000000" target="_blank" rel="noopener noreferrer"><Icon name="message-circle" /> Abrir WhatsApp<span class="visually-hidden">, se abre en otra pestaña o aplicación</span></a>
+        <button type="button" class="btn btn--suave" id="ag-otra">Hacer otra solicitud</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { ESPECIALISTAS } from '../lib/especialistas';
+  import { TRATAMIENTOS } from '../lib/tratamientos';
+  import { bloquesDelDia, formatearFecha, proximosDias, validarFechaHora } from '../lib/horarios';
+  import { construirUrlWhatsApp, normalizarCelular, validarPaciente } from '../lib/validaciones';
+
+  const form = document.getElementById('agenda-form') as HTMLFormElement | null;
+  if (form) {
+    form.hidden = false;
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const diasEl = $('ag-dias');
+    const horasEl = $('ag-horas');
+    const ayudaHora = $('ag-hora-ayuda');
+    const ayudaDias = $('ag-dias-ayuda');
+    const resumen = $('ag-resumen');
+    const conf = $('ag-conf');
+    const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const ahora = () => new Date();
+
+    const espActual = () => {
+      const id = (form.elements.namedItem('especialista') as RadioNodeList).value;
+      return ESPECIALISTAS.find((e) => e.id === id) ?? ESPECIALISTAS[0];
+    };
+    const valor = (name: string) => (form.elements.namedItem(name) as RadioNodeList | null)?.value ?? '';
+
+    function opcion(name: string, id: string, value: string, off: boolean, checked: boolean, html: string, estado: string) {
+      return `<div class="opcion"><input type="radio" name="${name}" id="${id}" value="${value}"${off ? ' aria-disabled="true"' : ''}${checked ? ' checked' : ''} /><label for="${id}">${html}<span class="visually-hidden">, ${estado}</span></label></div>`;
+    }
+
+    function pintarDias(preferida?: string) {
+      const esp = espActual();
+      const previa = preferida ?? valor('fecha');
+      const t = ahora();
+      const dias = proximosDias(t).map((d) => {
+        const bloques = bloquesDelDia(d.fecha, esp.id, t, esp.dias);
+        const libres = bloques.filter((b) => b.estado === 'libre').length;
+        let nota = '';
+        if (!d.abierto) nota = 'Cerrado';
+        else if (!esp.dias.includes(d.diaSemana)) nota = 'No atiende';
+        else if (libres === 0) nota = 'Sin cupos';
+        return { ...d, libres, nota };
+      });
+      const elegida = dias.find((d) => !d.nota && d.fecha === previa) ?? dias.find((d) => !d.nota);
+      diasEl.innerHTML = dias
+        .map((d) => {
+          const [, m, dd] = d.fecha.split('-').map(Number);
+          const html = `<span class="dow">${DIAS_CORTOS[d.diaSemana]}</span><span class="num">${dd}</span><span class="mes">${d.nota || MESES[m - 1]}</span>`;
+          const estado = `${formatearFecha(d.fecha)}, ${d.nota ? d.nota.toLowerCase() : d.libres + ' horarios libres'}`;
+          return opcion('fecha', `ag-f-${d.fecha}`, d.fecha, !!d.nota, d === elegida, html, estado);
+        })
+        .join('');
+      ayudaDias.textContent = `${esp.nombre}: ${dias.filter((d) => !d.nota).length} días con horarios libres.`;
+      pintarHoras();
+    }
+
+    function pintarHoras() {
+      const esp = espActual();
+      const fecha = valor('fecha');
+      const previa = valor('hora');
+      if (!fecha) {
+        horasEl.innerHTML = '';
+        ayudaHora.textContent = 'No hay días con cupos para este especialista.';
+        return;
+      }
+      const bloques = bloquesDelDia(fecha, esp.id, ahora(), esp.dias);
+      const libres = bloques.filter((b) => b.estado === 'libre').length;
+      ayudaHora.textContent = `${formatearFecha(fecha)}: ${libres} horarios libres.`;
+      horasEl.innerHTML = bloques
+        .map((b) => {
+          const off = b.estado !== 'libre';
+          const nota = b.estado === 'ocupado' ? 'ocupado' : 'pasó';
+          const html = `${b.hora}${off ? `<small>${nota}</small>` : ''}`;
+          return opcion('hora', `ag-h-${b.hora.replace(':', '')}`, b.hora, off, !off && b.hora === previa, html, off ? nota : 'libre');
+        })
+        .join('');
+    }
+
+    /* ---------- errores ---------- */
+    const campos: Record<string, string> = {
+      fecha: 'ag-fecha-grupo',
+      hora: 'ag-hora-grupo',
+      nombre: 'ag-nombre',
+      celular: 'ag-celular',
+      dni: 'ag-dni',
+      motivo: 'ag-motivo',
+      consentimiento: 'ag-consentimiento',
+    };
+    function limpiarErrores() {
+      Object.keys(campos).forEach((k) => {
+        const p = document.getElementById(`err-${k}`);
+        if (p) { p.hidden = true; p.textContent = ''; }
+        document.getElementById(campos[k])?.removeAttribute('aria-invalid');
+      });
+      resumen.hidden = true;
+      resumen.textContent = '';
+    }
+    function mostrarError(k: string, msg: string) {
+      const p = document.getElementById(`err-${k}`)!;
+      p.textContent = msg;
+      p.hidden = false;
+      // aria-invalid solo en controles, no en fieldset.
+      if (k !== 'fecha' && k !== 'hora') document.getElementById(campos[k])?.setAttribute('aria-invalid', 'true');
+    }
+    /** Mueve el foco al control que corresponde a un error. */
+    function enfocarCampo(k: string) {
+      if (k === 'fecha' || k === 'hora') {
+        const grupo = document.getElementById(campos[k])!;
+        const el = grupo.querySelector<HTMLInputElement>('input:checked') ?? grupo.querySelector<HTMLInputElement>('input:not([aria-disabled="true"])') ?? grupo.querySelector<HTMLInputElement>('input');
+        el?.focus();
+      } else {
+        document.getElementById(campos[k])?.focus();
+      }
+    }
+    function resolver(k: string) {
+      const p = document.getElementById(`err-${k}`);
+      if (p) p.hidden = true;
+      document.getElementById(campos[k])?.removeAttribute('aria-invalid');
+      resumen.querySelector(`li[data-k="${k}"]`)?.remove();
+      if (!resumen.querySelector('li')) resumen.hidden = true;
+    }
+
+    // Opciones no disponibles: aria-disabled bloquea la selección pero siguen siendo alcanzables.
+    form.addEventListener('click', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.matches?.('input[aria-disabled="true"]')) e.preventDefault();
+    });
+    form.addEventListener('change', (e) => {
+      const n = (e.target as HTMLInputElement).name;
+      if (n === 'especialista') pintarDias();
+      if (n === 'fecha') pintarHoras();
+      if (campos[n]) resolver(n);
+    });
+    form.addEventListener('input', (e) => {
+      const n = (e.target as HTMLInputElement).name;
+      if (campos[n] && (e.target as HTMLInputElement).getAttribute('aria-invalid') === 'true') resolver(n);
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      limpiarErrores();
+      const esp = espActual();
+      const fecha = valor('fecha');
+      const hora = valor('hora');
+      const get = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+      const datos = {
+        nombre: get('nombre').value,
+        celular: get('celular').value,
+        dni: get('dni').value,
+        motivo: get('motivo').value,
+        consentimiento: get('consentimiento').checked,
+      };
+      const errores: Record<string, string> = { ...validarPaciente(datos) };
+      const eFecha = validarFechaHora(fecha, hora, esp.id, ahora(), esp.dias);
+      if (eFecha) {
+        if (!fecha || /fecha|domingos|próximos|no atiende|no es válida/i.test(eFecha)) errores.fecha = eFecha;
+        else errores.hora = eFecha;
+      }
+      const claves = Object.keys(campos).filter((k) => errores[k]);
+      if (claves.length) {
+        claves.forEach((k) => mostrarError(k, errores[k]));
+        const t = document.createElement('p');
+        t.textContent = `Revisa ${claves.length} ${claves.length === 1 ? 'dato' : 'datos'} antes de continuar:`;
+        const ul = document.createElement('ul');
+        claves.forEach((k) => {
+          const li = document.createElement('li');
+          li.dataset.k = k;
+          const a = document.createElement('a');
+          a.href = `#${campos[k]}`;
+          a.textContent = errores[k];
+          a.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            enfocarCampo(k);
+          });
+          li.append(a);
+          ul.append(li);
+        });
+        resumen.replaceChildren(t, ul);
+        resumen.hidden = false;
+        resumen.focus();
+        return;
+      }
+      const trat = TRATAMIENTOS.find((x) => x.id === (form.elements.namedItem('tratamiento') as HTMLSelectElement).value);
+      const resumenCita = { ...datos, especialista: esp.nombre, fecha, hora, tratamiento: trat?.nombre ?? '' };
+      const dl = $('ag-conf-datos');
+      dl.innerHTML = '';
+      const filas: Array<[string, string]> = [
+        ['Especialista', esp.nombre],
+        ['Fecha', formatearFecha(fecha)],
+        ['Hora', `${hora} (hora de Lima)`],
+        ['Paciente', datos.nombre.trim()],
+        ['Celular', normalizarCelular(datos.celular)],
+      ];
+      if (trat) filas.push(['Tratamiento de interés', trat.nombre]);
+      filas.push(['Motivo', datos.motivo.trim()]);
+      filas.forEach(([k, v]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = k;
+        const dd = document.createElement('dd');
+        dd.textContent = v;
+        dl.append(dt, dd);
+      });
+      ($('ag-wa') as HTMLAnchorElement).href = construirUrlWhatsApp(resumenCita);
+      form.hidden = true;
+      conf.hidden = false;
+      conf.focus();
+    });
+
+    $('ag-otra').addEventListener('click', () => {
+      form.reset();
+      limpiarErrores();
+      conf.hidden = true;
+      form.hidden = false;
+      pintarDias();
+      $('ag-titulo').focus();
+    });
+
+    pintarDias();
+  }
+</script>

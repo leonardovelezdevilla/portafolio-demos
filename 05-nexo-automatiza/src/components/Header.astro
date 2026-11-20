@@ -1,0 +1,41 @@
+---
+---
+<header class="cab sobre-tinta">
+  <div class="wrap cab__in">
+    <a class="marca" href="/" aria-label="Nexo Automatiza, inicio">
+      <svg class="marca__logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <rect width="40" height="40" rx="8" fill="#c9f23b" />
+        <path d="M11 29V11h4l10 11V11h4v18h-4L15 18v11z" fill="#12110f" />
+      </svg>
+      <span class="marca__txt">nexo<span>.</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <ul class="nav">
+        <li><a href="/#servicios">Servicios</a></li>
+        <li><a href="/#casos">Casos</a></li>
+        <li><a href="/#proceso">Proceso</a></li>
+        <li class="ancho"><a href="/#faq">Preguntas</a></li>
+        <li class="ancho"><a href="/#contacto">Contacto</a></li>
+        <li><a class="nav__cta" href="/#cotizador">Cotizar</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cab { position: relative; z-index: 20; border-bottom: 1px solid var(--linea-ink); }
+  .cab { position: sticky; top: 0; }
+  .cab__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; padding-block: 8px; }
+  .marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--paper); min-height: 44px; }
+  .marca__logo { width: 34px; height: 34px; }
+  .marca__txt { font-family: var(--f-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; }
+  .marca__txt span { color: var(--lima); }
+  .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+  .nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; color: var(--paper); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .nav a:hover { color: var(--lima); text-decoration: underline; text-underline-offset: 6px; }
+  .nav .nav__cta { background: var(--lima); color: var(--ink); border-radius: 4px; padding: 0 16px; margin-left: 4px; }
+  .nav .nav__cta:hover { color: var(--ink); background: var(--paper); text-decoration: none; }
+  .ancho { display: none; }
+  @media (min-width: 700px) { .ancho { display: block; } }
+  @media (max-width: 420px) { .nav a { padding: 0 7px; font-size: 0.9rem; } }
+</style>

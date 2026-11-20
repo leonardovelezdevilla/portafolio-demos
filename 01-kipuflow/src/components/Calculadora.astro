@@ -1,0 +1,180 @@
+---
+import Icon from './Icon.astro';
+import { calcular, UIT_2026 } from '../lib/impuestos';
+const inicial = { ingresoMensual: 6000, recibosPorMes: 2 };
+const r = calcular(inicial);
+const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
+const pct = (n: number) => `${Math.round(n * 100)} %`;
+---
+<section class="seccion" id="calculadora" aria-labelledby="t-calc">
+  <div class="contenedor">
+    <div class="cabecera-sec">
+      <p class="sobretitulo">Calculadora referencial</p>
+      <h2 id="t-calc">¿Cuánto te retienen y cuánto pagarías al año?</h2>
+      <p class="lead">Renta de 4.ª categoría para recibos por honorarios. Mueve los números y mira la retención, la deducción y el tramo de la escala.</p>
+    </div>
+
+    <div class="calc">
+      <form class="calc-form vidrio" id="calc-form" novalidate aria-describedby="calc-aviso">
+        <div class="campo">
+          <label for="ingreso">Ingresos brutos mensuales (S/)</label>
+          <input id="ingreso" name="ingreso" type="number" inputmode="decimal" min="0" max="1000000" step="50" value={inicial.ingresoMensual} aria-describedby="ingreso-err" />
+          <p class="err" id="ingreso-err" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="recibos">Recibos por honorarios al mes</label>
+          <input id="recibos" name="recibos" type="number" inputmode="numeric" min="1" max="60" step="1" value={inicial.recibosPorMes} aria-describedby="recibos-ayuda recibos-err" />
+          <p class="ayuda" id="recibos-ayuda">La retención se decide recibo por recibo, no por el total del mes.</p>
+          <p class="err" id="recibos-err" role="alert"></p>
+        </div>
+        <div class="regla">
+          <Icon name="info" size={20} />
+          <p><strong>Retención de 8 %:</strong> si un agente de retención te paga un recibo que <em>supera</em> S/ 1 500, te descuenta el 8 %. Es un pago a cuenta de tu impuesto anual, no el impuesto final.</p>
+        </div>
+      </form>
+
+      <div class="calc-res vidrio" id="calc-res">
+        <p class="sr-only" role="status" id="calc-status"></p>
+        <p class="obsoleto" id="calc-obsoleto" hidden>No se recalculó: corrige los valores marcados. Lo que ves abajo es el cálculo anterior.</p>
+        <h3 class="sr-only">Resultado</h3>
+        <p class="res-estado" data-out="estado">{r.seRetiene ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1 500: te retienen 8 %.` : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1 500: sin retención.`}</p>
+        <div class="res-grande">
+          <p class="res-etq" data-out="saldoEtq">{r.saldo > 0 ? 'Impuesto por pagar al regularizar' : r.saldo < 0 ? 'Saldo a favor estimado' : 'Sin saldo'}</p>
+          <p class="res-valor num" data-out="saldo">{sol.format(Math.abs(r.saldo))}</p>
+          <p class="res-estim">Estimación, no una devolución garantizada.</p>
+        </div>
+        <p class="aviso" id="calc-aviso"><Icon name="circle-alert" size={20} /><span>Cálculo referencial, no reemplaza la asesoría de un contador ni la información de SUNAT.</span></p>
+        <dl class="res-lista">
+          <div><dt>Ingreso anual</dt><dd class="num" data-out="ingresoAnual">{sol.format(r.ingresoAnual)}</dd></div>
+          <div><dt>Deducción 20 % (tope 24 UIT)</dt><dd class="num" data-out="deduccion20">− {sol.format(r.deduccion20)}</dd></div>
+          <div><dt>Deducción fija 7 UIT</dt><dd class="num" data-out="deduccionFija">− {sol.format(r.deduccionFija)}</dd></div>
+          <div class="sub"><dt>Renta neta anual</dt><dd class="num" data-out="rentaNeta">{sol.format(r.rentaNeta)}</dd></div>
+          <div><dt>Impuesto anual (escala)</dt><dd class="num" data-out="impuestoAnual">{sol.format(r.impuestoAnual)}</dd></div>
+          <div><dt>Retenciones del año</dt><dd class="num" data-out="retencionAnual">− {sol.format(r.retencionAnual)}</dd></div>
+          <div><dt>Retención por mes</dt><dd class="num" data-out="retencionMensual">{sol.format(r.retencionMensual)}</dd></div>
+        </dl>
+        <div class="tramos" tabindex="0" role="region" aria-labelledby="tramos-tit">
+          <p class="tramos-tit" id="tramos-tit">Cómo cae tu renta neta en la escala</p>
+          <table>
+            <caption class="sr-only">Tramos de la escala progresiva</caption>
+            <thead><tr><th scope="col">Tramo (UIT)</th><th scope="col">Base</th><th scope="col">Tasa</th><th scope="col">Impuesto</th></tr></thead>
+            <tbody data-out="tramos">
+              {r.tramos.length === 0 && <tr><td colspan="4">Tu renta neta es S/ 0: no hay impuesto anual.</td></tr>}
+              {r.tramos.map((t) => (
+                <tr><th scope="row">{t.desde / UIT_2026} a {Number.isFinite(t.hasta) ? t.hasta / UIT_2026 : 'más'}</th><td class="num">{sol.format(t.base)}</td><td class="num">{pct(t.tasa)}</td><td class="num">{sol.format(t.impuesto)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul class="nota">
+          <li>UIT 2026 usada: S/ {UIT_2026.toLocaleString('es-PE')}.</li>
+          <li>Escala: 8 % hasta 5 UIT, 14 % hasta 20, 17 % hasta 35, 20 % hasta 45 y 30 % por encima.</li>
+          <li>Solo retiene un cliente que es agente de retención.</li>
+          <li>No considera la suspensión de retenciones o pagos a cuenta (RS 000390-2025/SUNAT), los gastos por boletas (3 UIT) ni otras rentas.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .calc { display: grid; gap: 1.2rem; }
+  .calc-form { padding: 1.4rem; display: grid; gap: 1.2rem; align-content: start; }
+  .campo { display: grid; gap: .4rem; }
+  label { font-weight: 600; }
+  input { font: inherit; min-height: 48px; padding: .6rem .9rem; border-radius: 10px; color: var(--texto); background: rgba(5,9,14,.7); border: 1px solid rgba(190,220,245,.35); width: 100%; }
+  input[aria-invalid='true'] { border-color: var(--error); }
+  .ayuda { color: var(--texto-2); font-size: .92rem; }
+  .err { color: var(--error); font-size: .92rem; min-height: 0; }
+  .regla { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: 1rem; border-radius: 12px; background: rgba(93,180,255,.1); border: 1px solid rgba(93,180,255,.3); font-size: .98rem; }
+  .regla svg { color: var(--azul); margin-top: 3px; }
+  .aviso { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: 1rem; border-radius: 12px; background: rgba(255,212,121,.1); border: 1px solid rgba(255,212,121,.45); color: var(--alerta); font-weight: 600; font-size: .98rem; }
+  .aviso svg { margin-top: 3px; }
+  .calc-res { padding: 1.4rem; display: grid; gap: 1.2rem; align-content: start; min-width: 0; }
+  .res-estado { color: var(--texto-2); font-size: .98rem; }
+  .res-etq { color: var(--texto-2); }
+  .res-valor { font-size: clamp(2.4rem, 9vw, 3.6rem); font-weight: 700; line-height: 1; color: var(--verde); margin-top: .3rem; }
+  .res-lista { margin: 0; display: grid; }
+  .res-lista > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-top: 1px solid var(--borde); }
+  .res-lista dt { color: var(--texto-2); }
+  .res-lista dd { white-space: nowrap; margin: 0; font-weight: 500; text-align: right; }
+  .res-lista .sub { color: var(--texto); }
+  .res-lista .sub dt, .res-lista .sub dd { color: var(--azul); font-weight: 600; }
+  .tramos-tit { font: 500 .95rem var(--f-titulo); margin-bottom: .5rem; }
+  .tramos { overflow-x: auto; }
+  .tramos :global(td:first-child), .tramos :global(th[scope='row']) { white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; min-width: 0; }
+  .tramos :global(th), .tramos :global(td) { padding: .45rem .25rem; text-align: right; border-top: 1px solid var(--borde); white-space: nowrap; }
+  thead th { color: var(--texto-2); font-weight: 600; font-size: .82rem; }
+  .tramos :global(th:first-child) { text-align: left; font-weight: 600; }
+  .nota { color: var(--texto-2); font-size: .9rem; margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+  .res-estim { color: var(--texto-2); font-size: .92rem; margin-top: .4rem; }
+  .obsoleto { color: var(--error); font-weight: 600; padding: .7rem 1rem; border: 1px solid rgba(255,155,155,.5); border-radius: 10px; }
+  .obsoleto[hidden] { display: none; }
+  .calc-res.viejo .res-grande, .calc-res.viejo .res-lista, .calc-res.viejo .tramos { opacity: .45; }
+  @media (min-width: 900px) {
+    .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 1.6rem; align-items: start; }
+    .calc-form, .calc-res { padding: 2rem; }
+    .calc-form { position: sticky; top: 90px; }
+  }
+</style>
+
+<script>
+  import { calcular, UIT_2026 } from '../lib/impuestos';
+  const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
+  const pct = (n: number) => `${Math.round(n * 100)} %`;
+  const form = document.getElementById('calc-form') as HTMLFormElement | null;
+  if (form) {
+    const ingreso = form.elements.namedItem('ingreso') as HTMLInputElement;
+    const recibos = form.elements.namedItem('recibos') as HTMLInputElement;
+    const out = (k: string) => document.querySelector<HTMLElement>(`[data-out="${k}"]`)!;
+    const setErr = (el: HTMLInputElement, msg: string) => {
+      const p = document.getElementById(el.id + '-err')!;
+      p.textContent = msg;
+      el.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    };
+    const status = document.getElementById('calc-status')!;
+    const res = document.getElementById('calc-res')!;
+    const obsoleto = document.getElementById('calc-obsoleto')!;
+    let t: number | undefined;
+    const actualizar = () => {
+      const i = ingreso.value.trim() === '' ? NaN : Number(ingreso.value);
+      const n = recibos.value.trim() === '' ? NaN : Number(recibos.value);
+      let ok = true;
+      if (!Number.isFinite(i) || i < 0 || i > 1_000_000) { setErr(ingreso, 'Escribe un monto mensual entre S/ 0 y S/ 1 000 000.'); ok = false; } else setErr(ingreso, '');
+      if (!Number.isInteger(n) || n < 1 || n > 60) { setErr(recibos, 'Escribe un número entero de recibos entre 1 y 60.'); ok = false; } else setErr(recibos, '');
+      obsoleto.hidden = ok;
+      res.classList.toggle('viejo', !ok);
+      if (!ok) { status.textContent = 'No se recalculó: hay valores no válidos.'; return; }
+      const r = calcular({ ingresoMensual: i, recibosPorMes: n });
+      out('estado').textContent = r.seRetiene
+        ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1 500: te retienen 8 %.`
+        : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1 500: sin retención.`;
+      out('saldoEtq').textContent = r.saldo > 0 ? 'Impuesto por pagar al regularizar' : r.saldo < 0 ? 'Saldo a favor estimado' : 'Sin saldo';
+      out('saldo').textContent = sol.format(Math.abs(r.saldo));
+      out('ingresoAnual').textContent = sol.format(r.ingresoAnual);
+      out('deduccion20').textContent = `− ${sol.format(r.deduccion20)}`;
+      out('deduccionFija').textContent = `− ${sol.format(r.deduccionFija)}`;
+      out('rentaNeta').textContent = sol.format(r.rentaNeta);
+      out('impuestoAnual').textContent = sol.format(r.impuestoAnual);
+      out('retencionAnual').textContent = `− ${sol.format(r.retencionAnual)}`;
+      out('retencionMensual').textContent = sol.format(r.retencionMensual);
+      window.clearTimeout(t);
+      t = window.setTimeout(() => { status.textContent = `${out('saldoEtq').textContent}: ${out('saldo').textContent}. ${out('estado').textContent}`; }, 400);
+      const tb = out('tramos');
+      tb.replaceChildren();
+      if (r.tramos.length === 0) {
+        const tr = tb.insertRow(); const td = tr.insertCell(); td.colSpan = 4; td.textContent = 'Tu renta neta es S/ 0: no hay impuesto anual.'; td.style.textAlign = 'left';
+      }
+      for (const t of r.tramos) {
+        const tr = tb.insertRow();
+        const th = document.createElement('th'); th.scope = 'row';
+        th.textContent = `${t.desde / UIT_2026} a ${Number.isFinite(t.hasta) ? t.hasta / UIT_2026 : 'más'}`;
+        tr.appendChild(th);
+        for (const v of [sol.format(t.base), pct(t.tasa), sol.format(t.impuesto)]) { const td = tr.insertCell(); td.className = 'num'; td.textContent = v; }
+      }
+    };
+    form.addEventListener('input', actualizar);
+    form.addEventListener('submit', (e) => { e.preventDefault(); actualizar(); });
+  }
+</script>

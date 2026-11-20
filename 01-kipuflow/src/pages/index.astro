@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Calculadora from '../components/Calculadora.astro';
+import Funciones from '../components/Funciones.astro';
+import Precios from '../components/Precios.astro';
+import Testimonios from '../components/Testimonios.astro';
+import Faq from '../components/Faq.astro';
+import Acceso from '../components/Acceso.astro';
+import Franja from '../components/Franja.astro';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Kipuflow',
+  url: '/',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web',
+  inLanguage: 'es-PE',
+  description: 'Demo de portafolio: finanzas para freelancers peruanos con calculadora referencial de renta de 4.ª categoría.',
+  offers: [
+    { '@type': 'Offer', name: 'Esencial', price: '19', priceCurrency: 'PEN' },
+    { '@type': 'Offer', name: 'Pro', price: '39', priceCurrency: 'PEN' },
+    { '@type': 'Offer', name: 'Estudio', price: '79', priceCurrency: 'PEN' },
+  ],
+};
+---
+<Base
+  titulo="Kipuflow · Finanzas para freelancers en Perú (demo)"
+  descripcion="Calcula la retención de 8 % de tus recibos por honorarios y tu renta de 4.ª categoría. Demo de portafolio con calculadora referencial."
+  ruta="/"
+  jsonld={jsonld}
+>
+  <Hero />
+  <Franja />
+  <Calculadora />
+  <Funciones />
+  <Precios />
+  <Testimonios />
+  <Faq />
+  <Acceso />
+</Base>

@@ -1,0 +1,44 @@
+---
+import { PASOS } from '../data/contenido';
+---
+<section class="seccion proceso sobre-tinta" id="proceso" aria-labelledby="h-proc">
+  <div class="wrap">
+    <p class="etiqueta" data-reveal>Cómo trabajamos</p>
+    <h2 class="h2 proceso__h" id="h-proc" data-reveal data-delay="1">De tu caos a un flujo que corre solo, en cinco pasos</h2>
+    <p class="lead muted proceso__lead" data-reveal data-delay="2">Tiempos referenciales: dependen del tamaño del negocio y de qué tan rápido nos pases accesos y datos. Los plazos del cotizador (prioritaria, urgente) cuentan solo la construcción, después del diagnóstico y la propuesta.</p>
+    <ol class="pasos">
+      {PASOS.map((p, i) => (
+        <li class={`paso paso--${i % 2 ? 'b' : 'a'}`} data-reveal={i % 2 ? 'der' : 'izq'}>
+          <span class="paso__n" aria-hidden="true">{p.n}</span>
+          <div>
+            <h3>{p.titulo}</h3>
+            <p class="paso__t">{p.tiempo} <span class="sr-only">(referencial)</span></p>
+            <p class="paso__x">{p.texto}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .proceso__h { max-width: 18ch; margin-bottom: 20px; }
+  .proceso__lead { margin-bottom: 56px; }
+  .pasos { display: grid; gap: 28px; border-left: 2px dashed var(--linea-ink); padding-left: 20px; margin-left: 4px; }
+  .paso { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; position: relative; }
+  .paso::before { content: ''; position: absolute; left: -26px; top: 14px; width: 10px; height: 10px; background: var(--lima); border-radius: 50%; }
+  .paso__n { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.6rem, 11vw, 5rem); line-height: 0.9; color: transparent; -webkit-text-stroke: 1.5px var(--lima); }
+  .paso h3 { font-size: 1.35rem; margin-bottom: 6px; }
+  .paso__t { display: inline-block; background: var(--lima); color: var(--ink); font-weight: 700; font-size: 0.85rem; padding: 3px 10px; border-radius: 2px; margin-bottom: 10px; }
+  .paso__x { color: var(--muted-ink); max-width: 46ch; }
+  @media (min-width: 900px) {
+    .pasos { border-left: 0; padding-left: 0; margin-left: 0; gap: 0; }
+    .paso { grid-template-columns: 8rem 1fr; max-width: 640px; padding-block: 28px; border-top: 1px solid var(--linea-ink); }
+    .paso::before { display: none; }
+    .paso--b { margin-left: auto; margin-right: 0; }
+    .paso:nth-child(3) { margin-left: 12%; margin-right: auto; }
+    .paso:nth-child(4) { margin-left: auto; margin-right: 6%; }
+    .paso:nth-child(5) { margin-left: 4%; }
+    .paso__n { font-size: 4.6rem; }
+  }
+</style>

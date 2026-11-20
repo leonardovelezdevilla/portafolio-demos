@@ -1,0 +1,194 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Carta from '../components/Carta.astro';
+import Reserva from '../components/Reserva.astro';
+import Icono from '../components/Icono.astro';
+import { urlWhatsApp } from '../lib/reserva';
+import nigiri from '../assets/fotos/nigiri-ruales.jpg';
+import chef from '../assets/fotos/chef-botio.jpg';
+import salmon from '../assets/fotos/salmon-crystaljo.jpg';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: 'Kuro',
+  description: 'Restaurante de cocina nikkei en Barranco, Lima. Marca ficticia: demo de portafolio de Vélez De Villa.',
+  servesCuisine: ['Nikkei', 'Peruana', 'Japonesa'],
+  priceRange: 'S/ 16 - S/ 320',
+  telephone: '+51900000000',
+  image: '/og.png',
+  url: '/',
+  menu: '/#carta',
+  acceptsReservations: true,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Jr. Los Cedros 245 (dirección ficticia)',
+    addressLocality: 'Barranco',
+    addressRegion: 'Lima',
+    postalCode: '15063',
+    addressCountry: 'PE',
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '12:30', closes: '16:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '19:00', closes: '23:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '12:30', closes: '17:00' },
+  ],
+};
+const tiemposOmakase = [
+  'Sunomono de la estación, para despertar el paladar',
+  'Tiradito del día con leche de tigre de ají limo',
+  'Sashimi de tres pescas, cortados a la vista',
+  'Causa tibia de langostino y miso',
+  'Cuatro nigiris de la barra, uno a uno',
+  'Maki flameado de la casa',
+  'Caldo claro de pescado y kion',
+  'Fondo: la pesca del día o res maturada al wok',
+  'Mochi de lúcuma',
+  'Té hojicha y un último bocado dulce',
+];
+---
+<Base
+  titulo="Kuro · Cocina nikkei en Barranco, Lima"
+  descripcion="Kuro es un restaurante nikkei en Barranco: carta por tiempos, barra omakase y reservas por WhatsApp. Demo de portafolio de Vélez De Villa."
+  ruta="/"
+  jsonld={jsonld}
+>
+  <section class="hero" aria-labelledby="hero-titulo">
+    <div class="contenedor">
+      <div class="hero__ficha">
+        <span>Cocina nikkei</span>
+        <span>Barranco · Lima</span>
+        <span>Mar a dom desde las 12:30</span>
+      </div>
+      <div class="hero__grid">
+        <div>
+          <h1 id="hero-titulo">Kuro<span>Lo negro, lo hondo, lo bien hecho. Cocina nikkei con el mar de Lima.</span></h1>
+          <p class="hero__texto">Pesca del día, ají amarillo y el corte preciso de la cocina japonesa. Platos desde S/ 24, de martes a domingo, en una casa pequeña de Barranco.</p>
+          <div class="hero__acciones">
+            <a class="boton boton--oro" href="#reserva">Reservar mesa</a>
+            <a class="boton boton--linea" href="#carta">Ver la carta</a>
+          </div>
+        </div>
+        <figure class="hero__foto">
+          <Image src={nigiri} alt="Tres nigiris de atún con salsa oscura y cebollita china sobre un plato de cerámica gris" width={1200} widths={[480, 800, 1200]} sizes="(min-width: 72rem) 36rem, 100vw" format="webp" quality={75} loading="eager" fetchpriority="high" decoding="async" />
+          <figcaption class="pie-foto">Nigiris de atún. Fotografía de Jose Ruales (Unsplash).</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="historia" aria-labelledby="historia-titulo">
+    <div class="contenedor historia__grid">
+      <figure class="historia__foto">
+        <Image src={chef} alt="Cocinero con chaquetilla blanca colocando una pieza de pescado sobre un plato en una barra de madera clara" width={640} widths={[400, 640]} sizes="(min-width: 48rem) 36vw, 92vw" format="webp" quality={72} loading="lazy" decoding="async" />
+        <figcaption class="pie-foto">Fotografía de archivo de Paolo Botio (Pexels), a modo ilustrativo.</figcaption>
+      </figure>
+      <div class="historia__texto">
+        <p class="sobretitulo">La historia</p>
+        <h2 class="titulo-seccion" id="historia-titulo">Un chef, dos <em>orillas</em></h2>
+        <div class="columnas">
+          <p class="capitular">Daigo Higa Valdivia creció entre dos cocinas: la de su abuela okinawense, donde el arroz se lavaba tres veces, y la de su madre barranquina, donde el ají amarillo nunca faltaba en la licuadora. Esa mesa doble es Kuro.</p>
+          <p>Se formó en cocinas de Lima y de Osaka, y volvió a Barranco con una idea sencilla: respetar el producto como lo hacen en Japón y condimentarlo como lo hacemos acá. Compra pescado en el muelle cada madrugada, corta a pedido y no sirve nada que no comería en su propia casa.</p>
+        </div>
+        <blockquote class="cita">«Kuro significa negro. Es el color de la sartén bien curada, de la salsa que lleva horas y de la noche en que nadie quiere irse.»</blockquote>
+        <p class="firma">Daigo Higa Valdivia · Chef (personaje ficticio)</p>
+        <dl class="cifras">
+          <div><dt>8</dt><dd>asientos en la barra omakase</dd></div>
+          <div><dt>6</dt><dd>secciones en la carta</dd></div>
+          <div><dt>24</dt><dd>platos, de S/ 16 a S/ 78</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <Carta />
+
+  <section class="seccion oscuro" id="omakase" aria-labelledby="omakase-titulo">
+    <div class="contenedor omakase__grid">
+      <div>
+        <p class="sobretitulo">Experiencia omakase</p>
+        <h2 class="titulo-seccion" id="omakase-titulo">Déjalo en <em>nuestras manos</em></h2>
+        <p class="bajada">Diez pasos en la barra, a un metro del chef. No hay carta: hay lo mejor que llegó esta mañana.</p>
+        <p class="precio-grande">S/ 320 <small>por persona · IGV incluido</small></p>
+        <ol class="lista-tiempos">
+          {tiemposOmakase.map((t) => <li>{t}</li>)}
+        </ol>
+        <p class="omakase__notas">Maridaje de sakes y piscos opcional: S/ 140 por persona. Solo 8 asientos, martes a sábado, a las 19:00 y a las 21:30. Se reserva con 48 horas de anticipación desde el formulario de abajo y queda sujeto a confirmación. Si tienes alergias, indícalas al reservar y consúltalas con el personal: adaptamos lo que podemos, pero no garantizamos ausencia de trazas.</p>
+        <p><a class="boton boton--oro" href="#reserva" data-reservar-tipo="omakase">Reservar omakase</a></p>
+      </div>
+      <figure class="omakase__foto">
+        <Image src={salmon} alt="Nigiris de salmón con ajonjolí sobre un plato blanco, con wasabi, jengibre en conserva y palillos" width={1000} widths={[480, 800, 1000]} sizes="(min-width: 48rem) 45vw, 92vw" format="webp" quality={72} loading="lazy" decoding="async" />
+        <figcaption class="pie-foto">Fotografía de Crystal Jo (Unsplash).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <Reserva />
+
+  <section class="seccion oscuro" id="testimonios" aria-labelledby="testimonios-titulo">
+    <div class="contenedor">
+      <p class="sobretitulo">Mesas que volvieron</p>
+      <h2 class="titulo-seccion" id="testimonios-titulo">Lo que dicen <em>en la mesa</em></h2>
+      <p class="bajada">Opiniones de ejemplo para esta demostración: no corresponden a clientes reales.</p>
+      <div class="testimonios__grid">
+        <figure class="testimonio">
+          <blockquote><p>«El tiradito Kuro es el mejor que he probado en Lima. Fresco, justo de ají y con ese crocante que lo cambia todo.»</p></blockquote>
+          <figcaption><span>Mariana R., Miraflores</span><span class="etiqueta-demo">Ejemplo de demo</span></figcaption>
+        </figure>
+        <figure class="testimonio">
+          <blockquote><p>«Fuimos al omakase por nuestro aniversario. Nos explicaron cada tiempo con calma y sin pose. Volveremos pronto.»</p></blockquote>
+          <figcaption><span>Andrés y Camila, Surco</span><span class="etiqueta-demo">Ejemplo de demo</span></figcaption>
+        </figure>
+        <figure class="testimonio">
+          <blockquote><p>«Avisé de mi alergia al reservar y el equipo ya lo sabía al llegar. Eso, para mí, vale más que cualquier plato.»</p></blockquote>
+          <figcaption><span>Valeria T., Barranco</span><span class="etiqueta-demo">Ejemplo de demo</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="visitanos" aria-labelledby="visitanos-titulo">
+    <div class="contenedor ubicacion__grid">
+      <div>
+        <p class="sobretitulo">Visítanos</p>
+        <h2 class="titulo-seccion" id="visitanos-titulo">En el corazón de <em>Barranco</em></h2>
+        <div class="dato">
+          <Icono nombre="map-pin" />
+          <div>
+            <h3>Dirección</h3>
+            <p>Jr. Los Cedros 245, Barranco, Lima 15063<br /><span class="etiqueta-demo">Dirección ficticia</span></p>
+          </div>
+        </div>
+        <div class="dato">
+          <Icono nombre="clock" />
+          <div>
+            <h3>Horario</h3>
+            <table class="horario">
+              <caption class="solo-lectores">Horario de atención</caption>
+              <tbody>
+                <tr><th scope="row">Lunes</th><td>Cerrado</td></tr>
+                <tr><th scope="row">Martes a sábado</th><td>12:30 a 16:00 y 19:00 a 23:00</td></tr>
+                <tr><th scope="row">Domingo</th><td>12:30 a 17:00</td></tr>
+              </tbody>
+            </table>
+            <p class="ayuda">Última reserva: 1 hora antes del cierre de cada turno.</p>
+          </div>
+        </div>
+        <div class="dato">
+          <Icono nombre="phone" />
+          <div>
+            <h3>Contacto</h3>
+            <p><a href={urlWhatsApp('Hola Kuro, tengo una consulta.')}>WhatsApp +51 900 000 000</a> (número de demostración)</p>
+          </div>
+        </div>
+      </div>
+      <div class="plano">
+        <p class="sobretitulo">Cómo llegar</p>
+        <strong>Jr. Los Cedros 245</strong>
+        <p>A dos cuadras del parque principal de Barranco. Estacionamiento en la calle y a pocos pasos del Metropolitano (estación Barranco).</p>
+        <p>Referencias ficticias, solo para la demo: esta página no incluye mapa porque la dirección no existe.</p>
+      </div>
+    </div>
+  </section>
+</Base>
