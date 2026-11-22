@@ -53,6 +53,7 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
               </select>
               <p class="ayuda" id="ayuda-hora">Se muestran solo las horas disponibles para esa fecha.</p>
               <p class="error" id="err-hora" hidden></p>
+              <div data-espera></div>
             </div>
           </div>
 
@@ -105,12 +106,13 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
             <p class="error" id="err-consentimiento" hidden></p>
           </div>
 
-          <button class="boton" type="submit"><Icono nombre="send" /> Solicitar reserva</button>
+          <button class="boton" type="submit"><Icono nombre="send" /> Reservar</button>
         </form>
 
-        <div class="exito" data-exito role="status" hidden>
-          <h3 tabindex="-1" data-exito-titulo>Falta un paso, <span data-e-nombre></span>: envía tu solicitud por WhatsApp</h3>
-          <p>Tu mesa <strong>no está confirmada</strong> hasta que el restaurante te responda. Esto es una demostración: no se guardó nada ni se envió a ningún restaurante real.</p>
+        <div class="exito" data-exito hidden>
+          <h3 tabindex="-1" data-exito-titulo>Listo, <span data-e-nombre></span>: tu reserva quedó apartada</h3>
+          <p>Tu mesa <strong>no está confirmada</strong> hasta que el restaurante te responda. Esto es una demostración: la reserva quedó apartada solo en este navegador (aparece en el panel del restaurante) y no se envió a ningún restaurante real. Para confirmarla, envía tu solicitud por WhatsApp (en omakase, también puedes pagar la garantía en línea).</p>
+          <div data-kit hidden></div>
           <dl>
             <dt>Reserva</dt><dd data-e-tipo></dd>
             <dt>Fecha</dt><dd data-e-fecha></dd>
@@ -139,6 +141,11 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
   } from '../lib/reserva';
   import type { Errores, TipoReserva } from '../lib/reserva';
   import { limpiarCelular, normalizarTexto } from '../lib/validar';
+  import { botonEspera, extras, ocultarBarraEn, registrar } from '../kit/sistema-demo';
+  import { GARANTIA_OMAKASE, PRECIO_OMAKASE, TITULO_OMAKASE, aMin, asientosLibres, iniciarKit } from '../lib/kit';
+
+  iniciarKit();
+  ocultarBarraEn(document.querySelector('.barra-reserva'), [document.getElementById('reserva')]);
 
   const form = document.querySelector<HTMLFormElement>('#form-reserva');
   if (form) {
@@ -147,6 +154,8 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
     const grupos = document.querySelector<HTMLElement>('[data-grupos]')!;
     const ayudaTipo = document.querySelector<HTMLElement>('[data-ayuda-tipo]')!;
     const enviar = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const esperaBox = document.querySelector<HTMLElement>('[data-espera]')!;
+    const kitBox = document.querySelector<HTMLElement>('[data-kit]')!;
     const el = <T extends HTMLElement>(n: string) => form.elements.namedItem(n) as unknown as T;
     const fecha = el<HTMLInputElement>('fecha');
     const hora = el<HTMLSelectElement>('hora');
@@ -163,8 +172,14 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
 
     const llenarHoras = () => {
       const previa = hora.value;
-      const horas = horasDisponibles(fecha.value, new Date(), tipo());
+      const n = Math.max(1, Number(personas.value) || 1);
+      const todas = horasDisponibles(fecha.value, new Date(), tipo());
+      const horas = tipo() === 'omakase' ? todas.filter((h) => asientosLibres(fecha.value, h) >= n) : todas;
       hora.innerHTML = '';
+      esperaBox.replaceChildren();
+      if (tipo() === 'omakase' && todas.length && !horas.length) esperaBox.append(
+        Object.assign(document.createElement('p'), { className: 'ayuda', textContent: `La barra está llena ese día para ${n} ${n === 1 ? 'persona' : 'personas'}.` }),
+        botonEspera({ tipo: 'reserva', titulo: TITULO_OMAKASE, fecha: fecha.value }));
       const op = (v: string, t: string) => { const o = document.createElement('option'); o.value = v; o.textContent = t; return o; };
       if (!fecha.value) {
         hora.disabled = true; hora.append(op('', 'Primero elige la fecha'));
@@ -245,7 +260,7 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
       aplicarTipo();
       if (fecha.value) mostrarError('fecha', validarFecha(fecha.value, new Date(), tipo()));
     });
-    personas.addEventListener('change', actualizarGrupos);
+    personas.addEventListener('change', () => { actualizarGrupos(); llenarHoras(); });
     form.addEventListener('focusout', (ev) => {
       const t = ev.target as HTMLElement;
       const n = (t as HTMLInputElement).name;
@@ -283,6 +298,7 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
       const r = validarReserva(datos, new Date());
       if (Number(datos.personas) > MAX_PERSONAS) { actualizarGrupos(); return; }
       pintarResumen(r.errores);
+      if (r.ok && datos.tipo === 'omakase' && asientosLibres(datos.fecha, datos.hora) < Number(datos.personas)) { r.ok = false; r.errores.hora = 'Ya no quedan asientos en ese horario. Elige otro.'; pintarResumen(r.errores); }
       if (!r.ok) {
         resumen.focus();
         resumen.scrollIntoView({ block: 'center' });
@@ -299,15 +315,22 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
       set('[data-e-ocasion]', normalizarTexto(datos.ocasion) || '—');
       set('[data-e-alergias]', normalizarTexto(datos.alergias) || 'Ninguna indicada');
       (exito.querySelector('[data-e-wa]') as HTMLAnchorElement).href = urlWhatsApp(mensajeWhatsApp({ ...datos, celular: limpiarCelular(datos.celular) }));
+      const n = Number(datos.personas);
+      const om = datos.tipo === 'omakase';
+      const reg = registrar({ tipo: 'reserva', titulo: om ? TITULO_OMAKASE : 'Mesa en el salón', detalle: `${n} ${n === 1 ? 'persona' : 'personas'}${normalizarTexto(datos.ocasion) ? ' · ' + normalizarTexto(datos.ocasion) : ''}`,
+        nombre: normalizarTexto(datos.nombre), cel: limpiarCelular(datos.celular), fecha: datos.fecha, inicioMin: aMin(datos.hora), durMin: om ? 150 : 120,
+        cantidad: om ? n : 1, ...(om ? { monto: PRECIO_OMAKASE * n, adelanto: GARANTIA_OMAKASE * n } : {}) });
+      kitBox.replaceChildren(extras(reg));
       form.hidden = true;
       exito.hidden = false;
+      kitBox.hidden = false;
       (exito.querySelector('[data-exito-titulo]') as HTMLElement).focus();
       exito.scrollIntoView({ block: 'center' });
     });
 
     exito.querySelector('[data-nueva]')!.addEventListener('click', () => {
       form.reset(); intento = false; pintarResumen({}); aplicarTipo(); actualizarGrupos();
-      exito.hidden = true; form.hidden = false;
+      exito.hidden = true; kitBox.hidden = true; form.hidden = false;
       fecha.focus();
     });
 

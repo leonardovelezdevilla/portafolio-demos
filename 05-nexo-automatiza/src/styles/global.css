@@ -245,3 +245,9 @@ html:not(.js) .solo-js { display: none !important; }
 .legal p, .legal li { margin-bottom: 12px; }
 .legal ul { list-style: disc; padding-left: 1.4rem; }
 .legal .aviso-demo { background: var(--lima); border: 2px solid var(--ink); padding: 12px 16px; font-weight: 600; margin-block: 20px; border-radius: 4px; }
+
+/* Kit «sistema completo» con los colores de Nexo */
+:root:root { --kit-fondo: var(--paper); --kit-texto: var(--ink); --kit-suave: var(--muted); --kit-linea: var(--linea); --kit-borde-campo: var(--ink); --kit-acento: var(--ink); --kit-acento-tx: var(--lima); --kit-aviso-fondo: var(--lima); --kit-aviso-tx: var(--ink); --kit-error: var(--brasa); --kit-radio: 4px; --kit-fuente: var(--f-body); }
+.sobre-tinta .kit-extras a.kit-btn { color: var(--kit-acento); }
+.sobre-tinta .kit-extras a.kit-btn--main { color: var(--kit-acento-tx); }
+.sobre-tinta .kit-extras a:not(.kit-btn) { color: var(--cobalto); }

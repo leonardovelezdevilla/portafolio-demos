@@ -79,13 +79,14 @@ import { urlWhatsApp } from '../lib/horario';
         <p class="error" id="err-consentimiento" hidden></p>
       </div>
       <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
-      <button class="boton boton--ancho" type="submit"><Icono nombre="calendar-check" /> Reservar clase (demo)</button>
+      <button class="boton boton--ancho" type="submit"><Icono nombre="calendar-check" /> Reservar clase</button>
     </form>
 
     <div class="exito" data-exito hidden>
       <span class="sello">Confirmación de demo</span>
-      <h3 tabindex="-1" data-exito-titulo>Tu solicitud está lista</h3>
-      <p>No se reservó nada de verdad. Así se vería la confirmación; para enviarla al estudio, abre WhatsApp.</p>
+      <h3 tabindex="-1" data-exito-titulo>Tu cupo quedó apartado</h3>
+      <p>Quedó guardado solo en este navegador (ya aparece en el panel del estudio). Para confirmarlo, paga la clase en línea o avisa al estudio por WhatsApp.</p>
+      <div data-kit></div>
       <dl>
         <dt>Clase</dt><dd data-e-clase></dd>
         <dt>Instructora y nivel</dt><dd data-e-inst></dd>
@@ -106,6 +107,12 @@ import { urlWhatsApp } from '../lib/horario';
   import { fechaCorta, mensajeReserva, ocurrenciasReservables, precioReserva, programaDe, urlWhatsApp, validarReserva, ahoraLima, type DatosReserva } from '../lib/horario';
   import { INSTRUCTORAS, NIVELES } from '../data/clases';
   import { soles } from '../lib/precios';
+  import { extras, ocultarBarraEn, registrar } from '../kit/sistema-demo';
+  import { tituloClase } from '../lib/horario';
+  import { iniciarKit } from '../lib/kit';
+
+  iniciarKit();
+  ocultarBarraEn(document.querySelector('.barra-movil'), [document.getElementById('reserva')]);
 
   const form = document.querySelector<HTMLFormElement>('#form-reserva');
   if (form) {
@@ -263,6 +270,10 @@ import { urlWhatsApp } from '../lib/horario';
       set('[data-e-nombre]', d.nombre.replace(/\s+/g, ' ').trim());
       set('[data-e-precio]', d.primeraVez === 'si' ? `${soles(precioReserva(true))} · clase de prueba, IGV incluido` : `${soles(precioReserva(false))} · clase suelta, IGV incluido (sin costo extra si usas un plan o paquete)`);
       (exito.querySelector('[data-e-wa]') as HTMLAnchorElement).href = urlWhatsApp(mensajeReserva(d));
+      const [hh, mm] = o.clase.hora.split(':').map(Number);
+      const reg = registrar({ tipo: 'clase', titulo: tituloClase(o.clase), detalle: `${INSTRUCTORAS[o.clase.instructora].nombre}${d.primeraVez === 'si' ? ' · clase de prueba' : ''}`,
+        nombre: d.nombre.replace(/\s+/g, ' ').trim(), cel: d.celular, fecha: o.fecha, inicioMin: hh * 60 + mm, durMin: p.duracion, monto: precioReserva(d.primeraVez === 'si') });
+      exito.querySelector<HTMLElement>('[data-kit]')!.replaceChildren(extras(reg));
       form.hidden = true; exito.hidden = false;
       (exito.querySelector('[data-exito-titulo]') as HTMLElement).focus();
       exito.scrollIntoView({ block: 'start' });

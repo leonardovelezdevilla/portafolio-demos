@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Panel de ventas · Habitat Sur (demo)" descripcion="Demo del panel de Habitat Sur: visitas agendadas desde la web, lista de espera, clientes y reporte del mes." ruta="/panel/">
+  <article class="contenedor texto">
+    <p class="sobretitulo">Demo del sistema completo</p>
+    <h1>Panel de ventas</h1>
+    <p>Así ve el equipo de ventas las visitas que llegan desde la web: confirma, marca las visitas hechas, cancela, envía recordatorios y avisa a la lista de espera. Todo sale de las pruebas que hiciste en este navegador.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </article>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

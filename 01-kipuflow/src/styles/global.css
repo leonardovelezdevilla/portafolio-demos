@@ -81,3 +81,8 @@ a:hover { color: #9bd0ff; }
 .texto { padding-block: 3rem 5rem; max-width: 760px; display: grid; gap: 1rem; }
 .texto h2 { font-size: 1.5rem; margin-top: 1.2rem; }
 .texto p { color: var(--texto-2); }
+
+/* Kit «sistema completo» con los colores de Kipuflow (tema oscuro) */
+:root { --kit-fondo: var(--bg-2); --kit-texto: var(--texto); --kit-suave: var(--texto-2); --kit-linea: rgba(190, 220, 245, .22); --kit-borde-campo: #8a9aa8; --kit-acento: var(--verde); --kit-acento-tx: var(--verde-osc); --kit-aviso-fondo: #3a2f10; --kit-aviso-tx: var(--alerta); --kit-error: var(--error); --kit-radio: 14px; }
+.kit-bloque a:not(.kit-btn), .kit-mute a { color: var(--azul); }
+.kit-campo select option { background: var(--bg-2); color: var(--texto); }

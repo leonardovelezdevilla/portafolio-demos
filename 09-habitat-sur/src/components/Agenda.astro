@@ -25,6 +25,7 @@ const { departamento, id = 'ag' } = Astro.props;
       ))}
       <p class="err" id={`${id}-franja-e`} data-err="franja"></p>
     </fieldset>
+    <div class="ag-espera" data-espera></div>
     <div class="campo">
       <label for={`${id}-nombre`}>Nombre y apellido</label>
       <input id={`${id}-nombre`} name="nombre" type="text" autocomplete="name" required aria-describedby={`${id}-nombre-e`} data-campo="nombre" />
@@ -43,12 +44,13 @@ const { departamento, id = 'ag' } = Astro.props;
       <p class="err" id={`${id}-cons-e`} data-err="consentimiento"></p>
     </div>
     <p class="ayuda"><Icon name="message-circle" size={16} /> Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos de tus ingresos, deudas ni documentos.</p>
-    <button type="submit" class="btn btn-primario">Preparar mensaje de WhatsApp</button>
+    <button type="submit" class="btn btn-primario">Agendar visita</button>
   </form>
   <div class="ag-ok" hidden data-ok>
-    <h3 tabindex="-1" data-ok-t>Tu visita está lista para enviar</h3>
+    <h3 tabindex="-1" data-ok-t>Tu visita quedó agendada</h3>
     <dl class="ag-dl" data-dl></dl>
-    <p>Aún no se envió nada. Toca el botón para abrir WhatsApp con el mensaje escrito y envíalo desde allí (número de demo). Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
+    <div data-kit></div>
+    <p>En esta demo la visita queda guardada solo en este navegador y aparece en el panel del equipo de ventas. Para que un asesor la confirme, abre WhatsApp con el mensaje escrito y envíalo. Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
     <p><a class="btn btn-primario" data-wa href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer">Abrir WhatsApp<span class="sr-only"> (se abre en otra pestaña)</span></a> <button type="button" class="btn" data-editar>Cambiar datos</button></p>
     <p class="ayuda">El botón se abre en otra pestaña.</p>
   </div>
@@ -56,6 +58,7 @@ const { departamento, id = 'ag' } = Astro.props;
 <style>
   .ag-form, .ag-ok { display: grid; gap: 1.1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.3rem; max-width: 640px; }
   .ag-ok[hidden] { display: none; }
+  .ag-espera:empty { display: none; }
   .franjas { border: 0; padding: 0; margin: 0; min-width: 0; }
   .radio { display: grid; grid-template-columns: 28px 1fr; gap: .7rem; align-items: start; padding: .7rem; border: 2px solid var(--tinta-2); background: var(--papel); min-height: 48px; cursor: pointer; margin-bottom: .5rem; }
   .radio:has(input:checked) { border-color: var(--tinta); background: #fff3de; }
@@ -73,6 +76,10 @@ const { departamento, id = 'ag' } = Astro.props;
 <script>
   import { franjasDelDia, parseFecha, validarVisita, mensajeWhatsApp, urlWhatsApp, fechaMinima, fechaMaxima, FRANJAS, type Visita } from '../lib/visita';
   import { pintarResumen } from '../lib/resumen';
+  import { anular, botonEspera, extras, registrar } from '../kit/sistema-demo';
+  import { INICIO_FRANJA, VISITAS_POR_FRANJA, iniciarKit, tituloVisita, visitasEn } from '../lib/kit';
+
+  iniciarKit();
   document.querySelectorAll<HTMLElement>('[data-agenda]').forEach((ag) => {
     const q = <T extends HTMLElement>(s: string) => ag.querySelector<T>(s)!;
     const form = q<HTMLFormElement>('[data-form]');
@@ -89,12 +96,19 @@ const { departamento, id = 'ag' } = Astro.props;
     const actualizarFranjas = () => {
       const f = parseFecha(fecha.value);
       const dispo = f ? franjasDelDia(f).map((x) => x.id as string) : FRANJAS.map((x) => x.id as string);
+      const depto = ag.dataset.depto ?? '';
+      let llenas = 0;
       radios.forEach((r) => {
-        const no = !dispo.includes(r.value);
+        const llena = !!fecha.value && dispo.includes(r.value) && visitasEn(fecha.value, r.value, depto) >= VISITAS_POR_FRANJA;
+        if (llena) llenas++;
+        const no = !dispo.includes(r.value) || llena;
         r.disabled = no;
-        ag.querySelector<HTMLElement>(`[data-nodisp="${r.value}"]`)!.textContent = no ? 'No disponible ese día' : '';
+        ag.querySelector<HTMLElement>(`[data-nodisp="${r.value}"]`)!.textContent = llena ? 'Sin cupos para visitas' : no ? 'No disponible ese día' : '';
         if (no && r.checked) r.checked = false;
       });
+      const espera = q('[data-espera]');
+      espera.replaceChildren();
+      if (llenas && llenas === dispo.length) espera.append(botonEspera({ tipo: 'visita', titulo: tituloVisita(depto), fecha: fecha.value }));
     };
     const ponerError = (k: string, msg: string | undefined) => {
       q(`[data-err="${k}"]`).textContent = msg ?? '';
@@ -107,6 +121,7 @@ const { departamento, id = 'ag' } = Astro.props;
       ponerError('fecha', e.fecha);
     });
     function datos(): Visita { return { departamento: ag.dataset.depto ?? '', fecha: fecha.value, franja: franjaActual(), nombre: campo('nombre').value, telefono: campo('telefono').value, consentimiento: campo('consentimiento').checked }; }
+    let ultima = ''; // al cambiar datos se reemplaza la visita anterior
     const foco = (k: string) => (k === 'franja' ? (radios.find((r) => !r.disabled) ?? radios[0]) : campo(k)).focus();
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
@@ -119,8 +134,14 @@ const { departamento, id = 'ag' } = Astro.props;
         foco(claves[0]);
         return;
       }
+      if (visitasEn(d.fecha, d.franja, ag.dataset.depto ?? '') >= VISITAS_POR_FRANJA) { ponerError('franja', 'Esa franja se acaba de llenar. Elige otra.'); actualizarFranjas(); foco('franja'); return; }
       resumen.hidden = true;
       const msg = mensajeWhatsApp(d, ag.dataset.depto ?? '');
+      if (ultima) anular(ultima);
+      const reg = registrar({ tipo: 'visita', titulo: tituloVisita(ag.dataset.depto ?? ''), detalle: FRANJAS.find((x) => x.id === d.franja)?.etiqueta,
+        nombre: d.nombre, cel: d.telefono.replace(/[\s-]/g, ''), fecha: d.fecha, inicioMin: INICIO_FRANJA[d.franja], durMin: 180 });
+      ultima = reg.codigo;
+      q('[data-kit]').replaceChildren(extras(reg));
       const f = parseFecha(d.fecha)!;
       const dl = q('[data-dl]');
       dl.replaceChildren();

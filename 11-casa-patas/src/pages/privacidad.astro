@@ -12,7 +12,9 @@ import { NEGOCIO } from '../lib/config';
     <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> Casa Patas es una veterinaria ficticia. Este texto ilustra cómo se redactaría una política real; no es asesoría legal.</p>
     <div class="prosa">
       <h2>Datos del dueño</h2>
-      <p>La reserva de cita usa tu nombre y tu celular. Se validan en tu navegador y se usan únicamente para armar la confirmación en pantalla y el mensaje de WhatsApp. No se envían a ningún servidor propio ni se guardan. En el mensaje de WhatsApp solo va tu nombre de pila; tu celular no se escribe en el texto, aunque WhatsApp lo recibe cuando tú envías el mensaje.</p>
+      <p>La reserva de cita usa tu nombre y tu celular. Se validan en tu navegador y se usan únicamente para armar la confirmación en pantalla y el mensaje de WhatsApp. No se envían a ningún servidor propio. Para mostrarte cómo funciona el sistema completo, la cita (nombre, celular, mascota, servicio, día y hora) se guarda <strong>solo en tu navegador</strong> y aparece en el <a href="/panel/">panel de demostración</a>; puedes borrarla allí con «Borrar los datos de prueba». En una web real, esos datos se guardan en la base de datos de la clínica. En el mensaje de WhatsApp solo va tu nombre de pila; tu celular no se escribe en el texto, aunque WhatsApp lo recibe cuando tú envías el mensaje.</p>
+      <h2>Pago en línea, comprobante y lista de espera (simulados)</h2>
+      <p>En esta demo el pago es simulado: no se cobra nada ni se piden datos de tarjeta. Si eliges factura, pedimos el RUC y la razón social; si eliges boleta, el DNI es opcional. En una web real, el pago lo procesa una pasarela autorizada (por ejemplo Culqi, Izipay o Mercado Pago) y el comprobante lo emite un proveedor autorizado por SUNAT; la clínica no ve ni guarda los datos de tu tarjeta. Si te anotas en la lista de espera, guardamos tu nombre y celular solo para avisarte si se libera un horario, y se borran pasado ese día.</p>
       <h2>Datos de la mascota</h2>
       <p>Pedimos el nombre, la especie, la edad aproximada y, para baño y peluquería, el tamaño. Son los datos mínimos para reservar el turno correcto. Los datos de una mascota se asocian a su dueño, por eso los tratamos con el mismo cuidado que los tuyos.</p>
       <h2>Datos de salud animal</h2>
@@ -25,7 +27,7 @@ import { NEGOCIO } from '../lib/config';
       <ul>
         <li>No usamos cookies de seguimiento ni analítica.</li>
         <li>No cargamos fuentes ni scripts de terceros: todo se sirve desde este mismo sitio.</li>
-        <li>No vendemos ni cedemos tus datos. La única transferencia ocurre cuando tú envías el mensaje por WhatsApp.</li>
+        <li>No vendemos ni cedemos tus datos. Solo hay transferencia si tú envías el mensaje por WhatsApp o usas «Agregar a Google Calendar» (Google recibe el servicio, la fecha, la hora y el código de la cita, no tus datos de contacto).</li>
       </ul>
       <h2>Destinatarios: WhatsApp (Meta)</h2>
       <p>Al usar «Enviar por WhatsApp» se abre WhatsApp con un mensaje que incluye el servicio, el nombre de tu mascota y su especie, la fecha y hora, y tu nombre de pila. Si lo envías, tu mensaje y tu número pasan a WhatsApp (Meta Platforms), que los trata según su propia política de privacidad y puede transferirlos fuera del Perú. Antes de continuar se te pide marcar una casilla de consentimiento, que viene sin marcar.</p>
@@ -35,7 +37,7 @@ import { NEGOCIO } from '../lib/config';
       <ul>
         <li><strong>Titular del banco de datos:</strong> {NEGOCIO.razonSocial}, RUC {NEGOCIO.ruc}, {NEGOCIO.direccion}.</li>
         <li><strong>Finalidad:</strong> gestionar citas y reclamos de esta demo.</li>
-        <li><strong>Conservación:</strong> ninguna; los datos no se guardan en este sitio.</li>
+        <li><strong>Conservación:</strong> la cita de prueba queda solo en tu navegador hasta que la borres en el panel de demostración o borres los datos del sitio. No llega a ningún servidor.</li>
         <li><strong>Derechos de acceso, rectificación, cancelación y oposición (ARCO):</strong> escribe a {NEGOCIO.correoArco} (correo ficticio). En un negocio real se respondería en los plazos del Reglamento de la Ley 29733 (D. S. 016-2024-JUS), que debes verificar al aplicarlo.</li>
         <li><strong>Revocar el consentimiento:</strong> puedes retirarlo cuando quieras escribiendo al mismo correo ficticio.</li>
         <li><strong>Si no te responden:</strong> en un negocio real podrías reclamar ante la Autoridad Nacional de Protección de Datos Personales (ANPD) del Ministerio de Justicia y Derechos Humanos.</li>

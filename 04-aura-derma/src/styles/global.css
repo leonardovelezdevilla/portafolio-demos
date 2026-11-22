@@ -901,3 +901,9 @@ body {
 .constancia dd {
   margin: 0;
 }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--blanco); --kit-texto: var(--tinta); --kit-suave: var(--tinta-suave); --kit-linea: var(--linea); --kit-acento: var(--salvia-700); --kit-acento-tx: #fff; --kit-aviso-fondo: var(--crema-2); --kit-aviso-tx: var(--salvia-900); --kit-error: var(--error); --kit-radio: var(--radio); --kit-fuente: var(--sans); }
+.ag-espera { margin-top: .75rem; display: grid; gap: .5rem; justify-items: start; }
+.ag-espera[hidden] { display: none; }
+:root { --kit-borde-campo: var(--salvia-500); }

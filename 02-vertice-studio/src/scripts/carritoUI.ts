@@ -6,6 +6,10 @@ import { armarMensaje, urlWhatsApp } from '../lib/whatsapp';
 import { validarPedido } from '../lib/validacion';
 import { abrirModal, cerrarModal, iniciarModal } from './dialogos';
 import { leerForm, mostrarErrores } from './formularios';
+import { alCambiar, anular, estaPagado, extras, registrar } from '../kit/sistema-demo';
+import { iniciarKit } from '../lib/kit';
+
+iniciarKit();
 
 interface ProductoTienda {
   slug: string; nombre: string; categoria: string; precio: number;
@@ -38,6 +42,7 @@ if (dlg && catalogo.length) {
   const toastTexto = toast.querySelector<HTMLElement>('[data-toast-texto]')!;
   let toastTimer = 0;
   let confirmando = false;
+  let ultimoPedido = '';
 
   let lineas: Linea[] = cargar(catalogo);
   const zona = (): Zona => (dlg.querySelector<HTMLInputElement>('input[name="zona"]:checked')?.value as Zona) || 'lima';
@@ -210,12 +215,22 @@ if (dlg && catalogo.length) {
       armarMensaje({ nombre: datos.nombre, distrito: datos.distrito, referencia: datos.referencia, pago: datos.pago }, lineas, catalogo, zona()),
     );
     $<HTMLAnchorElement>('[data-enlace-wa]').href = url;
-    window.open(url, '_blank', 'noopener');
+    const t = totales(lineas, catalogo, zona());
+    const pares = totalUnidades(lineas);
+    if (ultimoPedido) anular(ultimoPedido); // si volvió al carrito y confirmó otra vez, se reemplaza el pedido anterior
+    const tarjeta = datos.pago === 'Tarjeta en línea';
+    const reg = registrar({ tipo: 'pedido', titulo: `Pedido de ${pares} ${pares === 1 ? 'par' : 'pares'}`,
+      detalle: `${lineas.map((l) => `${prod(l.slug).nombre} T${l.talla} ×${l.cantidad}`).join(', ')} · ${datos.distrito ?? ''} · pago: ${datos.pago ?? ''}`,
+      nombre: datos.nombre ?? '', cel: '', monto: tarjeta ? t.total : undefined }); // Yape, Plin o contraentrega: se coordina por WhatsApp
+    ultimoPedido = reg.codigo;
+    $('[data-kit]').replaceChildren(extras(reg, { pagoOpcional: false }));
     confirmando = true;
     render();
     elConfirmacion.focus();
   });
 
+  // pagado: ya no se vuelve a editar ese pedido (solo vaciar el carrito)
+  alCambiar(() => { $('[data-volver-carrito]').hidden = !!ultimoPedido && estaPagado(ultimoPedido); });
   $('[data-volver-carrito]').addEventListener('click', () => {
     confirmando = false;
     render();

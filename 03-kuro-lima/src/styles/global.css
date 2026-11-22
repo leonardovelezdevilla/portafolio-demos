@@ -315,3 +315,8 @@ body { padding-bottom: 4.25rem; }
 @media (min-width: 48rem) { .barra-reserva { display: none; } body { padding-bottom: 0; } html { scroll-padding-top: 5.5rem; scroll-padding-bottom: 0; } }
 @media print { .barra-reserva { display: none; } }
 .barra-reserva .boton--linea { color: var(--texto-oscuro); }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--papel); --kit-texto: var(--tinta); --kit-suave: var(--tinta-suave); --kit-linea: var(--linea-clara); --kit-acento: var(--carbon); --kit-acento-tx: var(--papel); --kit-aviso-fondo: var(--papel-2); --kit-aviso-tx: var(--oro-texto); --kit-error: var(--error); --kit-radio: 6px; --kit-fuente: var(--sans); }
+[data-kit] .kit-extras { margin-top: 1rem; }
+[data-espera] { display: grid; gap: .5rem; justify-items: start; margin-top: .5rem; }

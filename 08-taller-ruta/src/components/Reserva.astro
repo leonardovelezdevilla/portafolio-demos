@@ -79,14 +79,15 @@ import Icon from './Icon.astro';
           <p class="err" id="e-r-consent"></p>
         </div>
         <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos sensibles. En esta demo no se envía ni guarda nada.</p>
-        <button class="btn" type="submit"><Icon nombre="calendario" tamano={20} /> Reservar cita (demo)</button>
+        <button class="btn" type="submit"><Icon nombre="calendario" tamano={20} /> Reservar cita</button>
       </form>
 
       <div id="res-ok" class="panel confirma" hidden>
-        <h3 tabindex="-1" id="res-ok-t">Resumen de tu cita (demo)</h3>
+        <h3 tabindex="-1" id="res-ok-t">Tu cupo quedó apartado (demo)</h3>
         <p><strong id="res-codigo"></strong></p>
+        <div id="res-kit"></div>
         <dl class="datos" id="res-datos"></dl>
-        <p class="aviso">Demostración: no se envió ni guardó ningún dato, así que tu cita aún no está agendada. En un taller real, la cita queda confirmada cuando envías el mensaje por WhatsApp y el taller te responde. El código de seguimiento (TR-DEMO-…) te lo entregamos al recibir tu vehículo en el taller.</p>
+        <p class="aviso">Demostración: tu cupo quedó apartado solo en este navegador y ya aparece en el panel del taller. En un taller real, la cita queda confirmada cuando envías el mensaje por WhatsApp y el taller te responde. El código de seguimiento (TR-DEMO-…) te lo entregamos al recibir tu vehículo en el taller.</p>
         <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
         <div class="nav">
           <a class="btn" id="res-wa" href="https://wa.me/51935852637"><Icon nombre="mensaje" tamano={20} /> Confirmar por WhatsApp</a>
@@ -100,7 +101,11 @@ import Icon from './Icon.astro';
 <script>
   import { enlaceWhatsApp } from '../data/taller';
   import { SERVICIOS, VEHICULOS } from '../data/precios';
-  import { celularValido, diasReservables, estadoTurno, fechaLegible, formatearPlaca, placaValida, turnoReservable, turnosDelDia, type TurnoId } from '../lib/reserva';
+  import { celularValido, diasReservables, fechaLegible, formatearPlaca, placaValida, turnoReservable, turnosDelDia, type TurnoId } from '../lib/reserva';
+  import { botonEspera, extras, registrar } from '../kit/sistema-demo';
+  import { estadoTurnoKit as estadoTurno, iniciarKit, inicioTurno } from '../lib/kit';
+
+  iniciarKit();
 
   const form = document.getElementById('res-form') as HTMLFormElement;
   const $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -162,6 +167,8 @@ import Icon from './Icon.astro';
       resumenTurnos.push(`${t.nombre}: ${libre ? (e.estado === 'ultimos' ? 'últimos cupos' : 'con cupos') : e.estado === 'agotado' ? 'agotado' : 'cerrado'}`);
     }
     $('r-turnos-ayuda').textContent = `Turnos de ese día. ${resumenTurnos.join('. ')}.`;
+    for (const agotado of turnosDelDia(f).filter((t) => estadoTurno(f, t, ahora()).estado === 'agotado'))
+      lista.append(botonEspera({ tipo: 'cita', titulo: `Turno ${agotado.nombre.toLowerCase()}`, fecha: f }, `Turno ${agotado.nombre.toLowerCase()} lleno: anotarme en la lista de espera`));
   }
 
   const ERR_IDS = ['nombre', 'cel', 'veh', 'placa', 'serv', 'fecha', 'turno', 'consent'];
@@ -200,7 +207,7 @@ import Icon from './Icon.astro';
       placa: !d.placa || placaValida(d.placa) ? '' : 'La placa no tiene un formato válido. Ejemplos: ABC-123, A1B-234 o 1234-AB.',
       serv: d.serv ? '' : 'Cuéntanos qué necesitas.',
       fecha: d.fecha ? '' : 'Elige un día de atención.',
-      turno: d.fecha && d.turno && turnoReservable(d.fecha, d.turno, ahora()) ? '' : d.fecha ? 'Elige un turno con cupos.' : 'Elige primero el día y luego el turno.',
+      turno: d.fecha && d.turno && turnoReservable(d.fecha, d.turno, ahora()) && estadoTurno(d.fecha, turnosDelDia(d.fecha).find((t) => t.id === d.turno)!, ahora()).estado !== 'agotado' ? '' : d.fecha ? 'Elige un turno con cupos.' : 'Elige primero el día y luego el turno.',
       consent: d.consent ? '' : 'Marca la casilla de consentimiento para continuar.',
     };
     return { d, m, malos: ERR_IDS.filter((k) => m[k]) };
@@ -261,8 +268,11 @@ import Icon from './Icon.astro';
     const turnoDef = turnosDelDia(d.fecha).find((t) => t.id === d.turno)!;
     const veh = VEHICULOS.find((v) => v.id === d.veh)!.nombre;
     const serv = SERVICIOS.find((s) => s.id === d.serv)?.nombre ?? (d.serv === 'varios' ? 'Varios servicios' : 'Revisión de una falla');
-    const codigo = `CITA-DEMO-${String(Date.now()).slice(-5)}`;
     const placa = d.placa ? formatearPlaca(d.placa) : 'sin indicar';
+    const reg = registrar({ tipo: 'cita', titulo: `${serv} (turno ${turnoDef.nombre.toLowerCase()})`, detalle: `${veh}, placa ${placa}`, nombre: d.nombre, cel: d.cel,
+      fecha: d.fecha, inicioMin: inicioTurno(d.turno), durMin: 240, adelanto: 30 });
+    const codigo = reg.codigo;
+    $('res-kit').replaceChildren(extras(reg));
     const filas: [string, string][] = [
       ['Día', fechaLegible(d.fecha)],
       ['Turno', `${turnoDef.nombre} (${turnoDef.horario.toLowerCase()})`],
@@ -282,7 +292,7 @@ import Icon from './Icon.astro';
         return div;
       }),
     );
-    $('res-codigo').textContent = `Código: ${codigo}`;
+    $('res-codigo').textContent = `Código de tu cita: ${codigo}`;
     const texto = `Hola Taller Ruta, soy ${d.nombre}. Quiero confirmar mi cita de demo (${codigo}): ${fechaLegible(d.fecha)}, turno ${turnoDef.nombre.toLowerCase()}. Vehículo: ${veh}, placa ${placa}. Necesito: ${serv}.`;
     $('res-wa').setAttribute('href', enlaceWhatsApp(texto));
     form.hidden = true;

@@ -250,3 +250,7 @@ dialog .btn-cerrar:focus-visible { outline-offset: -4px; box-shadow: inset 0 0 0
   .rec__ok { box-shadow: none; border: 2px solid #000; }
 }
 @media (max-width: 359px) { .logo { font-size: 24px; padding-right: 8px; } .logo__marca { width: 32px; height: 32px; } .btn-carrito { padding: 0 10px; gap: 6px; font-size: 13px; } }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--blanco); --kit-texto: var(--negro); --kit-suave: var(--gris-medio); --kit-linea: var(--negro); --kit-acento: var(--negro); --kit-acento-tx: var(--blanco); --kit-aviso-fondo: #fff1e8; --kit-aviso-tx: var(--negro); --kit-error: #b00020; --kit-radio: 0; --kit-fuente: var(--fuente-texto); }
+[data-kit] .kit-extras { margin-block: 12px; }

@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Panel del taller (demo)" descripcion="Demo del panel de Taller Ruta: citas por turno, pagos y comprobantes de ejemplo, lista de espera, clientes y reporte del mes." ruta="/panel/">
+  <section class="legal">
+    <div class="wrap legal__in">
+      <h1>Panel del taller</h1>
+      <p class="aviso-demo">Así ve el taller las citas que llegan desde la web: confirma, marca atendidas, cancela, envía recordatorios y revisa pagos. Todo sale de las reservas de prueba que hiciste en este navegador; pagos y comprobantes son simulados.</p>
+      <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+    </div>
+  </section>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

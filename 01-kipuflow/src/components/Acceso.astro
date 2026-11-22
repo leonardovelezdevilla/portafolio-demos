@@ -1,14 +1,16 @@
 ---
 import Icon from './Icon.astro';
-const planes = [['', 'Aún no lo sé'], ['esencial', 'Esencial'], ['pro', 'Pro'], ['estudio', 'Estudio']];
+import { PLANES } from '../lib/planes';
+const sol = (n: number) => `S/ ${n}`;
 const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor/a o traductor/a', 'Fotógrafo/a o videógrafo/a', 'Otra profesión'];
 ---
 <section class="seccion" id="acceso" aria-labelledby="t-acc">
   <div class="contenedor acc">
     <div>
-      <p class="sobretitulo">Acceso anticipado</p>
-      <h2 id="t-acc">Sé de los primeros en probar Kipuflow.</h2>
-      <p class="lead">Déjanos tu nombre, correo y profesión. Nada se envía hasta que tú abras WhatsApp: al terminar verás una confirmación de ejemplo y un mensaje ya escrito que puedes enviar o descartar.</p>
+      <p class="sobretitulo">Crea tu cuenta</p>
+      <h2 id="t-acc">Empieza hoy con Kipuflow.</h2>
+      <p class="lead">Elige tu plan y cómo pagarlo, déjanos tu nombre y correo, y en el siguiente paso pagas en línea y recibes tu comprobante electrónico. Puedes cancelar cuando quieras.</p>
+      <p class="legal">Demostración: el pago es simulado, no se cobra nada y no se piden datos de tarjeta.</p>
     </div>
 
     <div class="vidrio caja">
@@ -32,11 +34,19 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
           <p class="err" id="profesion-err" role="alert"></p>
         </div>
         <div class="campo">
-          <label for="plan">Plan de interés (opcional)</label>
-          <select id="plan" name="plan">
-            {planes.map(([v, t]) => <option value={v}>{t}</option>)}
+          <label for="plan">Plan</label>
+          <select id="plan" name="plan" aria-required="true" aria-describedby="plan-err">
+            <option value="">Elige un plan</option>
+            {PLANES.map((p) => <option value={p.id}>{p.nombre} · {sol(p.mensual)} al mes</option>)}
           </select>
+          <p class="err" id="plan-err" role="alert"></p>
         </div>
+        <fieldset class="campo periodo">
+          <legend>Cómo quieres pagar</legend>
+          <label class="opcion"><input type="radio" name="periodo-cuenta" value="mensual" checked /> <span>Mes a mes</span></label>
+          <label class="opcion"><input type="radio" name="periodo-cuenta" value="anual" /> <span>El año completo (≈ 20 % menos)</span></label>
+        </fieldset>
+        <p class="total" id="acc-total" aria-live="polite"></p>
         <div class="campo check">
           <div class="check-fila">
             <input id="consent" name="consent" type="checkbox" aria-required="true" aria-describedby="consent-err" />
@@ -44,17 +54,19 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
           </div>
           <p class="err" id="consent-err" role="alert"></p>
         </div>
-        <button class="btn btn-primario" type="submit">Solicitar acceso <Icon name="send" /></button>
-        <p class="legal">No enviamos nada a ningún servidor. Si abres WhatsApp, tu mensaje se transmite a WhatsApp (Meta). Ver <a href="/terminos/">Términos de demo</a>.</p>
+        <button class="btn btn-primario" type="submit">Continuar al pago <Icon name="arrow-right" /></button>
+        <p class="legal">En esta demo tus datos se guardan solo en tu navegador, no en un servidor. Ver <a href="/terminos/">Términos de demo</a>.</p>
       </form>
 
-      <div id="acc-ok" class="ok" hidden tabindex="-1" role="status" aria-labelledby="acc-ok-tit">
+      <div id="acc-ok" class="ok" hidden tabindex="-1" role="region" aria-labelledby="acc-ok-tit">
         <Icon name="shield-check" size={32} />
-        <h3 id="acc-ok-tit">Listo, así se vería tu confirmación</h3>
+        <h3 id="acc-ok-tit">Tu cuenta quedó creada</h3>
         <p id="acc-ok-txt"></p>
-        <a id="acc-wa" class="btn btn-primario" href="https://wa.me/51935852637" target="_blank" rel="noopener">Abrir WhatsApp con mi mensaje <span class="sr-only">(se abre en una pestaña nueva)</span></a>
+        <div id="acc-kit" class="acc-kit"></div>
+        <p class="legal" id="acc-dudas">¿Tienes dudas antes de pagar? Escríbenos por WhatsApp; tu mensaje ya va escrito. Al abrirlo, tu mensaje pasa a WhatsApp (Meta).</p>
+        <a id="acc-wa" class="btn btn-sec" href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer">Escribir por WhatsApp <span class="sr-only">(se abre en una pestaña nueva)</span></a>
         <button type="button" class="btn btn-sec" id="acc-volver">Corregir datos</button>
-        <p class="legal">Número de demo. Es una confirmación simulada: no se guardó ni se envió nada.</p>
+        <p class="legal">Número de demo. La cuenta queda guardada solo en este navegador.</p>
       </div>
     </div>
   </div>
@@ -76,17 +88,41 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
   .ok { display: grid; gap: 1rem; justify-items: start; }
   .ok svg { color: var(--verde); }
   .ok[hidden] { display: none; }
+  .acc-kit { width: 100%; }
+  .periodo { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .periodo legend { font-weight: 600; margin-bottom: .4rem; }
+  .opcion { display: flex; gap: .7rem; align-items: center; min-height: 44px; font-weight: 400; cursor: pointer; }
+  .opcion input { width: 22px; min-height: 22px; height: 22px; accent-color: var(--verde); }
+  .total { font-weight: 600; }
+  .total:empty { display: none; }
   @media (min-width: 900px) { .acc { grid-template-columns: 1fr 1fr; gap: 4rem; } .caja { padding: 2rem; } }
 </style>
 
 <script>
+  import { registrar, extras, anular, estaPagado, alCambiar } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  import { PLANES, cobroHoy, type Periodo } from '../lib/planes';
+  iniciarKit();
   const form = document.getElementById('acc-form') as HTMLFormElement | null;
   const ok = document.getElementById('acc-ok')!;
   if (form) {
-    const campos = ['nombre', 'correo', 'profesion', 'consent'].map((id) => document.getElementById(id) as HTMLInputElement);
+    const campos = ['nombre', 'correo', 'profesion', 'plan', 'consent'].map((id) => document.getElementById(id) as HTMLInputElement);
     const plan = document.getElementById('plan') as HTMLSelectElement;
-    const pedido = new URLSearchParams(location.search).get('plan');
+    const periodos = [...form.querySelectorAll<HTMLInputElement>('input[name="periodo-cuenta"]')];
+    const periodo = () => (periodos.find((r) => r.checked)?.value ?? 'mensual') as Periodo;
+    const total = document.getElementById('acc-total')!;
+    const q = new URLSearchParams(location.search);
+    const pedido = q.get('plan');
     if (pedido && [...plan.options].some((o) => o.value === pedido)) plan.value = pedido;
+    const per = q.get('periodo');
+    periodos.forEach((r) => { if (r.value === per) r.checked = true; });
+    const pintarTotal = () => {
+      const m = cobroHoy(plan.value, periodo());
+      total.textContent = m ? `Pagas hoy S/ ${m} ${periodo() === 'anual' ? 'por todo el año' : 'por el primer mes'} (IGV incluido).` : '';
+    };
+    pintarTotal();
+    plan.addEventListener('change', pintarTotal);
+    periodos.forEach((r) => r.addEventListener('change', pintarTotal));
     const err = (el: HTMLInputElement, msg: string) => {
       document.getElementById(el.id + '-err')!.textContent = msg;
       el.setAttribute('aria-invalid', msg ? 'true' : 'false');
@@ -97,22 +133,39 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
       if (el.id === 'nombre') return err(el, v.length < 3 || !/\s/.test(v) ? 'Escribe tu nombre y apellido (mínimo 3 letras).' : '');
       if (el.id === 'correo') return err(el, !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? 'Escribe un correo válido, por ejemplo nombre@dominio.pe.' : '');
       if (el.id === 'consent') return err(el, el.checked ? '' : 'Marca la casilla para aceptar el uso de tus datos.');
+      if (el.id === 'plan') return err(el, v === '' ? 'Elige un plan.' : '');
       return err(el, v === '' ? 'Elige tu profesión.' : '');
     };
     campos.forEach((c) => c.addEventListener('blur', () => validar(c)));
+    let anterior = '';
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const res = campos.map(validar);
       const primero = campos[res.indexOf(false)];
       if (primero) { primero.focus(); return; }
       const [n, c, p] = campos.map((x) => x.value.trim());
-      const pl = plan.value ? ` Me interesa el plan ${plan.selectedOptions[0].text}.` : '';
-      const msg = `Hola, soy ${n} (${p}). Quiero acceso anticipado a Kipuflow.${pl} Mi correo: ${c}`;
+      const pl = PLANES.find((x) => x.id === plan.value)!;
+      const pe = periodo();
+      const monto = cobroHoy(pl.id, pe);
+      if (anterior) anular(anterior); // al corregir datos no queda una cuenta duplicada sin pagar
+      const reg = registrar({ tipo: 'suscripcion', titulo: `Plan ${pl.nombre} (${pe === 'anual' ? 'anual' : 'mensual'})`, detalle: `${p} · ${c}`, nombre: n, cel: '', monto });
+      anterior = reg.codigo;
+      document.getElementById('acc-kit')!.replaceChildren(extras(reg, { pagoOpcional: false }));
+      const msg = `Hola, soy ${n} (${p}). Creé mi cuenta en Kipuflow con el plan ${pl.nombre} ${pe === 'anual' ? 'anual' : 'mensual'} (código ${reg.codigo}) y tengo una duda antes de pagar. Mi correo: ${c}`;
       (document.getElementById('acc-wa') as HTMLAnchorElement).href = `https://wa.me/51935852637?text=${encodeURIComponent(msg)}`;
-      document.getElementById('acc-ok-txt')!.textContent = `Gracias, ${n.split(/\s+/)[0]}. Así se vería la respuesta a ${c}. Nada se ha enviado todavía.`;
+      document.getElementById('acc-ok-txt')!.textContent = `Gracias, ${n.split(/\s+/)[0]}. Tu código es ${reg.codigo}. Para activarla, paga el plan ${pl.nombre}: S/ ${monto} ${pe === 'anual' ? 'por el año' : 'por el primer mes'}.`;
       form.hidden = true;
       ok.hidden = false;
       ok.focus();
+    });
+    alCambiar(() => {
+      const pagado = !!anterior && estaPagado(anterior);
+      document.getElementById('acc-volver')!.hidden = pagado;
+      if (pagado) {
+        document.getElementById('acc-ok-tit')!.textContent = 'Tu cuenta está activa';
+        document.getElementById('acc-ok-txt')!.textContent = `Pago recibido (simulado). Tu código es ${anterior}. En la versión real, aquí te llegaría el acceso por correo.`;
+        document.getElementById('acc-dudas')!.textContent = '¿Tienes alguna duda? Escríbenos por WhatsApp; tu mensaje ya va escrito. Al abrirlo, tu mensaje pasa a WhatsApp (Meta).';
+      }
     });
     document.getElementById('acc-volver')!.addEventListener('click', () => { ok.hidden = true; form.hidden = false; campos[0].focus(); });
   }

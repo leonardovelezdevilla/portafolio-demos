@@ -331,6 +331,7 @@ const faq = [
                 </select>
                 <p class="campo__ayuda" id="r-hora-a" data-ayuda-hora>Las horas no disponibles aparecen marcadas como «no disponible».</p>
                 <p class="error" id="r-hora-e" data-error="hora" hidden></p>
+                <div class="espera-box" data-espera></div>
               </div>
             </div>
 
@@ -350,14 +351,15 @@ const faq = [
               <p class="error" id="r-acepta-e" data-error="acepta" hidden></p>
             </div>
 
-            <button type="submit" class="btn btn--primario">Preparar mensaje de cita</button>
+            <button type="submit" class="btn btn--primario">Reservar cita</button>
             <noscript><p class="nota">La reserva necesita JavaScript. Sin él, <a href={waSinJs} target="_blank" rel="noopener">escríbenos por WhatsApp</a> para coordinar tu cita.</p></noscript>
           </form>
 
           <section class="panel cita-ok" data-cita-ok role="region" tabindex="-1" aria-labelledby="cita-ok-t" hidden>
             <p class="etiqueta">Confirmación de demo</p>
-            <h3 id="cita-ok-t">Falta un paso: envía tu solicitud por WhatsApp</h3>
-            <p>Código de tu solicitud (demo): <strong data-numero></strong>. <strong>Todavía no hay cita:</strong> esta es una demo y no se guardó ningún dato. Para solicitarla a la clínica, abre WhatsApp con el mensaje ya redactado y envíalo.</p>
+            <h3 id="cita-ok-t">Tu cita quedó apartada</h3>
+            <p>Código de tu solicitud (demo): <strong data-numero></strong>. <strong>Tu horario quedó apartado en esta demo</strong> (solo en tu navegador) y ya aparece en el panel de la clínica. Para confirmarla, paga el adelanto en línea o envía el mensaje ya redactado por WhatsApp.</p>
+            <div data-kit-extras></div>
             <dl class="resumen" data-resumen></dl>
             <div class="aviso" role="note"><p>Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). El mensaje no incluye lo que escribiste para el médico ni el celular.</p></div>
             <div class="acciones">
@@ -422,7 +424,7 @@ const faq = [
       </div>
       <dl class="politica">
         <div><dt><Icono nombre="reloj" /> Tolerancia</dt><dd>15 minutos para consulta y vacuna, y 10 minutos para baño y peluquería. Pasado ese tiempo, reprogramamos según disponibilidad. Si una urgencia retrasa tu cita, te avisamos por WhatsApp.</dd></div>
-        <div><dt><Icono nombre="calendario" /> Reprogramación</dt><dd>Sin costo hasta 4 horas antes en consulta y vacuna, y hasta 24 horas antes en baño y peluquería. Escríbenos por WhatsApp indicando el código de tu solicitud.</dd></div>
+        <div><dt><Icono nombre="calendario" /> Reprogramación</dt><dd>Sin costo hasta 4 horas antes en consulta y vacuna, y hasta 24 horas antes en baño y peluquería. Puedes cancelar con el enlace que recibes al reservar o escribirnos por WhatsApp con el código de tu cita.</dd></div>
         <div><dt><Icono nombre="cerrar" /> Cancelación y ausencias</dt><dd>No se cobra penalidad por cancelar tarde ni por no asistir. Si no llegas y no avisas dos veces seguidas, solo te pediremos confirmar tu siguiente cita con un mensaje.</dd></div>
         <div><dt><Icono nombre="banio" /> Baño y peluquería</dt><dd>Avísanos si tu mascota tiene pulgas, nudos fuertes o se estresa: puede aplicarse un recargo, que te informamos y debes aceptar antes de empezar. Registramos su estado al recibirla.</dd></div>
         <div><dt><Icono nombre="jeringa" /> Vacunas</dt><dd>Trae el carnet. El médico examina a tu mascota antes de vacunar y puede posponer la dosis si no está en condiciones.</dd></div>

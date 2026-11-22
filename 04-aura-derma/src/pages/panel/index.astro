@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  titulo="Panel de la clínica (demo) | Aura Derma"
+  descripcion="Demo del panel de Aura Derma: citas, pagos y comprobantes de ejemplo, lista de espera, pacientes y reporte del mes."
+  ruta="/panel/"
+>
+  <section class="contenedor legal">
+    <p class="sobretitulo">Demo del sistema completo</p>
+    <h1>Panel de la clínica</h1>
+    <p class="aviso-legal">Así ve la recepción las citas que llegan desde la web: confirma, marca atendidas, cancela, envía recordatorios y revisa pagos. Todo sale de las reservas de prueba que hiciste en este navegador; pagos y comprobantes son simulados. El motivo de consulta no se guarda aquí.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </section>
+</Base>
+<script>
+  import { panel } from '../../kit/sistema-demo';
+  import { iniciarKit } from '../../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

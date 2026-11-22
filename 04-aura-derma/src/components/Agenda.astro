@@ -52,6 +52,7 @@ import { NEGOCIO } from '../lib/negocio';
       <fieldset class="agenda-paso" id="ag-fecha-grupo" aria-describedby="err-fecha">
         <legend><span class="num-paso" aria-hidden="true">2</span> Elige el día (próximos 14 días) <span class="req" aria-hidden="true">*</span></legend>
         <p class="nota-sim" id="ag-dias-ayuda" role="status"></p>
+        <div class="ag-espera" id="ag-espera" hidden></div>
         <div class="dias-grid" id="ag-dias"></div>
         <p class="error" id="err-fecha" hidden></p>
       </fieldset>
@@ -119,13 +120,14 @@ import { NEGOCIO } from '../lib/negocio';
         </div>
       </fieldset>
 
-      <button type="submit" class="btn"><Icon name="message-circle" /> Continuar a WhatsApp</button>
+      <button type="submit" class="btn"><Icon name="calendar-check" /> Reservar cita</button>
     </form>
 
     <div id="ag-conf" class="confirmacion" tabindex="-1" hidden>
       <span class="sello-demo">Confirmación de demo</span>
-      <h3>Falta un paso: envía el mensaje por WhatsApp</h3>
-      <p>Aún no se ha reservado nada. Abre WhatsApp y envía el mensaje para que la clínica confirme tu cita.</p>
+      <h3>Tu cita quedó apartada</h3>
+      <p>Tu horario quedó apartado en esta demo (solo en tu navegador) y ya aparece en el panel de la clínica. Para confirmarla, paga el adelanto en línea o envía el mensaje por WhatsApp.</p>
+      <div id="ag-kit"></div>
       <dl id="ag-conf-datos"></dl>
       <p class="aviso-wa"><strong>Recuerda:</strong> no agregues diagnósticos ni detalles clínicos al mensaje; WhatsApp pertenece a Meta.</p>
       <div class="acciones">
@@ -141,6 +143,17 @@ import { NEGOCIO } from '../lib/negocio';
   import { TRATAMIENTOS } from '../lib/tratamientos';
   import { bloquesDelDia, formatearFecha, proximosDias, validarFechaHora } from '../lib/horarios';
   import { construirUrlWhatsApp, normalizarCelular, validarPaciente } from '../lib/validaciones';
+  import { botonEspera, extras, ocultarBarraEn, ocupados, registrar } from '../kit/sistema-demo';
+  import { iniciarKit, tituloCita } from '../lib/kit';
+
+  iniciarKit();
+  ocultarBarraEn(document.querySelector('.barra-movil'), [document.getElementById('agenda')]);
+  const aMin = (h: string) => { const [a, b] = h.split(':').map(Number); return a * 60 + b; };
+  /** Bloques del día sumando los horarios que ya tomaron las reservas de prueba. */
+  const bloquesKit = (fecha: string, esp: { id: string; nombre: string; dias: number[] }, t: Date) => {
+    const tomadas = new Set(ocupados(fecha, tituloCita(esp.nombre)));
+    return bloquesDelDia(fecha, esp.id, t, esp.dias).map((b) => (b.estado === 'libre' && tomadas.has(aMin(b.hora)) ? { ...b, estado: 'ocupado' as const } : b));
+  };
 
   const form = document.getElementById('agenda-form') as HTMLFormElement | null;
   if (form) {
@@ -171,7 +184,7 @@ import { NEGOCIO } from '../lib/negocio';
       const previa = preferida ?? valor('fecha');
       const t = ahora();
       const dias = proximosDias(t).map((d) => {
-        const bloques = bloquesDelDia(d.fecha, esp.id, t, esp.dias);
+        const bloques = bloquesKit(d.fecha, esp, t);
         const libres = bloques.filter((b) => b.estado === 'libre').length;
         let nota = '';
         if (!d.abierto) nota = 'Cerrado';
@@ -189,6 +202,16 @@ import { NEGOCIO } from '../lib/negocio';
         })
         .join('');
       ayudaDias.textContent = `${esp.nombre}: ${dias.filter((d) => !d.nota).length} días con horarios libres.`;
+      // todos los días llenos (máximo 3 botones para no saturar)
+      const llenos = dias.filter((d) => d.nota === 'Sin cupos' && d.fecha >= dias[0].fecha && bloquesDelDia(d.fecha, esp.id, t, esp.dias).some((b) => b.estado !== 'pasado')).slice(0, 3);
+      const espera = $('ag-espera');
+      espera.hidden = !llenos.length;
+      if (llenos.length) {
+        const p = document.createElement('p');
+        p.className = 'nota-sim';
+        p.textContent = `${llenos.length === 1 ? `El ${formatearFecha(llenos[0].fecha)} no tiene` : 'Estos días no tienen'} cupos con ${esp.nombre}. Si se libera uno, te avisamos.`;
+        espera.replaceChildren(p, ...llenos.map((d) => botonEspera({ tipo: 'cita', titulo: tituloCita(esp.nombre), fecha: d.fecha }, `Anotarme en la lista de espera del ${formatearFecha(d.fecha)}`)));
+      }
       pintarHoras();
     }
 
@@ -201,7 +224,7 @@ import { NEGOCIO } from '../lib/negocio';
         ayudaHora.textContent = 'No hay días con cupos para este especialista.';
         return;
       }
-      const bloques = bloquesDelDia(fecha, esp.id, ahora(), esp.dias);
+      const bloques = bloquesKit(fecha, esp, ahora());
       const libres = bloques.filter((b) => b.estado === 'libre').length;
       ayudaHora.textContent = `${formatearFecha(fecha)}: ${libres} horarios libres.`;
       horasEl.innerHTML = bloques
@@ -290,6 +313,7 @@ import { NEGOCIO } from '../lib/negocio';
       };
       const errores: Record<string, string> = { ...validarPaciente(datos) };
       const eFecha = validarFechaHora(fecha, hora, esp.id, ahora(), esp.dias);
+      if (!eFecha && fecha && hora && ocupados(fecha, tituloCita(esp.nombre)).includes(aMin(hora))) errores.hora = 'Ese horario acaba de ocuparse. Elige otro.';
       if (eFecha) {
         if (!fecha || /fecha|domingos|próximos|no atiende|no es válida/i.test(eFecha)) errores.fecha = eFecha;
         else errores.hora = eFecha;
@@ -339,6 +363,9 @@ import { NEGOCIO } from '../lib/negocio';
         dl.append(dt, dd);
       });
       ($('ag-wa') as HTMLAnchorElement).href = construirUrlWhatsApp(resumenCita);
+      const reg = registrar({ tipo: 'cita', titulo: tituloCita(esp.nombre), nombre: datos.nombre, cel: normalizarCelular(datos.celular),
+        fecha, inicioMin: aMin(hora), durMin: 30, adelanto: 50 });
+      $('ag-kit').replaceChildren(extras(reg));
       form.hidden = true;
       conf.hidden = false;
       conf.focus();

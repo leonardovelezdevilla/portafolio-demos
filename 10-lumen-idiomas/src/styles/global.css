@@ -180,3 +180,7 @@ legend { padding: 0; margin-bottom: 0.5rem; font-weight: 700; color: var(--azul-
   .franja-demo, .cab, .pie, .skip, .barra-movil, .no-imprimir { display: none !important; }
   body { background: #fff; font-size: 11pt; }
 }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--blanco); --kit-texto: var(--tinta); --kit-suave: var(--tinta-suave); --kit-linea: var(--linea); --kit-acento: var(--azul-700); --kit-acento-tx: #fff; --kit-aviso-fondo: var(--aviso-fondo); --kit-aviso-tx: var(--aviso-texto); --kit-error: var(--error); --kit-fuente: inherit; }
+#mat-kit .kit-extras { margin-block: 1rem; }

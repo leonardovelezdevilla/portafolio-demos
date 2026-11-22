@@ -2,6 +2,9 @@
 import { TIPOS_NEGOCIO, PROCESOS, VOLUMENES, INTEGRACIONES, URGENCIAS, NOTA_IGV } from '../data/precios';
 import { NEXO } from '../data/contenido';
 import Icon from './Icon.astro';
+import { HORAS_DIAG, DIAGNOSTICO } from '../lib/kit-datos';
+const horaTxt = (m: number) => { const h = Math.floor(m / 60), mm = m % 60; return `${((h + 11) % 12) + 1}:${String(mm).padStart(2, '0')} ${h < 12 ? 'a. m.' : 'p. m.'}`; };
+const DIAGNOSTICO_TXT = `S/ ${DIAGNOSTICO}`;
 
 const pasos = [
   { n: 1, leyenda: '¿Qué tipo de negocio tienes?', tipo: 'radio', name: 'tipo', ops: TIPOS_NEGOCIO },
@@ -60,6 +63,52 @@ const pasos = [
         <h4>Tu resumen</h4>
         <ul class="res-lista" id="res-lista"></ul>
 
+        <section class="diag" aria-labelledby="diag-tit">
+          <h4 id="diag-tit" class="diag__tit">Siguiente paso: agenda tu diagnóstico</h4>
+          <p class="res-nota">Una videollamada de 45 minutos para ver cómo trabajas hoy y darte el precio cerrado. Cuesta {DIAGNOSTICO_TXT} (IGV incluido) y se descuenta del proyecto si lo contratas. Lo pagas en línea al agendar.</p>
+          <form id="form-diag" class="diag__form" novalidate>
+            <div class="campo">
+              <label for="diag-fecha">Día</label>
+              <input id="diag-fecha" type="date" aria-describedby="diag-fecha-ayuda diag-fecha-err" />
+              <p class="res-nota" id="diag-fecha-ayuda">De lunes a viernes, desde mañana y hasta dentro de 3 semanas. Elige primero el día para ver las horas libres.</p>
+              <p class="error" id="diag-fecha-err" role="alert"></p>
+            </div>
+            <fieldset class="diag__horas" aria-describedby="diag-hora-err">
+              <legend class="diag__leg">Hora</legend>
+              <div class="diag__ops" id="diag-horas">
+                {HORAS_DIAG.map((m) => (
+                  <label class="op op--simple"><input type="radio" name="diag-hora" value={m} /> <span class="op__txt"><strong>{horaTxt(m)}</strong><small data-nodisp></small></span></label>
+                ))}
+              </div>
+              <p class="error" id="diag-hora-err" role="alert"></p>
+            </fieldset>
+            <div id="diag-espera"></div>
+            <div class="campo">
+              <label for="diag-nombre">Nombre y apellido</label>
+              <input id="diag-nombre" type="text" autocomplete="name" aria-describedby="diag-nombre-err" />
+              <p class="error" id="diag-nombre-err" role="alert"></p>
+            </div>
+            <div class="campo">
+              <label for="diag-cel">Celular (9 dígitos)</label>
+              <input id="diag-cel" type="tel" inputmode="tel" autocomplete="tel-national" aria-describedby="diag-cel-err" />
+              <p class="error" id="diag-cel-err" role="alert"></p>
+            </div>
+            <label class="op op--simple">
+              <input type="checkbox" id="diag-consent" aria-describedby="diag-consent-err" />
+              <span class="op__txt"><span>Acepto que Nexo use mi nombre, celular y este resumen solo para coordinar el diagnóstico, según la <a href="/privacidad/">política de privacidad</a> (demo).</span></span>
+            </label>
+            <p class="error" id="diag-consent-err" role="alert"></p>
+            <div class="acciones"><button type="submit" class="btn btn--lima">Agendar diagnóstico <Icon nombre="arrow-right" tamano={20} /></button></div>
+          </form>
+          <div class="diag__ok" id="diag-ok" tabindex="-1" role="region" aria-labelledby="diag-ok-tit" hidden>
+            <h4 class="diag__tit" id="diag-ok-tit">Tu diagnóstico quedó apartado</h4>
+            <p id="diag-ok-txt"></p>
+            <div id="diag-kit"></div>
+            <p><button type="button" class="enlace" id="diag-cambiar">Cambiar día u hora</button></p>
+          </div>
+        </section>
+
+        <h4>¿Prefieres conversarlo antes?</h4>
         <div class="consent">
           <label class="op op--simple">
             <input type="checkbox" id="res-consent" aria-describedby="res-consent-ayuda err-consent" />
@@ -85,6 +134,10 @@ const pasos = [
 <script>
   import { cotizar, enlaceWhatsApp, formatoSoles, mensajeWhatsApp, type EntradaCotizador } from '../lib/cotizador';
   import { PRECIOS } from '../data/precios';
+  import { registrar, extras, anular, ocupados, botonEspera, celValido, celIntl, estaPagado, alCambiar } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  import { HORAS_DIAG, DIAGNOSTICO, TITULO_DIAG } from '../lib/kit-datos';
+  iniciarKit();
 
   const TOTAL = 5;
   const form = document.getElementById('form-cotiz') as HTMLFormElement;
@@ -193,6 +246,10 @@ const pasos = [
       }),
     );
     urlWa = enlaceWhatsApp(mensajeWhatsApp(e, c));
+    resumenDiag = `${filas.find((f) => f[0] === 'Procesos')![1]} · rango ${formatoSoles(c.min)} a ${formatoSoles(c.max)}`;
+    // si ya pagó su diagnóstico, se sigue mostrando la confirmación (no se ofrece pagar otro)
+    const pagado = !!apartado && estaPagado(apartado);
+    diagForm.hidden = pagado; diagOk.hidden = !pagado;
     consent.checked = false;
     errConsent.textContent = '';
     wa.setAttribute('aria-disabled', 'true');
@@ -233,6 +290,69 @@ const pasos = [
     form.hidden = false;
     ir(1);
   });
+
+  // ---------- diagnóstico: agenda + pago en línea (simulado) ----------
+  let resumenDiag = '';
+  let apartado = '';
+  let apartadoEn = { fecha: '', ini: -1 }; // su propia hora no cuenta como tomada al cambiarla
+  const diagForm = document.getElementById('form-diag') as HTMLFormElement;
+  const diagOk = document.getElementById('diag-ok')!;
+  const dFecha = document.getElementById('diag-fecha') as HTMLInputElement;
+  const dNombre = document.getElementById('diag-nombre') as HTMLInputElement;
+  const dCel = document.getElementById('diag-cel') as HTMLInputElement;
+  const dCons = document.getElementById('diag-consent') as HTMLInputElement;
+  const dHoras = [...diagForm.querySelectorAll<HTMLInputElement>('input[name="diag-hora"]')];
+  const limaHoy = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const sumar = (k: string, n: number) => { const d = new Date(k + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  dFecha.min = sumar(limaHoy(), 1); dFecha.max = sumar(limaHoy(), 21);
+  const finDeSemana = (k: string) => [0, 6].includes(new Date(k + 'T12:00:00Z').getUTCDay());
+  const fechaError = (k: string) => !k ? 'Elige el día del diagnóstico.' : k < dFecha.min || k > dFecha.max ? 'Elige un día entre mañana y dentro de 3 semanas.' : finDeSemana(k) ? 'Atendemos de lunes a viernes. Elige otro día.' : '';
+  const ponerErr = (id: string, el: HTMLElement, msg: string) => { document.getElementById(id)!.textContent = msg; if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid'); return !msg; };
+  const pintarHoras = () => {
+    const k = dFecha.value, ok = !!k && !fechaError(k);
+    const tomadas = ok ? ocupados(k, TITULO_DIAG) : [];
+    if (apartado && !estaPagado(apartado) && apartadoEn.fecha === k) { const i = tomadas.indexOf(apartadoEn.ini); if (i >= 0) tomadas.splice(i, 1); }
+    let libres = 0;
+    dHoras.forEach((r) => {
+      const ocupada = tomadas.includes(Number(r.value));
+      r.disabled = !ok || ocupada;
+      if (r.disabled && r.checked) r.checked = false;
+      if (!r.disabled) libres++;
+      r.closest('label')!.querySelector('[data-nodisp]')!.textContent = !ok ? 'Elige primero el día' : ocupada ? 'Ya tomada' : '';
+    });
+    const espera = document.getElementById('diag-espera')!;
+    espera.replaceChildren();
+    if (ok && !libres) espera.append(botonEspera({ tipo: 'llamada', titulo: TITULO_DIAG, fecha: k }));
+  };
+  dFecha.addEventListener('change', () => { ponerErr('diag-fecha-err', dFecha, fechaError(dFecha.value)); pintarHoras(); });
+  pintarHoras();
+  diagForm.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const hora = dHoras.find((r) => r.checked);
+    const nom = dNombre.value.trim(), cel = celIntl(dCel.value);
+    const checks: [string, HTMLElement, string][] = [
+      ['diag-fecha-err', dFecha, fechaError(dFecha.value)],
+      ['diag-hora-err', dHoras.find((r) => !r.disabled) ?? dHoras[0], hora ? '' : 'Elige una hora libre.'],
+      ['diag-nombre-err', dNombre, nom.length < 3 || !/\s/.test(nom) ? 'Escribe tu nombre y apellido.' : ''],
+      ['diag-cel-err', dCel, /^519\d{8}$/.test(cel) && celValido(cel) ? '' : 'Escribe tu celular de 9 dígitos, empieza con 9.'],
+      ['diag-consent-err', dCons, dCons.checked ? '' : 'Marca la casilla para aceptar el uso de tus datos.'],
+    ];
+    const malos = checks.filter(([id, el, msg]) => !ponerErr(id, el, msg));
+    if (malos.length) { malos[0][1].focus(); return; }
+    const ini = Number(hora!.value);
+    const propia = apartadoEn.fecha === dFecha.value && apartadoEn.ini === ini;
+    if (!propia && ocupados(dFecha.value, TITULO_DIAG).includes(ini)) { ponerErr('diag-hora-err', hora!, 'Esa hora se acaba de tomar. Elige otra.'); pintarHoras(); dHoras.find((r) => !r.disabled)?.focus(); return; }
+    if (apartado) anular(apartado); // al cambiar día u hora no queda un diagnóstico duplicado sin pagar
+    const reg = registrar({ tipo: 'llamada', titulo: TITULO_DIAG, detalle: resumenDiag, nombre: nom, cel, fecha: dFecha.value, inicioMin: ini, durMin: 45, monto: DIAGNOSTICO });
+    apartado = reg.codigo; apartadoEn = { fecha: dFecha.value, ini };
+    document.getElementById('diag-kit')!.replaceChildren(extras(reg, { pagoOpcional: false }));
+    const cuando = new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(dFecha.value + 'T12:00:00Z'));
+    document.getElementById('diag-ok-txt')!.textContent = `${nom.split(/\s+/)[0]}, te esperamos el ${cuando} a las ${hora!.closest('label')!.querySelector('strong')!.textContent} por videollamada. Código ${reg.codigo}. Paga el diagnóstico para confirmarlo.`;
+    diagForm.hidden = true; diagOk.hidden = false; document.getElementById('diag-cambiar')!.hidden = false; diagOk.focus();
+  });
+  // ya pagado: no se ofrece cambiar desde aquí (se usa el enlace para cancelar o WhatsApp)
+  alCambiar(() => { document.getElementById('diag-cambiar')!.hidden = !!apartado && estaPagado(apartado); });
+  document.getElementById('diag-cambiar')!.addEventListener('click', () => { diagOk.hidden = true; diagForm.hidden = false; pintarHoras(); dFecha.focus(); });
 
   ir(1, false);
 </script>
@@ -287,6 +407,19 @@ const pasos = [
   .acciones .btn--lima { background: var(--ink); color: var(--lima); border-color: var(--ink); }
   .acciones .btn--lima:hover { background: var(--lima); color: var(--ink); }
   #btn-sig { margin-left: auto; }
+  .diag { display: grid; gap: 12px; margin-top: 8px; padding: 16px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper-2); }
+  .diag__tit { font-family: var(--f-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; text-transform: none; color: var(--ink); margin: 0; }
+  .diag__form, .diag__ok { display: grid; gap: 12px; }
+  .diag__form[hidden], .diag__ok[hidden] { display: none; }
+  .diag__ok { outline-offset: 4px; }
+  .diag .campo { display: grid; gap: 6px; }
+  .diag .campo label, .diag__leg { font-weight: 700; }
+  .diag input[type='date'], .diag input[type='text'], .diag input[type='tel'] { font: inherit; min-height: 48px; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper); color: var(--ink); width: 100%; }
+  .diag [aria-invalid='true'] { border-color: var(--brasa); }
+  .diag__horas { margin: 0; }
+  .diag__ops { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .diag .op:has(input:disabled) { border-style: dashed; opacity: 0.6; cursor: not-allowed; }
+  .diag small[data-nodisp]:empty { display: none; }
   #res-wa[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
 
   .resultado[hidden] { display: none; }

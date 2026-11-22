@@ -128,11 +128,12 @@ const enlaces = [
 
         <section class="confirmacion" data-confirmacion tabindex="-1" aria-labelledby="conf-titulo" hidden>
           <p class="etiqueta">Pedido armado</p>
-          <h3 id="conf-titulo">Se abrió WhatsApp</h3>
-          <p>Tu pedido quedó escrito en un mensaje. <strong>Aún no está enviado</strong>: envíalo desde WhatsApp para que el vendedor lo reciba. Ahí se confirma el stock y se acuerda el pago.</p>
-          <p>Si no se abrió nada (a veces el navegador bloquea la ventana), usa este enlace:</p>
+          <h3 id="conf-titulo">Tu pedido quedó registrado</h3>
+          <p>Si elegiste tarjeta, págalo en línea aquí abajo. Con Yape, Plin o contraentrega, envíalo por WhatsApp y acuerda el pago con el vendedor.</p>
+          <div data-kit></div>
+          <p>¿Prefieres WhatsApp? Tu pedido ya está escrito en el mensaje:</p>
           <p><a class="btn btn--primario btn--bloque" data-enlace-wa href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer"><Icono nombre="mensaje" /> Abrir WhatsApp con mi pedido</a></p>
-          <p class="nota">Demo: el número es ficticio, no habrá respuesta.</p>
+          <p class="nota">Demo: el mensaje llega a Vélez De Villa, no a una tienda real.</p>
           <div class="confirmacion__acciones">
             <button type="button" class="btn" data-volver-carrito>Volver al carrito</button>
             <button type="button" class="btn btn--negro" data-vaciar>Vaciar carrito</button>
@@ -184,6 +185,7 @@ const enlaces = [
             <fieldset class="campo" aria-describedby="ped-pago-error">
               <legend>Método de pago (obligatorio)</legend>
               <div class="opciones">
+                <label class="opcion"><input type="radio" name="pago" value="Tarjeta en línea" aria-required="true" /><span>Tarjeta en línea</span></label>
                 <label class="opcion"><input type="radio" name="pago" value="Yape" aria-required="true" /><span>Yape</span></label>
                 <label class="opcion"><input type="radio" name="pago" value="Plin" aria-required="true" /><span>Plin</span></label>
                 <label class="opcion"><input type="radio" name="pago" value="Contraentrega" aria-required="true" /><span>Contraentrega</span></label>
@@ -198,7 +200,7 @@ const enlaces = [
               <p class="campo__ayuda" id="ped-acepta-ayuda">Al continuar, tu mensaje se abre en WhatsApp (Meta), que lo procesa según su propia política y puede transferirlo fuera del Perú.</p>
               <p class="error" id="ped-acepta-error" data-error="acepta" role="alert" hidden></p>
             </div>
-            <button type="submit" class="btn btn--primario btn--bloque"><Icono nombre="mensaje" /> Enviar pedido por WhatsApp</button>
+            <button type="submit" class="btn btn--primario btn--bloque">Confirmar pedido</button>
             <p class="nota nota--sep">Demo: el número de WhatsApp es ficticio. Se abre WhatsApp con tu pedido ya escrito; tú decides si lo envías. El stock se confirma por ese chat.</p>
           </form>
         </div>

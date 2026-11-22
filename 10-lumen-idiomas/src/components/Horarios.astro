@@ -78,6 +78,7 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
           {v.estado === 'sin-vacantes' ? (
             <p class="grupo__cierre">
               <span class="grupo__agotado">Este grupo no tiene vacantes.</span>
+              <button type="button" class="btn btn--suave" data-espera={g.id} data-espera-titulo={`Inglés ${etiquetaGrupo(g)}`} hidden>Lista de espera<span class="visually-hidden"> para {etiquetaGrupo(g)}</span></button>
               <a class="btn btn--suave" href="/#horarios" data-ver-nivel={g.nivel} data-ver-pub={pub}>Ver otros horarios de {g.nivel}<span class="visually-hidden"> para {g.publico}</span></a>
             </p>
           ) : (
@@ -123,7 +124,15 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
 </style>
 
 <script>
+  import { abrirEspera } from '../kit/sistema-demo';
+  import { INICIO_CICLO, iniciarKit } from '../lib/kit';
+
+  iniciarKit();
   const lista = document.getElementById('hor-lista')!;
+  lista.querySelectorAll<HTMLButtonElement>('[data-espera]').forEach((b) => {
+    b.hidden = false;
+    b.addEventListener('click', () => abrirEspera({ tipo: 'matricula', titulo: b.dataset.esperaTitulo!, fecha: INICIO_CICLO }));
+  });
   const items = Array.from(lista.querySelectorAll<HTMLElement>('.grupo'));
   const nivel = document.getElementById('f-nivel') as HTMLSelectElement;
   const pub = document.getElementById('f-pub') as HTMLSelectElement;

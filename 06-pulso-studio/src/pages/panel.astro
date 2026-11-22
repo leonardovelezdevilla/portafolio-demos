@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Panel del estudio · Pulso Studio (demo)" descripcion="Demo del panel de Pulso Studio: reservas de clases, pagos y comprobantes de ejemplo, lista de espera, alumnas y reporte del mes." ruta="/panel/">
+  <div class="contenedor pagina">
+    <p class="sobretitulo">Demo del sistema completo</p>
+    <h1>Panel del estudio</h1>
+    <div class="aviso-demo">Así ve el estudio las reservas que llegan desde la web: confirma, marca asistencias, cancela, envía recordatorios, avisa a la lista de espera y revisa pagos. Todo sale de las reservas de prueba que hiciste en este navegador; pagos y comprobantes son simulados. Los datos de salud no se guardan aquí.</div>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </div>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

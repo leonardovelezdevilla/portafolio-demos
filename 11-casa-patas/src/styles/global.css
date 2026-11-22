@@ -306,3 +306,8 @@ textarea { min-height: 96px; resize: vertical; }
 .plegable > summary { cursor: pointer; padding: 12px 14px; min-height: 48px; display: flex; align-items: center; font-weight: 700; }
 .plegable > .hitos { padding: 0 12px 12px; margin: 0; }
 .plegable[open] > summary { border-bottom: 1px solid var(--linea); margin-bottom: 12px; }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--papel); --kit-texto: var(--tinta); --kit-suave: var(--suave); --kit-linea: var(--linea); --kit-acento: var(--teal); --kit-acento-tx: #fff; --kit-aviso-fondo: #fdf0cf; --kit-aviso-tx: var(--mostaza-tx); --kit-error: var(--error); --kit-radio: var(--radio); --kit-fuente: var(--sans); }
+.espera-box { margin-top: 10px; }
+:root { --kit-borde-campo: var(--suave); }

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Panel de suscripciones · Kipuflow (demo)" descripcion="Demo del panel de Kipuflow: cuentas creadas desde la web, pagos simulados, comprobantes, clientes y reporte del mes." ruta="/panel/">
+  <article class="contenedor texto">
+    <p class="sobretitulo">Demo del sistema completo</p>
+    <h1>Panel de suscripciones</h1>
+    <p>Así ve el equipo las cuentas que se crean desde la web: quién pagó, qué plan eligió, su comprobante y el reporte del mes. Todo sale de las pruebas que hiciste en este navegador.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </article>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

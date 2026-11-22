@@ -2,6 +2,14 @@ import { SERVICIOS_RESERVA, TAMANOS_BANO, type ServicioId } from '../lib/config'
 import { etiquetaFecha, horasDelDia, horasDisponibles, motivoCierre, partesLima, ultimoDiaPermitido, validarCita, ymdValido } from '../lib/fechas';
 import { armarMensaje, numeroCita, urlWhatsApp, validarCitaForm, type DatosCita } from '../lib/reserva';
 import { leerForm, mostrarErrores, pintarResumen, quitarDelResumen } from './formularios';
+import { botonEspera, extras, ocultarBarraEn, ocupados, registrar } from '../kit/sistema-demo';
+
+import { iniciarKit } from '../lib/kit';
+
+iniciarKit();
+ocultarBarraEn(document.querySelector('.barra-movil'), [document.getElementById('reserva')]);
+
+const aMinutos = (h: string) => { const [a, b] = h.split(':').map(Number); return a * 60 + b; };
 
 const form = document.querySelector<HTMLFormElement>('[data-form-reserva]');
 if (form) {
@@ -11,6 +19,8 @@ if (form) {
   const hora = form.querySelector<HTMLSelectElement>('[name="hora"]')!;
   const bloqueTamano = form.querySelector<HTMLElement>('[data-bloque-tamano]')!;
   const errFecha = form.querySelector<HTMLElement>('[data-error="fecha"]')!;
+  const espera = form.querySelector<HTMLElement>('[data-espera]')!;
+  const kitBox = ok.querySelector<HTMLElement>('[data-kit-extras]')!;
 
   const servicio = () => (form.querySelector<HTMLInputElement>('[name="servicio"]:checked')?.value ?? '') as ServicioId | '';
   const fijarLimites = () => { fecha.min = partesLima(new Date()).ymd; fecha.max = ultimoDiaPermitido(new Date()); };
@@ -30,6 +40,7 @@ if (form) {
     const f = fecha.value;
     const previa = hora.value;
     hora.replaceChildren();
+    espera.replaceChildren();
     if (!s || !f || !ymdValido(f)) {
       hora.append(opcion('', !s ? 'Elige primero el servicio' : 'Elige primero la fecha'));
       return;
@@ -39,7 +50,12 @@ if (form) {
       hora.append(opcion('', motivoCierre(f, s) ?? 'Sin horas ese día'));
       return;
     }
-    const libres = new Set(horasDisponibles(f, s, new Date()));
+    const srvNombre = SERVICIOS_RESERVA.find((x) => x.id === s)!.nombre;
+    const tomadas = new Set(ocupados(f, srvNombre));
+    const libres = new Set(horasDisponibles(f, s, new Date()).filter((h) => !tomadas.has(aMinutos(h))));
+    if (!libres.size && tomadas.size) espera.replaceChildren(
+      Object.assign(document.createElement('p'), { className: 'campo__ayuda', textContent: 'Este día ya no tiene horarios libres.' }),
+      botonEspera({ tipo: 'cita', titulo: srvNombre, fecha: f }));
     hora.append(opcion('', s === 'bano' ? 'Elige un turno' : 'Elige la hora'));
     for (const h of todas) hora.append(opcion(h, libres.has(h) ? (s === 'bano' ? `${h} (turno)` : h) : `${h} (no disponible)`, !libres.has(h)));
     if (libres.has(previa)) hora.value = previa;
@@ -121,7 +137,12 @@ if (form) {
     const numero = numeroCita(new Date());
     const srv = SERVICIOS_RESERVA.find((s) => s.id === datos.servicio)!;
     const tam = TAMANOS_BANO.find((t) => t.id === datos.tamano);
-    ok.querySelector('[data-numero]')!.textContent = numero;
+    const reg = registrar({ tipo: 'cita', titulo: srv.nombre, detalle: `Mascota: ${datos.mascota.trim()} (${datos.especie})${tam ? ', ' + tam.nombre : ''}`,
+      nombre: datos.dueno, cel: datos.celular, fecha: datos.fecha, inicioMin: aMinutos(datos.hora), durMin: srv.duracion,
+      monto: tam ? tam.desde : srv.desde, adelanto: 20, codigo: numero, horasCancelar: srv.id === 'bano' ? 24 : 4 });
+    kitBox.replaceChildren(extras(reg));
+    ok.querySelector('[data-numero]')!.textContent = reg.codigo;
+    
     ok.querySelector<HTMLElement>('[data-resumen]')!.replaceChildren(
       fila('Servicio solicitado', `${srv.nombre}${tam ? `, ${tam.nombre}` : ''}`),
       fila('Mascota', `${datos.mascota.trim()}, ${datos.especie}, ${datos.edadValor} ${unidadTxt[datos.edadUnidad]} (aprox.)`),
@@ -131,7 +152,7 @@ if (form) {
       fila('Para el médico (no se envía por WhatsApp)', datos.sintomas.trim()),
       fila('Precio de referencia', `Desde S/ ${tam ? tam.desde : srv.desde}, IGV incluido; el monto final se confirma en la clínica`),
     );
-    ok.querySelector<HTMLAnchorElement>('[data-wa]')!.href = urlWhatsApp(armarMensaje(datos, numero));
+    ok.querySelector<HTMLAnchorElement>('[data-wa]')!.href = urlWhatsApp(armarMensaje(datos, reg.codigo));
     form.hidden = true;
     ok.hidden = false;
     ok.focus();

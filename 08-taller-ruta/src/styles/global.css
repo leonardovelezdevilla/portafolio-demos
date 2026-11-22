@@ -134,3 +134,6 @@ input[aria-invalid='true'], select[aria-invalid='true'], textarea[aria-invalid='
 .campo > label.marca { display: flex; font-weight: 400; margin-bottom: 0; }
 .oscuro .muted { color: var(--texto-claro-suave); }
 .oscuro .etiqueta { color: var(--texto-claro-suave); }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--papel); --kit-texto: var(--texto); --kit-suave: var(--texto-suave); --kit-linea: var(--linea); --kit-acento: var(--asfalto); --kit-acento-tx: #fff; --kit-aviso-fondo: var(--senal-suave); --kit-aviso-tx: var(--asfalto); --kit-error: var(--error); --kit-radio: var(--radio); --kit-fuente: var(--f-cuerpo); }

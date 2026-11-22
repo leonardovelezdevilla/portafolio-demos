@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  titulo="Panel de la clínica (demo) | Casa Patas"
+  descripcion="Demo del panel de Casa Patas: citas del día, pagos y comprobantes de ejemplo, lista de espera, clientes y reporte del mes."
+  ruta="/panel/"
+>
+  <header class="pagina-cab"><div class="contenedor"><h1>Panel de la clínica</h1><p>Así ve la recepción las citas que llegan desde la web: confirma, marca atendidas, cancela, envía recordatorios y revisa pagos.</p></div></header>
+  <div class="contenedor seccion">
+    <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> Todo lo que ves aquí sale de las reservas de prueba que hiciste en este navegador. Los pagos y comprobantes son simulados.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </div>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

@@ -1,6 +1,7 @@
 import { CLASES, DIAS_NOMBRE, INSTRUCTORAS, NIVELES, PROGRAMAS, TIPOS, type Clase } from '../data/clases';
 import { PRECIO_PRUEBA, PRECIO_SUELTA } from '../data/planes';
 import { limpiarCelular, validarCelular, validarNombre } from './validar';
+import { ocupados } from '../kit/sistema-demo';
 
 export const ZONA = 'America/Lima';
 export const WHATSAPP = '51935852637';
@@ -100,8 +101,14 @@ export function estadoCupos(total: number, ocupados: number): Cupos {
   return { total, ocupados: oc, libres, estado: 'disponible', texto: `${libres} cupos libres` };
 }
 
+/** Título con el que se guarda una reserva de esta clase en el sistema de demo. */
+export const tituloClase = (c: Clase) => `${programaDe(c).nombre} · ${c.hora}`;
+
 export function cuposDe(c: Clase, fecha: string): Cupos {
-  return estadoCupos(cuposTotales(c), cuposOcupados(c, fecha));
+  const total = cuposTotales(c);
+  // Suma las reservas de prueba hechas en este navegador (sistema de demo).
+  const demo = typeof localStorage === 'undefined' ? 0 : ocupados(fecha, tituloClase(c)).length;
+  return estadoCupos(total, Math.min(total, cuposOcupados(c, fecha) + demo));
 }
 
 // ---------- Ocurrencias (clases concretas con fecha) ----------

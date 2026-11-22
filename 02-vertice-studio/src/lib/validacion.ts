@@ -1,6 +1,6 @@
 export type Errores<T extends string> = Partial<Record<T, string>>;
 
-export const METODOS_PAGO = ['Yape', 'Plin', 'Contraentrega'] as const;
+export const METODOS_PAGO = ['Tarjeta en línea', 'Yape', 'Plin', 'Contraentrega'] as const;
 export type MetodoPago = (typeof METODOS_PAGO)[number];
 
 export interface DatosPedido {

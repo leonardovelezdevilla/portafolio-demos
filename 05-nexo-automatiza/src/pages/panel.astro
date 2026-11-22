@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Panel de diagnósticos · Nexo Automatiza (demo)" descripcion="Demo del panel de Nexo Automatiza: diagnósticos agendados desde el cotizador, pagos simulados, comprobantes, clientes y reporte del mes." ruta="/panel/">
+  <section class="legal">
+    <div class="wrap legal__in">
+      <p class="aviso-demo">Demo del sistema completo</p>
+      <h1>Panel de diagnósticos</h1>
+      <p>Así ve el equipo los diagnósticos que llegan desde el cotizador: quién pagó, qué procesos quiere automatizar, su comprobante y el reporte del mes. Todo sale de las pruebas que hiciste en este navegador.</p>
+      <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+    </div>
+  </section>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

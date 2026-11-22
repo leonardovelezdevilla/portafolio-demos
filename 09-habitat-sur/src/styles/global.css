@@ -93,3 +93,6 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 html { scroll-padding-top: 5.5rem; }
 .enlace-btn { background: none; border: 0; padding: .35rem 0; min-height: 44px; font: inherit; color: var(--error); text-decoration: underline; text-align: left; cursor: pointer; }
 .resumen-err li { list-style: disc; }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: var(--blanco); --kit-texto: var(--tinta); --kit-suave: var(--tinta-2); --kit-linea: var(--linea); --kit-borde-campo: var(--linea); --kit-acento: var(--tinta); --kit-acento-tx: var(--blanco); --kit-aviso-fondo: var(--papel-2); --kit-aviso-tx: var(--tinta); --kit-error: var(--error); --kit-radio: 0; --kit-fuente: var(--f-cuerpo); }

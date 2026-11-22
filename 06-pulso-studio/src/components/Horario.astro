@@ -78,13 +78,17 @@ const total = CLASES.length;
       </div>
     ))}
   </div>
-  <p class="cupos-nota">Cupos de ejemplo (demo). «Lista de espera» abre WhatsApp en una pestaña nueva; al abrirlo, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
+  <p class="cupos-nota">Cupos de ejemplo (demo). «Lista de espera» te anota para que el estudio te avise por WhatsApp si se libera un cupo.</p>
   <p class="sin-resultados aviso" data-vacio hidden><Icono nombre="info" /> <span>No hay clases con esa combinación. Prueba quitando algún filtro.</span></p>
 </div>
 
 <script>
   import { CLASES } from '../data/clases';
-  import { ahoraLima, fechaCorta, proximaOcurrencia, urlWhatsApp, programaDe } from '../lib/horario';
+  import { ahoraLima, fechaCorta, proximaOcurrencia, tituloClase } from '../lib/horario';
+  import { abrirEspera } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+
+  iniciarKit();
 
   const raiz = document.querySelector<HTMLElement>('[data-horario]');
   if (raiz) {
@@ -112,14 +116,11 @@ const total = CLASES.length;
       prox.textContent = `Próxima: ${o.fecha === hoy ? 'hoy, ' : ''}${fechaCorta(o.fecha)}`;
       btn.dataset.ocurrencia = o.id;
       if (o.cupos.estado === 'llena') {
-        const p = programaDe(c);
-        btn.href = urlWhatsApp(`Hola Pulso Studio, la clase ${p.nombre} del ${fechaCorta(o.fecha)} a las ${c.hora} está llena. Quiero entrar a la lista de espera (demo).`);
-        btn.target = '_blank';
-        btn.rel = 'noopener noreferrer';
+        btn.setAttribute('role', 'button');
         btn.classList.add('boton--linea', 'sobre-claro');
         btn.querySelector('[data-txt]')!.textContent = 'Lista de espera';
-        btn.querySelector('[data-lector]')!.textContent += ' (se abre en una pestaña nueva)';
         btn.removeAttribute('data-reservar');
+        btn.addEventListener('click', (ev) => { ev.preventDefault(); abrirEspera({ tipo: 'clase', titulo: tituloClase(c), fecha: o.fecha }); });
       }
     }
 

@@ -332,3 +332,7 @@ input[type='radio'], input[type='checkbox'] { width: 1.4rem; height: 1.4rem; acc
 .tabla-datos th { background: var(--arena); }
 .firma-proveedor { border-top: 1px dashed var(--suave); margin-top: 1rem; padding-top: .5rem; color: var(--suave); }
 .tabla-wrap { overflow-x: auto; max-width: 100%; } .tabla-datos { min-width: 34rem; }
+
+/* Kit «sistema completo»: colores de la marca */
+:root { --kit-fondo: #fff; --kit-texto: var(--tinta); --kit-suave: var(--suave); --kit-linea: var(--linea); --kit-acento: var(--bosque); --kit-acento-tx: #fff; --kit-aviso-fondo: var(--arena); --kit-aviso-tx: var(--tinta); --kit-error: var(--error); --kit-radio: var(--radio); --kit-fuente: var(--f-texto); }
+[data-kit] .kit-extras { margin-top: 1rem; }

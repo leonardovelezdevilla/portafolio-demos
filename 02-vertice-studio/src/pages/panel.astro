@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  titulo="Panel de pedidos (demo) | Vértice Studio"
+  descripcion="Demo del panel de Vértice Studio: pedidos que llegan desde la web, pagos y comprobantes de ejemplo, clientes y reporte del mes."
+  ruta="/panel/"
+>
+  <header class="pagina-cab"><div class="contenedor"><h1>Panel de pedidos</h1><p>Así ve la tienda los pedidos que llegan desde la web: confirma, marca entregados, cancela y revisa pagos y comprobantes.</p></div></header>
+  <div class="contenedor seccion">
+    <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> Todo sale de los pedidos de prueba que hiciste en este navegador. Los pagos y comprobantes son simulados.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </div>
+</Base>
+<script>
+  import { panel } from '../kit/sistema-demo';
+  import { iniciarKit } from '../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>

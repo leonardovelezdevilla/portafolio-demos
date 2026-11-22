@@ -125,20 +125,21 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
           <p class="mat__meta"><Icon name="message-circle" /> {AVISO_WHATSAPP}</p>
         </fieldset>
 
-        <button type="submit" class="btn btn--sol">Revisar mi matrícula</button>
+        <button type="submit" class="btn btn--sol">Matricularme</button>
       </form>
 
       <div id="mat-conf" class="conf" tabindex="-1" role="region" aria-labelledby="mat-conf-tit" hidden>
         <span class="etiqueta-demo">Confirmación de demo</span>
-        <h3 id="mat-conf-tit">Tu solicitud está lista</h3>
+        <h3 id="mat-conf-tit">Tu vacante quedó separada</h3>
+        <div id="mat-kit"></div>
         <dl id="mat-datos" class="conf__datos"></dl>
         <ol class="conf__pasos">
-          <li>Envía el mensaje por WhatsApp (botón de abajo).</li>
+          <li>Paga la reserva de vacante en línea (arriba) o envía el mensaje por WhatsApp (abajo).</li>
           <li>Te escribimos para agendar la entrevista de ubicación.</li>
-          <li>Pagas el ciclo y los materiales (<span id="mat-precio"></span>, IGV incluido) y confirmas tu vacante.</li>
+          <li>Pagas el resto del ciclo y los materiales (total <span id="mat-precio"></span>, IGV incluido) y confirmas tu vacante.</li>
         </ol>
         <p>{AVISO_WHATSAPP}</p>
-        <p><strong>Esto es una demostración:</strong> no se guardó ningún dato ni se reservó ninguna vacante. En una academia real, la matrícula se confirma tras la entrevista de ubicación y el pago.</p>
+        <p><strong>Esto es una demostración:</strong> la solicitud quedó guardada solo en este navegador y aparece en el panel de la academia. En una academia real, la matrícula se confirma tras la entrevista de ubicación y el pago.</p>
         <div class="conf__acciones">
           <a class="btn btn--sol" id="mat-wa" href="https://wa.me/51935852637" target="_blank" rel="noopener noreferrer">
             <Icon name="message-circle" /> Abrir WhatsApp con el mensaje<span class="visually-hidden"> (se abre en otra pestaña)</span>
@@ -177,6 +178,11 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
   import { GRUPOS, etiquetaGrupo } from '../data/horarios';
   import { PRECIOS, soles } from '../data/precios';
   import { esMenorDeEdad, validarMatricula, construirUrlWhatsApp, type DatosMatricula } from '../lib/matricula';
+  import { alCambiar as alCambiarKit, anular, estaPagado, extras, registrar } from '../kit/sistema-demo';
+  import { RESERVA_VACANTE, aMin, iniciarKit, primeraClase } from '../lib/kit';
+
+  iniciarKit();
+  let ultimo = '';
 
   const form = document.getElementById('mat-form') as HTMLFormElement;
   const resumen = document.getElementById('mat-resumen')!;
@@ -313,11 +319,20 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
       dl.append(dt, dd);
     });
     (document.getElementById('mat-wa') as HTMLAnchorElement).href = construirUrlWhatsApp(d, hoy);
+    if (ultimo) anular(ultimo); // si corrigió sus datos, se reemplaza la solicitud anterior
+    const reg = registrar({ tipo: 'matricula', titulo: `Inglés ${etiquetaGrupo(g)}`,
+      detalle: menor ? `${g.publico} · alumno menor de edad (datos del apoderado)` : g.publico,
+      nombre: menor ? d.apoderado : d.alumno, cel: menor ? d.celularApoderado : d.celular,
+      fecha: primeraClase(g), inicioMin: aMin(g.inicio), durMin: aMin(g.fin) - aMin(g.inicio), monto: precio.ciclo + precio.materiales, adelanto: RESERVA_VACANTE });
+    ultimo = reg.codigo;
+    document.getElementById('mat-kit')!.replaceChildren(extras(reg));
     form.hidden = true;
     conf.hidden = false;
     conf.focus();
   });
 
+  // con la reserva pagada ya no se corrige desde aquí (evita una segunda matrícula)
+  alCambiarKit(() => { document.getElementById('mat-editar')!.hidden = !!ultimo && estaPagado(ultimo); });
   document.getElementById('mat-editar')!.addEventListener('click', () => {
     conf.hidden = true;
     form.hidden = false;

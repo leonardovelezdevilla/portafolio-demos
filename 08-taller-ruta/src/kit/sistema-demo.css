@@ -1,0 +1,91 @@
+/* Estilos del kit «sistema completo». Copia maestra: kit/sistema-demo.css (se copia a src/kit/ con node scripts/kit.mjs).
+   Cada demo ajusta los colores definiendo estas variables en :root; si no, se usan los valores por defecto. */
+:root {
+  --kit-fondo: #ffffff;
+  --kit-texto: #1d2327;
+  --kit-suave: #4f5a60;
+  --kit-linea: #d5d9dc;
+  --kit-borde-campo: #6b7378; /* bordes de campos: contraste 3:1 o más */
+  --kit-acento: #1f5f5b;
+  --kit-acento-tx: #ffffff;
+  --kit-aviso-fondo: #fff4d6;
+  --kit-aviso-tx: #6b4500;
+  --kit-error: #a3261b;
+  --kit-radio: 12px;
+  --kit-fuente: inherit;
+}
+
+.kit-extras { display: grid; gap: 12px; margin-top: 16px; text-align: left; }
+.kit-bloque { border: 1px solid var(--kit-linea); border-radius: var(--kit-radio); padding: 14px 16px; background: var(--kit-fondo); color: var(--kit-texto); }
+.kit-t { font-weight: 700; margin: 0 0 6px; }
+.kit-mute { color: var(--kit-suave); font-size: 0.9rem; margin: 6px 0; }
+.kit-mute a, .kit-bloque a:not(.kit-btn) { color: var(--kit-acento); text-decoration: underline; text-underline-offset: 2px; }
+.kit-err { color: var(--kit-error); font-weight: 600; margin: 8px 0; min-height: 0; }
+.kit-err:empty { display: none; }
+.kit-aviso { background: var(--kit-aviso-fondo); color: var(--kit-aviso-tx); border-radius: 8px; padding: 8px 12px; font-weight: 600; font-size: 0.92rem; margin: 0 0 10px; }
+
+.kit-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.kit-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px;
+  border: 1.5px solid var(--kit-acento); border-radius: 999px; background: transparent; color: var(--kit-acento);
+  font: 600 0.95rem/1.2 var(--kit-fuente); text-decoration: none; cursor: pointer; text-align: center;
+}
+.kit-btn:hover { background: color-mix(in srgb, var(--kit-acento) 10%, transparent); }
+.kit-btn--main { background: var(--kit-acento); color: var(--kit-acento-tx); }
+.kit-btn--main:hover { background: color-mix(in srgb, var(--kit-acento) 85%, #000); }
+.kit-btn--sm { min-height: 44px; padding: 6px 12px; font-size: 0.88rem; }
+/* más específico que los «.seccion-oscura a» de cada demo, para que los enlaces del kit no hereden colores sin contraste */
+.kit-extras a.kit-btn, .kit-dialog a.kit-btn, .kit-panel a.kit-btn { color: var(--kit-acento); }
+.kit-extras a.kit-btn--main, .kit-dialog a.kit-btn--main { color: var(--kit-acento-tx); }
+.kit-extras a:not(.kit-btn), .kit-dialog a:not(.kit-btn), .kit-panel a:not(.kit-btn) { color: var(--kit-acento); }
+.kit-btn:focus-visible, .kit-dialog :focus-visible, .kit-card :focus-visible { outline: 3px solid var(--kit-acento); outline-offset: 2px; }
+.kit-btn[hidden], .kit-campo[hidden] { display: none; }
+
+.kit-dialog { border: 0; border-radius: var(--kit-radio); padding: 0; width: min(520px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); background: var(--kit-fondo); color: var(--kit-texto); font-family: var(--kit-fuente); }
+.kit-dialog::backdrop { background: rgb(0 0 0 / 55%); }
+.kit-dialog__in { padding: 20px; }
+.kit-h { font-size: 1.2rem; line-height: 1.25; margin: 0 0 12px; }
+.kit-h:focus { outline: none; }
+
+.kit-dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0; }
+.kit-dl dt { color: var(--kit-suave); }
+.kit-dl dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.kit-campo { display: grid; gap: 4px; margin: 10px 0; }
+.kit-campo label { font-weight: 600; }
+.kit-campo input, .kit-campo select {
+  min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--kit-borde-campo); border-radius: 8px;
+  background: var(--kit-fondo); color: var(--kit-texto); font: inherit; width: 100%; box-sizing: border-box;
+}
+.kit-check { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; min-height: 44px; }
+.kit-check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--kit-acento); }
+.kit-met { border: 1px solid var(--kit-borde-campo); border-radius: 8px; padding: 6px 12px; margin: 10px 0; }
+.kit-met legend { font-weight: 600; padding: 0 4px; }
+
+.kit-toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 150%); max-width: calc(100vw - 32px);
+  background: var(--kit-texto); color: var(--kit-fondo); padding: 10px 16px; border-radius: 999px; z-index: 1000;
+  transition: transform 0.25s ease; font-family: var(--kit-fuente);
+}
+.kit-toast--on { transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .kit-toast { transition: none; } }
+
+/* Panel */
+.kit-panel { display: grid; gap: 16px; }
+.kit-card { border: 1px solid var(--kit-linea); border-radius: var(--kit-radio); padding: 16px; background: var(--kit-fondo); color: var(--kit-texto); }
+.kit-pin { max-width: 420px; }
+.kit-fila { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: end; }
+.kit-fila .kit-campo { margin: 0; min-width: 200px; }
+.kit-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.kit-ancho { grid-column: 1 / -1; }
+.kit-lista { list-style: none; margin: 0; padding: 0; }
+.kit-lista > li { display: grid; grid-template-columns: 88px 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--kit-linea); }
+.kit-lista > li:first-child { border-top: 0; }
+.kit-lista__t { font-weight: 700; color: var(--kit-acento); overflow-wrap: anywhere; }
+.kit-pill { display: inline-block; font-size: 0.8rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--kit-acento) 12%, var(--kit-fondo)); color: var(--kit-texto); margin: 2px 4px 2px 0; }
+.kit-wa { background: #e7f8ee; color: #10351f; border-radius: 10px; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 480px) { .kit-lista > li { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Bloque de pago destacado y barra fija oculta cerca del formulario */
+.kit-bloque--pago { border-width: 2px; border-color: var(--kit-acento); }
+.kit-oculta { display: none !important; }

@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  titulo="Panel de la academia (demo) | Lumen"
+  descripcion="Demo del panel de Lumen: solicitudes de matrícula, reservas de vacante y comprobantes de ejemplo, lista de espera, alumnos y reporte del mes."
+  ruta="/panel/"
+>
+  <section class="contenedor legal">
+    <p class="sobretitulo">Demo del sistema completo</p>
+    <h1>Panel de la academia</h1>
+    <p class="aviso-legal">Así ve la academia las solicitudes que llegan desde la web: confirma, marca matrículas, cancela, envía recordatorios, avisa a la lista de espera y revisa pagos. Todo sale de las pruebas que hiciste en este navegador; pagos y comprobantes son simulados.</p>
+    <div class="kit-panel" data-panel><p>Activa JavaScript para ver el panel de demostración.</p></div>
+  </section>
+</Base>
+<script>
+  import { panel } from '../../kit/sistema-demo';
+  import { iniciarKit } from '../../lib/kit';
+  iniciarKit();
+  const raiz = document.querySelector<HTMLElement>('[data-panel]');
+  if (raiz) panel(raiz);
+</script>
