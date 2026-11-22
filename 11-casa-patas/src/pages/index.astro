@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icono from '../components/Icono.astro';
+import Capitulo from '../components/Capitulo.astro';
 import { FOTOS } from '../data/fotos';
 import { HORARIO_TEXTO, NEGOCIO, PRECIOS, SERVICIOS_RESERVA, TAMANOS_BANO, TELEFONO_DEMO } from '../lib/config';
 import { AVISO_REFERENCIAL } from '../lib/vacunas';
@@ -53,115 +54,112 @@ const faq = [
   jsonLd={jsonLd}
 >
   <section class="hero" aria-labelledby="hero-t">
-    <div class="contenedor hero__grid">
-      <div class="hero__texto">
-        <p class="etiqueta">Veterinaria de barrio · Magdalena del Mar</p>
-        <h1 id="hero-t">Cuidamos a tu mascota como parte de la familia.</h1>
-        <p class="lead">Consulta con médico veterinario, vacunas con carnet, baño y peluquería con turnos propios, farmacia y alimento. Precios claros, en soles y con IGV incluido.</p>
+    <div class="hero__foto">
+      <Image src={FOTOS.hero} alt="Un médico veterinario con uniforme azul sostiene con cuidado a un perro pomerania y lo escucha con un estetoscopio." widths={[640, 960, 1280, 1600]} sizes="100vw" format="webp" quality={72} loading="eager" fetchpriority="high" decoding="async" />
+    </div>
+    <div class="hero__fondo">
+      <div class="hero__caja">
+        <h1 id="hero-t">La veterinaria de tu barrio, en Magdalena del Mar.</h1>
+        <p class="lead">Consulta, vacunas, baño y farmacia. Precios en soles, con IGV incluido.</p>
         <div class="hero__acciones">
-          <a class="btn btn--primario" href="#reserva"><Icono nombre="calendario" /> Reservar cita</a>
-          <a class="btn btn--urgencia" href={waUrgencia} target="_blank" rel="noopener"><Icono nombre="mensaje" /> Urgencias por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span></a>
+          <a class="btn btn--primario" href="#reserva">Reservar cita</a>
+          <a class="btn" href="#servicios">Ver precios</a>
         </div>
-        <div class="horario" role="group" aria-labelledby="horario-t">
-          <p class="horario__t" id="horario-t"><Icono nombre="reloj" /> Horario de atención</p>
-          <dl>
-            {HORARIO_TEXTO.map((h) => <><dt>{h.dias}</dt><dd>{h.horas}</dd></>)}
-          </dl>
-          <p class="horario__ahora" data-ahora></p>
+        <div class="hero__horario">
+          <p><strong>Horario:</strong> lun a sáb 9:00 a 20:00 · dom 9:00 a 13:00</p>
+          <p class="hero__ahora" data-ahora></p>
         </div>
-      </div>
-      <div>
-        <div class="hero__foto">
-          <Image src={FOTOS.hero} alt="Un médico veterinario con uniforme azul sostiene con cuidado a un perro pomerania y lo escucha con un estetoscopio." widths={[480, 720, 960]} sizes="(min-width: 900px) 44vw, calc(100vw - 32px)" format="webp" quality={72} loading="eager" fetchpriority="high" decoding="async" />
-        </div>
-        <p class="credito">Foto ilustrativa: Tima Miroshnichenko, Pexels.</p>
       </div>
     </div>
   </section>
 
-  <section class="urgencias" id="urgencias" aria-labelledby="urg-t" tabindex="-1">
-    <div class="contenedor">
-      <p class="urgencias__horario" data-cerrado hidden><strong>Ahora estamos cerrados.</strong> Si es una urgencia, no esperes respuesta: acude a una clínica veterinaria con atención las 24 horas.</p>
-      <p class="urgencias__horario"><strong>Horario de urgencias:</strong> lunes a sábado de 9:00 a 20:00 y domingos de 9:00 a 13:00. Fuera de ese horario, acude a una clínica veterinaria con atención las 24 horas.</p>
-      <div class="urgencias__grid">
-        <div>
-          <p class="etiqueta">Urgencias</p>
-          <h2 id="urg-t">Si es una urgencia, no esperes a reservar.</h2>
-          <p>Avísanos por WhatsApp antes de salir y ven. Las urgencias pasan antes que las citas y no se reservan en esta web.</p>
-          <div class="urgencias__acc">
-                        <a class="btn" href={waUrgencia} data-wa-urgencia data-wa-cerrado={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" /> <span data-wa-texto>Avisar por WhatsApp</span><span class="sr-only"> (se abre en una pestaña nueva)</span></a>
-          </div>
-          <p class="urgencias__ref">{NEGOCIO.direccion}. Referencia: a media cuadra de un parque (ficticio). <a href="#como-llegar">Cómo llegar</a></p>
+  <section class="urg" id="urgencias" aria-labelledby="urg-t" tabindex="-1">
+    <div class="contenedor urg__in">
+      <div>
+        <h2 id="urg-t">Si es una urgencia, no esperes a reservar.</h2>
+        <p class="urg__txt">Avísanos por WhatsApp antes de salir y ven. Las urgencias pasan antes que las citas y no se reservan en esta web.</p>
+        <p class="urg__horario" data-cerrado hidden><strong>Ahora estamos cerrados.</strong> Si es una urgencia, no esperes respuesta: acude a una clínica veterinaria con atención las 24 horas.</p>
+        <p class="urg__horario" data-horario-urg><strong>Horario de urgencias:</strong> lunes a sábado de 9:00 a 20:00 y domingos de 9:00 a 13:00. Fuera de ese horario, acude a una clínica veterinaria con atención las 24 horas.</p>
+        <div class="urg__acc">
+          <a class="btn btn--blanco" href={waUrgencia} data-wa-urgencia data-wa-cerrado={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" /> <span data-wa-texto>Avisar por WhatsApp</span><span class="sr-only"> (se abre en una pestaña nueva)</span></a>
         </div>
-        <div class="urgencias__col">
-          <h3><Icono nombre="aviso" /> Cuándo ir de inmediato</h3>
-          <ul>
-            <li>Le cuesta respirar o tiene las encías pálidas o azuladas.</li>
-            <li>Convulsiona, se desmaya o no reacciona.</li>
-            <li>Un sangrado que no se detiene.</li>
-            <li>Atropello, caída desde altura o golpe fuerte.</li>
-            <li>Posible envenenamiento o ingesta de algo tóxico.</li>
-            <li>No logra orinar o el abdomen está duro e hinchado.</li>
-          </ul>
-        </div>
-        <div class="urgencias__col">
-          <h3><Icono nombre="check" /> Qué hacer mientras llegas</h3>
+      </div>
+      <div>
+        <h3>Cuándo ir de inmediato</h3>
+        <ul class="urg__lista">
+          <li>Le cuesta respirar o tiene las encías pálidas o azuladas.</li>
+          <li>Convulsiona, se desmaya o no reacciona.</li>
+          <li>Un sangrado que no se detiene.</li>
+          <li>Atropello, caída desde altura o golpe fuerte.</li>
+          <li>Posible envenenamiento o ingesta de algo tóxico.</li>
+          <li>No logra orinar o el abdomen está duro e hinchado.</li>
+        </ul>
+        <details class="urg__mas" data-abierto-escritorio open>
+          <summary>Qué hacer mientras llegas <Icono nombre="abajo" tamano={18} /></summary>
           <ol>
             <li>Mantén la calma y llámanos antes de mover a tu mascota si puedes.</li>
             <li>Muévela lo mínimo y con apoyo firme (una tabla o una transportadora), sobre todo si hubo golpe o caída.</li>
             <li>No le des medicamentos humanos ni la fuerces a comer o beber.</li>
             <li>Si comió algo tóxico, lleva el envase.</li>
           </ol>
-        </div>
+        </details>
       </div>
-      <p class="urgencias__aviso">Por WhatsApp solo avisa que vas en camino: no damos diagnósticos ni enviamos tratamientos por chat, y te pedimos no mandar detalles clínicos.</p>
+      <p class="urg__nota">Por WhatsApp solo avisa que vas en camino: no damos diagnósticos ni enviamos tratamientos por chat, y te pedimos no mandar detalles clínicos. <a href="#como-llegar">Cómo llegar</a></p>
     </div>
   </section>
 
-  <section class="seccion" id="servicios" aria-labelledby="serv-t">
+  <section class="seccion" id="visita" aria-labelledby="visita-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Servicios y precios</p>
+      <div class="enc">
+        <h2 id="visita-t">Una visita en Casa Patas</h2>
+        <p class="nota">Fotos ilustrativas de Pexels: no muestran a Casa Patas ni a su equipo.</p>
+      </div>
+
+      <Capitulo n="01" titulo="Llegas y nadie te apura." clase="a" foto={FOTOS.llegada} sizes="(min-width: 900px) 42vw, calc(100vw - 32px)" alt="Una mujer sentada con su perro pomerania en brazos conversa con el veterinario en la clínica." enlace={{ href: '#reserva', texto: 'Reservar o pasar sin cita, según disponibilidad' }}>
+        <p>Si tienes el carnet de vacunas, tráelo. Si tu mascota toma algún medicamento, trae el envase o anota el nombre.</p>
+      </Capitulo>
+      <Capitulo n="02" titulo="El médico la examina con calma." clase="b" foto={FOTOS.consultorio} sizes="(min-width: 900px) 58vw, calc(100vw - 32px)" alt="Un veterinario con uniforme celeste examina a un perro pastor alemán echado sobre la mesa de un consultorio." enlace={{ href: '#servicios', texto: 'Consulta general desde S/ 60, IGV incluido' }}>
+        <p>Examen físico y orientación, con control de peso. Si hace falta algo más, te explicamos el procedimiento, el costo y los cuidados antes de empezar.</p>
+      </Capitulo>
+      <Capitulo n="03" titulo="La vacuna, con carnet." clase="c" foto={FOTOS.vacuna} sizes="(min-width: 900px) 36vw, calc(100vw - 32px)" alt="Manos con guantes preparan una jeringa mientras sostienen a un gato carey con una prenda azul sobre una mesa metálica." enlace={{ href: '#guia-vacunas', texto: 'Mira la guía de vacunas referencial' }}>
+        <p>Antes de vacunar, el médico examina a tu mascota y puede posponer la dosis si no está en condiciones. Si dudas qué corresponde, la guía te orienta.</p>
+      </Capitulo>
+      <Capitulo n="04" titulo="El baño tiene turno propio." clase="d" foto={FOTOS.peluqueria} sizes="(min-width: 900px) 42vw, calc(100vw - 32px)" alt="Una groomer seca con una manguera de aire a un perro yorkshire sobre la mesa de peluquería, con fondo azul." enlace={{ href: '#reserva', texto: 'Baño desde S/ 50, IGV incluido' }}>
+        <p>Los turnos de la groomer son a las 9:00, 11:30, 14:00 y 16:30, de lunes a sábado, para no apurar a ninguna mascota. Avísanos si tiene pulgas o nudos.</p>
+      </Capitulo>
+    </div>
+  </section>
+
+  <section class="seccion seccion--surf" id="servicios" aria-labelledby="serv-t">
+    <div class="contenedor">
+      <div class="enc">
         <h2 id="serv-t">Precios claros, desde el primer día.</h2>
-        <p class="lead">Todos los montos son «desde» y llevan IGV incluido. El precio final lo confirma el médico o la groomer según el peso y lo que necesite tu mascota.</p>
+        <p>Todos los montos son «desde» y llevan IGV incluido. El precio final lo confirma el médico o la groomer según el peso y lo que necesite tu mascota.</p>
       </div>
-      <div class="servicios__grid">
-        {PRECIOS.map((g) => (
-          <section class="grupo" aria-labelledby={`g-${g.icono}`}>
-            <h3 id={`g-${g.icono}`}><Icono nombre={g.icono} tamano={24} /> {g.grupo}</h3>
-            <ul class="precios">
-              {g.items.map((i) => (
-                <li>
-                  <span class="precios__n">{i.nombre}</span>
-                  <span class="precio"><small>desde</small>{soles(i.desde)}</span>
-                  <p class="precios__d">{i.detalle}</p>
-                  {i.nota && <p class="precios__nota">{i.nota}</p>}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
-      <p class="servicios__pie">Precios de ejemplo de la demo, con IGV incluido. Las cirugías menores se programan solo previa evaluación del médico. Medicamentos de venta con receta se entregan únicamente con indicación médica.</p>
-      <div class="servicios__fotos">
-        <figure class="foto-card">
-          <Image src={FOTOS.consultorio} alt="Un veterinario con uniforme celeste examina a un perro pastor alemán echado sobre la mesa de un consultorio." widths={[480, 720, 960]} sizes="(min-width: 768px) 50vw, calc(100vw - 32px)" format="webp" quality={72} loading="lazy" decoding="async" />
-          <figcaption>Consultorio: examen físico con calma. Foto ilustrativa de Tima Miroshnichenko, Pexels.</figcaption>
-        </figure>
-        <figure class="foto-card">
-          <Image src={FOTOS.peluqueria} alt="Una groomer seca con una manguera de aire a un perro yorkshire sobre la mesa de peluquería, con fondo azul." widths={[480, 720, 960]} sizes="(min-width: 768px) 50vw, calc(100vw - 32px)" format="webp" quality={66} loading="lazy" decoding="async" class="foto--peluqueria" />
-          <figcaption>Baño y peluquería con turnos propios. Foto ilustrativa de Tima Miroshnichenko, Pexels.</figcaption>
-        </figure>
-      </div>
+      {PRECIOS.map((g) => (
+        <section class="cat" aria-labelledby={`g-${g.icono}`}>
+          <h3 id={`g-${g.icono}`}>{g.grupo}</h3>
+          <ul class={`cat__items cat__items--${g.items.length}`}>
+            {g.items.map((i) => (
+              <li class="item">
+                <p class="item__p"><small>desde</small>{soles(i.desde)}</p>
+                <p class="item__n">{i.nombre}</p>
+                <p class="item__d">{i.detalle}</p>
+                {i.nota && <p class="item__nota">{i.nota}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="pie-precios">Precios de ejemplo de la demo, con IGV incluido. Las cirugías menores se programan solo previa evaluación del médico. Medicamentos de venta con receta se entregan únicamente con indicación médica.</p>
     </div>
   </section>
 
-  <section class="seccion seccion--salvia" id="guia-vacunas" aria-labelledby="guia-t">
+  <section class="seccion" id="guia-vacunas" aria-labelledby="guia-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Guía referencial</p>
+      <div class="enc enc--ancho">
         <h2 id="guia-t">Vacunas y desparasitación: ¿qué suele corresponder?</h2>
-        <p class="lead">Elige la especie y la edad de tu mascota para ver un calendario orientativo.</p>
+        <p>Elige la especie y la edad de tu mascota para ver un calendario orientativo.</p>
       </div>
       <p class="aviso aviso--corto" role="note"><strong>Referencia orientativa:</strong> el médico define el esquema según tu mascota.</p>
       <div class="dos-col">
@@ -215,30 +213,37 @@ const faq = [
         <div>
           <div class="panel guia-res" data-resultado role="region" tabindex="-1" aria-labelledby="guia-res-t" hidden>
             <h3 id="guia-res-t" data-res-titulo>Guía referencial</h3>
-            <div class="aviso aviso--grande" role="note"><strong>Esto es solo una referencia.</strong>{AVISO_REFERENCIAL} Las edades siguen la práctica común en Lima y el médico puede variar el esquema.</div>
             <ul class="guia-res__resumen" data-res-resumen></ul>
             <div class="acciones acciones--guia">
               <a class="btn btn--primario" href="#reserva" data-elegir-servicio="vacuna"><Icono nombre="jeringa" /> Reservar vacunación</a>
               <a class="btn" href="#reserva" data-elegir-servicio="consulta">Pedir consulta</a>
             </div>
             <div data-res-lista></div>
+            <div class="aviso aviso--grande" role="note"><strong>Esto es solo una referencia.</strong>{AVISO_REFERENCIAL} Las edades siguen la práctica común en Lima y el médico puede variar el esquema.</div>
             <p class="nota" data-res-avisos></p>
           </div>
-          <div class="lateral-foto" data-guia-foto>
-            <Image src={FOTOS.vacuna} alt="Manos con guantes preparan una jeringa mientras sostienen a un gato carey con una prenda azul sobre una mesa metálica." widths={[480, 720, 960]} sizes="(min-width: 960px) 44vw, calc(100vw - 32px)" format="webp" quality={66} loading="lazy" decoding="async" class="foto--vacuna" />
-            <p class="credito">Foto ilustrativa: Gustavo Fring, Pexels.</p>
+          <div class="ayuda-guia" data-guia-foto>
+            <h3>Cómo leer la guía</h3>
+            <ul>
+              <li>Te muestra rangos de edad habituales, no fechas exactas.</li>
+              <li>Si no recuerdas la fecha de nacimiento, una edad aproximada basta.</li>
+              <li>Tu carnet de vacunas manda: llévalo a la cita y el médico decide.</li>
+            </ul>
+            <div class="guia-fotos">
+              <div class="guia-fotos__a"><Image src={FOTOS.cachorro} alt="Un cachorro de bulldog francés sostenido con guantes en una clínica veterinaria." widths={[480, 720, 960]} sizes="(min-width: 960px) 28vw, 60vw" format="webp" quality={68} loading="lazy" decoding="async" /></div>
+              <div class="guia-fotos__b"><Image src={FOTOS.gatito} alt="Un gatito de pie sobre la mesa de una clínica veterinaria." widths={[480, 720, 960]} sizes="(min-width: 960px) 18vw, 40vw" format="webp" quality={68} loading="lazy" decoding="async" /></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="seccion" id="reserva" aria-labelledby="res-t">
+  <section class="seccion seccion--surf" id="reserva" aria-labelledby="res-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Reserva de cita</p>
+      <div class="enc">
         <h2 id="res-t">Reserva tu cita en pocos pasos.</h2>
-        <p class="lead">Elige el servicio, cuéntanos de tu mascota y escoge el día y la hora. Termina en un mensaje de WhatsApp listo para enviar.</p>
+        <p>Elige el servicio, cuéntanos de tu mascota y escoge el día y la hora. Termina en un mensaje de WhatsApp listo para enviar.</p>
       </div>
       <div class="dos-col dos-col--reserva">
         <div>
@@ -355,15 +360,14 @@ const faq = [
           </form>
 
           <section class="panel cita-ok" data-cita-ok role="region" tabindex="-1" aria-labelledby="cita-ok-t" hidden>
-            <p class="etiqueta">Confirmación de demo</p>
             <h3 id="cita-ok-t">Falta un paso: envía tu solicitud por WhatsApp</h3>
             <p>Código de tu solicitud (demo): <strong data-numero></strong>. <strong>Todavía no hay cita:</strong> esta es una demo y no se guardó ningún dato. Para solicitarla a la clínica, abre WhatsApp con el mensaje ya redactado y envíalo.</p>
-            <dl class="resumen" data-resumen></dl>
-            <div class="aviso" role="note"><p>Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). El mensaje no incluye lo que escribiste para el médico ni el celular.</p></div>
-            <div class="acciones">
+            <div class="acciones acciones--ok">
               <a class="btn btn--primario" data-wa href="https://wa.me/51935852637" target="_blank" rel="noopener"><Icono nombre="mensaje" /> Enviar solicitud por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span></a>
               <button type="button" class="btn" data-nueva>Hacer otra reserva</button>
             </div>
+            <dl class="resumen" data-resumen></dl>
+            <div class="aviso" role="note"><p>Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). El mensaje no incluye lo que escribiste para el médico ni el celular.</p></div>
           </section>
         </div>
 
@@ -375,21 +379,21 @@ const faq = [
             <li><Icono nombre="escudo" /> <span><strong>Trae el carnet</strong> de vacunas si lo tienes.</span></li>
             <li><Icono nombre="calendario" /> <span>Revisa la <a href="#politica">política de citas</a> para tolerancia y reprogramación.</span></li>
           </ul>
-          <div class="lateral-foto">
-            <Image src={FOTOS.convivencia} alt="Un perro grande de pelo claro baja la cabeza para olfatear a un gatito gris sentado sobre un piso de madera." widths={[480, 720, 960]} sizes="(min-width: 960px) 36vw, calc(100vw - 32px)" format="webp" quality={62} loading="lazy" decoding="async" class="foto--conv" />
-            <p class="credito">Foto ilustrativa: belen capello, Pexels.</p>
-          </div>
+          <div class="reserva-foto"><Image src={FOTOS.reserva} alt="Una mujer con boina sostiene a su perro pomerania en el consultorio veterinario." widths={[480, 720, 960]} sizes="(min-width: 960px) 30vw, calc(100vw - 32px)" format="webp" quality={68} loading="lazy" decoding="async" /></div>
         </aside>
       </div>
     </div>
   </section>
 
-  <section class="seccion seccion--papel" id="equipo" aria-labelledby="eq-t">
+  <section class="seccion" id="equipo" aria-labelledby="eq-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Equipo (ficticio)</p>
+      <div class="enc">
         <h2 id="eq-t">Las personas que cuidan a tu mascota.</h2>
-        <p class="lead">Nombres ficticios; cualquier parecido con personas reales es coincidencia. En una clínica real, la colegiatura del médico se muestra en el consultorio.</p>
+        <p>Nombres ficticios; cualquier parecido con personas reales es coincidencia. En una clínica real, la colegiatura del médico se muestra en el consultorio.</p>
+      </div>
+      <div class="equipo-foto">
+        <Image src={FOTOS.equipo} alt="Un veterinario con mascarilla abraza con cuidado a un perro." widths={[480, 720, 960]} sizes="(min-width: 1240px) 1160px, calc(100vw - 32px)" format="webp" quality={68} loading="lazy" decoding="async" />
+        <p class="nota">Foto ilustrativa de Pexels: no muestra a nuestro equipo.</p>
       </div>
       <div class="equipo">
         <article class="persona">
@@ -413,10 +417,9 @@ const faq = [
     </div>
   </section>
 
-  <section class="seccion" id="politica" aria-labelledby="pol-t">
+  <section class="seccion seccion--surf" id="politica" aria-labelledby="pol-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Política de citas</p>
+      <div class="enc">
         <h2 id="pol-t">Tolerancia, reprogramación y cancelación.</h2>
         <p class="nota">Política de ejemplo para esta demo; en un negocio real debe validarse con asesoría legal.</p>
       </div>
@@ -431,33 +434,35 @@ const faq = [
     </div>
   </section>
 
-  <section class="seccion" id="como-llegar" aria-labelledby="ub-t">
+
+  <section class="seccion seccion--surf" id="como-llegar" aria-labelledby="ub-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Ubicación (ficticia)</p>
-        <h2 id="ub-t">Estamos en Magdalena del Mar.</h2>
+      <div class="ubi__cab">
+      <h2 id="ub-t" class="ubi__t"><span class="ubi__peq">Estamos en</span> <span class="ubi__gran">Magdalena</span> <span class="ubi__gran">del Mar</span></h2>
+      <div class="ubi__foto"><Image src={FOTOS.barrio} alt="Una señora pasea a su perro pequeño por una vereda con árboles de la ciudad." widths={[480, 720, 960]} sizes="(min-width: 900px) 30vw, calc(100vw - 32px)" format="webp" quality={68} loading="lazy" decoding="async" /></div>
       </div>
-      <div class="ubicacion">
+      <div class="ubi__datos">
         <div>
-          <ul class="datos">
-            <li><Icono nombre="pin" /> <span>{NEGOCIO.direccion}. Referencia: a media cuadra de un parque (ficticio).</span></li>
-            <li><Icono nombre="reloj" /> <span>Lunes a sábado, 9:00 a 20:00. Domingo, 9:00 a 13:00.</span></li>
-            <li><Icono nombre="mensaje" /> <span>WhatsApp: en esta demo, el mensaje llega a Vélez De Villa.</span></li>
-          </ul>
-          <p class="nota">La dirección es ficticia; el WhatsApp de esta demo llega a Vélez De Villa. Esta demo no incluye un mapa interactivo para no cargar servicios de terceros.</p>
-          <a class="btn" href="#reserva">Reservar una cita</a>
+          <h3>Dirección</h3>
+          <p>{NEGOCIO.direccion}. Referencia: a media cuadra de un parque (ficticia).</p>
         </div>
-        <div class="mapa" role="img" aria-label="Ilustración del mapa: la dirección de la clínica es ficticia">
-          <div><Icono nombre="pin" tamano={48} /><p><strong>Magdalena del Mar, Lima</strong><br />Dirección ficticia de demo</p></div>
+        <div>
+          <h3>Horario</h3>
+          <p>Lunes a sábado, 9:00 a 20:00. Domingo, 9:00 a 13:00.</p>
+        </div>
+        <div>
+          <h3>WhatsApp</h3>
+          <p>En esta demo, el mensaje llega a Vélez De Villa.</p>
         </div>
       </div>
+      <p class="nota">La dirección es ficticia; el WhatsApp de esta demo llega a Vélez De Villa. Esta demo no incluye un mapa interactivo para no cargar servicios de terceros.</p>
+      <a class="btn btn--primario" href="#reserva">Reservar una cita</a>
     </div>
   </section>
 
-  <section class="seccion seccion--papel" id="preguntas" aria-labelledby="faq-t">
+  <section class="seccion" id="preguntas" aria-labelledby="faq-t">
     <div class="contenedor">
-      <div class="encabezado">
-        <p class="etiqueta">Preguntas frecuentes</p>
+      <div class="enc">
         <h2 id="faq-t">Lo que más nos preguntan.</h2>
       </div>
       <div class="faq">
@@ -473,6 +478,7 @@ const faq = [
 
   <script>
     import '../scripts/horario';
+    import '../scripts/urgencias';
     import '../scripts/guia';
     import '../scripts/reserva';
   </script>

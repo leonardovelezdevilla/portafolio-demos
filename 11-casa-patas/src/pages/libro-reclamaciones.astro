@@ -117,7 +117,6 @@ import { NEGOCIO } from '../lib/config';
       </form>
 
       <section class="rec__ok" data-confirmacion role="region" tabindex="-1" aria-labelledby="rec-ok-t" hidden>
-        <p class="etiqueta">Constancia de demo</p>
         <h2 id="rec-ok-t">Hoja <span data-hoja></span></h2>
         <p>Guarda este número como constancia de ejemplo. <strong>No se envió nada</strong> a ningún servidor ni a ningún correo. Puedes imprimir esta constancia o guardarla en PDF.</p>
         <dl class="rec__resumen" data-resumen></dl>
@@ -180,7 +179,7 @@ import { NEGOCIO } from '../lib/config';
       const primero = mostrarErrores(form, errores);
       if (primero) {
         pintarResumen(form, resumenErr, errores);
-        primero.focus();
+        resumenErr.focus();
         return;
       }
       resumenErr.hidden = true;

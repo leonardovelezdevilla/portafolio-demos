@@ -16,9 +16,10 @@ const json = (o: unknown) => JSON.stringify(o).replace(/</g, '\u003c');
 const waUrgencia = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Casa Patas, tengo una urgencia con mi mascota (demo). Voy en camino.')}`;
 const waConsulta = `https://wa.me/${TELEFONO_DEMO}?text=${encodeURIComponent('Hola Casa Patas, quiero hacer una consulta (demo).')}`;
 const enlaces = [
-  { href: '/#servicios', t: 'Servicios' },
-  { href: '/#guia-vacunas', t: 'Guía de vacunas' },
-  { href: '/#reserva', t: 'Reservar cita' },
+  { href: '/#visita', t: 'Una visita' },
+  { href: '/#servicios', t: 'Precios' },
+  { href: '/#guia-vacunas', t: 'Vacunas' },
+  { href: '/#reserva', t: 'Reservar' },
   { href: '/#equipo', t: 'Equipo' },
   { href: '/#preguntas', t: 'Preguntas' },
 ];
@@ -31,11 +32,11 @@ const enlaces = [
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#f8f4ec" />
+    <meta name="theme-color" content="#eeecea" />
     {!sinCanonical && <link rel="canonical" href={ruta} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/fonts/literata-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/nunito-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/gabarito-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/rethink-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_PE" />
     <meta property="og:site_name" content="Casa Patas (demo)" />
@@ -57,22 +58,26 @@ const enlaces = [
     <header class="cabecera">
       <div class="contenedor">
         <div class="cabecera__fila">
-          <a class="logo" href="/" aria-label="Casa Patas, inicio"><span class="logo__marca" aria-hidden="true"><Icono nombre="huella" tamano={22} /></span>Casa Patas</a>
+          <a class="logo" href="/" aria-label="Casa Patas, inicio"><span class="logo__marca" aria-hidden="true"><Icono nombre="huella" tamano={26} /></span>Casa Patas</a>
           <nav class="nav" aria-label="Principal">
             {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
           </nav>
           <div class="cabecera__acc">
-            <a class="btn btn--urgencia cabecera__cta" href="/#urgencias"><Icono nombre="sirena" tamano={18} /> Urgencias</a>
+            <a class="btn btn--urgencia cabecera__cta" href="/#urgencias">Urgencias</a>
             <button type="button" class="btn-menu" data-menu aria-expanded="false" aria-controls="nav-movil" hidden>
-              <Icono nombre="menu" /> Menú
+              <Icono nombre="menu" /><span class="btn-menu__t">Menú</span>
             </button>
           </div>
         </div>
       </div>
-      <nav class="nav-movil" id="nav-movil" aria-label="Secciones" data-nav-movil>
+      <nav class="nav-movil" id="nav-movil" aria-label="Secciones" data-nav-movil hidden>
         {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
-        <a href="/#urgencias">Urgencias</a>
       </nav>
+      <noscript>
+        <nav class="nav-movil" aria-label="Secciones (sin JavaScript)">
+          {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+        </nav>
+      </noscript>
     </header>
 
     <main id="contenido" tabindex="-1">
@@ -82,9 +87,9 @@ const enlaces = [
     <Pie waConsulta={waConsulta} waUrgencia={waUrgencia} />
 
     <div class="barra-movil" role="group" aria-label="Acciones rápidas">
-      <a class="btn btn--primario" href="/#reserva"><Icono nombre="calendario" tamano={18} /> Reservar</a>
-      <a class="btn btn--urgencia" href="/#urgencias"><Icono nombre="sirena" tamano={18} /> Urgencias</a>
-      <a class="btn" href={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" tamano={18} /> WhatsApp</a>
+      <a class="btn btn--primario" href="/#reserva">Reservar</a>
+      <a class="btn btn--rojo" href="/#urgencias">Urgencias</a>
+      <a class="btn" href={waConsulta} target="_blank" rel="noopener">WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span></a>
     </div>
 
     <script>
@@ -103,6 +108,7 @@ const enlaces = [
           else { nav.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
         });
         nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) cerrar(); });
+        document.querySelector('.cabecera__cta')?.addEventListener('click', () => cerrar());
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') cerrar(true);
         });

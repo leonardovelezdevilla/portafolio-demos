@@ -1,5 +1,5 @@
 import { SERVICIOS_RESERVA, TAMANOS_BANO, type ServicioId } from '../lib/config';
-import { etiquetaFecha, horasDelDia, horasDisponibles, motivoCierre, partesLima, ultimoDiaPermitido, validarCita, ymdValido } from '../lib/fechas';
+import { etiquetaFecha, horasDelDia, horasDisponibles, motivoCierre, partesLima, primerDiaDisponible, sumarDias, ultimoDiaPermitido, validarCita, ymdValido } from '../lib/fechas';
 import { armarMensaje, numeroCita, urlWhatsApp, validarCitaForm, type DatosCita } from '../lib/reserva';
 import { leerForm, mostrarErrores, pintarResumen, quitarDelResumen } from './formularios';
 
@@ -51,7 +51,17 @@ if (form) {
     if (!s || !fecha.value) return;
     const r = validarCita(fecha.value, '', s, new Date());
     if (!r.ok && r.campo === 'fecha') {
-      errFecha.textContent = r.mensaje;
+      // La sugerencia de fecha se puede aceptar con un botón en vez de obligar a reescribirla.
+      const sug = / Te sugerimos el .*.$/.test(r.mensaje) ? primerDiaDisponible(s, new Date(), sumarDias(fecha.value, 1)) : '';
+      errFecha.textContent = sug ? r.mensaje.replace(/ Te sugerimos el .*.$/, '') : r.mensaje;
+      if (sug) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'enlace';
+        b.textContent = `Usar el ${etiquetaFecha(sug)}`;
+        b.addEventListener('click', () => { fecha.value = sug; quitarDelResumen(resumenErr, 'fecha'); pintarHoras(); revisarFecha(); fecha.focus(); });
+        errFecha.append(' ', b);
+      }
       errFecha.hidden = false;
       fecha.setAttribute('aria-invalid', 'true');
     } else {
@@ -114,7 +124,7 @@ if (form) {
     const primero = mostrarErrores(form, errores);
     if (primero) {
       pintarResumen(form, resumenErr, errores);
-      primero.focus();
+      resumenErr.focus();
       return;
     }
     resumenErr.hidden = true;
@@ -129,12 +139,14 @@ if (form) {
       fila('Dueño', datos.dueno.trim()),
       fila('Celular', datos.celular.trim()),
       fila('Para el médico (no se envía por WhatsApp)', datos.sintomas.trim()),
-      fila('Precio de referencia', `Desde S/ ${tam ? tam.desde : srv.desde}, IGV incluido; el monto final se confirma en la clínica`),
+      fila('Precio de referencia', `Desde S/ ${tam ? tam.desde : srv.desde}, IGV incluido; el monto final se confirma en la clínica`),
     );
     ok.querySelector<HTMLAnchorElement>('[data-wa]')!.href = urlWhatsApp(armarMensaje(datos, numero));
     form.hidden = true;
     ok.hidden = false;
-    ok.focus();
+    // El panel es más alto que la pantalla: se lleva al inicio para que se vean el título y el botón de WhatsApp.
+    ok.focus({ preventScroll: true });
+    ok.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   });
 
   ok.querySelector('[data-nueva]')!.addEventListener('click', () => {

@@ -60,6 +60,7 @@ export function pintarResumen(form: HTMLElement, caja: HTMLElement, errores: Rec
     ul.append(li);
   }
   caja.replaceChildren(t, ul);
+  caja.tabIndex = -1;
   caja.hidden = false;
 }
 

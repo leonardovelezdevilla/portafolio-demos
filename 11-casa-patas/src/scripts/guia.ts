@@ -35,8 +35,9 @@ if (form) {
     const t = p('hito__t');
     const ins = document.createElement('span');
     ins.className = `insignia insignia--${h.estado}`;
-    ins.textContent = h.estado === 'ahora' ? 'Podría tocar ahora' : h.estado === 'proximo' ? 'Rango próximo' : 'Rango ya pasado';
-    t.append(ins, h.titulo);
+    ins.textContent = h.estado === 'proximo' ? 'Rango próximo' : 'Rango ya pasado';
+    // En el grupo «Podría tocar ahora» el encabezado ya lo dice: sin insignia repetida.
+    if (h.estado === 'ahora') t.append(h.titulo); else t.append(ins, h.titulo);
     e.append(t, p('hito__d', h.detalle));
     if (h.desde && h.hasta) e.append(p('hito__f', `Rango habitual: del ${fechaCorta(h.desde)} al ${fechaCorta(h.hasta)}${aprox ? ' (aproximado)' : ''}`));
     return e;
@@ -56,7 +57,7 @@ if (form) {
       pintarResumen(form, resumenErr, errores);
       res.hidden = true;
       if (foto) foto.hidden = false;
-      primero?.focus();
+      if (primero) resumenErr.focus();
       return;
     }
     mostrarErrores(form, {});

@@ -59,8 +59,9 @@ for (const { w, h } of anchos) {
   await p.waitForTimeout(300);
   await sinScroll('reserva con error');
   await p.locator('#reserva').screenshot({ path: join(salida, `${w}-reserva-error.png`) });
-  const alFoco = await p.evaluate(() => document.activeElement?.getAttribute('name'));
-  if (alFoco !== 'servicio') problemas.push(`[${w}] el foco debía ir al primer campo inválido (servicio) y fue: ${alFoco}`);
+  // Desde el rediseño el foco va al resumen de errores (tabindex=-1), que enlaza a cada campo.
+  const alFoco = await p.evaluate(() => { const a = document.activeElement; return a?.matches('[data-resumen], [role="group"], .resumen-errores, [tabindex="-1"]') && /corregir/i.test(a.textContent || '') ? 'resumen' : a?.getAttribute('name'); });
+  if (alFoco !== 'resumen') problemas.push(`[${w}] el foco debía ir al resumen de errores y fue: ${alFoco}`);
 
   // 5. Reserva con éxito: consulta con la última hora libre de un día dentro de 3 días
   await p.locator('[data-form-reserva] input[name="servicio"][value="consulta"]').evaluate((e) => e.click());

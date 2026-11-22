@@ -13,6 +13,8 @@ if (el) {
 // Si estamos cerrados: aviso arriba de la banda y el botón pasa a ser una consulta para cuando abramos.
 if (!abierto) {
   document.querySelector<HTMLElement>('[data-cerrado]')?.removeAttribute('hidden');
+  // El aviso de cerrado ya dice lo mismo que el de horario: se muestra uno solo.
+  document.querySelector<HTMLElement>('[data-horario-urg]')?.setAttribute('hidden', '');
   const b = document.querySelector<HTMLAnchorElement>('[data-wa-urgencia]');
   if (b?.dataset.waCerrado) {
     b.href = b.dataset.waCerrado;

@@ -15,6 +15,7 @@ const { waConsulta, waUrgencia } = Astro.props;
       <div>
         <h2>Atención</h2>
         <ul>
+          <li><a href="/#visita">Una visita en Casa Patas</a></li>
           <li><a href="/#servicios">Servicios y precios</a></li>
           <li><a href="/#guia-vacunas">Guía de vacunación</a></li>
           <li><a href="/#reserva">Reservar cita</a></li>
@@ -35,14 +36,13 @@ const { waConsulta, waUrgencia } = Astro.props;
         <ul>
           <li><a href={waConsulta} target="_blank" rel="noopener"><Icono nombre="mensaje" tamano={16} /> WhatsApp (llega a Vélez De Villa)<span class="sr-only"> (se abre en una pestaña nueva)</span></a></li>
           <li><a href={waUrgencia} target="_blank" rel="noopener"><Icono nombre="sirena" tamano={16} /> Urgencias por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span></a></li>
-          <li>Lun a sáb, 9:00 a 20:00</li>
-          <li>Dom, 9:00 a 13:00</li>
+          <li class="pie__txt">Lun a sáb, 9:00 a 20:00. Dom, 9:00 a 13:00.</li>
         </ul>
       </div>
     </div>
     <div class="pie__legal">
-      <span>Demo de portafolio — Vélez De Villa. Marca, equipo, y precios son ficticios; no se atiende ni se cobra nada.</span>
-      <span>Fotos ilustrativas de Pexels (créditos en el repositorio): no corresponden a Casa Patas.</span>
+      <span>Demo de portafolio — Vélez De Villa. Marca, equipo y precios son ficticios; no se atiende ni se cobra nada.</span>
+      <span>Fotos ilustrativas de Pexels: Tima Miroshnichenko, Gustavo Fring, Sueda Güzeldere, Dominik Gryzbon, Mikhail Nilov y Narmin Aliyeva. No muestran a Casa Patas ni a su equipo.</span>
     </div>
   </div>
 </footer>

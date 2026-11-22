@@ -2,8 +2,12 @@
 
 ## Stack y reglas
 - Astro estático (`trailingSlash: 'always'`, `inlineStylesheets: 'never'`), CSS propio en `src/styles/global.css`, sin Tailwind ni frameworks de UI. JS solo en islas (`src/scripts/`): guía de vacunas, reserva, horario «ahora», menú móvil y Libro de Reclamaciones. Sin JS el contenido y los precios se ven; los formularios muestran un aviso con enlace a WhatsApp.
-- Fuentes: **Literata** + **Nunito Sans**. Se revisaron las fuentes de 01-10 (Schibsted Grotesk, Onest, Anton, Space Mono, Cormorant Garamond, Figtree, Instrument Serif, Albert Sans, Unbounded, Bricolage Grotesque, Young Serif, Karla, Newsreader, Public Sans, Red Hat Display, Hanken Grotesk, Familjen Grotesk, Barlow, Atkinson Hyperlegible) y ninguna coincide; tampoco están en la lista de muy vistas.
-- Paleta propia: verde azulado profundo, mostaza y crema cálida; rojo ladrillo solo para urgencias. Sin degradados, sin bordes laterales de color, sin tono infantil: la calidez viene del serif, la crema y las fotos reales.
+- Fuentes: **Gabarito** (títulos, 700) + **Rethink Sans** (texto 400/600), autohospedadas. Se descartaron Literata y Nunito Sans.
+- Dirección B «Barrio y foto» (elegida por el dueño): paleta piedra #eeecea, superficie #e4e1dd, papel #f7f6f4, tinta #2b2a28, acento oliva #4f5d47 (botón principal, enlaces) y rojo #a3221b solo en urgencias y errores. Planos de color, sin degradados, radio 14 px. Sin etiquetas en mayúsculas sobre los títulos y sin pies de foto: los créditos van en una línea del pie y en CREDITOS.md.
+- Héroe: foto a sangre (sin copias espejadas ni parches) con caja sólida del color del fondo a la izquierda desde 1200 px; en celular, foto arriba (38svh) y texto debajo, con Reservar y horario visibles en 360×780 sobre la barra fija. Entre 768 y 1199 px la foto va arriba y el texto debajo, porque la caja taparía la cara del médico. Urgencias va en la cabecera y la barra móvil, no en el héroe.
+- «Una visita en Casa Patas»: 4 capítulos con foto grande (componente Capitulo.astro), sin animaciones de scroll. Las fotos de la guía y la reserva se quitaron para no repetirlas; no se añadieron fotos nuevas (se reutilizan las 5 de Pexels). Las fotos no son enlaces, así que no hay zoom al pasar el mouse; el enlace va en el texto.
+- Urgencias compacta: «Qué hacer mientras llegas» es un <details> que arranca abierto desde 900 px (src/scripts/urgencias.ts) y cerrado en celular.
+- Precios por categoría con números grandes en Gabarito; ubicación con «Magdalena del Mar» como momento tipográfico (se quitó el mapa ilustrado).
 - Foco en dos tonos (anillo oscuro interno + halo blanco externo) para cumplir ≥ 3:1 sobre cualquier fondo, incluido el rojo de urgencias y el verde del pie.
 - og:image y og:url son rutas relativas (`/og.png`, `/`) hasta tener dominio; hay que volverlas absolutas al publicar. `robots.txt` permite todo y el `noindex` va solo en `<meta>`.
 - `_headers`: CSP estricta y `Cache-Control: public, max-age=31536000, immutable` solo en `/_astro/*` y `/fonts/*`; la regla `/*` no define `Cache-Control`, así que no lo anula.
@@ -37,7 +41,7 @@ Fuentes consultadas:
 
 ## Equipo, testimonios y precios
 - Equipo ficticio sin números de colegiatura: los médicos llevan «CMVP visible en la clínica». Sin fotos de personas (las fotos son de stock): monogramas.
-- Testimonios con el sello «Ejemplo de demo». Sin cifras, calificaciones ni «n.º 1».
+- Sin testimonios (se quitaron en la versión publicada del 20-11-2026). Sin cifras, calificaciones ni «n.º 1».
 - Precios «desde S/», con IGV incluido (dicho en la sección, en la reserva y en las FAQ). Cirugías menores: «solo previa evaluación del médico».
 
 ## Libro de Reclamaciones (DS 011-2011-PCM)
@@ -55,3 +59,14 @@ Con una clínica real: dominio y URLs absolutas, números de CMVP, revisión del
 - **Legal**: política sin penalidad por cancelación tardía o inasistencia y con recargo de baño aceptado antes de empezar; privacidad con transferencia internacional y lista de lo que haría un negocio real (RNPDP, conservación, encargados); nombres del equipo ficticios sin «Dr./Dra.»; número de WhatsApp rotulado «ficticio»; la FAQ distingue consulta sin cita y baño solo con turno.
 - **SEO**: JSON-LD con `hasOfferCatalog` y `priceRange`; descripciones de portada y privacidad ≤ 155 caracteres; fotos verticales con `widths` 480/720/960. `image`, `url`, og:image y og:url siguen relativos hasta tener dominio (completarlos al publicar). No se aplicó el preload de la imagen del hero ni se quitó Literata 400 (ahorro de ~20 KB; opcional).
 - **Pendiente al publicar**: `Strict-Transport-Security` en `_headers` (solo con dominio propio y HTTPS) y revisar que `+51 900 000 000` no pertenezca a una línea real (la demo lo rotula como ficticio).
+
+## Correcciones tras la revisión del rediseño
+- Reserva con éxito: `reserva.ts` ahora hace `ok.focus({ preventScroll: true })` + `scrollIntoView({ block: 'start' })` (sin animación con `prefers-reduced-motion`), y los botones de WhatsApp van sobre el resumen. Es un cambio mínimo en la isla, sin tocar `src/lib`.
+- Errores de formulario: el foco va al resumen (`tabindex=-1`), que lleva a cada campo. La sugerencia de fecha por cierre ahora es un botón «Usar el …».
+- Guía: sin insignia repetida en «Podría tocar ahora» y sin mayúsculas; el aviso completo va debajo del resultado (arriba solo el corto). La etapa «mayor» queda pendiente (lógica de `vacunas.ts`).
+- Menú móvil oculto desde el HTML (sin salto) y, sin JS, un `<noscript>` con los enlaces; se cierra con el CTA de Urgencias; `overscroll-behavior: contain`.
+- Urgencias: `<details>` ya viene abierto en el HTML y el JS lo pliega solo en celular; con el aviso de cerrado se oculta el de horario.
+- Precios: columnas según cantidad de ítems (3, 4, 5) y sin huérfanos; `S/` con espacio duro. og.png con paleta (< 300 KB) y sin viuda. Favicon en la paleta nueva. Nota «Fotos ilustrativas de Pexels» bajo «Una visita». Borrada la fuente Gabarito 600 sin uso.
+
+## Versión publicada (velezdevilla.com/portafolio/casa-patas/)
+- Se mantienen las decisiones de la publicación del 20-11-2026: el WhatsApp llega al número del estudio (`TELEFONO_DEMO`), no hay botón «Llamar» ni testimonios, y la franja común de demo la añade `scripts/publicar.mjs` del portafolio.
