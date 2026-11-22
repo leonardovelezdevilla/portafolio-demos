@@ -1,53 +1,58 @@
-/* Aura Derma — estilos globales: tokens, base, utilidades e islas (DOM generado por JS). */
+/* Aura Derma — «Editorial de piel»: porcelana y tinta con acento óxido.
+   Tokens, base, utilidades e islas (DOM generado por JS). */
 
 @font-face {
-  font-family: 'Instrument Serif';
+  font-family: 'Bodoni Moda';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+  src: url('/fonts/bodoni-moda-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Albert Sans';
+  font-family: 'Bodoni Moda';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/bodoni-moda-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/albert-sans-latin-400-normal.woff2') format('woff2');
+  src: url('/fonts/manrope-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Albert Sans';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/albert-sans-latin-600-normal.woff2') format('woff2');
+  src: url('/fonts/manrope-latin-600-normal.woff2') format('woff2');
 }
 
 :root {
-  --crema: #f7f3ea;
-  --crema-2: #efe9db;
-  --blanco: #ffffff;
-  --salvia-50: #eef2ea;
-  --salvia-100: #dde5d6;
-  --salvia-300: #a9b9a0;
-  --salvia-500: #6f8570;
-  --salvia-700: #4a5f4c;
-  --salvia-900: #2b3a2e;
-  --tinta: #26302a;
-  --tinta-suave: #4d5a51;
-  --linea: #d9d8cb;
-  --error: #9b3a2e;
-  --error-fondo: #fbeeea;
-  --ocupado: #5c5f57;
-  --ocupado-borde: #8a8d85;
+  --porcelana: #f5f1ec;
+  --papel: #ebe4dc;
+  --blanco: #fbf9f6;
+  --tinta: #221d1a;
+  --tinta-suave: #4f4640;
+  --oxido: #8a3324;
+  --oxido-osc: #6b261a;
+  --oxido-claro: #eaa592;
+  --linea: rgb(34 29 26 / 0.22);
+  --borde-ctrl: #6f655d;
+  --error: #9b2417;
+  --error-fondo: #f7e4dd;
+  --ocupado: #62584f;
+  --ocupado-borde: #7d746c;
+  --foco: var(--oxido);
 
-  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
-  --sans: 'Albert Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --radio: 14px;
-  --radio-lg: 28px;
-  --sombra: 0 1px 2px rgb(43 58 46 / 0.06), 0 8px 24px rgb(43 58 46 / 0.07);
-  --ancho: 72rem;
-  --gutter: clamp(1rem, 4vw, 2rem);
+  --ancho: 76rem;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --alto-cab: 3.5rem;
 }
 
 *,
@@ -59,7 +64,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 5.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -71,13 +76,14 @@ html {
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
     transition-duration: 0.001ms !important;
   }
 }
 
 body {
   margin: 0;
-  background: var(--crema);
+  background: var(--porcelana);
   color: var(--tinta);
   font-family: var(--sans);
   font-size: 1.0625rem;
@@ -97,36 +103,46 @@ h2,
 h3 {
   font-family: var(--serif);
   font-weight: 400;
-  line-height: 1.15;
-  color: var(--salvia-900);
-  margin: 0 0 0.6em;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--tinta);
+  margin: 0 0 0.5em;
   text-wrap: balance;
 }
 h1 {
-  font-size: clamp(2.5rem, 7.5vw, 4.4rem);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-size: clamp(2.9rem, 8vw, 5.3rem);
+  letter-spacing: -0.025em;
+  line-height: 0.98;
 }
 h2 {
-  font-size: clamp(2rem, 5.2vw, 3rem);
-  font-weight: 400;
+  font-size: clamp(2.5rem, 6.4vw, 5rem);
 }
 h3 {
-  font-size: 1.55rem;
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+h1 em,
+h2 em,
+h3 em {
+  font-style: italic;
+  color: var(--oxido);
 }
 p {
   margin: 0 0 1em;
 }
 a {
-  color: var(--salvia-700);
-  text-underline-offset: 0.2em;
+  color: var(--oxido-osc);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
 }
 a:hover {
-  color: var(--salvia-900);
+  color: var(--tinta);
+  text-decoration-thickness: 2px;
 }
 
 :focus-visible {
-  outline: 3px solid var(--salvia-700);
+  outline: 3px solid var(--foco);
   outline-offset: 3px;
 }
 main:focus {
@@ -154,14 +170,13 @@ main:focus {
   left: 1rem;
   top: -4rem;
   z-index: 100;
-  background: var(--salvia-900);
-  color: var(--blanco);
+  background: var(--tinta);
+  color: var(--porcelana);
   padding: 0.75rem 1rem;
-  border-radius: 8px;
 }
 .skip:focus {
   top: 1rem;
-  color: var(--blanco);
+  color: var(--porcelana);
 }
 
 .contenedor {
@@ -170,94 +185,148 @@ main:focus {
 }
 
 .seccion {
-  padding-block: clamp(3.5rem, 9vw, 6rem);
+  padding-block: clamp(4rem, 10vw, 8rem);
 }
-.seccion--blanca {
-  background: var(--blanco);
+.seccion--papel {
+  background: var(--papel);
 }
-.seccion--salvia {
-  background: var(--salvia-50);
+.seccion--tinta {
+  --foco: var(--oxido-claro);
+  background: var(--tinta);
+  color: var(--porcelana);
 }
-.seccion__cabecera {
-  max-width: 42rem;
-  margin-bottom: 2.25rem;
+.seccion--tinta h2,
+.seccion--tinta h3 {
+  color: var(--porcelana);
 }
+.seccion--tinta h2 em,
+.seccion--tinta h3 em {
+  color: var(--oxido-claro);
+}
+.seccion--tinta a {
+  color: var(--porcelana);
+}
+.seccion--oxido {
+  --foco: var(--porcelana);
+  background: var(--oxido);
+  color: var(--porcelana);
+}
+.seccion--oxido h2,
+.seccion--oxido h3,
+.seccion--oxido a {
+  color: var(--porcelana);
+}
+
+.lead {
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  line-height: 1.6;
+  color: var(--tinta-suave);
+}
+/* Etiqueta tipográfica (una sola en el inicio: el titular del héroe; también en páginas legales). */
 .sobretitulo {
   font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--salvia-700);
-  margin: 0 0 0.75rem;
-}
-.lead {
-  font-size: 1.1875rem;
-  color: var(--tinta-suave);
+  color: var(--oxido-osc);
+  margin: 0 0 1rem;
 }
 
-/* ---------- Botones ---------- */
+/* ---------- Botones: rectos, de tinta; el secundario es un enlace que se dibuja ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px;
-  border: 2px solid var(--salvia-700);
-  background: var(--salvia-700);
-  color: var(--blanco);
-  font: 600 1rem/1.2 var(--sans);
+  gap: 0.6rem;
+  min-height: 52px;
+  padding: 0.8rem 1.7rem;
+  border: 1px solid var(--oxido);
+  border-radius: 0;
+  background: var(--oxido);
+  color: var(--porcelana);
+  font: 600 0.95rem/1.2 var(--sans);
+  letter-spacing: 0.03em;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.18s,
+    border-color 0.18s,
+    color 0.18s,
+    transform 0.12s;
 }
 .btn:hover {
-  background: var(--salvia-900);
-  border-color: var(--salvia-900);
-  color: var(--blanco);
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--porcelana);
+  text-decoration: none;
+}
+.btn:active {
+  transform: translateY(1px) scale(0.99);
 }
 .btn--suave {
   background: transparent;
-  color: var(--salvia-900);
+  border-color: var(--tinta);
+  color: var(--tinta);
 }
 .btn--suave:hover {
-  background: var(--salvia-100);
-  color: var(--salvia-900);
-  border-color: var(--salvia-700);
+  background: var(--tinta);
+  color: var(--porcelana);
 }
 .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
+.btn--chico {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+}
+.seccion--oxido .btn,
+.seccion--tinta .btn {
+  background: var(--porcelana);
+  border-color: var(--porcelana);
+  color: var(--tinta);
+}
+.seccion--oxido .btn:hover,
+.seccion--tinta .btn:hover {
+  background: var(--tinta);
+  border-color: var(--porcelana);
+  color: var(--porcelana);
+}
 .icono {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.15em;
+  height: 1.15em;
   flex: none;
 }
 
-/* ---------- Aviso médico ---------- */
+/* Enlace con subrayado que se dibuja */
+.dibuja {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.28s ease;
+  padding-bottom: 0.15em;
+}
+.dibuja:hover,
+.dibuja:focus-visible {
+  background-size: 100% 1px;
+  text-decoration: none;
+}
+
+/* ---------- Aviso médico: nota editorial entre filetes ---------- */
 .aviso {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-  background: var(--blanco);
-  border: 1px solid var(--salvia-500);
-  border-radius: var(--radio);
-  padding: 0.9rem 1.1rem;
-  color: var(--salvia-900);
-  font-size: 0.98rem;
+  border-top: 1px solid var(--tinta);
+  border-bottom: 1px solid var(--linea);
+  padding: 0.9rem 0;
+  color: var(--tinta);
+  font-size: 0.97rem;
   line-height: 1.5;
 }
 .aviso .icono {
-  flex: none;
-  box-sizing: border-box;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0.5rem;
-  border-radius: 10px;
-  background: var(--salvia-100);
-  color: var(--salvia-900);
+  margin-top: 0.15rem;
+  color: var(--oxido);
 }
 .aviso p {
   margin: 0;
@@ -268,12 +337,12 @@ main:focus {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.25rem;
 }
 .campo label,
 .campo .etiqueta {
   font-weight: 600;
-  color: var(--salvia-900);
+  color: var(--tinta);
 }
 .campo .ayuda {
   font-size: 0.9rem;
@@ -287,20 +356,26 @@ main:focus {
 .campo select,
 .campo textarea {
   width: 100%;
-  min-height: 48px;
+  min-height: 50px;
   padding: 0.65rem 0.9rem;
   font: inherit;
   color: var(--tinta);
   background: var(--blanco);
-  border: 1.5px solid var(--salvia-500);
-  border-radius: 10px;
+  border: 1px solid var(--borde-ctrl);
+  border-radius: 0;
 }
 .campo textarea {
   min-height: 6.5rem;
   resize: vertical;
 }
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--oxido);
+}
 .campo [aria-invalid='true'] {
   border-color: var(--error);
+  border-width: 2px;
   background: var(--error-fondo);
 }
 .error {
@@ -314,7 +389,7 @@ main:focus {
 }
 .check {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.8rem;
   align-items: flex-start;
 }
 .check input {
@@ -322,7 +397,7 @@ main:focus {
   height: 1.5rem;
   margin: 0.15rem 0 0;
   flex: none;
-  accent-color: var(--salvia-700);
+  accent-color: var(--oxido);
 }
 .check label {
   font-weight: 400;
@@ -337,104 +412,119 @@ legend {
   padding: 0;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: var(--salvia-900);
+  color: var(--tinta);
 }
 .resumen-errores {
   background: var(--error-fondo);
-  border: 1.5px solid var(--error);
-  border-radius: var(--radio);
+  border: 1px solid var(--error);
   padding: 0.9rem 1.1rem;
   margin-bottom: 1.25rem;
   color: var(--error);
   font-weight: 600;
 }
-.resumen-errores:focus {
-  outline-offset: 3px;
+.resumen-errores ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
+.resumen-errores a {
+  color: var(--error);
 }
 
 /* ---------- Isla: comparador ---------- */
 .comp-opciones {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
-  gap: 0.6rem;
-  margin-bottom: 1rem;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--tinta);
 }
 .comp-opcion {
   position: relative;
+  border-bottom: 1px solid var(--linea);
 }
+/* La casilla queda oculta sin cubrir la etiqueta: el clic va a la etiqueta. */
 .comp-opcion input {
   position: absolute;
-  opacity: 0;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 1px;
+  height: 1px;
   margin: 0;
-  cursor: pointer;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 .comp-opcion label {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.85rem;
   min-height: 56px;
-  padding: 0.6rem 0.9rem;
-  background: var(--crema);
-  border: 1.5px solid var(--salvia-500);
-  border-radius: var(--radio);
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--salvia-900);
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--tinta);
+  transition: padding 0.2s, color 0.2s;
+}
+.comp-opcion label:hover {
+  color: var(--oxido);
+  padding-left: 0.6rem;
 }
 .comp-opcion .icono {
-  color: var(--salvia-700);
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--tinta-suave);
 }
 .comp-opcion .marca {
   margin-left: auto;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  border: 2px solid var(--salvia-500);
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 1px solid var(--tinta);
   display: grid;
   place-items: center;
   flex: none;
-  background: var(--blanco);
+  background: transparent;
   color: transparent;
 }
+.comp-opcion .marca .icono {
+  color: inherit;
+  width: 1rem;
+  height: 1rem;
+}
 .comp-opcion input:checked + label {
-  background: var(--salvia-100);
-  border-color: var(--salvia-700);
+  font-style: italic;
+  color: var(--oxido-osc);
 }
 .comp-opcion input:checked + label .marca {
-  background: var(--salvia-700);
-  border-color: var(--salvia-700);
-  color: var(--blanco);
+  background: var(--oxido);
+  border-color: var(--oxido);
+  color: var(--porcelana);
 }
 .comp-opcion input:focus-visible + label {
-  outline: 3px solid var(--salvia-700);
-  outline-offset: 2px;
-}
-.comp-opcion input[aria-disabled='true'] {
-  cursor: not-allowed;
+  outline: 3px solid var(--oxido);
+  outline-offset: -3px;
 }
 .comp-opcion input[aria-disabled='true'] + label {
-  background: var(--crema-2);
+  cursor: not-allowed;
+  color: var(--ocupado);
+}
+.comp-opcion input[aria-disabled='true'] + label:hover {
+  color: var(--ocupado);
+  padding-left: 0.25rem;
+}
+.comp-opcion input[aria-disabled='true'] + label .marca {
   border-style: dashed;
   border-color: var(--ocupado-borde);
-  color: var(--ocupado);
 }
-.comp-opcion input[aria-disabled='true'] + label .icono {
-  color: var(--ocupado);
-}
-.comp-estado {
-  font-size: 0.95rem;
-  color: var(--tinta-suave);
-  min-height: 1.5em;
-  margin: 0 0 1.25rem;
+.comp-motivo {
+  margin: 0 0 1rem;
+  color: var(--tinta);
+  font-size: 0.97rem;
+  min-height: 1.6em;
 }
 
 .comp-vacio {
-  background: var(--blanco);
-  border: 1px dashed var(--salvia-500);
-  border-radius: var(--radio);
+  border: 1px dashed var(--borde-ctrl);
   padding: 1.5rem;
   color: var(--tinta-suave);
   margin: 0;
@@ -442,13 +532,12 @@ legend {
 .comp-nota-pie {
   margin-top: 1rem;
 }
-/* Escritorio: tratamientos como columnas, atributos como filas. */
+/* Escritorio: tabla de revista, tratamientos como columnas. */
 .comp-scroll {
   display: none;
   overflow-x: auto;
-  border: 1px solid var(--salvia-500);
-  border-radius: var(--radio);
-  background: var(--blanco);
+  border-top: 3px double var(--tinta);
+  border-bottom: 1px solid var(--tinta);
 }
 .comp-tabla {
   width: 100%;
@@ -457,81 +546,85 @@ legend {
   font-size: 1rem;
 }
 .comp-tabla caption {
+  caption-side: bottom;
   text-align: left;
-  padding: 0.9rem 1.1rem;
-  font-weight: 600;
-  color: var(--salvia-900);
-  caption-side: top;
+  padding: 0.8rem 0 0.2rem;
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--tinta-suave);
 }
 .comp-tabla th,
 .comp-tabla td {
-  padding: 0.9rem 1.1rem;
+  padding: 1rem 1.25rem 1rem 0;
   text-align: left;
   vertical-align: top;
   border-top: 1px solid var(--linea);
 }
 .comp-tabla thead th {
-  background: var(--salvia-100);
-  color: var(--salvia-900);
-  font: 400 1.5rem/1.15 var(--serif);
+  font: 400 clamp(1.5rem, 2.2vw, 2rem) / 1.1 var(--serif);
+  letter-spacing: -0.01em;
   border-top: 0;
+  vertical-align: bottom;
+  padding-block: 1.4rem 1rem;
+  color: var(--tinta);
 }
 .comp-tabla tbody th {
-  width: 11rem;
-  background: var(--salvia-50);
-  color: var(--salvia-900);
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  width: 10.5rem;
+  font: italic 400 1.1rem/1.3 var(--serif);
+  color: var(--oxido-osc);
 }
 .comp-tabla thead th:first-child {
-  font: 600 0.85rem/1.2 var(--sans);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font: 600 0.8125rem/1.3 var(--sans);
+  letter-spacing: 0.02em;
+  color: var(--tinta-suave);
 }
 .comp-tabla .precio {
-  font-weight: 600;
-  color: var(--salvia-900);
+  font: 400 clamp(1.2rem, 2.6vw, 2.1rem) / 1.1 var(--serif);
+  color: var(--tinta);
 }
 .comp-tabla .precio small {
   display: block;
-  font-weight: 400;
+  margin-top: 0.35rem;
+  font: 400 0.8125rem/1.3 var(--sans);
   color: var(--tinta-suave);
 }
-/* Móvil: una tarjeta por tratamiento. */
+.comp-tabla tbody tr:last-child th,
+.comp-tabla tbody tr:last-child td {
+  border-top: 1px solid var(--tinta);
+}
+/* Móvil: una ficha por tratamiento, sin cajas. */
 .comp-cards {
   display: grid;
-  gap: 1rem;
+  gap: 2.25rem;
 }
 .comp-card {
-  background: var(--blanco);
-  border: 1px solid var(--salvia-500);
-  border-radius: var(--radio);
-  overflow: hidden;
+  border-top: 3px double var(--tinta);
 }
 .comp-card h3 {
-  margin: 0;
-  padding: 0.8rem 1rem;
-  background: var(--salvia-100);
+  margin: 0.9rem 0 0;
+  font-size: 1.9rem;
 }
 .comp-card dl {
   margin: 0;
-  padding: 0.25rem 1rem 0.75rem;
+  padding: 0 0 0.25rem;
 }
 .comp-card dt {
-  margin-top: 0.75rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--salvia-700);
+  margin-top: 0.9rem;
+  font: italic 400 1.05rem/1.3 var(--serif);
+  color: var(--oxido-osc);
 }
 .comp-card dd {
   margin: 0.1rem 0 0;
 }
 .comp-card .precio {
-  font-weight: 600;
-  color: var(--salvia-900);
+  font: 400 1.6rem/1.2 var(--serif);
+  color: var(--tinta);
+}
+@media (min-width: 40rem) {
+  .comp-opciones {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 3rem;
+  }
 }
 @media (min-width: 48rem) {
   .comp-scroll {
@@ -541,50 +634,29 @@ legend {
     display: none;
   }
 }
-.comp-motivo {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
-  margin: 0 0 1rem;
-  color: var(--salvia-900);
-  font-size: 0.97rem;
-}
-.comp-motivo .icono {
-  margin-top: 0.15rem;
-  color: var(--salvia-700);
-}
 
 /* ---------- Isla: agenda ---------- */
 .agenda-form {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-lg);
-  padding: clamp(1.1rem, 4vw, 2.25rem);
-  box-shadow: var(--sombra);
+  background: var(--porcelana);
+  border: 1px solid var(--tinta);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
 }
 .agenda-paso {
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
 }
-.agenda-paso > legend,
-.agenda-paso .titulo-paso {
-  font-family: var(--serif);
-  font-size: 1.3rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.9rem;
+.agenda-paso > legend {
+  display: block;
+  width: 100%;
+  font: 400 1.7rem/1.15 var(--serif);
+  letter-spacing: -0.01em;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--tinta);
 }
 .num-paso {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: var(--salvia-700);
-  color: var(--blanco);
-  font: 600 0.95rem var(--sans);
-  flex: none;
+  font: italic 400 1.1rem/1 var(--serif);
+  color: var(--oxido-osc);
+  margin-right: 0.6rem;
 }
 .esp-lista {
   display: grid;
@@ -596,15 +668,12 @@ legend {
 }
 .opcion input {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 1px;
+  height: 1px;
   margin: 0;
   opacity: 0;
-  cursor: pointer;
-}
-.opcion input[aria-disabled='true'] {
-  cursor: not-allowed;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 .opcion label {
   display: flex;
@@ -614,12 +683,16 @@ legend {
   min-height: 52px;
   height: 100%;
   padding: 0.6rem 0.9rem;
-  border: 1.5px solid var(--salvia-500);
-  border-radius: var(--radio);
-  background: var(--crema);
+  border: 1px solid var(--borde-ctrl);
+  background: var(--blanco);
   line-height: 1.3;
   font-weight: 600;
-  color: var(--salvia-900);
+  color: var(--tinta);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.opcion label:hover {
+  border-color: var(--oxido);
 }
 .opcion label small {
   font-weight: 400;
@@ -627,22 +700,26 @@ legend {
   font-size: 0.85rem;
 }
 .opcion input:checked + label {
-  background: var(--salvia-700);
-  border-color: var(--salvia-700);
-  color: var(--blanco);
+  background: var(--oxido);
+  border-color: var(--oxido);
+  color: var(--porcelana);
 }
 .opcion input:checked + label small {
-  color: var(--salvia-100);
+  color: var(--porcelana);
 }
 .opcion input:focus-visible + label {
-  outline: 3px solid var(--salvia-900);
+  outline: 3px solid var(--tinta);
   outline-offset: 2px;
 }
 .opcion input[aria-disabled='true'] + label {
-  background: var(--crema-2);
+  cursor: not-allowed;
+  background: var(--papel);
   border-style: dashed;
   border-color: var(--ocupado-borde);
   color: var(--ocupado);
+}
+.opcion input[aria-disabled='true'] + label:hover {
+  border-color: var(--ocupado-borde);
 }
 .opcion input[aria-disabled='true'] + label small {
   color: var(--ocupado);
@@ -664,7 +741,7 @@ legend {
   letter-spacing: 0.06em;
 }
 .dias-grid .num {
-  font: 600 1.35rem/1.1 var(--serif);
+  font: 400 1.7rem/1.1 var(--serif);
 }
 .dias-grid .mes {
   font-size: 0.8125rem;
@@ -688,6 +765,8 @@ legend {
   text-decoration: none;
 }
 .leyenda {
+  list-style: none;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem 1.25rem;
@@ -695,26 +774,28 @@ legend {
   color: var(--tinta-suave);
   margin: 0.9rem 0 0;
 }
-.leyenda span {
+.leyenda li {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
 }
+.leyenda s {
+  text-decoration-thickness: 1px;
+}
 .leyenda i {
   width: 1rem;
   height: 1rem;
-  border-radius: 4px;
   display: inline-block;
-  border: 1.5px solid var(--salvia-500);
-  background: var(--crema);
+  border: 1px solid var(--borde-ctrl);
+  background: var(--blanco);
 }
 .leyenda i.oc {
-  border: 1.5px dashed var(--ocupado-borde);
-  background: var(--crema-2);
+  border: 1px dashed var(--ocupado-borde);
+  background: var(--papel);
 }
 .leyenda i.sel {
-  background: var(--salvia-700);
-  border-color: var(--salvia-700);
+  background: var(--oxido);
+  border-color: var(--oxido);
 }
 .nota-sim {
   font-size: 0.9rem;
@@ -729,30 +810,33 @@ legend {
     grid-template-columns: 1fr 1fr;
   }
 }
+@media (min-width: 48rem) {
+  .dias-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
 
 .confirmacion {
-  background: var(--salvia-50);
-  border: 2px solid var(--salvia-700);
-  border-radius: var(--radio-lg);
+  background: var(--porcelana);
+  border: 1px solid var(--tinta);
+  border-top: 3px double var(--tinta);
   padding: clamp(1.25rem, 4vw, 2.25rem);
 }
 .confirmacion:focus {
-  outline: 3px solid var(--salvia-700);
+  outline: 3px solid var(--oxido);
   outline-offset: 4px;
 }
 .confirmacion h3 {
-  font-size: 1.6rem;
-  font-weight: 400;
+  font-size: 2rem;
 }
 .confirmacion dl {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.35rem 1rem;
+  gap: 0.35rem 1.25rem;
   margin: 1rem 0 1.5rem;
 }
 .confirmacion dt {
   font-weight: 600;
-  color: var(--salvia-900);
 }
 .confirmacion dd {
   margin: 0;
@@ -764,65 +848,14 @@ legend {
 }
 .sello-demo {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: 1.5px solid var(--salvia-700);
-  color: var(--salvia-700);
-  border-radius: 999px;
-  padding: 0.15rem 0.7rem;
+  border: 1px solid var(--oxido-osc);
+  color: var(--oxido-osc);
+  padding: 0.15rem 0.6rem;
   margin-bottom: 0.75rem;
-}
-
-/* ---------- Páginas legales ---------- */
-.legal {
-  max-width: 46rem;
-  padding-block: clamp(2.5rem, 7vw, 4.5rem);
-}
-.legal h2 {
-  font-size: 1.6rem;
-  margin-top: 2.25rem;
-}
-.legal ul {
-  padding-left: 1.25rem;
-}
-.legal li {
-  margin-bottom: 0.4rem;
-}
-
-.seccion--crema {
-  background: var(--crema-2);
-}
-.aviso-legal {
-  background: var(--salvia-50);
-  border-radius: var(--radio);
-  padding: 0.9rem 1.1rem;
-  color: var(--salvia-900);
-}
-.comp-opcion .marca .icono {
-  color: inherit;
-  width: 1rem;
-  height: 1rem;
-}
-
-/* ---------- Revisión: agenda, avisos y barra móvil ---------- */
-@media (min-width: 48rem) {
-  .dias-grid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-}
-.leyenda {
-  list-style: none;
-  padding: 0;
-}
-.leyenda li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.leyenda s {
-  text-decoration-thickness: 1px;
 }
 .req {
   color: var(--error);
@@ -834,58 +867,44 @@ legend {
   margin: 0 0 1.25rem;
 }
 .aviso-wa {
-  background: var(--salvia-50);
-  border: 1px solid var(--salvia-500);
-  border-radius: 10px;
+  border: 1px solid var(--tinta);
+  background: var(--papel);
   padding: 0.7rem 0.9rem;
   font-size: 0.92rem;
-  color: var(--salvia-900);
+  color: var(--tinta);
   margin: 0.25rem 0 0;
 }
 .salida-wa {
   margin: 0 0 1.25rem;
 }
-.resumen-errores ul {
-  margin: 0.4rem 0 0;
-  padding-left: 1.2rem;
+
+/* ---------- Páginas legales ---------- */
+.legal {
+  max-width: 46rem;
+  padding-block: clamp(2.5rem, 7vw, 4.5rem);
 }
-.resumen-errores a {
-  color: var(--error);
+.legal h1 {
+  font-size: clamp(2.6rem, 7vw, 4.4rem);
 }
-.franja-demo {
-  margin: 0;
-  background: var(--salvia-900);
-  color: #ffffff;
-  text-align: center;
-  font-size: 0.85rem;
-  padding: 0.4rem var(--gutter);
+.legal h2 {
+  font-size: 1.8rem;
+  margin-top: 2.25rem;
 }
-.barra-movil {
-  position: fixed;
-  inset: auto 0 0 0;
-  z-index: 40;
-  padding: 0.6rem var(--gutter);
-  background: rgb(247 243 234 / 0.97);
-  border-top: 1px solid var(--linea);
+.legal ul {
+  padding-left: 1.25rem;
 }
-.barra-movil .btn {
-  width: 100%;
+.legal li {
+  margin-bottom: 0.4rem;
 }
-body {
-  padding-bottom: 4.5rem;
-}
-@media (min-width: 62rem) {
-  .barra-movil {
-    display: none;
-  }
-  body {
-    padding-bottom: 0;
-  }
+.aviso-legal {
+  background: var(--papel);
+  border-top: 1px solid var(--tinta);
+  padding: 0.9rem 1.1rem;
+  color: var(--tinta);
 }
 .firma-prov {
-  background: var(--crema-2);
+  background: var(--papel);
   border: 1px dashed var(--ocupado-borde);
-  border-radius: var(--radio);
   padding: 0.9rem 1.1rem;
   margin-bottom: 1.1rem;
   font-size: 0.95rem;
@@ -901,3 +920,17 @@ body {
 .constancia dd {
   margin: 0;
 }
+
+/* ---------- Franja de demo ---------- */
+.franja-demo {
+  margin: 0;
+  background: var(--tinta);
+  color: var(--porcelana);
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  padding: 0.4rem var(--gutter);
+}
+
+/* Enlaces dentro de párrafos: área táctil de al menos 24 px (WCAG 2.5.8) sin mover el texto. */
+p a:not([class]) { padding-block: .3em; }

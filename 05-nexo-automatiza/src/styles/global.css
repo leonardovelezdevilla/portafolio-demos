@@ -245,3 +245,8 @@ html:not(.js) .solo-js { display: none !important; }
 .legal p, .legal li { margin-bottom: 12px; }
 .legal ul { list-style: disc; padding-left: 1.4rem; }
 .legal .aviso-demo { background: var(--lima); border: 2px solid var(--ink); padding: 12px 16px; font-weight: 600; margin-block: 20px; border-radius: 4px; }
+.legal__in p > a:only-child { display: inline-flex; align-items: center; min-height: 44px; }
+
+.cotiz__panel a { color: var(--ink); }
+.btn, .chip, .op { touch-action: manipulation; }
+.modal { overscroll-behavior: contain; }

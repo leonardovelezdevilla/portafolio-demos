@@ -9,10 +9,9 @@ const preguntas = [
   { p: '¿Cómo reclamo si no quedé conforme?', r: 'Escríbenos por WhatsApp o registra tu caso en el Libro de Reclamaciones, que responde en un plazo de 15 días hábiles.' },
 ];
 ---
-<section class="seccion seccion--papel" id="preguntas" aria-labelledby="t-faq">
+<section class="seccion seccion--oscura oscuro" id="preguntas" aria-labelledby="t-faq">
   <div class="wrap faq">
     <div>
-      <p class="etiqueta">Preguntas frecuentes</p>
       <h2 id="t-faq">Lo que más nos preguntan</h2>
     </div>
     <div class="faq__lista">
@@ -28,12 +27,13 @@ const preguntas = [
 
 <style>
   .faq { display: grid; gap: 32px; }
-  @media (min-width: 960px) { .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; } }
-  .faq__lista { border-top: 3px solid var(--asfalto); }
-  details { border-bottom: 1px solid var(--linea); }
-  summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding-block: 10px; font-weight: 600; font-size: 1.1rem; cursor: pointer; list-style: none; }
+  @media (min-width: 960px) { .faq { grid-template-columns: 5fr 7fr; gap: 72px; } }
+  .faq__lista { border-top: 4px solid var(--texto-claro); }
+  details { border-bottom: 1px solid var(--linea-oscura); }
+  summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; padding-block: 12px; font-weight: 600; font-size: 1.12rem; cursor: pointer; list-style: none; }
+  summary:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; font-family: var(--f-titular); font-size: 1.8rem; line-height: 1; flex: none; }
+  summary::after { content: '+'; font-family: var(--f-mono); font-weight: 500; font-size: 1.6rem; line-height: 1; flex: none; }
   details[open] summary::after { content: '\2212'; }
-  details p { margin: 0 0 18px; color: var(--texto-suave); max-width: 62ch; }
+  details p { margin: 0 0 20px; color: var(--texto-claro-suave); max-width: 62ch; }
 </style>

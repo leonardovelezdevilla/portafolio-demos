@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Demos de portafolio · Vélez De Villa</title>
-  <meta name="description" content="Nueve demos de sistemas web para negocios en Lima: SaaS, tienda, restaurante, clínica, agencia, pilates, taller, inmobiliaria y academia. Marcas ficticias.">
+  <meta name="description" content="Diez demos de sistemas web para negocios en Lima: SaaS, tienda, restaurante, clínica, agencia, pilates, pastelería, taller, inmobiliaria y academia. Marcas ficticias.">
   <style>
     :root {
       --fondo: #f6f4ef;
@@ -44,10 +44,10 @@
     .bajada { color: var(--texto-2); max-width: 62ch; margin: 0; }
     .grilla { list-style: none; padding: 0; margin: 0 0 48px; display: grid; gap: 24px; grid-template-columns: 1fr; }
     @media (min-width: 760px) { .grilla { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1100px) { .grilla { grid-template-columns: repeat(3, 1fr); } .grilla li:first-child { grid-column: span 2; }
-      .grilla li:nth-child(2) figure { aspect-ratio: auto; flex: 1; min-height: 0; }
-      .grilla li:nth-child(2) img { object-position: left top; }
-      .grilla li:nth-child(2) .cuerpo { flex: 0 0 auto; } }
+    @media (min-width: 1100px) { .grilla { grid-template-columns: repeat(3, 1fr); } .grilla li:nth-child(1), .grilla li:nth-child(6) { grid-column: span 2; }
+      .grilla li:nth-child(2) figure, .grilla li:nth-child(7) figure { aspect-ratio: auto; flex: 1; min-height: 0; }
+      .grilla li:nth-child(2) img, .grilla li:nth-child(7) img { object-position: left top; }
+      .grilla li:nth-child(2) .cuerpo, .grilla li:nth-child(7) .cuerpo { flex: 0 0 auto; } }
     .demo { background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
     .demo figure { margin: 0; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--borde); background: var(--borde); }
     .demo img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
@@ -69,7 +69,7 @@
   <div class="envoltura">
     <header>
       <p class="marca">Vélez De Villa · Sistemas y automatización para negocios</p>
-      <h1>Nueve demos para negocios de Lima</h1>
+      <h1>Diez demos para negocios de Lima</h1>
       <p class="bajada">Cada demo resuelve un caso real —reservar, pedir, cotizar o calcular— con una identidad propia. Todas las marcas, personas, cifras y testimonios son ficticios y están marcados como «Ejemplo de demo».</p>
     </header>
 
@@ -77,11 +77,11 @@
       <ul class="grilla">
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/01-kipuflow.webp" alt="Página de inicio de Kipuflow: titular sobre recibos por honorarios y panel oscuro con recibos de ejemplo" width="960" height="600" loading="eager"></figure>
+            <figure><img src="miniaturas/01-kipuflow.webp" alt="Página de inicio de Kipuflow: titular sobre recibos por honorarios y la app con la lista de recibos de noviembre" width="960" height="600" loading="eager"></figure>
             <div class="cuerpo">
               <p class="num">01</p>
               <h2>Kipuflow</h2>
-              <p class="caso">SaaS de finanzas para freelancers peruanos. Oscuro con vidrio, acentos verde y azul.</p>
+              <p class="caso">SaaS de finanzas para freelancers peruanos. «Libro mayor»: claro y exacto, tinta y cobalto, la app real a todo el ancho.</p>
               <ul class="muestra">
                 <li>Calculadora referencial de renta de 4.ª categoría</li>
                 <li>Precios mensual/anual, bento de funciones y FAQ</li>
@@ -122,11 +122,11 @@
         </li>
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/04-aura-derma.webp" alt="Inicio de Aura Derma: clínica dermatológica en tonos salvia y crema" width="960" height="600" loading="lazy"></figure>
+            <figure><img src="miniaturas/04-aura-derma.webp" alt="Inicio de Aura Derma: titular en Bodoni sobre porcelana y foto de una consulta dermatológica" width="960" height="600" loading="lazy"></figure>
             <div class="cuerpo">
               <p class="num">04</p>
               <h2>Aura Derma</h2>
-              <p class="caso">Clínica dermatológica en San Isidro. Salvia, crema y blanco.</p>
+              <p class="caso">Clínica dermatológica en San Isidro. «Editorial de piel»: porcelana, tinta y óxido, en Bodoni.</p>
               <ul class="muestra">
                 <li>Comparador de tratamientos</li>
                 <li>Agenda con horarios ocupados simulados</li>
@@ -141,7 +141,7 @@
             <div class="cuerpo">
               <p class="num">05</p>
               <h2>Nexo</h2>
-              <p class="caso">Agencia de automatización para pymes. Asimétrica, con animación al hacer scroll.</p>
+              <p class="caso">Agencia de automatización para pymes. Asimétrica, tinta y lima, con diagrama del flujo en el héroe.</p>
               <ul class="muestra">
                 <li>Casos con filtro y modal</li>
                 <li>Cotizador por pasos con rango de precio</li>
@@ -152,14 +152,14 @@
         </li>
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/06-pulso-studio.webp" alt="Inicio de Pulso Studio: estudio de pilates en verde oscuro con foto de reformer" width="960" height="600" loading="lazy"></figure>
+            <figure><img src="miniaturas/06-pulso-studio.webp" alt="Inicio de Pulso Studio: foto de reformer a sangre con titular grande en arena y persimón" width="960" height="600" loading="lazy"></figure>
             <div class="cuerpo">
               <p class="num">06</p>
               <h2>Pulso Studio</h2>
-              <p class="caso">Estudio de pilates reformer y funcional en Surco. Verde bosque y lima.</p>
+              <p class="caso">Estudio de pilates reformer y funcional en Surco. «Ritmo»: arena, tinta y persimón, titulares expandidos.</p>
               <ul class="muestra">
-                <li>Horario semanal con filtros y cupos</li>
-                <li>Reserva de clase con prueba de S/ 35</li>
+                <li>Horario semanal con cupos y filtros</li>
+                <li>Reserva de clase y clase de prueba</li>
               </ul>
               <div class="acciones"><a href="06-pulso-studio/README.md">Ficha (README)</a><a href="06-pulso-studio/capturas/">Capturas</a></div>
             </div>
@@ -167,14 +167,29 @@
         </li>
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/08-taller-ruta.webp" alt="Inicio de Taller Ruta: taller mecánico en negro y amarillo con foto de herramientas" width="960" height="600" loading="lazy"></figure>
+            <figure><img src="miniaturas/07-alba-pasteleria.webp" alt="Inicio de Alba: torta de dos pisos con flores a sangre sobre fondo oscuro y titular en Gloock" width="960" height="600" loading="lazy"></figure>
+            <div class="cuerpo">
+              <p class="num">07</p>
+              <h2>Alba</h2>
+              <p class="caso">Pastelería de tortas a pedido en Jesús María. «Vitrina»: crema, cacao y frambuesa, catálogo en mosaico.</p>
+              <ul class="muestra">
+                <li>Configurador de torta con precio en vivo</li>
+                <li>Fechas de entrega validadas y pedido por WhatsApp</li>
+              </ul>
+              <div class="acciones"><a href="07-alba-pasteleria/README.md">Ficha (README)</a><a href="07-alba-pasteleria/capturas/">Capturas</a></div>
+            </div>
+          </article>
+        </li>
+        <li>
+          <article class="demo">
+            <figure><img src="miniaturas/08-taller-ruta.webp" alt="Inicio de Taller Ruta: foto oscura de taller con titular condensado y banda amarilla de datos" width="960" height="600" loading="lazy"></figure>
             <div class="cuerpo">
               <p class="num">08</p>
               <h2>Taller Ruta</h2>
-              <p class="caso">Taller mecánico en Los Olivos. Asfalto y amarillo señal.</p>
+              <p class="caso">Taller mecánico en Los Olivos. «Ficha técnica»: concreto, tinta y amarillo señal.</p>
               <ul class="muestra">
-                <li>Cotizador de mantenimiento con rango en S/</li>
-                <li>Reserva por turnos y seguimiento del auto</li>
+                <li>Cotizador de mantenimiento por pasos</li>
+                <li>Reserva por turnos y seguimiento de ejemplo</li>
               </ul>
               <div class="acciones"><a href="08-taller-ruta/README.md">Ficha (README)</a><a href="08-taller-ruta/capturas/">Capturas</a></div>
             </div>
@@ -182,13 +197,13 @@
         </li>
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/09-habitat-sur.webp" alt="Inicio de Habitat Sur: inmobiliaria con foto de edificio con balcones verdes" width="960" height="600" loading="lazy"></figure>
+            <figure><img src="miniaturas/09-habitat-sur.webp" alt="Inicio de Habitat Sur: fachada de edificio a sangre con titular grande y ficha de precios por distrito" width="960" height="600" loading="lazy"></figure>
             <div class="cuerpo">
               <p class="num">09</p>
               <h2>Habitat Sur</h2>
-              <p class="caso">Inmobiliaria de departamentos en Lima Sur. Ladrillo y arena.</p>
+              <p class="caso">Inmobiliaria en Chorrillos y Lima Sur. «Arquitectura»: piedra, tinta y bronce, proyectos con su plano.</p>
               <ul class="muestra">
-                <li>Listado con filtros y ficha por departamento</li>
+                <li>Departamentos con filtros y galería accesible</li>
                 <li>Simulador de crédito hipotecario referencial</li>
               </ul>
               <div class="acciones"><a href="09-habitat-sur/README.md">Ficha (README)</a><a href="09-habitat-sur/capturas/">Capturas</a></div>
@@ -197,14 +212,14 @@
         </li>
         <li>
           <article class="demo">
-            <figure><img src="miniaturas/10-lumen-idiomas.webp" alt="Inicio de Lumen: academia de inglés con niveles A1 a C1" width="960" height="600" loading="lazy"></figure>
+            <figure><img src="miniaturas/10-lumen-idiomas.webp" alt="Inicio de Lumen: titular sobre azul tinta y escalera de niveles de A1 a C1" width="960" height="600" loading="lazy"></figure>
             <div class="cuerpo">
               <p class="num">10</p>
               <h2>Lumen</h2>
-              <p class="caso">Academia de inglés en Pueblo Libre. Editorial, con acentos rojos.</p>
+              <p class="caso">Academia de inglés en Pueblo Libre. Azul tinta y rojo, con la escalera de niveles A1→C1 como héroe.</p>
               <ul class="muestra">
-                <li>Test de nivel de 12 preguntas</li>
-                <li>Matrícula con datos del apoderado si es menor</li>
+                <li>Test de nivel referencial</li>
+                <li>Horarios con vacantes y matrícula con apoderado</li>
               </ul>
               <div class="acciones"><a href="10-lumen-idiomas/README.md">Ficha (README)</a><a href="10-lumen-idiomas/capturas/">Capturas</a></div>
             </div>

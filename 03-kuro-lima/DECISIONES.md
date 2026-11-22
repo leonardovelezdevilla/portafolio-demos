@@ -51,3 +51,14 @@
 ## Pendiente conocido
 - Sin dominio: canonical, `og:url` y `og:image` son relativos; deberán ser absolutos al publicar.
 - Los testimonios y datos del restaurante son ficticios y están rotulados.
+
+## Pulido 2026-11
+- Se mantiene paleta, Cormorant + Figtree y la carta. Rama `rediseno-2026-11`, sin commit.
+- Móvil (< 48 rem): la cabecera pasó de 163 px a 58 px (marca + botón «Menú» con `aria-expanded`, `aria-controls`, cierra con Escape, clic fuera o al elegir un enlace; el foco vuelve al botón). Sin JS, los enlaces quedan a la vista. El botón «Reservar» de la cabecera se oculta en móvil porque ya existe la barra inferior (63 px, algo más baja). Total 121 px ≈ 15,5 % de 780 px (antes 29 %).
+- Alergias: aviso `aviso-salud` junto al campo («solo lo necesario, sin diagnósticos ni medicinas; viaja en el mensaje de WhatsApp (Meta)»), enlazado con `aria-describedby`. No se tocó `src/lib`.
+- La cita del chef lleva «Ejemplo de demo» junto a la firma.
+- Etiquetas en mayúsculas sobre títulos: quedó solo «La historia» en el inicio (las de Legal están una por página).
+- Enlaces «Volver al inicio» de privacidad y términos a 44 px de alto. Foto del chef sin cambios (no se pudo verificar otra en Unsplash/Pexels desde aquí).
+- npm test 32/32; verificador 0 ERROR (quedan AVISO de capturas/licencia y objetivos táctiles en párrafos de texto).
+- Revisión (segunda ronda): a 360 la primera pantalla muestra titular y foto del nigiri (38svh); se ocultan la ficha y los 2 botones del héroe (la barra inferior ya los ofrece). La barra inferior se oculta con IntersectionObserver cuando `#reserva` o el pie están a la vista. Omakase a 1440: foto arriba, 4:5 y pegajosa (sin vacío negro). «Ejemplo de demo» bajo las cifras 8/6/24. Entrada del héroe (opacity 0,4 + translateY, una vez, apagada con reduced-motion). Menú: pasa a «Cerrar» con X, se cierra al hacer scroll, «Inicio» en páginas legales; `S/&nbsp;`; `touch-action`.
+- No aplicado: fotos anchas en la carta y plano SVG de Visítanos (faltan fotos verificadas).

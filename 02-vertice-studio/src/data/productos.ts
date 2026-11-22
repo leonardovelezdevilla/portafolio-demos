@@ -125,8 +125,8 @@ export const productos: Producto[] = [
       45: 1
     },
     foto: 'balon-violeta',
-    posicion: 'left',
-    alt: 'Balón de básquet junto a unas zapatillas tejidas violeta con suela dorada sobre una cancha de asfalto',
+    posicion: 'right',
+    alt: 'Zapatillas tejidas violeta con suela dorada apoyadas sobre una cancha de asfalto',
     resumen: 'Tejido violeta y suela dorada hecha para la cancha.',
     detalle: [
       'Capellada tejida de una pieza',
@@ -202,6 +202,75 @@ export const productos: Producto[] = [
     ]
   },
   {
+    slug: 'chapa-roja',
+    nombre: 'Chapa Roja',
+    categoria: 'skate',
+    precio: 229,
+    colores: [
+      {
+        nombre: 'Rojo',
+        hex: '#c8202f'
+      },
+      {
+        nombre: 'Blanco',
+        hex: '#f1f1ee'
+      }
+    ],
+    tallas: {
+      38: 2,
+      39: 3,
+      40: 4,
+      41: 4,
+      42: 3,
+      43: 2,
+      44: 1
+    },
+    foto: 'rojas-lona',
+    posicion: 'center',
+    alt: 'Par de zapatillas de lona rojas con puntera blanca y cordones blancos sobre asfalto gris',
+    resumen: 'Lona roja y suela plana para sentir la tabla.',
+    detalle: [
+      'Lona resistente en zonas de desgaste',
+      'Suela vulcanizada plana',
+      'Puntera reforzada'
+    ]
+  },
+  {
+    slug: 'pila-blanca',
+    nombre: 'Pila Blanca',
+    categoria: 'urbana',
+    precio: 279,
+    colores: [
+      {
+        nombre: 'Blanco',
+        hex: '#f1f1ee'
+      },
+      {
+        nombre: 'Hueso',
+        hex: '#e6dfd0'
+      }
+    ],
+    tallas: {
+      36: 2,
+      37: 3,
+      38: 4,
+      39: 4,
+      40: 3,
+      41: 3,
+      42: 2,
+      43: 1
+    },
+    foto: 'blancas-hojas',
+    posicion: 'right',
+    alt: 'Zapatilla blanca de cuero con los cordones sueltos sobre hojas secas oscuras',
+    resumen: 'El blanco total que pide limpieza.',
+    detalle: [
+      'Cuero sintético fácil de limpiar',
+      'Suela con borde de goma',
+      'Perforaciones en la puntera'
+    ]
+  },
+  {
     slug: 'trama-run',
     nombre: 'Trama Run',
     categoria: 'running',
@@ -258,82 +327,13 @@ export const productos: Producto[] = [
       45: 1
     },
     foto: 'balon-violeta',
-    posicion: 'right',
-    alt: 'Detalle de zapatillas tejidas violeta con suela translúcida ámbar apoyadas junto a un balón',
+    posicion: 'center',
+    alt: 'Zapatillas tejidas violeta con suela ámbar apoyadas junto a un balón de básquet en una cancha',
     resumen: 'Suela translúcida y amortiguación para saltar más.',
     detalle: [
       'Amortiguación en el talón',
       'Suela con patrón de espiga',
       'Soporte de tobillo reforzado'
-    ]
-  },
-  {
-    slug: 'pila-blanca',
-    nombre: 'Pila Blanca',
-    categoria: 'urbana',
-    precio: 279,
-    colores: [
-      {
-        nombre: 'Blanco',
-        hex: '#f1f1ee'
-      },
-      {
-        nombre: 'Hueso',
-        hex: '#e6dfd0'
-      }
-    ],
-    tallas: {
-      36: 2,
-      37: 3,
-      38: 4,
-      39: 4,
-      40: 3,
-      41: 3,
-      42: 2,
-      43: 1
-    },
-    foto: 'blancas-hojas',
-    posicion: 'right',
-    alt: 'Zapatilla blanca de cuero con los cordones sueltos sobre hojas secas oscuras',
-    resumen: 'El blanco total que pide limpieza.',
-    detalle: [
-      'Cuero sintético fácil de limpiar',
-      'Suela con borde de goma',
-      'Perforaciones en la puntera'
-    ]
-  },
-  {
-    slug: 'chapa-roja',
-    nombre: 'Chapa Roja',
-    categoria: 'skate',
-    precio: 229,
-    colores: [
-      {
-        nombre: 'Rojo',
-        hex: '#c8202f'
-      },
-      {
-        nombre: 'Blanco',
-        hex: '#f1f1ee'
-      }
-    ],
-    tallas: {
-      38: 2,
-      39: 3,
-      40: 4,
-      41: 4,
-      42: 3,
-      43: 2,
-      44: 1
-    },
-    foto: 'rojas-lona',
-    posicion: 'center',
-    alt: 'Par de zapatillas de lona rojas con puntera blanca y cordones blancos sobre asfalto gris',
-    resumen: 'Lona roja y suela plana para sentir la tabla.',
-    detalle: [
-      'Lona resistente en zonas de desgaste',
-      'Suela vulcanizada plana',
-      'Puntera reforzada'
     ]
   },
   {
@@ -439,7 +439,7 @@ export const productos: Producto[] = [
       'Suela blanca de goma',
       'Plantilla ergonómica'
     ]
-  }
+  },
 ];
 
 export const porSlug = (slug: string) => productos.find((p) => p.slug === slug);

@@ -19,10 +19,11 @@ for (const ancho of anchos) {
   await p.goto(`${base}/`, { waitUntil: 'networkidle' });
   // Carga las imágenes diferidas recorriendo la página y deja la cabecera fija como estática para las capturas.
   await p.evaluate(async () => {
+    await document.fonts.ready;
     for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }
     window.scrollTo(0, 0);
     document.querySelector('.cab').style.position = 'static';
-    document.querySelector('.barra-movil').style.display = 'none';
+    
   });
   await p.waitForLoadState('networkidle');
 
@@ -35,14 +36,13 @@ for (const ancho of anchos) {
   // Comparador con 3 tratamientos
   const comp = p.locator('#comparador');
   await comp.scrollIntoViewIfNeeded();
-  await p.check('#comp-peeling');
+  await p.click('label[for=comp-peeling]');
   await p.locator('#tratamientos').screenshot({ path: join(salida, `comparador-${ancho}.png`) });
 
   // Agenda: especialista, primer día con cupos, y ocupados visibles
   await p.locator('#agenda').scrollIntoViewIfNeeded();
-  await p.check('#ag-esp-quispe');
-  const dia = p.locator('#ag-dias input:not([aria-disabled="true"])').nth(2);
-  await dia.check();
+  await p.click('label[for=ag-esp-quispe]');
+  await p.locator('#ag-dias .opcion:has(input:not([aria-disabled="true"])) label').nth(2).click();
   await p.waitForSelector('#ag-horas input');
   const ocupados = await p.locator('#ag-horas input[aria-disabled="true"]').count();
   console.log(`${ancho}px: horarios ocupados/no disponibles = ${ocupados}`);

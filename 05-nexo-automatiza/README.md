@@ -22,6 +22,9 @@ node scripts/capturas.mjs   # con preview activo; usa Edge instalado
 node scripts/og.mjs         # regenera public/og.png
 ```
 
+## Diseño
+Pulido 2026-11: se mantienen la paleta tinta / papel / lima, el titular tachado y las sombras duras. Cabecera móvil de 53 px, héroe que cabe en una pantalla (lista de 4 pasos a 768 px, diagrama en escritorio) y entrada del héroe una sola vez.
+
 ## Capturas
 En `capturas/`: inicio, casos filtrados con modal, cotizador paso 2 y resultado, a 360, 768 y 1440 px.
 

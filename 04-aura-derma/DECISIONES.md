@@ -1,7 +1,7 @@
 # Decisiones
 
 - **Stack**: Astro 7 estático, CSS propio, sin Tailwind ni frameworks. JS solo en tres islas (`<script>` de componente): comparador, agenda y Libro de Reclamaciones. Sin React/Preact.
-- **Identidad**: salvia, crema y blanco; Instrument Serif para títulos y Albert Sans para texto. Tono de calma: sin fotos de antes/después ni promesas de resultados; el aviso médico es visible junto al comparador.
+- **Identidad (anterior, reemplazada en el rediseño 2026-11)**: salvia, crema y blanco; Instrument Serif para títulos y Albert Sans para texto. Tono de calma: sin fotos de antes/después ni promesas de resultados; el aviso médico es visible junto al comparador.
 - **Comparador**: la tabla se renderiza completa en el servidor (los 8 tratamientos); el JS solo oculta filas y limita a 3. Sin JS se ven todos. En pantallas menores a 60rem la tabla pasa a tarjetas con etiquetas `data-label`.
 - **Horarios ocupados simulados** (`src/lib/horarios.ts`): para cada (fecha, especialista) se siembra mulberry32 con el hash FNV-1a de `aura-derma|AAAA-MM-DD|id`, con 38 % de probabilidad de ocupado y mínimo de 3 libres por día. Determinista, sin almacenamiento; documentado también en la propia página.
 - **Zona horaria**: Lima es UTC-5 sin horario de verano, así que se calcula con desplazamiento fijo (sin depender de la zona del navegador). Se exige 60 min de anticipación el mismo día.
@@ -11,7 +11,7 @@
 - **Consentimiento Ley 29733**: casilla obligatoria con enlace a `/privacidad/` (abre en otra pestaña, con aviso), que menciona los datos de salud como sensibles.
 - **Libro de Reclamaciones**: formulario validado con número de hoja `LR-DEMO-AAAA-NNNNNN` generado en el cliente; sin envío.
 - **Seguridad**: CSP estricta en `public/_headers`; no hay scripts ni estilos en línea (solo JSON-LD, que no se ejecuta). `noindex` mientras sea demo.
-- **Sin mapa incrustado**: evita terceros y CSP; la ubicación es texto con dirección ficticia.
+- **Mapa**: (rediseño 2026-11) botón «Ver mapa de la zona» que crea un iframe de OpenStreetMap solo al hacer clic, con nota de conexión a un tercero y de dirección ficticia; `frame-src https://www.openstreetmap.org` en `public/_headers`.
 - **Fotos**: solo dos, verificadas. Se descartó una tercera (procedimiento capilar) por no encajar con la marca.
 
 ## Cambios tras la revisión (UX, accesibilidad, SEO, legal)
@@ -25,3 +25,24 @@
 - **SEO**: `robots.txt` con `Allow: /`; la 404 sin canonical ni og:url; JSON-LD con `<` escapado; CSP con `object-src 'none'`; cache de `og.png` y favicon; preload de los 3 pesos; hero con ancho 1280.
 - **Pendiente hasta tener dominio**: `og:image`, `og:url`, `twitter:image` y `canonical` siguen relativos (convención del portafolio); al desplegar hay que pasarlos a URL absoluta y añadir `url`/`image` al JSON-LD.
 - **No aplicado**: no se añadió `Cross-Origin-Opener-Policy` (opcional, sin beneficio en una demo estática). El enlace a privacidad sigue abriéndose en otra pestaña (avisado), para no perder el formulario.
+
+## Rediseño 2026-11
+- **Dirección**: «Editorial de piel», una revista de dermatología en porcelana y tinta con acento óxido. Paleta `#f5f1ec` / `#ebe4dc` / `#221d1a` / `#8a3324` (más un óxido claro `#eaa592` solo sobre fondo tinta). Fuentes: Bodoni Moda (400 y cursiva, titulares) + Manrope (400 y 600, texto); las anteriores (Instrument Serif, Albert Sans) se quitaron de `public/fonts` y de `package.json`. Sin salvia, sin botones píldora (botones rectos, el secundario es un enlace con subrayado que se dibuja).
+- **Conservado**: toda la lógica de las islas (comparador, agenda, Libro de Reclamaciones), horarios ocupados simulados, validaciones, textos legales, aviso médico, «Ejemplo de demo», DNI fuera del mensaje de WhatsApp, ids y `data-*`.
+- **Secciones rehechas**: héroe de pantalla completa (titular grande a la izquierda, foto a sangre a la derecha sin caja redondeada, dato duro: 30–40 min / 4 especialistas / S/ 180 referencial); comparador como tabla editorial entre filetes (en celular, fichas sin cajas); especialistas como lista tipográfica grande sobre banda de tinta; primera consulta con foto a sangre y cifra gigante «30–40 min» (sin círculos numerados); agenda con título fijo a la izquierda y formulario a la derecha, sin círculos numerados; testimonios con una cita enorme; preguntas con título fijo; ubicación en banda óxido con la dirección como momento tipográfico; pie en tinta. Una sola etiqueta en mayúsculas en el inicio (la línea del héroe).
+- **Hallazgo MEDIA, texto libre de salud**: el campo «Motivo» ya no es un texto libre. Ahora es una lista de 6 motivos generales (`MOTIVOS_GENERALES` en `src/lib/validaciones.ts`) y solo ese motivo viaja en el mensaje de WhatsApp, con aviso claro («Tus detalles de salud no viajan por WhatsApp»). Se añadió `validarMotivoGeneral` y 3 pruebas nuevas; las existentes siguen igual. Privacidad y preguntas frecuentes actualizadas.
+- **Hallazgo MEDIA, cabecera + barra móvil**: se quitó la barra fija inferior «Reservar cita». La cabecera móvil mide 57 px (18 % antes, ahora 7 %) y lleva «Reservar» y «Menú» dentro; la franja de demo ya no es fija.
+- **Hallazgo BAJA, objetivos táctiles**: enlaces del menú móvil (56 px de alto, ancho completo al abrir), teléfono del héroe, del pie y de ubicación con mínimo 44 px.
+- **Hallazgo BAJA, casillas bajo la etiqueta**: la casilla del comparador y las opciones de la agenda ya no cubren la etiqueta (se ocultan sin posicionarse encima); el clic va a la etiqueta.
+- **Fotos**: las dos existentes (Gustavo Fring, Pexels), reutilizadas; no se pudo verificar una tercera en Unsplash/Pexels. El crédito va una sola vez en el pie.
+- **Objetivo táctil conocido**: el verificador marca un ERROR a 360 px en el enlace de «política de privacidad» / «Libro de Reclamaciones» dentro de un párrafo de texto legal (privacidad y términos, 109×23 px). WCAG 2.5.8 exime los enlaces dentro de una frase; se deja así a propósito.
+- **Avisos del verificador revisados**: los de «objetivo táctil» del menú móvil se miden con el menú cerrado (al abrirlo los enlaces miden 320×56 px); los de «contraste sobre imagen» son enlaces `.dibuja` sobre fondo liso.
+
+### Correcciones tras la revisión del rediseño (2026-11)
+- UX: «Quiénes te atienden» con tilde; cabecera opaca; Testimonios reordenado (título, sello y cita grande a la izquierda, citas cortas a la derecha); comparador con una sola nota bajo la tabla (caption solo para lectores); menos relleno inferior en Especialistas; DNI con `autocomplete="off"` y `spellcheck="false"`; marca con `translate="no"`.
+- Legal: aviso y FAQ precisos (viaja un motivo general, que sigue siendo dato de salud, y el tratamiento de interés si se elige); Privacidad con «Tratamiento de interés» y D.S. 016-2024-JUS; Términos con «Cambios y cancelación de citas» (24 h); Libro de Reclamaciones sin casilla bloqueante (párrafo informativo, sin cambiar las demás validaciones).
+- SEO: JSON-LD con horario partido (9–13 y 15–19); pie con enlace a las dos fotos de Pexels.
+- Mapa de San Isidro cargado con un clic (ver «Mapa» arriba); se quitó el esquema SVG provisional.
+- Pendiente a propósito: acordeón de «Tus datos», foto del héroe más alta a 768 px, `dist` limpio antes de desplegar.
+
+- (Orquestador) Enlaces dentro de párrafos con `padding-block: .3em`: área táctil ≥ 24 px (WCAG 2.5.8) sin mover el texto; el verificador queda sin ERROR.

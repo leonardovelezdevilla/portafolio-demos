@@ -5,14 +5,41 @@ const base = enInicio ? '' : '/';
 <header class="cabecera">
   <div class="contenedor cabecera__in">
     <a class="marca" href="/">Kuro <small>Barranco</small></a>
-    <nav class="nav" aria-label="Principal">
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu-nav" hidden>
+      <span class="menu-btn__barras" aria-hidden="true"></span> <span data-menu-txt>Menú</span>
+    </button>
+    <nav class="nav" id="menu-nav" aria-label="Principal">
       <ul>
+        {!enInicio && <li><a href="/">Inicio</a></li>}
         <li><a href={`${base}#historia`}>Historia</a></li>
         <li><a href={`${base}#carta`}>Carta</a></li>
         <li><a href={`${base}#omakase`}>Omakase</a></li>
         <li><a href={`${base}#visitanos`}>Visítanos</a></li>
       </ul>
     </nav>
-    <a class="boton boton--oro" href={`${base}#reserva`}>Reservar</a>
+    <a class="boton boton--oro cabecera__reservar" href={`${base}#reserva`}>Reservar</a>
   </div>
 </header>
+
+<script>
+  const btn = document.getElementById('menu-btn') as HTMLButtonElement | null;
+  const nav = document.getElementById('menu-nav');
+  if (btn && nav) {
+    btn.hidden = false;
+    const abrir = (v: boolean) => {
+      btn.setAttribute('aria-expanded', String(v));
+      const t = btn.querySelector('[data-menu-txt]');
+      if (t) t.textContent = v ? 'Cerrar' : 'Menú';
+      document.documentElement.classList.toggle('menu-abierto', v);
+    };
+    btn.addEventListener('click', () => abrir(btn.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) abrir(false); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { abrir(false); btn.focus(); }
+    });
+    window.addEventListener('scroll', () => { if (btn.getAttribute('aria-expanded') === 'true' && window.scrollY > 40) abrir(false); }, { passive: true });
+    document.addEventListener('click', (e) => {
+      if (btn.getAttribute('aria-expanded') === 'true' && !(e.target as HTMLElement).closest('.cabecera')) abrir(false);
+    });
+  }
+</script>

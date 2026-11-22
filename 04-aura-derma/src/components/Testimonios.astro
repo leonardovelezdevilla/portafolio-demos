@@ -6,23 +6,22 @@ const [grande, ...otros] = [
 ];
 ---
 
-<section class="seccion seccion--salvia" aria-labelledby="test-titulo">
+<section class="seccion" aria-labelledby="test-titulo">
   <div class="contenedor">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Experiencias</p>
-      <h2 id="test-titulo">Lo que valoran quienes nos visitan</h2>
-      <p class="sello"><span class="sello-demo">Ejemplo de demo</span> Testimonios ficticios, escritos para esta demostración.</p>
-    </div>
     <div class="tests">
-      <blockquote class="tests__grande">
-        <p>«{grande.t}»</p>
-        <footer>{grande.q} · <span class="sello-demo">Ejemplo de demo</span></footer>
-      </blockquote>
+      <div class="tests__izq">
+        <h2 id="test-titulo" class="test-tit">Lo que valoran <em>quienes nos visitan</em></h2>
+        <p class="sello"><span class="sello-demo">Ejemplo de demo</span> Testimonios ficticios, escritos para esta demostración.</p>
+        <blockquote class="tests__grande">
+          <p>{grande.t}</p>
+          <footer>{grande.q} · <span class="sello-demo">Ejemplo de demo</span></footer>
+        </blockquote>
+      </div>
       <div class="tests__otros">
         {
           otros.map((i) => (
             <blockquote>
-              <p>«{i.t}»</p>
+              <p>{i.t}</p>
               <footer>{i.q} · <span class="sello-demo">Ejemplo de demo</span></footer>
             </blockquote>
           ))
@@ -33,12 +32,17 @@ const [grande, ...otros] = [
 </section>
 
 <style>
+  .test-tit {
+    max-width: 52rem;
+  }
   .sello {
+    margin-bottom: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 0.75rem;
     align-items: center;
     color: var(--tinta-suave);
+    margin-bottom: clamp(1rem, 3vw, 2rem);
   }
   .sello :global(.sello-demo),
   .tests :global(.sello-demo) {
@@ -46,30 +50,47 @@ const [grande, ...otros] = [
   }
   .tests {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
   }
   @media (min-width: 62rem) {
     .tests {
-      grid-template-columns: 1.4fr 1fr;
-      gap: 4rem;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 5rem;
       align-items: center;
     }
   }
   blockquote {
     margin: 0;
   }
+  .tests__grande {
+    position: relative;
+    padding-top: 4.5rem;
+    margin-top: 2.5rem;
+  }
+  .tests__grande::before {
+    content: '“';
+    position: absolute;
+    top: -0.35em;
+    left: -0.05em;
+    font: 400 9rem/1 var(--serif);
+    color: var(--oxido);
+  }
   .tests__grande p {
-    font: 400 clamp(1.8rem, 4.2vw, 2.8rem) / 1.2 var(--serif);
-    color: var(--salvia-900);
+    font: italic 400 clamp(2rem, 4.8vw, 3.9rem) / 1.08 var(--serif);
+    letter-spacing: -0.015em;
+    color: var(--tinta);
+    margin-bottom: 1.25rem;
+  }
+  .tests__otros {
+    padding-top: 0.5rem;
   }
   .tests__otros blockquote {
-    padding-block: 1.25rem;
-    border-top: 1px solid var(--salvia-500);
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--tinta);
   }
   .tests__otros p {
-    font-size: 1.1rem;
-    color: var(--salvia-900);
-    margin-bottom: 0.5rem;
+    font: 400 1.5rem/1.25 var(--serif);
+    margin-bottom: 0.6rem;
   }
   footer {
     font-size: 0.92rem;

@@ -180,3 +180,6 @@ legend { padding: 0; margin-bottom: 0.5rem; font-weight: 700; color: var(--azul-
   .franja-demo, .cab, .pie, .skip, .barra-movil, .no-imprimir { display: none !important; }
   body { background: #fff; font-size: 11pt; }
 }
+
+/* Enlaces dentro de párrafos: área táctil de al menos 24 px (WCAG 2.5.8) sin mover el texto. */
+p a:not([class]) { padding-block: .3em; }

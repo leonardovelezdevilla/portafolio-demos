@@ -2,123 +2,318 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import Tarjeta from '../components/Tarjeta.astro';
+import Plano from '../components/Plano.astro';
+import Agenda from '../components/Agenda.astro';
 import { FOTOS } from '../data/fotos';
-import { departamentos, DISTRITOS } from '../data/departamentos';
-const destacados = departamentos.filter((d) => d.etapa === 'entrega inmediata');
-const porDistrito = DISTRITOS.map((n) => ({ n, c: departamentos.filter((d) => d.distrito === n).length }));
+import { departamentos, DISTRITOS, type Departamento, type FotoClave } from '../data/departamentos';
+import { soles, solesDec } from '../lib/formato';
+import { simular, tasaMensual, TEA_EJEMPLO } from '../lib/hipoteca';
+
 const jsonld = {
   '@context': 'https://schema.org',
   '@type': 'RealEstateAgent',
   name: 'Habitat Sur (marca ficticia, demo de portafolio)',
   description: 'Inmobiliaria ficticia de departamentos en Chorrillos y Lima Sur.',
   areaServed: [...DISTRITOS],
-  address: { '@type': 'PostalAddress', addressLocality: 'Lima', addressCountry: 'PE' },
+  url: '/',
+  image: '/og.png',
+  address: { '@type': 'PostalAddress', streetAddress: 'Av. Ejemplo 123 (dirección ficticia)', addressLocality: 'Chorrillos, Lima', addressCountry: 'PE' },
   telephone: '+51900000000',
 };
-const foto = FOTOS['ext-a'];
+
+const hero = FOTOS['ext-b'];
+const desde = Math.min(...departamentos.map((d) => d.precio));
+
+// Proyectos (agrupados por nombre) y distritos, calculados al construir.
+const proyectosMap = new Map<string, Departamento[]>();
+for (const d of departamentos) proyectosMap.set(d.proyecto, [...(proyectosMap.get(d.proyecto) ?? []), d]);
+const proyectos = [...proyectosMap.entries()].map(([nombre, ds]) => {
+  const tipo = [...ds].sort((a, b) => b.dormitorios - a.dormitorios)[0];
+  return { nombre, ds, tipo, distrito: ds[0].distrito, etapa: ds[0].etapa, entrega: ds[0].entrega, desde: Math.min(...ds.map((x) => x.precio)), foto: FOTOS[ds[0].fotos[0]], slug: ds[0].slug };
+});
+const elegidos = ['Residencial Morro Solar', 'Terrazas de Chorrillos', 'Conjunto Jardín Lurín'].map((n) => proyectos.find((p) => p.nombre === n)!);
+const rango = (xs: number[], u: string) => { const a = Math.min(...xs), b = Math.max(...xs); return a === b ? `${a} ${u}` : `${a} a ${b} ${u}`; };
+
+const fotoDistrito: Record<string, FotoClave> = { 'Chorrillos': 'ext-a', 'Villa El Salvador': 'ext-f', 'Villa María del Triunfo': 'ext-c', 'Lurín': 'ext-d', 'San Juan de Miraflores': 'ext-e' };
+const distritos = DISTRITOS.map((n) => { const ds = departamentos.filter((d) => d.distrito === n); return { n, c: ds.length, desde: Math.min(...ds.map((d) => d.precio)), foto: FOTOS[fotoDistrito[n]] }; });
+
+// Ejemplo de cuota (Morro Solar 502, 20 % de inicial, 20 años, TEA de ejemplo)
+const ej = departamentos.find((d) => d.slug === 'morro-solar-502')!;
+const inicial = Math.round(ej.precio * 0.2);
+const r = simular({ precio: ej.precio, inicial, plazoAnios: 20, teaPct: TEA_EJEMPLO });
+const tm = (tasaMensual(TEA_EJEMPLO) * 100).toLocaleString('es-PE', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const pctCapital = Math.round((r.financiado / r.totalPagado) * 100);
 ---
 <Base titulo="Habitat Sur · Departamentos en Lima Sur (demo)" descripcion="Demo de inmobiliaria: departamentos de ejemplo en Chorrillos y Lima Sur con filtros, simulador referencial de crédito y agenda de visita por WhatsApp." ruta="/" jsonld={jsonld}>
-  <section class="hero">
+  <section class="hero" aria-labelledby="h1">
+    <Image class="hero-img" src={hero.src} alt={hero.alt} width={1600} height={1067} widths={[640, 1024, 1600]} sizes="100vw" format="webp" quality={60} loading="eager" fetchpriority="high" decoding="async" />
     <div class="contenedor hero-in">
       <div class="hero-txt">
-        <p class="sobretitulo">Chorrillos y Lima Sur</p>
-        <h1>Departamentos con la cuenta clara desde el primer día.</h1>
-        <p class="lead">Compara, simula una cuota referencial y agenda tu visita sin dar vueltas. Diez departamentos de ejemplo en cinco distritos del sur de Lima, desde planos hasta entrega inmediata.</p>
-        <p class="acc"><a class="btn btn-primario" href="/departamentos/">Ver departamentos</a> <a class="btn" href="/simulador/">Simular una cuota</a></p>
+        <h1 id="h1">Departamentos con la cuenta clara, de Chorrillos a Lima Sur.</h1>
+        <p class="lead">Diez departamentos de ejemplo en cinco distritos: compara, simula una cuota referencial y agenda tu visita por WhatsApp.</p>
+        <p class="acc"><a class="btn btn-primario" href="/departamentos/">Ver los departamentos</a> <a class="btn" href="#visita">Agendar visita</a></p>
       </div>
-      <figure class="hero-foto">
-        <div class="hf-w">
-          <Image src={foto.src} alt={foto.alt} width={720} height={1080} widths={[420, 720]} sizes="(min-width: 900px) 420px, 90vw" format="webp" quality={74} loading="eager" fetchpriority="high" decoding="async" />
-          <span class="sello">Foto referencial, no es el proyecto</span>
-        </div>
-        <figcaption>Foto de {foto.autor}.</figcaption>
-      </figure>
+      <aside class="ficha-flot" aria-label="Resumen de la oferta de ejemplo">
+        <p class="ff-etq">Desde</p>
+        <p class="ff-monto">{soles(desde)}</p>
+        <p class="ff-nota">Precio total de ejemplo, sin IGV ni gastos notariales y registrales.</p>
+        <ul class="ff-dist">
+          {distritos.map((z) => <li><a href={`/departamentos/?distrito=${encodeURIComponent(z.n)}`}><span>{z.n}</span><span>{z.c}</span></a></li>)}
+        </ul>
+      </aside>
+    </div>
+    <p class="hero-cred">Foto referencial de fachada, no es el proyecto. {hero.autor}.</p>
+  </section>
+
+  <section class="seccion proyectos" id="proyectos" aria-labelledby="pro-t">
+    <div class="contenedor">
+      <div class="pro-cab">
+        <h2 id="pro-t">Proyectos con su plano a la vista</h2>
+        <p class="lead">Tres de los seis proyectos de ejemplo. Los planos son esquemas generados para esta demo, no a escala.</p>
+      </div>
+
+      {elegidos.map((p, i) => (
+        <article class={`proy p-${'abc'[i]}`} aria-labelledby={`pn-${i}`}>
+          <div class="pr-foto"><Image src={p.foto.src} alt={p.foto.alt} width={960} height={1100} widths={[480, 760, 960]} sizes="(min-width: 900px) 56vw, 100vw" format="webp" quality={72} loading="lazy" decoding="async" /></div>
+          <div class="pr-txt">
+            <h3 id={`pn-${i}`}>{p.nombre}</h3>
+            <p class="pr-meta">{p.distrito} · {p.etapa === 'entrega inmediata' ? 'Entrega inmediata' : `${p.etapa[0].toUpperCase() + p.etapa.slice(1)}, entrega ${p.entrega}`}</p>
+            <dl class="pr-datos">
+              <div><dt>Desde</dt><dd>{soles(p.desde)}</dd></div>
+              <div><dt>Área</dt><dd>{rango(p.ds.map((x) => x.area), 'm²')}</dd></div>
+              <div><dt>Dormitorios</dt><dd>{rango(p.ds.map((x) => x.dormitorios), '')}</dd></div>
+            </dl>
+            <p class="pr-enl">
+              {p.ds.map((d) => <a class="link-sub" href={`/departamento/${d.slug}/`}>{d.nombre}<span class="sr-only">, ficha del departamento</span> <Icon name="arrow-right" size={16} /></a>)}
+            </p>
+          </div>
+          <div class="pr-plano">
+            <Plano dormitorios={p.tipo.dormitorios} banos={p.tipo.banos} area={p.tipo.area} id={`plano-${i}`} titulo={`Plano esquemático de ${p.tipo.nombre}`} pie={false} />
+            <p class="pr-pie">Plano tipo de {p.tipo.nombre}: {p.tipo.dormitorios} {p.tipo.dormitorios === 1 ? 'dormitorio' : 'dormitorios'}, {p.tipo.area} m².</p>
+          </div>
+        </article>
+      ))}
+
+      <p class="mas"><a class="btn btn-primario" href="/departamentos/">Ver los {departamentos.length} departamentos y filtrar</a></p>
+      <p class="nota">Precios de ejemplo como precio total, sin desglose de IGV ni gastos notariales y registrales. Equivalente en dólares con un tipo de cambio fijo de demo, no de mercado. Áreas, entregas y equipamiento son referenciales.</p>
     </div>
   </section>
 
-  <section class="seccion zonas" aria-labelledby="zon-t">
+  <section class="seccion oscuro cuota" id="cuota" aria-labelledby="cuo-t">
     <div class="contenedor">
-      <p class="sobretitulo">Dónde buscamos</p>
-      <h2 id="zon-t">Cinco distritos del sur de Lima</h2>
-      <ul class="zonas-lista">
-        {porDistrito.map((z) => (
-          <li><a href={`/departamentos/?distrito=${encodeURIComponent(z.n)}`}><span class="z-n">{z.n}</span><span class="z-c">{z.c} {z.c === 1 ? 'departamento' : 'departamentos'}</span></a></li>
+      <h2 id="cuo-t">Así se calcula tu cuota</h2>
+      <p class="lead">Un caso de ejemplo con {ej.nombre}: {soles(ej.precio)}, cuota inicial de {soles(inicial)} (20 %), 20 años y una TEA de {TEA_EJEMPLO} % que no es la de ningún banco.</p>
+      <div class="cu-grid">
+        <div class="cu-fig">
+          <p class="cu-etq">Cuota mensual referencial</p>
+          <p class="cu-monto">{solesDec(r.cuota)}</p>
+          <svg class="cu-barra" viewBox="0 0 100 12" preserveAspectRatio="none" role="img" aria-label={`De lo que se paga en total, ${pctCapital} % es el monto financiado y ${100 - pctCapital} % son intereses.`} focusable="false">
+            <rect class="cb-cap" width={pctCapital} height="12" />
+            <rect class="cb-int" x={pctCapital} width={100 - pctCapital} height="12" />
+          </svg>
+          <p class="cu-leg" aria-hidden="true"><span class="k k1"></span>Monto financiado, {pctCapital} % <span class="k k2"></span>Intereses, {100 - pctCapital} %</p>
+          <p class="cu-leyenda">Total pagado en {r.meses} cuotas: {soles(r.totalPagado)}, de los cuales {soles(r.interesesTotales)} son intereses.</p>
+        </div>
+        <div class="cu-pasos">
+          <p class="cu-formula">cuota = monto × i ÷ (1 − (1 + i)<sup>−n</sup>)</p>
+          <dl>
+            <div><dt>Monto a financiar</dt><dd>{soles(r.financiado)}</dd><dd class="cu-exp">Precio menos cuota inicial.</dd></div>
+            <div><dt>i, tasa efectiva mensual</dt><dd>{tm} %</dd><dd class="cu-exp">La TEA de {TEA_EJEMPLO} % llevada a un mes.</dd></div>
+            <div><dt>n, número de cuotas</dt><dd>{r.meses}</dd><dd class="cu-exp">20 años por 12 meses.</dd></div>
+          </dl>
+          <p class="cu-aviso"><Icon name="triangle-alert" size={18} /> <span><strong>Ejemplo de demo, referencial.</strong> No es una oferta de crédito ni reemplaza la evaluación de una entidad financiera. No incluye seguros ni comisiones; la TCEA no se calcula.</span></p>
+          <p><a class="btn btn-primario" href="/simulador/">Probar con tus propios datos <Icon name="arrow-right" size={20} /></a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion distritos" id="distritos" aria-labelledby="dis-t">
+    <div class="contenedor">
+      <h2 id="dis-t">Cinco distritos del sur de Lima</h2>
+      <p class="lead">Elige un distrito y mira solo sus departamentos. Fotos referenciales de fachadas: no son de los proyectos publicados.</p>
+      <ul class="mosaico">
+        {distritos.map((z, i) => (
+          <li class={`m-${i + 1}`}>
+            <a href={`/departamentos/?distrito=${encodeURIComponent(z.n)}`}>
+              <Image src={z.foto.src} alt="" width={800} height={i === 0 ? 1100 : 560} widths={[400, 800]} sizes={i === 0 ? '(min-width: 900px) 40vw, 100vw' : '(min-width: 900px) 30vw, 100vw'} format="webp" quality={70} loading="lazy" decoding="async" />
+              <span class="m-txt">
+                <span class="m-n">{z.n}</span>
+                <span class="m-d">{z.c} {z.c === 1 ? 'departamento' : 'departamentos'} · desde {soles(z.desde)}</span>
+              </span>
+            </a>
+          </li>
         ))}
       </ul>
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="dest-t">
-    <div class="contenedor">
-      <p class="sobretitulo">Para mudarte ya</p>
-      <h2 id="dest-t">Entrega inmediata</h2>
-      <div class="dest-grid">
-        {destacados.map((d, i) => <Tarjeta d={d} grande={i === 0} nivel={3} />)}
+  <section class="seccion bronce-banda" id="visita" aria-label="Agenda de visita">
+    <div class="contenedor vis">
+      <div class="vis-txt">
+        <h2>Ven a ver el departamento</h2>
+        <p class="lead">Elige día y franja y el mensaje sale listo por WhatsApp. No guardamos nada en esta demo.</p>
+        <dl class="vis-horas">
+          <div><dt>Lunes a viernes</dt><dd>10:00 a 13:00 y 15:00 a 18:00</dd></div>
+          <div><dt>Sábados</dt><dd>10:00 a 13:00</dd></div>
+          <div><dt>Sala de ventas</dt><dd>Av. Ejemplo 123, Chorrillos (dirección ficticia)</dd></div>
+        </dl>
+        <div class="mapa" data-mapa>
+          <button type="button" class="btn" data-mapa-btn aria-controls="mapa-caja">Ver mapa de la zona</button>
+          <div id="mapa-caja" class="mapa-caja" data-mapa-caja hidden></div>
+          <p class="mapa-nota">Al cargar el mapa tu navegador se conecta a OpenStreetMap. Muestra solo la zona de Chorrillos: la sala de ventas y su dirección son ficticias.</p>
+        </div>
       </div>
-      <p class="mas"><a href="/departamentos/">Ver los 10 departamentos y filtrar</a></p>
-      <p class="nota">Precios de ejemplo expresados como precio total, sin desglose de IGV ni gastos notariales y registrales. Equivalente en dólares con un tipo de cambio fijo de demo (S/ 3,75 por US$), no de mercado. Áreas, entregas y equipamiento son referenciales.</p>
-    </div>
-  </section>
-
-  <section class="seccion proceso" id="proceso" aria-labelledby="pro-t">
-    <div class="contenedor">
-      <p class="sobretitulo">Cómo trabajamos</p>
-      <h2 id="pro-t">Tres pasos, sin letra chica escondida</h2>
-      <ol class="pasos">
-        <li><span class="num" aria-hidden="true">01</span><div><h3>Filtra y compara</h3><p>Por distrito, dormitorios, precio, área y etapa. La búsqueda queda en el enlace para que la compartas.</p></div></li>
-        <li><span class="num" aria-hidden="true">02</span><div><h3>Simula tu cuota</h3><p>Cuota mensual referencial con tu propia TEA. Dejamos claro lo que el cálculo no incluye.</p></div></li>
-        <li><span class="num" aria-hidden="true">03</span><div><h3>Agenda la visita</h3><p>Eliges día y franja y el mensaje sale listo por WhatsApp. No guardamos nada en esta demo.</p></div></li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="seccion oscuro" aria-labelledby="sim-t">
-    <div class="contenedor sim-banda">
-      <div>
-        <p class="sobretitulo">Simulador referencial</p>
-        <h2 id="sim-t">Una cuota de ejemplo antes de ir al banco</h2>
-        <p class="lead">Método francés y TEA que tú editas. No es una oferta ni reemplaza la evaluación de una entidad financiera.</p>
-      </div>
-      <p><a class="btn btn-primario" href="/simulador/">Abrir el simulador <Icon name="arrow-right" size={20} /></a></p>
+      <Agenda departamento="Visita a la sala de ventas" id="visita-ag" compacto />
     </div>
   </section>
 </Base>
 <style>
-  .hero { border-bottom: 2px solid var(--tinta); }
-  .hero-in { display: grid; gap: 2.5rem; padding-block: clamp(2.5rem, 7vw, 5rem); align-items: center; }
-  .hero-txt h1 { margin-bottom: .5em; }
+  /* Héroe: fachada a sangre y ficha flotante */
+  .hero { position: relative; isolation: isolate; min-height: calc(100svh - var(--cab)); display: grid; align-items: end; background: var(--tinta); color: var(--papel); overflow: hidden; }
+  .hero-img { position: absolute; inset: 0; width: 100%; max-width: 100%; height: 100%; object-fit: cover; z-index: -2; animation: asienta 1.6s cubic-bezier(.2, .7, .2, 1) both; }
+  .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(22, 33, 42, .92) 0%, rgba(22, 33, 42, .72) 46%, rgba(22, 33, 42, .25) 100%), linear-gradient(0deg, rgba(22, 33, 42, .55), transparent 45%); }
+  .hero-in { display: grid; gap: 2rem; padding-block: clamp(2.5rem, 7vw, 5rem) clamp(3rem, 6vw, 4.5rem); align-items: end; }
+  .hero h1 { margin-bottom: .45em; max-width: 14ch; }
+  .hero .lead { color: #e4e6e8; }
+  .hero-txt > * { animation: sube .9s cubic-bezier(.2, .7, .2, 1) both; }
+  .hero-txt > :nth-child(2) { animation-delay: .12s; }
+  .hero-txt > :nth-child(3) { animation-delay: .22s; }
+  .ficha-flot { animation: sube .9s .3s cubic-bezier(.2, .7, .2, 1) both; background: var(--papel); color: var(--tinta); padding: 1.3rem 1.4rem 1rem; max-width: 24rem; border-top: 4px solid var(--sol); }
+  .ff-etq { margin: 0; font-size: .9rem; color: var(--tinta-2); }
+  .ff-monto { font: 400 clamp(2.6rem, 6vw, 3.6rem)/1 var(--f-titulo); margin: 0 0 .3rem; }
+  .ff-nota { font-size: .82rem; color: var(--tinta-2); margin: 0 0 .8rem; }
+  .ff-dist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--tinta); }
+  .ff-dist a { display: flex; justify-content: space-between; gap: 1rem; min-height: 44px; align-items: center; color: var(--tinta); text-decoration: none; border-bottom: 1px solid var(--linea); font-size: .95rem; transition: padding-left .2s ease, background-color .2s ease; }
+  .ff-dist a:hover { padding-left: .5rem; background: var(--papel-2); color: var(--tinta); }
+  .ff-dist li:last-child a { border-bottom: 0; }
   .acc { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
-  .hero-foto { margin: 0; }
-  .hf-w { position: relative; }
-  .hf-w::before { content: ''; position: absolute; inset: 14px -14px -14px 14px; border: 2px solid var(--sol); }
-  .hf-w img { width: 100%; max-height: 520px; object-fit: cover; border: 2px solid var(--tinta); position: relative; z-index: 1; background: var(--papel-2); }
-  .sello { position: absolute; z-index: 2; left: 0; bottom: 0; padding: .4rem .7rem; font: 600 .85rem/1.1 var(--f-cuerpo); background: var(--papel); color: var(--tinta); border-top: 2px solid var(--tinta); border-right: 2px solid var(--tinta); }
-  .hero-foto figcaption { font-size: .85rem; color: var(--tinta-2); margin-top: 1.4rem; }
-  @media (min-width: 900px) { .hero-in { grid-template-columns: 1.15fr .85fr; } .hf-w img { max-height: 600px; aspect-ratio: 2 / 3; } }
-  .zonas { padding-block: clamp(2rem, 5vw, 3.5rem); border-bottom: 2px solid var(--tinta); background: var(--papel-2); }
-  .zonas h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
-  .zonas-lista { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); border: 2px solid var(--tinta); background: var(--blanco); }
-  .zonas-lista li { border-bottom: 2px solid var(--tinta); }
-  .zonas-lista li:last-child { border-bottom: 0; }
-  @media (min-width: 900px) { .zonas-lista li { border-bottom: 0; border-right: 2px solid var(--tinta); } .zonas-lista li:last-child { border-right: 0; } }
-  .zonas-lista a { display: grid; gap: .1rem; padding: 1rem 1.2rem; min-height: 64px; color: var(--tinta); text-decoration: none; }
-  .zonas-lista a:hover { background: var(--tinta); color: var(--papel); }
-  .z-n { font: 700 1.2rem/1.2 var(--f-titulo); }
-  .z-c { font-size: .9rem; }
-  .dest-grid { display: grid; gap: 1.5rem; margin-top: 2rem; }
-  @media (min-width: 900px) { .dest-grid { grid-template-columns: 1fr 1fr; } .dest-grid :global(.grande) { grid-column: 1 / -1; } }
-  .mas { margin-top: 2rem; font-weight: 600; }
-  .nota { font-size: .92rem; color: var(--tinta-2); max-width: 78ch; }
-  .proceso { background: var(--papel-2); border-block: 2px solid var(--tinta); }
-  .pasos { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 0; }
-  .pasos li { align-content: start; display: grid; grid-template-columns: 4.2rem 1fr; gap: 1rem; padding: 1.5rem 0; border-top: 2px solid var(--tinta); }
-  .pasos li:last-child { border-bottom: 2px solid var(--tinta); }
-  .num { font: 700 clamp(2.2rem, 7vw, 3.4rem)/1 var(--f-titulo); color: var(--sol-osc); }
-  .pasos h3 { margin-bottom: .3rem; }
-  .pasos p { margin: 0; color: var(--tinta-2); max-width: 56ch; }
-  @media (min-width: 860px) { .pasos { grid-template-columns: repeat(3, 1fr); gap: 2rem; } .pasos li { grid-template-columns: 1fr; border-bottom: 0 !important; } }
-  .sim-banda { display: grid; gap: 2rem; align-items: center; }
-  .sim-banda h2 { margin-bottom: .5em; }
-  @media (min-width: 860px) { .sim-banda { grid-template-columns: 1fr auto; } }
+  .hero-cred { position: absolute; right: var(--lado); bottom: .7rem; margin: 0; font-size: .78rem; color: #fff; text-shadow: 0 0 6px rgba(22, 33, 42, .9); text-align: right; max-width: 20rem; }
+  @keyframes sube { from { transform: translateY(22px); } to { transform: none; } }
+  @keyframes asienta { from { transform: scale(1.06); } to { transform: none; } }
+  @media (min-width: 900px) { .hero-in { grid-template-columns: 1fr auto; gap: 4rem; } }
+  @media (max-width: 899px) { .hero-cred { position: static; padding: 0 var(--lado) 1rem; text-align: left; max-width: none; } }
+
+  /* Proyectos: composición asimétrica con plano */
+  .proyectos { background: var(--papel); }
+  .pro-cab { display: grid; gap: .5rem 3rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+  .pro-cab h2 { max-width: 14ch; margin: 0; }
+  @media (min-width: 900px) { .pro-cab { grid-template-columns: 1fr 24rem; align-items: end; } .pro-cab .lead { margin: 0; } }
+  .proy { display: grid; gap: 1.4rem; margin-bottom: clamp(3rem, 8vw, 6rem); }
+  .pr-foto { overflow: hidden; background: var(--papel-2); }
+  .pr-foto img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; transition: transform .5s ease; }
+  .proy:hover .pr-foto img { transform: scale(1.02); }
+  .pr-txt h3 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-bottom: .2em; }
+  .pr-meta { color: var(--tinta-2); margin-bottom: 1.2rem; }
+  .pr-datos { margin: 0 0 1.2rem; border-top: 1px solid var(--tinta); }
+  .pr-datos div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--linea); }
+  .pr-datos dt { color: var(--tinta-2); }
+  .pr-datos dd { margin: 0; font-weight: 600; text-align: right; }
+  .pr-enl { display: flex; flex-wrap: wrap; gap: .2rem 1.6rem; margin: 0; }
+  .pr-enl a { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; color: var(--tinta); font-weight: 600; }
+  .pr-plano { margin: 0; }
+  .pr-pie { font-size: .85rem; color: var(--tinta-2); margin: .6rem 0 0; }
+  @media (min-width: 900px) {
+    .proy { grid-template-columns: repeat(12, 1fr); column-gap: 2rem; row-gap: 0; align-items: start; }
+    .pr-foto { grid-row: 1 / span 2; align-self: stretch; }
+    .pr-foto img { aspect-ratio: auto; height: 100%; min-height: 34rem; }
+    /* A: foto a la izquierda, texto y plano a la derecha */
+    .p-a .pr-foto { grid-column: 1 / 8; }
+    .p-a .pr-txt { grid-column: 8 / 13; grid-row: 1; padding-top: 1rem; }
+    .p-a .pr-plano { grid-column: 8 / 13; grid-row: 2; margin-top: 1rem; align-self: end; }
+    /* B: plano a la izquierda y foto más angosta a la derecha, desplazada */
+    .p-b .pr-foto { grid-column: 6 / 13; margin-top: 4rem; }
+    .p-b .pr-txt { grid-column: 1 / 6; grid-row: 1; }
+    .p-b .pr-plano { grid-column: 1 / 6; grid-row: 2; margin-top: 1rem; }
+    /* C: foto ancha y plano que la monta por abajo */
+    .p-c .pr-foto { grid-column: 1 / 13; grid-row: 1; }
+    .p-c .pr-foto img { min-height: 0; aspect-ratio: 21 / 9; }
+    .p-c .pr-txt { grid-column: 1 / 6; grid-row: 2; padding-top: 2rem; }
+    .p-c .pr-plano { grid-column: 7 / 13; grid-row: 2; margin-top: -8rem; position: relative; }
+  }
+  .mas { margin: 1rem 0 1.5rem; }
+  .nota { font-size: .88rem; color: var(--tinta-2); max-width: 78ch; margin: 0; }
+
+  /* Cuota: pieza oscura de ancho completo */
+  .cuota h2 { max-width: 16ch; }
+  .cu-grid { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
+  .cu-etq { margin: 0; color: var(--sol-claro); font-size: .95rem; }
+  .cu-monto { font: 400 clamp(3.6rem, 13vw, 9.5rem)/.95 var(--f-titulo); color: var(--sol-claro); margin: .1em 0 .3em; letter-spacing: -.02em; }
+  .cu-barra { display: block; width: 100%; height: 3rem; border: 1px solid var(--papel); }
+  .cb-cap { fill: var(--papel); }
+  .cb-int { fill: var(--sol-claro); }
+  .cu-leg { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem 1.2rem; margin: .7rem 0 0; font-size: .9rem; }
+  .cu-leg .k { display: inline-block; width: .9rem; height: .9rem; margin-right: .4rem; vertical-align: -.1rem; }
+  .k1 { background: var(--papel); }
+  .k2 { background: var(--sol-claro); }
+  .cu-leyenda { color: #c9ced2; font-size: .92rem; margin-top: .8rem; max-width: 52ch; }
+  .cu-formula { font: 400 clamp(1.5rem, 3.2vw, 2.1rem)/1.2 var(--f-titulo); border-bottom: 1px solid #4a5560; padding-bottom: 1rem; }
+  .cu-pasos dl { margin: 0 0 1.4rem; }
+  .cu-pasos dl div { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; padding: .8rem 0; border-bottom: 1px solid #4a5560; }
+  .cu-pasos dt { font-weight: 600; }
+  .cu-pasos dd { margin: 0; text-align: right; font-family: var(--f-titulo); font-size: 1.6rem; line-height: 1.1; }
+  .cu-pasos .cu-exp { grid-column: 1 / -1; text-align: left; font: 400 .9rem/1.4 var(--f-cuerpo); color: #c9ced2; }
+  .cu-aviso { display: grid; grid-template-columns: auto 1fr; gap: .6rem; font-size: .92rem; color: #dde0e3; margin-bottom: 1.6rem; }
+  .cu-aviso :global(svg) { margin-top: .25rem; color: var(--sol-claro); }
+  @media (min-width: 900px) { .cu-grid { grid-template-columns: 1.1fr .9fr; gap: 5rem; align-items: start; } }
+
+  /* Distritos: mosaico con foto */
+  .distritos { background: var(--papel-2); }
+  .distritos h2 { max-width: 16ch; }
+  .mosaico { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 1rem; }
+  .mosaico a { position: relative; display: block; height: 100%; min-height: 13rem; overflow: hidden; color: #fff; text-decoration: none; background: var(--tinta); }
+  .mosaico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+  .mosaico a:hover img { transform: scale(1.02); }
+  .mosaico a::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(22, 33, 42, .92) 0%, rgba(22, 33, 42, .55) 45%, rgba(22, 33, 42, .08) 100%); }
+  .m-txt { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 1.2rem 1.3rem; display: grid; gap: .2rem; }
+  .m-n { font: 400 clamp(1.9rem, 4vw, 2.7rem)/1.05 var(--f-titulo); background: linear-gradient(#fff, #fff) 0 100% / 0 2px no-repeat; justify-self: start; transition: background-size .25s ease; padding-bottom: .1em; }
+  .mosaico a:hover .m-n { background-size: 100% 2px; }
+  .m-d { font-size: .9rem; color: #e8eaec; }
+  @media (min-width: 700px) { .mosaico { grid-template-columns: repeat(2, 1fr); } .m-1 { grid-column: 1 / -1; } .mosaico a { min-height: 16rem; } }
+  @media (min-width: 900px) {
+    .mosaico { grid-template-columns: 1.15fr 1fr 1fr; grid-template-rows: 15rem 15rem; }
+    .m-1 { grid-column: 1; grid-row: 1 / span 2; }
+    .m-2 { grid-column: 2; grid-row: 1; } .m-3 { grid-column: 3; grid-row: 1; } .m-4 { grid-column: 2; grid-row: 2; } .m-5 { grid-column: 3; grid-row: 2; }
+    .mosaico a { min-height: 0; }
+  }
+
+  /* Visita: banda de bronce */
+  .bronce-banda { background: var(--sol-osc); color: #fff; }
+  .bronce-banda h2, .bronce-banda .lead { color: #fff; }
+  .bronce-banda .lead { max-width: 40ch; }
+  .vis { display: grid; gap: 2.5rem; align-items: start; }
+  .vis-horas { margin: 2rem 0 0; border-top: 1px solid rgba(255, 255, 255, .6); }
+  .vis-horas div { display: grid; gap: .1rem; padding: .8rem 0; border-bottom: 1px solid rgba(255, 255, 255, .6); }
+  .vis-horas dt { font-size: .9rem; }
+  .vis-horas dd { margin: 0; font: 400 1.35rem/1.25 var(--f-titulo); }
+  .mapa { margin-top: 1.6rem; }
+  .mapa-nota { font-size: .85rem; color: #fff; margin: .8rem 0 0; max-width: 46ch; }
+  .mapa-caja { margin-top: 1rem; border: 1px solid #fff; background: var(--papel); }
+  .mapa-caja :global(iframe) { display: block; width: 100%; height: 18rem; border: 0; }
+  .bronce-banda .btn { border-color: #fff; color: #fff; }
+  .bronce-banda .btn:hover { background: #fff; color: var(--sol-osc); }
+  .bronce-banda .ag-form .btn-primario, .bronce-banda .ag-ok .btn-primario { color: #fff; border-color: var(--sol); background: var(--sol); }
+  .bronce-banda .ag-ok .btn { border-color: var(--tinta); color: var(--tinta); }
+  @media (min-width: 900px) { .vis { grid-template-columns: .9fr 1.1fr; gap: 5rem; } .vis-txt { position: sticky; top: calc(var(--cab) + 1.5rem); align-self: start; } }
 </style>
+<script>
+  // Mapa que carga solo con un clic: hasta entonces no hay conexión con ningún tercero.
+  const raiz = document.querySelector<HTMLElement>('[data-mapa]');
+  if (raiz) {
+    const btn = raiz.querySelector<HTMLButtonElement>('[data-mapa-btn]')!;
+    const caja = raiz.querySelector<HTMLElement>('[data-mapa-caja]')!;
+    btn.addEventListener('click', () => {
+      if (caja.hidden) {
+        if (!caja.firstChild) {
+          const f = document.createElement('iframe');
+          f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=-77.045%2C-12.215%2C-76.995%2C-12.170&layer=mapnik';
+          f.title = 'Mapa de la zona de Chorrillos, Lima (OpenStreetMap); ubicación de ejemplo';
+          f.loading = 'lazy';
+          f.referrerPolicy = 'no-referrer';
+          caja.append(f);
+        }
+        caja.hidden = false; btn.textContent = 'Ocultar mapa';
+      } else { caja.hidden = true; btn.textContent = 'Ver mapa de la zona'; }
+    });
+  }
+</script>

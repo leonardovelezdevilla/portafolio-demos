@@ -2,9 +2,8 @@
 import { SERVICIOS, VEHICULOS } from '../data/precios';
 import Icon from './Icon.astro';
 ---
-<section class="seccion cot" id="cotizador" aria-labelledby="t-cot">
+<section class="seccion cot seccion--concreto" id="cotizador" aria-labelledby="t-cot">
   <div class="wrap">
-    <p class="etiqueta">Cotizador de mantenimiento</p>
     <h2 id="t-cot">Tu rango de precio en cuatro pasos</h2>
     <p class="intro">Elige tu vehículo, el kilometraje y los servicios. Te damos un rango en soles con IGV incluido. No pedimos tus datos para cotizar.</p>
 
@@ -12,6 +11,7 @@ import Icon from './Icon.astro';
     <form id="cot-form" class="caja" novalidate method="post" action="/404/" aria-label="Cotizador paso a paso">
       <noscript><p class="aviso">Para armar la cotización paso a paso se necesita JavaScript. Mientras tanto, mira el tarifario de arriba o escríbenos por <a href="https://wa.me/51935852637">WhatsApp</a>.</p></noscript>
 
+      <div class="ficha__cab" aria-hidden="true"><span class="mono">FICHA DE COTIZACIÓN</span><span class="mono">REF. TR-COT-DEMO</span></div>
       <ol class="pasos" id="cot-pasos" aria-label="Progreso del cotizador">
         <li data-ind="1"><span>1</span> Vehículo<small class="solo-lectores"></small></li>
         <li data-ind="2"><span>2</span> Kilometraje<small class="solo-lectores"></small></li>
@@ -39,7 +39,7 @@ import Icon from './Icon.astro';
       <div class="paso" data-paso="2">
         <div class="campo">
           <label for="km">2. ¿Cuántos kilómetros tiene?</label>
-          <p class="ayuda" id="km-ayuda">Mira el tablero. Puedes escribir un valor aproximado, por ejemplo 45 000.</p>
+          <p class="ayuda" id="km-ayuda">Mira el tablero. Puedes escribir un valor aproximado, por ejemplo 45,000.</p>
           <input id="km" name="km" inputmode="numeric" autocomplete="off" aria-describedby="km-ayuda e-km" />
           <p class="err" id="e-km" role="alert"></p>
         </div>
@@ -89,7 +89,7 @@ import Icon from './Icon.astro';
           <p class="err" id="e-cot-consent" role="alert"></p>
           <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos personales sensibles.</p>
           <div class="nav">
-            <a class="btn" id="cot-wa" href="https://wa.me/51935852637" aria-disabled="true"><Icon nombre="mensaje" tamano={20} /> Enviar por WhatsApp</a>
+            <a class="btn" id="cot-wa" role="link" tabindex="0" aria-disabled="true"><Icon nombre="mensaje" tamano={20} /> Enviar por WhatsApp</a>
             <a class="btn btn--oscuro" id="cot-reservar" href="#reserva"><Icon nombre="calendario" tamano={20} /> Reservar con esta cotización</a>
             <button type="button" class="btn btn--borde" id="cot-cambiar">Cambiar servicios</button>
             <button type="button" class="btn btn--borde" id="cot-reiniciar">Cotizar de nuevo</button>
@@ -126,6 +126,9 @@ import Icon from './Icon.astro';
   const res = document.getElementById('cot-resultado')!;
   const kmInput = document.getElementById('km') as HTMLInputElement;
   let actual = 1;
+  const nf = new Intl.NumberFormat('es-PE');
+  const etiquetaBanda = (b: { desde: number; hasta: number }) =>
+    b.desde === 0 ? `menos de ${nf.format(b.hasta + 1)} km` : b.hasta >= 500000 ? `${nf.format(b.desde)} km o más` : `${nf.format(b.desde)} a ${nf.format(b.hasta)} km`;
 
   const err = (id: string, msg: string) => {
     document.getElementById('e-' + id)!.textContent = msg;
@@ -182,7 +185,7 @@ import Icon from './Icon.astro';
     if (n === 2) {
       const km = parsearKm(kmInput.value);
       const ok = km !== null;
-      err('km', ok ? '' : 'Escribe el kilometraje con números, entre 0 y 500 000.');
+      err('km', ok ? '' : 'Escribe el kilometraje con números, entre 0 y 500,000.');
       kmInput.setAttribute('aria-invalid', String(!ok));
       if (!ok) kmInput.focus();
       return ok;
@@ -194,6 +197,14 @@ import Icon from './Icon.astro';
   }
 
   let ultimo = { texto: '', vehiculo: '' as string, servicios: '' as string };
+  const consent = document.getElementById('cot-consent') as HTMLInputElement;
+  const wa = document.getElementById('cot-wa') as HTMLAnchorElement;
+  // El enlace de WhatsApp solo existe (href) mientras la casilla de consentimiento esté marcada.
+  function syncWa() {
+    wa.setAttribute('aria-disabled', String(!consent.checked));
+    if (consent.checked && ultimo.texto) wa.setAttribute('href', enlaceWhatsApp(ultimo.texto));
+    else wa.removeAttribute('href');
+  }
 
   function mostrarResultado() {
     const v = vehiculoSel() as VehiculoId;
@@ -201,7 +212,7 @@ import Icon from './Icon.astro';
     const c = cotizar(v, km, serviciosSel());
     const veh = VEHICULOS.find((x) => x.id === v)!;
     const banda = bandaKm(km);
-    document.getElementById('cot-resumen')!.textContent = `${veh.nombre}, ${new Intl.NumberFormat('es-PE').format(km)} km (${banda.etiqueta.toLowerCase()}).`;
+    document.getElementById('cot-resumen')!.textContent = `${veh.nombre}, ${new Intl.NumberFormat('es-PE').format(km)} km (${etiquetaBanda(banda)}).`;
     const filas = document.getElementById('cot-filas')!;
     filas.replaceChildren(
       ...c.lineas.map((l) => {
@@ -224,7 +235,7 @@ import Icon from './Icon.astro';
     const lista = c.lineas.map((l) => `- ${l.nombre}: ${formatoRango(l.min, l.max)}`).join('\n');
     const texto = `Hola Taller Ruta, hice una cotización de demo.\nVehículo: ${veh.nombre}, ${new Intl.NumberFormat('es-PE').format(km)} km.\n${lista}\nTotal referencial: ${formatoRango(c.min, c.max)} (IGV incluido).\nEntiendo que el precio final requiere inspección. Quisiera coordinar una revisión.`;
     ultimo = { texto, vehiculo: v, servicios: c.lineas.map((l) => l.nombre).join(', ') };
-    document.getElementById('cot-wa')!.setAttribute('href', enlaceWhatsApp(texto));
+    syncWa();
     pasos.forEach((p) => (p.hidden = true));
     nav.hidden = true;
     res.hidden = false;
@@ -268,10 +279,8 @@ import Icon from './Icon.astro';
     }
   });
 
-  const consent = document.getElementById('cot-consent') as HTMLInputElement;
-  const wa = document.getElementById('cot-wa') as HTMLAnchorElement;
   consent.addEventListener('change', () => {
-    wa.setAttribute('aria-disabled', String(!consent.checked));
+    syncWa();
     if (consent.checked) err('cot-consent', '');
   });
   wa.addEventListener('click', (e) => {
@@ -279,6 +288,13 @@ import Icon from './Icon.astro';
       e.preventDefault();
       err('cot-consent', 'Marca la casilla para abrir WhatsApp.');
       consent.focus();
+    }
+  });
+  // Sin href no hay Enter nativo: lo damos a mano.
+  wa.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      wa.click();
     }
   });
   document.getElementById('cot-reservar')!.addEventListener('click', (e) => {
@@ -289,7 +305,8 @@ import Icon from './Icon.astro';
     form.reset();
     actualizarDisponibles();
     consent.checked = false;
-    wa.setAttribute('aria-disabled', 'true');
+    ultimo = { texto: '', vehiculo: '', servicios: '' };
+    syncWa();
     mostrar(1);
     form.querySelector<HTMLInputElement>('input[name="vehiculo"]')!.focus();
   });
@@ -299,33 +316,36 @@ import Icon from './Icon.astro';
 </script>
 
 <style is:global>
-  .cot { background: var(--hueso); }
-  .caja { margin-top: 32px; background: var(--papel); border: 2px solid var(--asfalto); border-radius: var(--radio); padding: clamp(18px, 4vw, 40px); max-width: 880px; }
-  .cot__grid { display: grid; gap: 28px; margin-top: 32px; }
-  @media (min-width: 1100px) { .cot__grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; gap: 48px; } }
-  .cot__grid .caja { margin-top: 0; max-width: none; }
-  .cot__aside { border-top: 3px solid var(--asfalto); padding-top: 16px; }
-  .cot__aside h3 { font-size: 1.7rem; }
-  .cot__aside li { padding-block: 10px; border-bottom: 1px solid var(--linea); }
-  .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 28px; counter-reset: p; font-size: 0.9rem; font-weight: 600; color: var(--texto-suave); }
-  .pasos li { display: grid; gap: 4px; padding-top: 8px; border-top: 6px solid #8a959b; }
-  .pasos li span { font-family: var(--f-titular); font-size: 1.3rem; line-height: 1; }
-  .pasos li.hecho { border-top-color: var(--acero); color: var(--texto); }
-  .pasos li.activo { border-top-color: var(--senal); color: var(--texto); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
-  @media (max-width: 420px) { .pasos { font-size: 0.875rem; } }
-  .caja legend { font-family: var(--f-titular); font-weight: 700; font-size: 1.7rem; text-transform: uppercase; margin-bottom: 12px; }
-  .caja label[for='km'] { font-family: var(--f-titular); font-weight: 700; font-size: 1.7rem; text-transform: uppercase; }
+  .cot__grid { display: grid; gap: 28px; margin-top: 36px; }
+  @media (min-width: 1100px) { .cot__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; gap: 56px; } }
+  /* La ficha: hoja de papel con cabecera de regla, borde de tinta */
+  .caja { background: var(--papel); border: 2px solid var(--asfalto); border-radius: var(--radio); padding: clamp(18px, 4vw, 40px); position: relative; }
+  .ficha__cab { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: calc(-1 * clamp(18px, 4vw, 40px)) calc(-1 * clamp(18px, 4vw, 40px)) 24px; padding: 10px clamp(18px, 4vw, 40px); background: var(--asfalto); color: var(--texto-claro); font-size: 0.78rem; letter-spacing: 0.08em; }
+  .cot__aside { border-top: 4px solid var(--asfalto); padding-top: 16px; }
+  .cot__aside h3 { font-size: 2.2rem; }
+  .cot__aside li { padding-block: 12px; border-bottom: 1px solid var(--linea); }
+  .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 28px; font-size: 0.9rem; font-weight: 600; color: var(--texto-suave); }
+  .pasos li { display: grid; gap: 4px; padding-top: 8px; border-top: 8px solid var(--linea); }
+  .pasos li span:first-child { font-family: var(--f-mono); font-weight: 500; font-size: 1rem; line-height: 1; }
+  .pasos li.hecho { border-top-color: var(--asfalto); color: var(--texto); }
+  .pasos li.activo { border-top-color: var(--senal); box-shadow: 0 -2px 0 var(--asfalto); color: var(--texto); }
+  .pasos li.activo { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  @media (max-width: 420px) { .pasos { font-size: 0.82rem; } }
+  .caja legend, .caja label[for='km'] { font-family: var(--f-titular); font-weight: 800; font-size: 2rem; line-height: 1; text-transform: uppercase; margin-bottom: 12px; }
   .icono-op { display: grid; place-items: center; flex: none; }
   .nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
   .nav[hidden] { display: none; }
-  .resultado h3 { font-size: 2rem; outline-offset: 6px; }
+  .caja input#km { font-family: var(--f-mono); font-weight: 500; font-size: 1.2rem; }
+  .resultado h3 { font-size: 2.6rem; outline-offset: 6px; }
+  #cot-resumen { font-family: var(--f-mono); font-weight: 500; font-size: 0.95rem; }
   .tabla { width: 100%; border-collapse: collapse; margin: 16px 0 20px; }
-  .tabla th, .tabla td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  .tabla th, .tabla td { padding: 12px 8px; text-align: left; border-bottom: 1px dotted var(--asfalto); vertical-align: top; }
   .tabla th { font-weight: 600; }
-  .tabla .der { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .tabla thead th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-suave); border-bottom: 2px solid var(--asfalto); }
-  .tabla tfoot th, .tabla tfoot td { font-family: var(--f-titular); font-size: 1.6rem; border-bottom: 0; border-top: 3px solid var(--asfalto); }
-  @media (max-width: 420px) { .tabla .der { white-space: normal; } .tabla tfoot th, .tabla tfoot td { font-size: 1.35rem; } }
+  .tabla .der { text-align: right; white-space: nowrap; font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .tabla thead th { font-family: var(--f-mono); font-weight: 500; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-suave); border-bottom: 2px solid var(--asfalto); }
+  .tabla tfoot th, .tabla tfoot td { font-size: 1.3rem; border-bottom: 0; border-top: 4px solid var(--asfalto); background: var(--concreto); }
+  .tabla tfoot th { font-family: var(--f-titular); font-weight: 800; text-transform: uppercase; font-size: 1.6rem; }
+  @media (max-width: 420px) { .tabla .der { font-size: 0.9rem; } .tabla tfoot td { font-size: 1.05rem; } }
   .envio { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--asfalto); }
   .aviso { margin-bottom: 12px; }
   /* Sin JS se ven todos los pasos y no hay botones de navegación. */

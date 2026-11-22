@@ -14,7 +14,7 @@ export function getStaticPaths() {
 const { p } = Astro.props as { p: Producto };
 const disponibles = tallasDisponibles(p);
 const relacionados = productos
-  .filter((x) => x.slug !== p.slug)
+  .filter((x) => x.slug !== p.slug && x.foto !== p.foto)
   .sort((a, b) => Number(b.categoria === p.categoria) - Number(a.categoria === p.categoria))
   .slice(0, 3);
 const grande = await getImage({ src: foto(p.foto), width: 900, height: 1125, format: 'webp', fit: 'cover', position: p.posicion });
@@ -46,7 +46,7 @@ const jsonLd = {
 <Base
   titulo={`${p.nombre} · ${nombreCategoria(p.categoria)} | Vértice Studio (demo)`}
   tipoOg="product"
-  descripcion={`${p.nombre}, zapatillas de ${nombreCategoria(p.categoria).toLowerCase()} por ${formatoSoles(p.precio)} (IGV incluido). Tallas EU con stock: ${disponibles.join(', ')}. Guía de tallas y pedido por WhatsApp. Producto ficticio de demo.`}
+  descripcion={`${p.nombre}, zapatillas de ${nombreCategoria(p.categoria).toLowerCase()} por ${formatoSoles(p.precio)} (IGV incl.). Tallas EU ${disponibles[0]} a ${disponibles[disponibles.length - 1]}. Pedido por WhatsApp. Producto ficticio de demo.`}
   ruta={`/producto/${p.slug}/`}
   jsonLd={[jsonLd]}
 >
@@ -67,7 +67,6 @@ const jsonLd = {
     </figure>
 
     <div class="producto__info">
-      <p class="etiqueta">{nombreCategoria(p.categoria)}</p>
       <h1 id="prod-titulo">{p.nombre}</h1>
       <p class="precio">{formatoSoles(p.precio)} <span class="igv">IGV incluido</span></p>
       <p>{p.resumen}</p>
@@ -97,7 +96,7 @@ const jsonLd = {
         </div>
       </form>
 
-      <p class="nota nota--envio"><Icono nombre="camion" tamano={16} /> Envío: Lima {formatoSoles(ENVIO.lima.tarifa)} (gratis desde {formatoSoles(ENVIO.lima.gratisDesde)}), provincias {formatoSoles(ENVIO.provincias.tarifa)} (gratis desde {formatoSoles(ENVIO.provincias.gratisDesde)}). <a href="/cambios/">Cambios y devoluciones</a>.</p>
+      <p class="nota nota--envio"><Icono nombre="camion" tamano={16} /> <span>Envío: Lima {formatoSoles(ENVIO.lima.tarifa)} (gratis desde {formatoSoles(ENVIO.lima.gratisDesde)}), provincias {formatoSoles(ENVIO.provincias.tarifa)} (gratis desde {formatoSoles(ENVIO.provincias.gratisDesde)}). <a href="/cambios/">Cambios y devoluciones.</a></span></p>
       <p class="nota">Foto ilustrativa de terceros; el par real puede variar levemente.</p>
 
       <details class="guia">
@@ -161,19 +160,22 @@ const jsonLd = {
 </Base>
 
 <style>
-  .migas { padding-block: 18px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 8px; }
+  .migas { padding-block: 6px; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; }
+  .migas a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 4px; }
+  .nota--envio a { display: inline-flex; align-items: center; min-height: 44px; }
   .producto { display: grid; gap: 28px; padding-bottom: 56px; }
   .producto__foto { margin: 0; border: var(--borde); box-shadow: var(--sombra); background: var(--gris); align-self: start; margin-right: 6px; }
   .producto__foto :global(img) { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
   .producto__info { background: var(--blanco); border: var(--borde); padding: 20px; box-shadow: var(--sombra); margin-right: 6px; }
-  .producto h1 { font-size: clamp(56px, 12vw, 104px); margin: 12px 0 8px; }
+  .producto h1 { font-size: clamp(56px, 12vw, 104px); margin: 0 0 8px; }
   .detalle { padding-left: 1.2em; margin: 0 0 16px; }
   .sw { width: 18px; height: 18px; border: 2px solid var(--negro); display: block; }
   .producto__acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
   .igv { font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: .06em; margin-left: 6px; }
   .nota--envio { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 16px; color: var(--negro); }
   .guia { margin-top: 24px; border: var(--borde); }
-  .guia summary { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; background: var(--naranja); }
+  .guia summary { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; background: var(--blanco); }
+  .guia summary:hover { background: var(--gris); }
   .guia[open] summary { border-bottom: var(--borde); }
   .guia :global(.guia-tallas) { padding: 14px; }
   .relacionados { border-top: var(--borde); background: var(--blanco); }

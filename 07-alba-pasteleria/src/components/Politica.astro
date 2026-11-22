@@ -1,0 +1,37 @@
+---
+interface Props { nivel?: 2 | 3; id?: string; plegada?: boolean }
+const { nivel = 3, id = 'politica', plegada = false } = Astro.props;
+const H = `h${nivel}` as 'h2' | 'h3';
+---
+<section class="politica" aria-labelledby={id}>
+  <H id={id}>Adelanto, cambio de fecha y cancelación</H>
+  <p class="nota">Política de ejemplo para esta demo. En un negocio real debe validarse con asesoría legal.</p>
+  {plegada && (
+    <ul class="politica__resumen">
+      <li><strong>Adelanto:</strong> 50 % por Yape o Plin en 24 horas; sin él, la fecha no queda reservada.</li>
+      <li><strong>Cambio de fecha:</strong> sin costo hasta 48 horas antes de la entrega.</li>
+      <li><strong>Cancelación:</strong> 100 % del adelanto hasta 72 h antes, 50 % entre 72 y 24 h, 0 % con menos de 24 h.</li>
+    </ul>
+  )}
+  {plegada ? (
+    <details class="politica__mas"><summary>Ver la política completa</summary>
+      <ul>
+        <li><strong>Adelanto:</strong> 50 % por Yape o Plin dentro de las 24 horas de enviado el pedido. Sin el pago, la fecha no queda reservada. El saldo se paga al recibir o recoger, y se emite boleta o factura por el total.</li>
+        <li><strong>Cambio de fecha:</strong> sin costo hasta 48 horas antes de la entrega, según disponibilidad; el adelanto se traslada a la nueva fecha.</li>
+        <li><strong>Cancelación por el cliente:</strong> hasta 72 horas antes se devuelve el 100 % del adelanto; entre 72 y 24 horas antes, el 50 % del adelanto (cubre insumos y trabajo ya iniciados); con menos de 24 horas o si no se recoge la torta, no se devuelve.</li>
+        <li><strong>Si Alba falla</strong> (no entrega, entrega tarde o la torta no corresponde al pedido): se devuelve todo lo pagado o se rehace la torta, a elección del cliente.</li>
+        <li><strong>Desistimiento:</strong> las tortas se elaboran a pedido, con el diseño que eliges, y son perecibles. Por eso, como regla general, no aplica el derecho de arrepentimiento de las compras a distancia (Ley 29571). Esto no limita tus derechos si el producto llega defectuoso o distinto a lo ofrecido.</li>
+        <li><strong>Confirmación de fecha:</strong> el calendario considera lunes y feriados nacionales; confirmaremos la fecha y la hora por WhatsApp por si hubiera un día no laborable decretado.</li>
+      </ul>
+    </details>
+  ) : (
+    <ul>
+    <li><strong>Adelanto:</strong> 50 % por Yape o Plin dentro de las 24 horas de enviado el pedido. Sin el pago, la fecha no queda reservada. El saldo se paga al recibir o recoger, y se emite boleta o factura por el total.</li>
+    <li><strong>Cambio de fecha:</strong> sin costo hasta 48 horas antes de la entrega, según disponibilidad; el adelanto se traslada a la nueva fecha.</li>
+    <li><strong>Cancelación por el cliente:</strong> hasta 72 horas antes se devuelve el 100 % del adelanto; entre 72 y 24 horas antes, el 50 % del adelanto (cubre insumos y trabajo ya iniciados); con menos de 24 horas o si no se recoge la torta, no se devuelve.</li>
+    <li><strong>Si Alba falla</strong> (no entrega, entrega tarde o la torta no corresponde al pedido): se devuelve todo lo pagado o se rehace la torta, a elección del cliente.</li>
+    <li><strong>Desistimiento:</strong> las tortas se elaboran a pedido, con el diseño que eliges, y son perecibles. Por eso, como regla general, no aplica el derecho de arrepentimiento de las compras a distancia (Ley 29571). Esto no limita tus derechos si el producto llega defectuoso o distinto a lo ofrecido.</li>
+    <li><strong>Confirmación de fecha:</strong> el calendario considera lunes y feriados nacionales; confirmaremos la fecha y la hora por WhatsApp por si hubiera un día no laborable decretado.</li>
+    </ul>
+  )}
+</section>

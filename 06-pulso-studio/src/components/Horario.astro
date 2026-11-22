@@ -11,6 +11,16 @@ const total = CLASES.length;
 <div data-horario>
   <p class="sin-js-nota aviso"><Icono nombre="info" /> <span>Este es el horario semanal. Los cupos de cada fecha se muestran con JavaScript; sin él, pídelos por WhatsApp.</span></p>
 
+  <fieldset class="dias filtros__grupo">
+    <legend>Día</legend>
+    <div class="chips dias__chips" data-grupo="dia">
+      <button class="chip dia-btn dia-btn--todos" type="button" data-valor="" aria-pressed="true">Todos</button>
+      {ORDEN_DIAS.map((d) => <button class="chip dia-btn" type="button" data-valor={String(d)} aria-pressed="false" aria-label={DIAS_NOMBRE[d]}><span class="dia-btn__d" aria-hidden="true">{DIAS_NOMBRE[d].slice(0, 3)}</span><span class="dia-btn__hoy" aria-hidden="true">Hoy</span><span class="dia-btn__n" data-cuenta aria-hidden="true"></span></button>)}
+    </div>
+  </fieldset>
+
+  <p class="aviso aviso--hoy" role="status" data-sin-hoy hidden><Icono nombre="info" /> <span data-sin-hoy-texto></span></p>
+
   <details class="filtros" data-filtros open>
     <summary class="filtros__resumen"><span>Filtros <span data-activos></span></span></summary>
     <div class="filtros__cuerpo">
@@ -28,30 +38,23 @@ const total = CLASES.length;
           {Object.entries(NIVELES).map(([k, n]) => <button class="chip" type="button" data-valor={k} aria-pressed="false">{n} <span data-cuenta></span></button>)}
         </div>
       </fieldset>
-      <fieldset class="filtros__grupo">
-        <legend>Día</legend>
-        <div class="chips" data-grupo="dia">
-          <button class="chip" type="button" data-valor="" aria-pressed="true">Todos</button>
-          {ORDEN_DIAS.map((d) => <button class="chip" type="button" data-valor={String(d)} aria-pressed="false" aria-label={DIAS_NOMBRE[d]}>{DIAS_NOMBRE[d].slice(0, 3)}</button>)}
-        </div>
-      </fieldset>
-    </div>
-    <div class="filtros__pie">
-      <p class="estado" role="status" data-estado>Mostrando {total} clases por semana.</p>
-      <button class="boton boton--linea boton--chico sobre-claro" type="button" data-limpiar hidden>Quitar filtros</button>
     </div>
   </details>
+  <div class="filtros__pie">
+    <p class="estado" role="status" data-estado>Mostrando {total} clases por semana.</p>
+    <button class="boton boton--linea boton--chico" type="button" data-limpiar hidden>Quitar filtros</button>
+  </div>
 
   <ul class="leyenda" role="list" aria-label="Significado de los cupos">
-    <li><span class="cupos">N cupos libres</span> hay lugar</li>
-    <li><span class="cupos cupos--ultimos">Últimos N cupos</span> quedan 3 o menos</li>
+    <li><span class="cupos">Con cupos</span> hay lugar</li>
+    <li><span class="cupos cupos--ultimos">Pocos cupos</span> quedan 3 o menos</li>
     <li><span class="cupos cupos--llena">Llena</span> sin lugar; lista de espera</li>
   </ul>
 
-  <div data-lista>
+  <div class="pizarra" data-lista>
     {porDia.map(({ dia, clases }) => (
       <div class="dia" role="group" data-dia-bloque={dia} aria-labelledby={`dia-${dia}`}>
-        <h3 id={`dia-${dia}`}>{DIAS_NOMBRE[dia]} <small data-n>{clases.length} clases</small></h3>
+        <h3 id={`dia-${dia}`}>{DIAS_NOMBRE[dia]} <small data-n>{clases.length} clases</small> <small class="dia__fecha" data-fecha></small></h3>
         <ul role="list">
           {clases.map((c) => {
             const p = PROGRAMAS[c.programa];
@@ -61,14 +64,16 @@ const total = CLASES.length;
                 <div class="fila__info">
                   <h4>{p.nombre}</h4>
                   <ul class="fila__meta" role="list">
-                    <li><Icono nombre="gauge" /> {NIVELES[p.nivel]}</li>
                     <li><Icono nombre="user" /> {INSTRUCTORAS[c.instructora].nombre}</li>
-                    <li><Icono nombre="dumbbell" /> {TIPOS[p.tipo].nombre}</li>
+                    <li><Icono nombre="gauge" /> {NIVELES[p.nivel]}</li>
+                    <li class="fila__tipo"><Icono nombre="dumbbell" /> {TIPOS[p.tipo].nombre}</li>
                   </ul>
                 </div>
                 <div class="fila__acc">
-                  <span class="cupos cupos--sinjs" data-cupos>Cupos: pídelos por WhatsApp</span>
-                  <span class="fila__prox" data-prox></span>
+                  <div class="fila__est">
+                    <span class="cupos cupos--sinjs" data-cupos>Cupos: pídelos por WhatsApp</span>
+                    <span class="fila__prox" data-prox></span>
+                  </div>
                   <a class="boton boton--chico" href="#reserva" data-reservar={c.id}><span data-txt>Reservar</span><span class="solo-lector" data-lector> {p.nombre}, {DIAS_NOMBRE[c.dia]} {c.hora}</span></a>
                 </div>
               </li>
@@ -79,12 +84,12 @@ const total = CLASES.length;
     ))}
   </div>
   <p class="cupos-nota">Cupos de ejemplo (demo). «Lista de espera» abre WhatsApp en una pestaña nueva; al abrirlo, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
-  <p class="sin-resultados aviso" data-vacio hidden><Icono nombre="info" /> <span>No hay clases con esa combinación. Prueba quitando algún filtro.</span></p>
+  <p class="sin-resultados aviso" data-vacio hidden><Icono nombre="info" /> <span>No hay clases con esa combinación. Prueba otro día o quita algún filtro.</span></p>
 </div>
 
 <script>
-  import { CLASES } from '../data/clases';
-  import { ahoraLima, fechaCorta, proximaOcurrencia, urlWhatsApp, programaDe } from '../lib/horario';
+  import { CLASES, DIAS_NOMBRE } from '../data/clases';
+  import { ahoraLima, diaSemana, fechaCorta, proximaOcurrencia, urlWhatsApp, programaDe } from '../lib/horario';
 
   const raiz = document.querySelector<HTMLElement>('[data-horario]');
   if (raiz) {
@@ -97,44 +102,83 @@ const total = CLASES.length;
     const activos = raiz.querySelector<HTMLElement>('[data-activos]')!;
     const ahora = new Date();
     const hoy = ahoraLima(ahora).fecha;
+    const diaHoy = diaSemana(hoy);
+    const ocs = new Map<string, ReturnType<typeof proximaOcurrencia>>();
+    for (const f of filas) ocs.set(f.dataset.id!, proximaOcurrencia(CLASES.find((x) => x.id === f.dataset.id)!, ahora));
+    const fechas = [...ocs.values()].filter(Boolean).map((o) => o!.fecha).sort();
+    const hayHoy = fechas[0] === hoy;
+    // Si hoy ya no quedan clases, el día de partida es el del próximo día con clases (no se muestra como «Hoy»).
+    const diaInicio = fechas.length ? diaSemana(fechas[0]) : diaHoy;
+    const sinHoy = document.querySelector<HTMLElement>('[data-sin-hoy]')!;
+    // Por debajo de 75 rem el horario se ve un día a la vez (el de hoy primero); desde 75 rem, pizarra de la semana.
+    const movil = window.matchMedia('(max-width: 74.99rem)');
     // En pantallas angostas los filtros arrancan plegados para ver pronto las clases.
     if (window.matchMedia('(max-width: 47.99rem)').matches) panel.open = false;
 
+    // Botones de día: orden desde hoy (en celular) y marca «Hoy».
+    raiz.querySelectorAll<HTMLButtonElement>('[data-grupo="dia"] button[data-valor]').forEach((b) => {
+      const v = b.dataset.valor!;
+      if (!v) return;
+      b.dataset.orden = String((Number(v) - diaInicio + 7) % 7);
+      if (hayHoy && Number(v) === diaHoy) b.dataset.hoy = '';
+    });
+
     for (const fila of filas) {
       const c = CLASES.find((x) => x.id === fila.dataset.id)!;
-      const o = proximaOcurrencia(c, ahora);
+      const o = ocs.get(fila.dataset.id!)!;
       const cupos = fila.querySelector<HTMLElement>('[data-cupos]')!;
       const prox = fila.querySelector<HTMLElement>('[data-prox]')!;
       const btn = fila.querySelector<HTMLAnchorElement>('[data-reservar]')!;
       if (!o) continue;
       cupos.className = `cupos cupos--${o.cupos.estado}`;
       cupos.textContent = o.cupos.texto;
-      prox.textContent = `Próxima: ${o.fecha === hoy ? 'hoy, ' : ''}${fechaCorta(o.fecha)}`;
+      const lector = document.createElement('span');
+      lector.className = 'solo-lector';
+      lector.textContent = 'Próxima: ';
+      prox.replaceChildren(lector, document.createTextNode(`${o.fecha === hoy ? 'hoy · ' : ''}${fechaCorta(o.fecha)}`));
       btn.dataset.ocurrencia = o.id;
       if (o.cupos.estado === 'llena') {
         const p = programaDe(c);
         btn.href = urlWhatsApp(`Hola Pulso Studio, la clase ${p.nombre} del ${fechaCorta(o.fecha)} a las ${c.hora} está llena. Quiero entrar a la lista de espera (demo).`);
         btn.target = '_blank';
         btn.rel = 'noopener noreferrer';
-        btn.classList.add('boton--linea', 'sobre-claro');
+        btn.classList.add('boton--linea');
         btn.querySelector('[data-txt]')!.textContent = 'Lista de espera';
         btn.querySelector('[data-lector]')!.textContent += ' (se abre en una pestaña nueva)';
         btn.removeAttribute('data-reservar');
       }
     }
 
-    const sel: Record<string, string> = { tipo: '', nivel: '', dia: '' };
+    // Fecha de cada día en el encabezado; la fecha por fila solo se muestra si difiere (p. ej. hoy ya pasó en parte).
+    for (const bl of bloques) {
+      const fs = [...bl.querySelectorAll<HTMLElement>('.fila')].map((f) => ocs.get(f.dataset.id!)?.fecha).filter(Boolean).sort() as string[];
+      const fd = fs[0];
+      if (!fd) continue;
+      bl.querySelector('[data-fecha]')!.textContent = `${fd === hoy ? 'hoy · ' : ''}${fechaCorta(fd)}`;
+      bl.querySelectorAll<HTMLElement>('.fila').forEach((f) => { if (ocs.get(f.dataset.id!)?.fecha === fd) f.querySelector('[data-prox]')?.classList.add('solo-lector'); });
+    }
+
+    // En celular siempre hay un día elegido (hoy al empezar); en pizarra, «Todos» muestra la semana.
+    const sel: Record<string, string> = { tipo: '', nivel: '', dia: movil.matches ? String(diaInicio) : '' };
     const coincide = (f: HTMLElement, s: Record<string, string>) => (!s.tipo || f.dataset.tipo === s.tipo) && (!s.nivel || f.dataset.nivel === s.nivel) && (!s.dia || f.dataset.dia === s.dia);
 
-    // Cuántas clases daría cada chip de tipo y nivel con el resto de filtros; sin resultados queda desactivado.
+    const sincronizarPresionados = () => {
+      raiz.querySelectorAll<HTMLElement>('[data-grupo]').forEach((g) => {
+        const k = g.dataset.grupo!;
+        g.querySelectorAll<HTMLButtonElement>('button[data-valor]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.valor === sel[k])));
+      });
+    };
+
+    // Cuántas clases daría cada botón con el resto de filtros; sin resultados queda desactivado.
     const actualizarChips = () => {
-      for (const grupo of ['tipo', 'nivel'] as const) {
+      for (const grupo of ['tipo', 'nivel', 'dia'] as const) {
         raiz.querySelectorAll<HTMLButtonElement>(`[data-grupo="${grupo}"] button[data-valor]`).forEach((b) => {
           const v = b.dataset.valor!;
           if (!v) return;
           const n = filas.filter((f) => coincide(f, { ...sel, [grupo]: v })).length;
           const el = b.querySelector('[data-cuenta]');
-          if (el) el.textContent = `(${n})`;
+          if (el) el.textContent = grupo === 'dia' ? String(n) : `(${n})`;
+          if (grupo === 'dia') b.setAttribute('aria-label', `${DIAS_NOMBRE[Number(v)]}${b.hasAttribute('data-hoy') ? ' (hoy)' : ''}, ${n === 1 ? '1 clase' : `${n} clases`}`);
           const off = n === 0 && sel[grupo] !== v;
           if (off) b.setAttribute('aria-disabled', 'true'); else b.removeAttribute('aria-disabled');
         });
@@ -142,6 +186,7 @@ const total = CLASES.length;
     };
 
     const aplicar = (anunciar: boolean) => {
+      if (movil.matches && !sel.dia) sel.dia = String(diaInicio);
       let n = 0;
       for (const f of filas) { const ok = coincide(f, sel); f.hidden = !ok; if (ok) n++; }
       for (const b of bloques) {
@@ -150,11 +195,18 @@ const total = CLASES.length;
         b.querySelector('[data-n]')!.textContent = k === 1 ? '1 clase' : `${k} clases`;
       }
       vacio.hidden = n > 0;
-      const na = [sel.tipo, sel.nivel, sel.dia].filter(Boolean).length;
+      const na = [sel.tipo, sel.nivel].filter(Boolean).length + (sel.dia && !movil.matches ? 1 : 0);
       limpiar.hidden = na === 0;
       activos.textContent = na ? `(${na} activos)` : '';
+      sincronizarPresionados();
       actualizarChips();
-      if (anunciar) estado.textContent = n === 0 ? 'No hay clases con esos filtros.' : n === 1 ? 'Mostrando 1 clase.' : `Mostrando ${n} clases.`;
+      raiz.dataset.listo = '';
+      const mostrarAviso = movil.matches && !hayHoy && fechas.length > 0;
+      sinHoy.hidden = !mostrarAviso;
+      if (mostrarAviso) sinHoy.querySelector('[data-sin-hoy-texto]')!.textContent = `Hoy ya no quedan clases. Empezamos por el próximo día con clases: ${DIAS_NOMBRE[diaInicio].toLowerCase()} ${fechaCorta(fechas[0]).split(' ').slice(1).join(' ')}.`;
+      const donde = sel.dia ? ` del ${DIAS_NOMBRE[Number(sel.dia)].toLowerCase()}` : '';
+      if (anunciar) estado.textContent = n === 0 ? 'No hay clases con esos filtros.' : n === 1 ? `Mostrando 1 clase${donde}.` : `Mostrando ${n} clases${donde}.`;
+      else if (movil.matches) estado.textContent = `Mostrando ${n} ${n === 1 ? 'clase' : 'clases'}${donde}.`;
     };
 
     raiz.querySelectorAll<HTMLElement>('[data-grupo]').forEach((g) => {
@@ -162,16 +214,15 @@ const total = CLASES.length;
         const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-valor]');
         if (!b || b.getAttribute('aria-disabled') === 'true') return;
         sel[g.dataset.grupo!] = b.dataset.valor!;
-        g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
         aplicar(true);
       });
     });
     limpiar.addEventListener('click', () => {
       sel.tipo = sel.nivel = sel.dia = '';
-      raiz.querySelectorAll<HTMLElement>('[data-grupo]').forEach((g) => g.querySelectorAll('button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0))));
       aplicar(true);
       panel.querySelector<HTMLElement>('summary')!.focus();
     });
+    movil.addEventListener('change', () => aplicar(false));
 
     raiz.addEventListener('click', (e) => {
       const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-reservar]');

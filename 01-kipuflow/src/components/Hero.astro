@@ -2,65 +2,156 @@
 import Icon from './Icon.astro';
 const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
 const f = (n: number) => sol.format(n);
+// Recibos de ejemplo (noviembre). La retención de 8 % solo aplica si el recibo SUPERA S/ 1,500.
+const recibos = [
+  { nro: 'E000-41', cliente: 'Estudio Brisa', dia: '3 nov', bruto: 3200, cobrado: true },
+  { nro: 'E000-42', cliente: 'Taller Pampa', dia: '7 nov', bruto: 1400, cobrado: true },
+  { nro: 'E000-43', cliente: 'Agencia Faro', dia: '12 nov', bruto: 2800, cobrado: true },
+  { nro: 'E000-44', cliente: 'Colectivo Ñawi', dia: '18 nov', bruto: 1500, cobrado: false },
+  { nro: 'E000-45', cliente: 'Hotel Cumbre', dia: '21 nov', bruto: 2000, cobrado: false },
+].map((r) => {
+  const ret = r.bruto > 1500 ? Math.round(r.bruto * 0.08) : 0;
+  return { ...r, ret, neto: r.bruto - ret };
+});
+const tot = recibos.reduce((a, r) => ({ bruto: a.bruto + r.bruto, ret: a.ret + r.ret, neto: a.neto + r.neto }), { bruto: 0, ret: 0, neto: 0 });
+const acumulado = 29840;
+const tope = 48125;
+const pct = Math.round((acumulado / tope) * 100);
+const menu = ['Recibos', 'Clientes', 'Gastos', 'Reportes', 'Pagos a cuenta'];
 ---
 <section class="hero">
-  <div class="contenedor hero-in">
-    <div class="hero-txt">
-      <p class="sobretitulo">Para freelancers en Perú</p>
+  <div class="contenedor">
+    <div class="hero-cab">
       <h1>Tus recibos por honorarios, sin sustos en el Excel.</h1>
-      <p class="lead">Kipuflow emite, ordena y proyecta lo que te retienen y lo que te toca pagar a SUNAT, para que sepas cuánto es realmente tuyo antes de que llegue la declaración anual.</p>
-      <div class="hero-cta">
-        <a class="btn btn-primario" href="/#acceso">Solicitar acceso anticipado <Icon name="arrow-right" /></a>
-        <a class="btn btn-sec" href="/#calculadora">Probar la calculadora</a>
+      <div class="hero-lado">
+        <p class="lead">Kipuflow emite, ordena y proyecta lo que te retienen y lo que te toca pagar a <span translate="no">SUNAT</span>, para que sepas cuánto es realmente tuyo antes de la declaración anual.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primario" href="/#acceso">Solicitar acceso anticipado <Icon name="arrow-right" /></a>
+          <a class="btn btn-sec" href="/#calculadora">Probar la calculadora</a>
+        </div>
+        <p class="hero-nota">Sin tarjeta. Demo de portafolio: no hay producto real detrás.</p>
       </div>
-      <p class="hero-sin">Sin tarjeta para pedir acceso.</p>
-      <p class="hero-nota">Demo de portafolio: no hay producto real detrás.</p>
     </div>
 
-    <div class="panel vidrio">
-      <div class="panel-cab">
-        <h2 class="panel-tit">Noviembre · recibos</h2>
+    <div class="app-frame" aria-label="Vista de ejemplo de la aplicación: recibos de noviembre">
+      <div class="af-barra">
+        <p class="af-ruta"><span class="num">ejemplo.invalid</span> <span aria-hidden="true">/</span> Recibos <span aria-hidden="true">/</span> <span class="num">2026-11</span></p>
         <span class="etiqueta-demo">Ejemplo de demo</span>
       </div>
-      <ul class="panel-lista">
-        <li><span>E000-41 · Estudio Brisa</span><span class="num">{f(3200)}</span><span class="ret">−{f(256)}</span></li>
-        <li><span>E000-42 · Taller Pampa</span><span class="num">{f(1400)}</span><span class="ret ret-no">sin retención</span></li>
-        <li><span>E000-43 · Agencia Faro</span><span class="num">{f(2800)}</span><span class="ret">−{f(224)}</span></li>
-      </ul>
-      <div class="panel-neto">
-        <p>Neto estimado del mes</p>
-        <p class="num neto">{f(6920)}</p>
+      <div class="af-cuerpo">
+        <ul class="af-menu" aria-label="Secciones de la aplicación de ejemplo">
+          {menu.map((m, i) => <li class:list={{ activo: i === 0 }} aria-current={i === 0 ? 'page' : undefined}>{m}</li>)}
+        </ul>
+        <div class="af-main">
+          <dl class="af-kpi">
+            <div><dt>Facturado en noviembre</dt><dd class="num">{f(tot.bruto)}</dd></div>
+            <div><dt>Retenido (8 %)</dt><dd class="num rojo">−{f(tot.ret)}</dd></div>
+            <div class="principal"><dt>Neto estimado</dt><dd class="num">{f(tot.neto)}</dd></div>
+          </dl>
+          <table class="af-tabla">
+            <caption class="sr-only">Recibos por honorarios de noviembre con retención y neto</caption>
+            <thead><tr><th scope="col">Recibo</th><th scope="col" class="fec">Emitido</th><th scope="col" class="d">Bruto</th><th scope="col" class="d">Retención</th><th scope="col" class="d">Neto</th><th scope="col" class="est">Estado</th></tr></thead>
+            <tbody>
+              {recibos.map((r) => (
+                <tr>
+                  <th scope="row" class="cli"><span class="nom">{r.cliente}</span><span class="sub num">{r.nro}<span class="solo-m"> · {r.dia}</span></span></th>
+                  <td class="fec">{r.dia}</td>
+                  <td class="d num" data-l="Bruto">{f(r.bruto)}</td>
+                  <td class:list={['d', 'num', { rojo: r.ret > 0, nulo: r.ret === 0 }]} data-l="Retención">{r.ret > 0 ? `−${f(r.ret)}` : 'sin retención'}</td>
+                  <td class="d num neto" data-l="Neto">{f(r.neto)}</td>
+                  <td class="est"><span class:list={['chip', { ok: r.cobrado }]}>{r.cobrado ? 'Cobrado' : 'Por cobrar'}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="af-pie">
+            <p>Acumulado del año <span class="num">{f(acumulado)}</span> de <span class="num">{f(tope)}</span>: {pct} % del tope anual referencial para pedir suspensión de retenciones.</p>
+            <div class="barra" aria-hidden="true"><span></span></div>
+          </div>
+        </div>
       </div>
-      <div class="barra" aria-hidden="true"><span></span></div>
-      <p class="panel-pie">Ingresos al 62 % del tope anual para pedir suspensión de pagos a cuenta</p>
     </div>
   </div>
 </section>
 
 <style>
-  .hero { padding-block: clamp(2.5rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem); }
-  .hero-in { display: grid; gap: 2.4rem; align-items: center; }
-  .hero-txt h1 { max-width: 15ch; }
-  .hero-cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
-  .hero-sin { margin-top: 1.2rem; font-weight: 600; color: var(--verde); }
-  .hero-nota { margin-top: .3rem; font-size: .92rem; color: var(--texto-2); }
-  .panel { padding: 1.3rem; display: grid; gap: 1rem; transform: rotate(-1.2deg); }
-  .panel-cab { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
-  .panel-tit { font: 500 1rem var(--f-titulo); letter-spacing: 0; }
-  .panel-lista { list-style: none; margin: 0; padding: 0; display: grid; }
-  .panel-lista li { display: grid; grid-template-columns: 1fr auto; gap: .1rem .8rem; padding: .75rem 0; border-top: 1px solid var(--borde); font-size: .95rem; }
-  .panel-lista li > span:first-child { grid-column: 1 / -1; color: var(--texto-2); font-size: .88rem; }
-  .ret { color: var(--alerta); text-align: right; font-size: .92rem; }
-  .ret-no { color: var(--verde); }
-  .panel-neto { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-top: .8rem; border-top: 1px solid var(--borde); }
-  .panel-neto p:first-child { color: var(--texto-2); }
-  .neto { white-space: nowrap; font-size: clamp(1.7rem, 7vw, 2.2rem); font-weight: 700; color: var(--verde); line-height: 1; }
-  .barra { height: 8px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
-  .barra span { display: block; height: 100%; width: 62%; background: linear-gradient(90deg, var(--verde), var(--azul)); border-radius: 99px; }
-  .panel-pie { font-size: .88rem; color: var(--texto-2); }
-  @media (min-width: 900px) {
-    .hero-in { grid-template-columns: 1.15fr .85fr; gap: 4rem; }
-    .panel { padding: 1.8rem; }
+  .hero { padding-block: clamp(2rem, 4.5vw, 3.6rem) clamp(2.5rem, 5vw, 4rem); }
+  .hero-cab { display: grid; gap: 1.6rem; margin-bottom: clamp(1.6rem, 3vw, 2.4rem); }
+  .hero h1 { max-width: 15ch; font-size: clamp(2.5rem, 8.4vw, 5.1rem); }
+  .hero-lado .lead { margin-top: 0; font-size: 1.1rem; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.4rem; }
+  .hero-cta .btn { flex: 1 1 100%; }
+  @media (min-width: 560px) { .hero-cta .btn { flex: 0 0 auto; } }
+  .hero-nota { margin-top: .9rem; font-size: .92rem; color: var(--tinta-2); }
+  @media (min-width: 1000px) {
+    .hero-cab { grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 3rem; align-items: end; }
+    .hero h1 { max-width: 20ch; font-size: clamp(3rem, 4.8vw, 4.6rem); }
   }
-  @media (prefers-reduced-motion: reduce) { .panel { transform: none; } }
+
+  .app-frame { background: var(--blanco); border: 1px solid var(--tinta); border-radius: 8px; box-shadow: 8px 8px 0 -1px var(--surf), 8px 8px 0 0 var(--linea); overflow: hidden; }
+  .af-barra { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .7rem 1rem; background: var(--tinta); color: #e6edf2; }
+  .af-ruta { font-size: .9rem; margin: 0; }
+  .af-ruta .num { font-size: .85rem; }
+  .af-cuerpo { display: grid; }
+  .af-menu { display: none; list-style: none; margin: 0; padding: 1rem .6rem; border-right: 1px solid var(--linea); background: var(--bg); align-content: start; gap: 2px; font-size: .95rem; }
+  .af-menu li { padding: .55rem .8rem; border-radius: 4px; color: var(--tinta-2); }
+  .af-menu li.activo { background: var(--cobalto-claro); color: var(--cobalto-osc); font-weight: 600; }
+  .af-main { min-width: 0; }
+  .af-kpi { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--linea); }
+  .af-kpi > div { padding: .8rem .7rem; border-right: 1px solid var(--linea); }
+  .af-kpi > div:last-child { border-right: 0; }
+  .af-kpi dt { font-size: .78rem; color: var(--tinta-2); line-height: 1.25; }
+  .af-kpi dd { margin: .25rem 0 0; font-size: clamp(1.05rem, 4.6vw, 1.9rem); font-weight: 500; letter-spacing: -.03em; white-space: nowrap; }
+  .af-kpi .principal dd { color: var(--cobalto); font-weight: 500; }
+  .rojo { color: var(--rojo); }
+  .af-tabla { width: 100%; border-collapse: collapse; }
+  .af-tabla thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .af-tabla tr { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .1rem .6rem; padding: .8rem .8rem; border-bottom: 1px solid var(--linea); align-items: end; }
+  .af-tabla th, .af-tabla td { font-weight: 400; text-align: left; padding: 0; }
+  .cli { grid-column: 1 / 3; display: grid; gap: .1rem; }
+  .nom { font-weight: 500; }
+  .sub { font-size: .8rem; color: var(--tinta-2); }
+  .est { grid-column: 3; justify-self: end; grid-row: 1; }
+  .fec { display: none; color: var(--tinta-2); }
+  .af-tabla td[data-l]::before { content: attr(data-l); display: block; font: 400 .72rem var(--f-texto); color: var(--tinta-2); margin-bottom: .1rem; }
+  .af-tabla td.d { font-size: .92rem; white-space: nowrap; }
+  .nulo { color: var(--tinta-2); font-size: .8rem !important; }
+  .neto { font-weight: 500; color: var(--tinta); }
+  .chip { display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; font-weight: 500; padding: .2rem .55rem; border: 1px solid var(--linea-fuerte); border-radius: 99px; color: var(--tinta-2); white-space: nowrap; }
+  .chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; }
+  .chip.ok { color: var(--cobalto-osc); border-color: var(--cobalto); background: var(--cobalto-claro); }
+  .chip.ok::before { background: currentColor; }
+  .af-pie { padding: .9rem 1rem 1.1rem; display: grid; gap: .6rem; font-size: .88rem; color: var(--tinta-2); background: var(--bg); }
+  .barra { height: 6px; background: var(--linea); border-radius: 99px; overflow: hidden; }
+  .barra span { display: block; height: 100%; width: 62%; background: var(--cobalto); transform-origin: left; }
+
+  @media (min-width: 760px) {
+    .af-kpi > div { padding: 1rem 1.2rem; }
+    .af-kpi dt { font-size: .85rem; }
+    .af-tabla thead { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+    .af-tabla tr { grid-template-columns: minmax(0, 1.7fr) 5.2rem repeat(3, minmax(0, 1fr)) 7.4rem; gap: 0 .8rem; padding: .62rem 1.2rem; align-items: center; }
+    .af-tabla thead tr { padding-block: .55rem; background: var(--bg); }
+    .af-tabla thead th { font: 500 .78rem var(--f-texto); color: var(--tinta-2); }
+    .cli { grid-column: auto; }
+    .est { grid-column: auto; grid-row: auto; justify-self: start; }
+    .fec { display: block; }
+    .af-tabla td[data-l]::before { display: none; }
+    .af-tabla td.d, .af-tabla th.d { text-align: right; font-size: .95rem; }
+    .solo-m { display: none; }
+    .af-pie { grid-template-columns: minmax(0, 1fr) minmax(8rem, 22rem); align-items: center; gap: 2rem; padding-inline: 1.2rem; }
+  }
+  @media (min-width: 1000px) {
+    .af-cuerpo { grid-template-columns: 11.5rem minmax(0, 1fr); }
+    .af-menu { display: grid; }
+  }
+  @media (min-width: 1000px) and (min-height: 760px) { .hero { padding-top: 2.4rem; } }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero h1 { animation: sube .7s cubic-bezier(.2, .7, .2, 1) both; }
+    .hero-lado { animation: sube .7s .08s cubic-bezier(.2, .7, .2, 1) both; }
+    .app-frame { animation: sube .8s .16s cubic-bezier(.2, .7, .2, 1) both; }
+    .barra span { animation: llena 1.1s .6s cubic-bezier(.2, .7, .2, 1) both; }
+    @keyframes sube { from { transform: translateY(16px); } to { transform: none; } }
+    @keyframes llena { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }
 </style>

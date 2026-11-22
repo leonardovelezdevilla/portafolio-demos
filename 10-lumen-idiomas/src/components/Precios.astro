@@ -15,29 +15,30 @@ const planes = (['Presencial', 'Virtual'] as const).map((m) => ({
 }));
 ---
 
-<section class="seccion" id="precios" aria-labelledby="pre-tit">
-  <div class="contenedor">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Precios por ciclo</p>
-      <h2 id="pre-tit">Un precio claro por <em>ciclo</em></h2>
-      <p class="lead">{CICLO.nombre}: {CICLO.duracion}. El precio es el mismo para todos los niveles y horarios de la misma modalidad.</p>
-    </div>
+<section class="pre" id="precios" aria-labelledby="pre-tit">
+  <div class="contenedor pre__cab">
+    <h2 id="pre-tit">Un precio claro por <em>ciclo</em></h2>
+    <p class="lead">{CICLO.nombre}: {CICLO.duracion}. El precio es el mismo para todos los niveles y horarios de la misma modalidad.</p>
+  </div>
 
-    <div class="planes">
-      {planes.map((p) => (
-        <article class="plan">
+  <div class="pre__banda">
+    {planes.map((p) => (
+      <article class={`plan plan--${p.m}`}>
+        <div class="plan__in">
           <h3><Icon name={p.icono} /> {p.m}</h3>
           <p class="plan__precio"><span>{soles(p.ciclo)}</span> por ciclo <small>IGV incluido</small></p>
           <ul class="plan__lista">
             {p.incluye.map((i) => <li><Icon name="check" /> {i}</li>)}
           </ul>
-          <p class="plan__mat"><strong>Materiales aparte:</strong> {soles(p.materiales)} por ciclo ({p.materialesDetalle}), IGV incluido.</p>
+          <p class="plan__mat">Materiales aparte: {soles(p.materiales)} por ciclo ({p.materialesDetalle}), IGV incluido.</p>
           <p class="plan__total">Total del primer ciclo: <strong>{soles(p.total)}</strong></p>
-        </article>
-      ))}
-    </div>
-    <p class="precios__nota">{IGV_TEXTO}</p>
+        </div>
+      </article>
+    ))}
+  </div>
 
+  <div class="contenedor">
+    <p class="precios__nota">{IGV_TEXTO}</p>
     <div class="condiciones" aria-labelledby="cond-tit">
       <h3 id="cond-tit">Condiciones del ciclo <span class="etiqueta-demo">Ficticias, de demo</span></h3>
       <dl>
@@ -50,23 +51,34 @@ const planes = (['Presencial', 'Virtual'] as const).map((m) => ({
 </section>
 
 <style>
-  .planes { display: grid; gap: 1.25rem; }
-  @media (min-width: 48rem) { .planes { grid-template-columns: 1.1fr 1fr; align-items: stretch; } }
-  .plan { background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 18px; padding: clamp(1.2rem, 3vw, 1.8rem); display: flex; flex-direction: column; gap: 0.5rem; }
-  .plan h3 { display: flex; align-items: center; gap: 0.6rem; margin: 0; }
-  .plan__precio { margin: 0; font-size: 1.05rem; color: var(--tinta-suave); }
-  .plan__precio span { font: 600 clamp(2.6rem, 8vw, 3.4rem)/1 var(--serif); color: var(--azul-900); margin-right: 0.3rem; }
-  .plan__precio small { display: inline-block; font-size: 0.85rem; font-weight: 700; color: var(--ok); background: var(--ok-fondo); padding: 0.1rem 0.5rem; border-radius: 6px; margin-left: 0.3rem; }
+  .pre { background: var(--papel); padding-block: clamp(3rem, 8vw, 6rem) clamp(3rem, 8vw, 5rem); }
+  .pre__cab { margin-bottom: 2.25rem; }
+  .pre__banda { display: grid; }
+  .plan { padding: clamp(2rem, 5vw, 3.5rem) var(--gutter); color: #fff; }
+  .plan--Presencial { background: var(--azul-900); }
+  .plan--Virtual { background: var(--coral-700); }
+  .plan__in { display: flex; flex-direction: column; gap: 0.6rem; max-width: 36rem; }
+  @media (min-width: 52rem) {
+    .pre__banda { grid-template-columns: 1fr 1fr; }
+    .plan--Presencial { padding-left: max(var(--gutter), calc((100vw - var(--ancho)) / 2)); }
+    .plan--Presencial .plan__in { margin-left: 0; }
+    .plan--Virtual { padding-right: max(var(--gutter), calc((100vw - var(--ancho)) / 2)); }
+    .plan--Virtual .plan__in { margin-left: 2rem; }
+  }
+  .plan h3 { display: flex; align-items: center; gap: 0.6rem; margin: 0; color: #fff; }
+  .plan__precio { margin: 0; font-size: 1.05rem; color: #e9edf8; }
+  .plan__precio span { display: block; font: 600 clamp(4.5rem, 12vw, 8rem)/0.95 var(--serif); letter-spacing: -0.03em; color: #fff; }
+  .plan__precio small { display: inline-block; font-size: 0.85rem; font-weight: 700; color: #fff; border: 1px solid #fff; padding: 0.1rem 0.5rem; border-radius: 6px; margin-left: 0.3rem; }
   .plan__lista { list-style: none; margin: 0.5rem 0; padding: 0; display: grid; gap: 0.4rem; }
   .plan__lista li { display: flex; gap: 0.55rem; align-items: flex-start; }
-  .plan__lista :global(.icono) { color: var(--ok); margin-top: 0.25rem; }
-  .plan__mat { margin: 0; padding: 0.7rem 0.9rem; background: var(--sol-100); border-radius: 10px; font-size: 0.97rem; color: var(--aviso-texto); }
-  .plan__total { margin: 0.4rem 0 0; padding-top: 0.6rem; border-top: 1px dashed var(--linea); }
-  .condiciones { margin-top: 2rem; background: var(--papel-2); border-radius: 16px; padding: clamp(1.1rem, 3vw, 1.8rem); }
+  .plan__lista :global(.icono) { margin-top: 0.25rem; }
+  .plan__mat { margin: 0; padding-top: 0.7rem; border-top: 1px solid rgb(255 255 255 / 0.4); font-size: 0.97rem; }
+  .plan__total { margin: 0; }
+  .precios__nota { margin: 1.5rem 0 2rem; font-size: 0.95rem; color: var(--tinta-suave); }
   .condiciones h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
-  .condiciones dl { display: grid; gap: 0.9rem 2rem; margin: 0; }
-  @media (min-width: 52rem) { .condiciones dl { grid-template-columns: 1fr 1fr; } }
+  .condiciones dl { margin: 0; border-top: 2px solid var(--azul-900); }
+  .condiciones dl > div { display: grid; gap: 0.2rem 2rem; padding: 0.9rem 0; border-bottom: 1px solid var(--linea); }
+  @media (min-width: 52rem) { .condiciones dl > div { grid-template-columns: 14rem 1fr; } }
   .condiciones dt { font-weight: 700; color: var(--azul-900); }
   .condiciones dd { margin: 0; color: var(--tinta-suave); }
-  .precios__nota { margin-top: 1.25rem; font-size: 0.95rem; color: var(--tinta-suave); }
 </style>

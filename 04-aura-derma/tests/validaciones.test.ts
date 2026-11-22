@@ -10,6 +10,8 @@ import {
   validarDocumento,
   validarMonto,
   validarMotivo,
+  validarMotivoGeneral,
+  MOTIVOS_GENERALES,
   validarNombre,
   validarPaciente,
 } from '../src/lib/validaciones';
@@ -102,6 +104,27 @@ describe('WhatsApp', () => {
     expect(u.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     expect(u).not.toContain(' ');
     expect(decodeURIComponent(u.split('text=')[1])).toBe(construirMensajeWhatsApp(r));
+  });
+});
+
+describe('motivo general (minimización de datos de salud)', () => {
+  it('todos los motivos de la lista son válidos y cortos', () => {
+    MOTIVOS_GENERALES.forEach((m) => {
+      expect(validarMotivo(m)).toBe('');
+      expect(validarMotivoGeneral(m)).toBe('');
+      expect(m.length).toBeLessThanOrEqual(60);
+    });
+  });
+  it('rechaza texto libre y vacío', () => {
+    expect(validarMotivoGeneral('')).not.toBe('');
+    expect(validarMotivoGeneral('Tengo una mancha que sangra en la espalda')).not.toBe('');
+  });
+  it('el mensaje de WhatsApp lleva solo el motivo general', () => {
+    const m = construirMensajeWhatsApp({
+      nombre: 'Lucía Torres', celular: '900111222', dni: '12345678', consentimiento: true,
+      motivo: MOTIVOS_GENERALES[0], especialista: 'Dra. Camila Rojas Ferreyra', fecha: '2026-11-24', hora: '10:30',
+    });
+    expect(m).toContain(`Motivo: ${MOTIVOS_GENERALES[0]}`);
   });
 });
 

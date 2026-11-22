@@ -6,7 +6,6 @@ const nombreSector = Object.fromEntries(SECTORES.map((s) => [s.id, s.etiqueta]))
 <section class="seccion casos" id="casos" aria-labelledby="h-casos">
   <div class="wrap">
     <div class="casos__cab">
-      <p class="etiqueta" data-reveal>Casos de automatización</p>
       <h2 class="h2" id="h-casos" data-reveal data-delay="1">Problemas reales, flujos que los resuelven</h2>
       <p class="lead muted" data-reveal data-delay="2">
         Ocho casos <strong>ficticios</strong> para mostrar cómo pensamos. Clientes, nombres y cifras son
@@ -80,7 +79,7 @@ const nombreSector = Object.fromEntries(SECTORES.map((s) => [s.id, s.etiqueta]))
         <Icon nombre="x" tamano={24} />
       </button>
       <p class="caso__sector" id="modal-sector"></p>
-      <h3 id="modal-titulo" tabindex="-1"></h3>
+      <h3 id="modal-titulo" tabindex="-1">Caso de ejemplo</h3>
       <p class="caso__cli" id="modal-cliente"></p>
       <div id="modal-cuerpo" class="caso__det"></div>
       <div class="modal__pie">
@@ -95,7 +94,7 @@ const nombreSector = Object.fromEntries(SECTORES.map((s) => [s.id, s.etiqueta]))
   const lista = document.getElementById('lista-casos') as HTMLElement;
   const casos = Array.from(lista.querySelectorAll<HTMLElement>('.caso[data-sector]'));
   const cta = document.getElementById('caso-cta')!;
-  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('#casos .chip'));
   const conteo = document.getElementById('conteo-casos')!;
   const total = casos.length;
 

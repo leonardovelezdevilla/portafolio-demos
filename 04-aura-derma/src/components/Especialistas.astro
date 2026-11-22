@@ -1,115 +1,105 @@
 ---
 import { ESPECIALISTAS, MENCION_REGISTRO } from '../lib/especialistas';
-
-const [principal, ...otros] = ESPECIALISTAS;
 ---
 
-<section class="seccion seccion--salvia" id="especialistas" aria-labelledby="esp-titulo">
+<section class="seccion seccion--tinta esp-sec" id="especialistas" aria-labelledby="esp-titulo">
   <div class="contenedor">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Especialistas</p>
-      <h2 id="esp-titulo">Quienes te atienden</h2>
-      <p class="lead">Cuatro dermatólogos con enfoques distintos. Perfiles ficticios de demostración.</p>
-      <p class="nota-sim">
-        {MENCION_REGISTRO} En una clínica real se mostrarían el CMP y el RNE, verificables en el Colegio Médico del Perú.
+    <div class="esp-cab">
+      <h2 id="esp-titulo">Quiénes <em>te atienden</em></h2>
+      <p class="esp-nota">
+        Cuatro dermatólogos con enfoques distintos. Perfiles ficticios de demostración. {MENCION_REGISTRO} En una clínica real se mostrarían el CMP y el RNE, verificables en el Colegio Médico del Perú.
       </p>
     </div>
-    <div class="esp">
-      <article class="esp__principal">
-        <span class="esp__mono" aria-hidden="true">{principal.iniciales}</span>
-        <div>
-          <p class="esp__rol">Dirección clínica (perfil ficticio)</p>
-          <h3>{principal.nombre}</h3>
-          <p class="esp__enfoque">{principal.enfoque}</p>
-          <p>{principal.detalle}</p>
-        </div>
-      </article>
-      <ul class="esp__lista">
-        {
-          otros.map((e) => (
-            <li>
-              <span class="esp__ini" aria-hidden="true">{e.iniciales}</span>
-              <div>
-                <h3>{e.nombre}</h3>
-                <p class="esp__enfoque">{e.enfoque}</p>
-                <p>{e.detalle}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    <ol class="esp">
+      {
+        ESPECIALISTAS.map((e, i) => (
+          <li class="esp__fila">
+            <span class="esp__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="esp__nombre">{e.nombre}</h3>
+            <div class="esp__texto">
+              <p class="esp__enfoque">{i === 0 ? 'Dirección clínica (perfil ficticio) · ' : ''}{e.enfoque}</p>
+              <p>{e.detalle}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </section>
 
 <style>
-  .esp {
+  .esp-sec {
+    padding-bottom: clamp(1.5rem, 4vw, 3rem);
+  }
+  .esp-cab {
     display: grid;
-    gap: 1.5rem;
+    gap: 1rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .esp-cab h2 {
+    margin: 0;
+  }
+  .esp-nota {
+    margin: 0;
+    max-width: 30rem;
+    font-size: 0.95rem;
+    color: #d8cfc6;
   }
   @media (min-width: 62rem) {
-    .esp {
-      grid-template-columns: 1.05fr 1fr;
-      gap: 3rem;
-      align-items: start;
+    .esp-cab {
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 4rem;
+      align-items: end;
     }
   }
-  .esp__principal {
-    background: var(--salvia-900);
-    color: #eef2ea;
-    border-radius: var(--radio-lg);
-    padding: clamp(1.5rem, 4vw, 2.5rem);
-    display: grid;
-    gap: 1.25rem;
-  }
-  .esp__principal h3 {
-    color: #ffffff;
-    font-size: 2rem;
-  }
-  .esp__principal .esp__enfoque {
-    color: var(--salvia-100);
-  }
-  .esp__mono {
-    font: 400 4.5rem/1 var(--serif);
-    color: var(--salvia-300);
-  }
-  .esp__rol {
-    font-size: 0.8125rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--salvia-300);
-    margin-bottom: 0.5rem;
-  }
-  .esp__enfoque {
-    color: var(--salvia-700);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  .esp__lista {
+  .esp {
     list-style: none;
     margin: 0;
     padding: 0;
+    border-top: 1px solid var(--porcelana);
   }
-  .esp__lista li {
-    display: flex;
-    gap: 1rem;
-    padding-block: 1.25rem;
-    border-top: 1px solid var(--salvia-500);
+  .esp__fila {
+    display: grid;
+    gap: 0.4rem 1.5rem;
+    padding-block: clamp(1.25rem, 3vw, 2.25rem);
+    border-bottom: 1px solid rgb(245 241 236 / 0.35);
+    transition: padding-left 0.25s ease;
   }
-  .esp__lista li:first-child {
-    border-top: 0;
-    padding-top: 0;
+  .esp__fila:hover {
+    padding-left: 0.75rem;
   }
-  .esp__ini {
-    flex: none;
-    font: 400 1.9rem/1 var(--serif);
-    color: var(--salvia-700);
-    width: 3rem;
+  .esp__n {
+    font: italic 400 1.1rem/1 var(--serif);
+    color: var(--oxido-claro);
   }
-  .esp__lista h3 {
-    margin-bottom: 0.1rem;
+  .esp__nombre {
+    margin: 0;
+    font-size: clamp(2rem, 5.4vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
   }
-  .esp__lista p {
-    margin-bottom: 0.4rem;
+  .esp__fila:hover .esp__nombre {
+    color: var(--oxido-claro);
+  }
+  .esp__texto p {
+    margin: 0;
+    color: #e4dcd3;
+    max-width: 34rem;
+  }
+  .esp__enfoque {
+    font-weight: 600;
+    color: var(--porcelana) !important;
+    margin-bottom: 0.2rem !important;
+  }
+  @media (min-width: 62rem) {
+    .esp__fila {
+      grid-template-columns: 3rem minmax(0, 1.5fr) minmax(0, 1fr);
+      align-items: center;
+    }
+    .esp__n {
+      align-self: start;
+      padding-top: 0.9rem;
+    }
   }
 </style>

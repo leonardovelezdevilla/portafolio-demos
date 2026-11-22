@@ -1,48 +1,77 @@
 ---
 import Icon from './Icon.astro';
 import { NEGOCIO } from '../lib/negocio';
+
+const [calle, oficina] = NEGOCIO.direccion.split(',').map((x) => x.trim());
 ---
 
-<section class="seccion seccion--crema" id="ubicacion" aria-labelledby="ubi-titulo">
-  <div class="contenedor ubi">
-    <div>
-      <p class="sobretitulo">Ubicación</p>
-      <h2 id="ubi-titulo">Visítanos en San Isidro</h2>
-      <p class="lead">Una dirección ficticia, en una zona tranquila y bien conectada, con ascensor y atención en un solo piso.</p>
-      <ul class="ubi__lista">
-        <li><Icon name="map-pin" /> <span><strong>{NEGOCIO.direccion}</strong><br />{NEGOCIO.distrito} <em>(dirección ficticia)</em></span></li>
-        <li><Icon name="bus" /> <span>Cerca de paraderos y de una estación de transporte público (referencia ficticia).</span></li>
-        <li><Icon name="phone" /> <span><a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible}</a> (WhatsApp de demo)</span></li>
-      </ul>
+<section class="seccion seccion--oxido" id="ubicacion" aria-labelledby="ubi-titulo">
+  <div class="contenedor">
+    <h2 id="ubi-titulo" class="ubi__titulo">Visítanos en San Isidro</h2>
+    <p class="ubi__dir">{calle}</p>
+    <p class="ubi__sub">{oficina} · {NEGOCIO.distrito} <em>(dirección ficticia)</em></p>
+
+    <div class="ubi">
+      <div>
+        <p class="lead">Una zona tranquila y bien conectada, con ascensor y atención en un solo piso.</p>
+        <ul class="ubi__lista">
+          <li><Icon name="bus" /> <span>Cerca de paraderos y de una estación de transporte público (referencia ficticia).</span></li>
+          <li><Icon name="phone" /> <span><a class="dibuja ubi__tel" href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible}<span class="visually-hidden">, WhatsApp de demo, se abre en otra pestaña o aplicación</span></a> (WhatsApp de demo)</span></li>
+        </ul>
+      </div>
+      <div class="ubi__horario">
+        <h3>Horario de atención</h3>
+        <dl>
+          {NEGOCIO.horario.map((h) => (<div><dt>{h.dias}</dt><dd>{h.horas}</dd></div>))}
+        </dl>
+        <p class="ubi__nota">Hora de Lima (UTC-5). Atención con cita previa.</p>
+      </div>
     </div>
-    <div class="ubi__horario">
-      <h3><Icon name="clock" /> Horario de atención</h3>
-      <dl>
-        {NEGOCIO.horario.map((h) => (<><dt>{h.dias}</dt><dd>{h.horas}</dd></>))}
-      </dl>
-      <p class="nota-sim">Hora de Lima (UTC-5). Atención con cita previa.</p>
+
+    <div class="mapa" data-mapa>
+      <button type="button" class="btn" data-mapa-btn aria-controls="mapa-caja">Ver mapa de la zona</button>
+      <div id="mapa-caja" class="mapa-caja" data-mapa-caja hidden></div>
+      <p class="ubi__nota">Al cargar el mapa tu navegador se conecta a OpenStreetMap. Muestra solo la zona de San Isidro: la clínica y su dirección son ficticias.</p>
     </div>
   </div>
 </section>
 
 <style>
+  .ubi__titulo {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    margin-bottom: 1.5rem;
+  }
+  .ubi__dir {
+    margin: 0;
+    font: 400 clamp(2.6rem, 11.2vw, 10.5rem) / 0.92 var(--serif);
+    letter-spacing: -0.035em;
+    color: var(--porcelana);
+  }
+  .ubi__sub {
+    margin: 0.75rem 0 clamp(2.5rem, 6vw, 4rem);
+    font: 400 clamp(1.3rem, 2.6vw, 2rem) / 1.2 var(--serif);
+  }
   .ubi {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
+    border-top: 1px solid var(--porcelana);
+    padding-top: 2rem;
+  }
+  .ubi .lead {
+    color: var(--porcelana);
   }
   @media (min-width: 52rem) {
     .ubi {
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1.1fr 1fr;
       gap: 4rem;
-      align-items: start;
     }
   }
   .ubi__lista {
     list-style: none;
-    margin: 1.5rem 0 0;
+    margin: 1.25rem 0 0;
     padding: 0;
     display: grid;
-    gap: 1rem;
+    gap: 0.5rem;
   }
   .ubi__lista li {
     display: flex;
@@ -50,29 +79,80 @@ import { NEGOCIO } from '../lib/negocio';
     align-items: flex-start;
   }
   .ubi__lista :global(.icono) {
-    margin-top: 0.25rem;
-    color: var(--salvia-700);
+    margin-top: 0.3rem;
   }
-  .ubi__horario {
-    background: var(--blanco);
-    border: 1px solid var(--linea);
-    border-radius: var(--radio-lg);
-    padding: 1.75rem;
+  .ubi__tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
   }
   .ubi__horario h3 {
-    display: flex;
-    gap: 0.6rem;
-    align-items: center;
+    font-size: 1.9rem;
   }
-  dl {
+  .ubi__horario dl {
     margin: 0 0 1rem;
+  }
+  .ubi__horario dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.7rem;
+    border-bottom: 1px solid rgb(245 241 236 / 0.55);
   }
   dt {
     font-weight: 600;
-    color: var(--salvia-900);
   }
   dd {
-    margin: 0 0 0.75rem;
-    color: var(--tinta-suave);
+    margin: 0;
+    text-align: right;
+  }
+  .ubi__nota {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .mapa {
+    margin-top: 2.5rem;
+  }
+  .mapa .ubi__nota {
+    margin-top: 0.75rem;
+  }
+  .mapa-caja {
+    margin: 1.25rem 0 0.75rem;
+    border: 1px solid var(--porcelana);
+    background: var(--papel);
+  }
+  .mapa-caja :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 18rem;
+    border: 0;
   }
 </style>
+
+
+<script>
+  // Mapa que carga solo con un clic: hasta entonces no hay conexión con ningún tercero.
+  const raiz = document.querySelector<HTMLElement>('[data-mapa]');
+  if (raiz) {
+    const btn = raiz.querySelector<HTMLButtonElement>('[data-mapa-btn]')!;
+    const caja = raiz.querySelector<HTMLElement>('[data-mapa-caja]')!;
+    btn.addEventListener('click', () => {
+      if (caja.hidden) {
+        if (!caja.firstChild) {
+          const f = document.createElement('iframe');
+          f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=-77.058%2C-12.115%2C-77.020%2C-12.085&layer=mapnik';
+          f.title = 'Mapa de la zona de San Isidro, Lima (OpenStreetMap); ubicación de ejemplo';
+          f.loading = 'lazy';
+          f.referrerPolicy = 'no-referrer';
+          caja.append(f);
+        }
+        caja.hidden = false;
+        btn.textContent = 'Ocultar mapa';
+      } else {
+        caja.hidden = true;
+        btn.textContent = 'Ver mapa de la zona';
+      }
+    });
+  }
+</script>

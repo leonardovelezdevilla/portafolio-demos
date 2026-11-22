@@ -18,7 +18,9 @@ Cada foto se verificó abriendo su página en Unsplash o Pexels (Unsplash Licens
 Descartadas: fachadas de ladrillo con aspecto centroeuropeo, fotos en blanco y negro y fotos con carteles o marcas posibles. Revisión visual de las nueve fotos finales: sin logos ni carteles legibles.
 
 ## Tipografías (SIL OFL, autohospedadas vía @fontsource)
-Familjen Grotesk (titulares) y Hanken Grotesk (cuerpo). Licencias en `public/fonts/`.
+Libre Caslon Display (titulares, 400) y Geologica (cuerpo, 400/600/700). Licencias en `public/fonts/`.
 
 ## Íconos
-Lucide (`lucide-static`, licencia ISC).
+Lucide (`lucide-static`, licencia ISC; copia en `public/licencias/LUCIDE-ISC.txt`).
+
+Rediseño 2026-11: no se añadieron fotos; se reutilizan las nueve. La foto del héroe es la de SHOX ART (Pexels) y las de los distritos son las fachadas de los proyectos.

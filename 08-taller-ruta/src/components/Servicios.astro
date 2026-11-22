@@ -1,45 +1,56 @@
 ---
+import { Image } from 'astro:assets';
+import foto from '../assets/fotos/pizarra-herramientas.jpg';
 import { SERVICIOS, TARIFAS } from '../data/precios';
 import { soles } from '../lib/cotizador';
 import Icon from './Icon.astro';
 const desdeAuto = (id: (typeof SERVICIOS)[number]['id']) => TARIFAS[id].auto![0];
 ---
-<section class="seccion seccion--papel" id="servicios" aria-labelledby="t-serv">
-  <div class="wrap">
-    <p class="etiqueta">Qué hacemos</p>
-    <h2 id="t-serv">Seis trabajos que cubren el mantenimiento de todos los días</h2>
-    <p class="intro">Todo con repuestos que te mostramos y precios con IGV incluido. El tarifario completo por tipo de vehículo está en el cotizador.</p>
-    <ol class="lista">
-      {SERVICIOS.map((s, i) => (
+<section class="seccion serv" id="servicios" aria-labelledby="t-serv">
+  <div class="wrap serv__grid">
+    <div class="serv__lado">
+      <h2 id="t-serv">Seis trabajos para el mantenimiento de todos los días</h2>
+      <p class="intro">Repuestos que te mostramos y precios con IGV incluido. El tarifario por tipo de vehículo está en el cotizador.</p>
+      <figure class="serv__foto">
+        <Image src={foto} alt="Pizarra de taller con llaves fijas y de corona colgadas por tamaños, y un esmeril de banco desenfocado delante" width={900} widths={[480, 720, 900]} sizes="(min-width: 960px) 480px, 100vw" format="webp" quality={70} loading="lazy" decoding="async" />
+      </figure>
+      <p class="muted serv__nota">Foto de stock referencial. Precios de ejemplo de demo; el precio final requiere inspección.</p>
+    </div>
+    <ul class="ficha-lista">
+      {SERVICIOS.map((s) => (
         <li class="fila">
-          <span class="fila__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <span class="fila__ico"><Icon nombre={s.id} tamano={32} /></span>
           <div class="fila__txt">
             <h3>{s.nombre}</h3>
             <p>{s.incluye}</p>
           </div>
-          <p class="fila__precio"><span class="muted">Auto, desde</span> <strong>{soles(desdeAuto(s.id))}</strong></p>
+          <p class="fila__precio"><span class="muted">Auto desde</span> <strong class="mono">{soles(desdeAuto(s.id))}</strong></p>
         </li>
       ))}
-    </ol>
-    <p class="muted nota">Precios de ejemplo de demo, referenciales. El precio final requiere inspección.</p>
+    </ul>
   </div>
 </section>
 
 <style>
-  .lista { margin-top: 36px; border-top: 3px solid var(--asfalto); }
-  .fila { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: center; padding-block: 20px; border-bottom: 1px solid var(--linea); }
-  .fila__n { display: none; font-family: var(--f-titular); font-weight: 700; font-size: 1.6rem; color: var(--texto-suave); }
-  .fila__ico { grid-row: span 2; display: grid; place-items: center; width: 56px; height: 56px; background: var(--asfalto); color: var(--senal); border-radius: 2px; }
-  .fila__txt h3 { margin: 0 0 2px; font-size: 1.55rem; }
+  .serv__grid { display: grid; gap: 36px; }
+  @media (min-width: 960px) { .serv__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: start; } .serv__lado { position: sticky; top: 24px; } }
+  .serv__foto { margin: 28px 0 10px; }
+  .serv__foto img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; filter: grayscale(0.4) contrast(1.05); transition: transform 0.4s; }
+  .serv__foto { overflow: hidden; border-radius: 2px; }
+  .serv__foto:hover img { transform: scale(1.02); }
+  .serv__nota { font-size: 0.9rem; }
+  .ficha-lista { border-top: 4px solid var(--asfalto); }
+  .fila { display: grid; grid-template-columns: 48px 1fr; gap: 2px 16px; align-items: center; padding-block: 22px; border-bottom: 1px solid var(--linea); transition: background-color 0.15s; }
+  .fila:hover { background: var(--concreto); }
+  .fila__ico { grid-row: span 2; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--asfalto); border-radius: 2px; }
+  .fila__txt h3 { margin: 0 0 2px; font-size: 2rem; }
   .fila__txt p { margin: 0; color: var(--texto-suave); }
-  .fila__precio { margin: 0; grid-column: 2; }
-  .fila__precio strong { font-family: var(--f-titular); font-size: 1.5rem; }
+  .fila__precio { margin: 6px 0 0; grid-column: 2; display: flex; align-items: baseline; gap: 10px; }
+  .fila__precio .muted { font-size: 0.9rem; }
+  .fila__precio strong { font-size: 1.35rem; }
   @media (min-width: 768px) {
-    .fila { grid-template-columns: 56px 64px 1fr auto; gap: 20px; }
-    .fila__n { display: block; }
+    .fila { grid-template-columns: 48px 1fr auto; gap: 20px; padding-inline: 8px; }
     .fila__ico { grid-row: auto; }
-    .fila__precio { grid-column: auto; text-align: right; }
+    .fila__precio { grid-column: auto; margin: 0; flex-direction: column; align-items: flex-end; gap: 0; text-align: right; }
   }
-  .nota { margin-top: 16px; font-size: 0.95rem; }
 </style>

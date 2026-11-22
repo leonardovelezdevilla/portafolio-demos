@@ -2,6 +2,8 @@
 export const CUOTA_INICIAL_MIN = 0.1;
 export const PLAZO_MIN = 5;
 export const PLAZO_MAX = 30;
+export const PRECIO_MIN = 50000;
+export const PRECIO_MAX = 5000000; // tope de ejemplo del simulador
 export const TEA_MIN = 1;
 export const TEA_MAX = 40;
 export const TEA_EJEMPLO = 10; // % anual, valor de ejemplo editable; no es una tasa de ninguna entidad
@@ -27,7 +29,8 @@ export interface ErroresSimulador { precio?: string; inicial?: string; plazo?: s
 
 export function validarSimulador(e: EntradaSimulador): ErroresSimulador {
   const err: ErroresSimulador = {};
-  if (!Number.isFinite(e.precio) || e.precio < 50000) err.precio = 'Ingresa un precio de al menos S/ 50 000.';
+  if (!Number.isFinite(e.precio) || e.precio < PRECIO_MIN) err.precio = 'Ingresa un precio de al menos S/ 50 000.';
+  else if (e.precio > PRECIO_MAX) err.precio = 'El simulador de ejemplo llega hasta S/ 5 000 000.';
   if (!Number.isFinite(e.inicial)) err.inicial = 'Ingresa la cuota inicial.';
   else if (!err.precio && e.inicial < cuotaInicialMinima(e.precio)) err.inicial = 'La cuota inicial mínima de este ejemplo es 10 % del precio; cada entidad define la suya.';
   else if (!err.precio && e.inicial >= e.precio) err.inicial = 'La cuota inicial debe ser menor que el precio.';

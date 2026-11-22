@@ -11,11 +11,12 @@
     "capturas": "node scripts/capturas.mjs"
   },
   "dependencies": {
+    "@fontsource/big-shoulders-display": "^5.3.0",
+    "@fontsource/chivo": "^5.3.0",
+    "@fontsource/chivo-mono": "^5.3.0",
     "astro": "^7.4.13"
   },
   "devDependencies": {
-    "@fontsource/barlow": "^5.3.0",
-    "@fontsource/barlow-condensed": "^5.3.0",
     "lucide-static": "^1.77.0",
     "playwright-core": "^1.65.1",
     "vitest": "^5.1.1"

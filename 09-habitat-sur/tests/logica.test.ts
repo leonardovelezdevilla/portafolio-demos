@@ -50,6 +50,12 @@ describe('validación del simulador', () => {
     expect(validarSimulador({ ...ok, teaPct: 0 }).tea).toBeDefined();
     expect(validarSimulador({ ...ok, teaPct: NaN }).tea).toBeDefined();
   });
+  it('rechaza precio sobre el tope de ejemplo y lo marca en el precio, no en la inicial', () => {
+    const e = validarSimulador({ ...ok, precio: 99_999_999_999, inicial: 40000 });
+    expect(e.precio).toMatch(/5 000 000/);
+    expect(e.inicial).toBeUndefined();
+    expect(validarSimulador({ ...ok, precio: 5_000_000, inicial: 1_000_000 })).toEqual({});
+  });
   it('rechaza precio vacío', () => expect(validarSimulador({ ...ok, precio: NaN }).precio).toBeDefined());
 });
 
@@ -92,7 +98,7 @@ describe('filtros del listado', () => {
 
 describe('agenda de visita', () => {
   const hoy = new Date(2026, 10, 20, 9); // viernes 20-nov-2026
-  const base: Visita = { departamento: 'Morro Solar 502', fecha: '2026-11-23', franja: 'manana', nombre: 'Ana Quispe', telefono: '987 654 321', consentimiento: true };
+  const base: Visita = { departamento: 'Morro Solar 502', fecha: '2026-11-23', franja: 'manana', nombre: 'Ana Quispe', consentimiento: true };
   it('acepta una visita válida', () => expect(validarVisita(base, hoy)).toEqual({}));
   it('fecha mínima es mañana', () => expect(fechaMinima(hoy)).toBe('2026-11-21'));
   it('rechaza el mismo día y fechas pasadas', () => {
@@ -107,9 +113,9 @@ describe('agenda de visita', () => {
     expect(franjasDelDia(parseFecha('2026-11-21')!).map((f) => f.id)).toEqual(['manana']);
     expect(validarVisita({ ...base, fecha: '2026-11-21', franja: 'tarde' }, hoy).franja).toBeDefined();
   });
-  it('exige nombre y apellido, celular de 9 dígitos y consentimiento', () => {
-    const e = validarVisita({ ...base, nombre: 'Ana', telefono: '12345', consentimiento: false }, hoy);
-    expect(Object.keys(e).sort()).toEqual(['consentimiento', 'nombre', 'telefono']);
+  it('exige nombre y apellido y consentimiento (ya no pide celular)', () => {
+    const e = validarVisita({ ...base, nombre: 'Ana', consentimiento: false }, hoy);
+    expect(Object.keys(e).sort()).toEqual(['consentimiento', 'nombre']);
   });
   it('fechas inexistentes no pasan', () => expect(parseFecha('2026-02-30')).toBeNull());
   it('arma el enlace wa.me codificado', () => {
@@ -117,6 +123,12 @@ describe('agenda de visita', () => {
     expect(u.startsWith('https://wa.me/51935852637?text=')).toBe(true);
     expect(decodeURIComponent(u.split('text=')[1])).toContain('Morro Solar 502');
     expect(u).not.toContain(' ');
+  });
+  it('el mensaje de WhatsApp no repite el celular del cliente', () => {
+    const t = mensajeWhatsApp(base, 'Morro Solar 502');
+    expect(t).not.toMatch(/celular/i);
+    expect(Object.keys(base)).not.toContain('telefono');
+    expect(t).toContain(base.nombre.trim());
   });
   it('aISO usa fecha local', () => expect(aISO(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05'));
 });

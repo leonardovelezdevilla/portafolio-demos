@@ -4,42 +4,50 @@ import { CONDICIONES, PAQUETES, PLANES_MENSUALES, PRECIO_PRUEBA, PRECIO_SUELTA }
 import { ahorroFrenteASuelta, baseSinIGV, montoIGV, precioPorClase, soles } from '../lib/precios';
 import { urlWhatsApp } from '../lib/horario';
 ---
-<p class="elegir"><Icono nombre="route" /> <span><strong>Cómo elegir:</strong> si vienes cada semana, un plan mensual sale más barato por clase. Si tu agenda cambia, un paquete no tiene mensualidad y puedes usarlo cuando quieras dentro de su vigencia. Primera vez: clase de prueba a {soles(PRECIO_PRUEBA)} (clase suelta regular: {soles(PRECIO_SUELTA)}).</span></p>
+<p class="elegir"><Icono nombre="route" /> <span><strong>Cómo elegir:</strong> si vienes cada semana, un plan mensual sale más barato por clase. Si tu agenda cambia, un paquete no tiene mensualidad y puedes usarlo cuando quieras dentro de su vigencia. <a href="#reserva">Primera vez: clase de prueba a {soles(PRECIO_PRUEBA)}</a>.</span></p>
 
 <h3 class="planes-sub">Planes mensuales</h3>
-<div class="planes">
+<ul class="tarifas" role="list">
   {PLANES_MENSUALES.map((p) => (
-    <article class="plan">
-      <h4>{p.nombre}</h4>
-      <p class="plan__precio">{soles(p.precio)} <small>/ mes</small></p>
-      <p class="plan__igv">IGV incluido (base {soles(baseSinIGV(p.precio))} + IGV {soles(montoIGV(p.precio))})</p>
-      <ul role="list">
+    <li class="tarifa">
+      <div class="tarifa__nombre">
+        <h4>{p.nombre}</h4>
+        <p>{p.detalle}</p>
+      </div>
+      <ul class="tarifa__datos" role="list">
         <li><Icono nombre="check" /> {p.clases} clases al mes · {soles(precioPorClase(p))} por clase</li>
         <li><Icono nombre="check" /> {ahorroFrenteASuelta(p, PRECIO_SUELTA)} % menos que clases sueltas</li>
-        <li><Icono nombre="check" /> {p.detalle}</li>
         <li><Icono nombre="calendar-check" /> Vence a los {p.vigenciaDias} días; las clases no usadas se pierden.</li>
       </ul>
+      <div class="tarifa__precio">
+        <p class="plan__precio">{soles(p.precio)} <small>/ mes</small></p>
+        <p class="plan__igv">IGV incluido (base {soles(baseSinIGV(p.precio))} + IGV {soles(montoIGV(p.precio))})</p>
+      </div>
       <a class="boton" href={urlWhatsApp(`Hola Pulso Studio, quiero info del plan ${p.nombre} (${p.clases} clases al mes, ${soles(p.precio)}).`)} target="_blank" rel="noopener noreferrer">Consultar este plan<span class="solo-lector"> (se abre en una pestaña nueva)</span></a>
-    </article>
+    </li>
   ))}
-</div>
+</ul>
 
 <h3 class="planes-sub">Paquetes de clases</h3>
-<div class="planes planes--2">
+<ul class="tarifas" role="list">
   {PAQUETES.map((p) => (
-    <article class="plan">
-      <h4>{p.nombre}</h4>
-      <p class="plan__precio">{soles(p.precio)}</p>
-      <p class="plan__igv">IGV incluido (base {soles(baseSinIGV(p.precio))} + IGV {soles(montoIGV(p.precio))})</p>
-      <ul role="list">
+    <li class="tarifa">
+      <div class="tarifa__nombre">
+        <h4>{p.nombre}</h4>
+        <p>{p.detalle}</p>
+      </div>
+      <ul class="tarifa__datos" role="list">
         <li><Icono nombre="check" /> {soles(precioPorClase(p))} por clase · {ahorroFrenteASuelta(p, PRECIO_SUELTA)} % menos que sueltas</li>
-        <li><Icono nombre="check" /> {p.detalle}</li>
         <li><Icono nombre="calendar-check" /> Vence a los {p.vigenciaDias} días; las clases no usadas se pierden.</li>
       </ul>
+      <div class="tarifa__precio">
+        <p class="plan__precio">{soles(p.precio)}</p>
+        <p class="plan__igv">IGV incluido (base {soles(baseSinIGV(p.precio))} + IGV {soles(montoIGV(p.precio))})</p>
+      </div>
       <a class="boton" href={urlWhatsApp(`Hola Pulso Studio, quiero info del ${p.nombre} (${soles(p.precio)}).`)} target="_blank" rel="noopener noreferrer">Consultar paquete<span class="solo-lector"> (se abre en una pestaña nueva)</span></a>
-    </article>
+    </li>
   ))}
-</div>
+</ul>
 
 <div class="condiciones">
   <h3>Condiciones de planes y paquetes (ejemplo de demo)</h3>

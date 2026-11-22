@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import { NEGOCIO } from '../lib/negocio';
 const anio = 2026;
 ---
@@ -14,68 +13,70 @@ const anio = 2026;
     <div>
       <h2 class="pie__tit">Contacto</h2>
       <ul class="pie__lista">
-        <li><Icon name="map-pin" /> {NEGOCIO.direccion}, {NEGOCIO.distrito} (dirección ficticia)</li>
+        <li>{NEGOCIO.direccion}, {NEGOCIO.distrito} (dirección ficticia)</li>
         <li>
-          <Icon name="phone" />
-          <a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible} (demo)</a>
+          <a class="pie__enlace" href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">{NEGOCIO.telefonoVisible} (WhatsApp de demo)<span class="visually-hidden">, se abre en otra pestaña o aplicación</span></a>
         </li>
       </ul>
     </div>
     <div>
       <h2 class="pie__tit">Información legal</h2>
-      <ul class="pie__lista pie__lista--enlaces">
-        <li><a href="/privacidad/">Privacidad (datos de salud = sensibles)</a></li>
-        <li><a href="/terminos/">Términos de demo</a></li>
-        <li><a href="/libro-reclamaciones/">Libro de Reclamaciones de demo</a></li>
+      <ul class="pie__lista">
+        <li><a class="pie__enlace" href="/privacidad/">Privacidad (datos de salud = sensibles)</a></li>
+        <li><a class="pie__enlace" href="/terminos/">Términos de demo</a></li>
+        <li><a class="pie__enlace" href="/libro-reclamaciones/">Libro de Reclamaciones de demo</a></li>
       </ul>
     </div>
   </div>
   <div class="contenedor pie__base">
     <p>Demo de portafolio — <a href="https://velezdevilla.com" rel="noopener">Vélez De Villa</a>. {NEGOCIO.nombre} es una marca ficticia; ningún dato se envía ni se guarda. © {anio}</p>
+    <p>Fotografías ilustrativas de Gustavo Fring, en Pexels (<a href="https://www.pexels.com/photo/a-specialist-and-a-client-looking-at-the-tablet-7446684/" rel="noopener">foto 1</a>, <a href="https://www.pexels.com/photo/a-tablet-with-a-magnifier-7446660/" rel="noopener">foto 2</a>).</p>
   </div>
 </footer>
 
 <style>
   .pie {
-    background: var(--salvia-900);
-    color: #e6ecdf;
-    padding-top: 3.5rem;
+    --foco: var(--oxido-claro);
+    background: var(--tinta);
+    color: #e4dcd3;
+    padding-top: 4rem;
     font-size: 0.97rem;
+    border-top: 1px solid var(--porcelana);
   }
   .pie a {
-    color: #ffffff;
+    color: var(--porcelana);
   }
   .pie a:hover {
-    color: var(--salvia-100);
+    color: var(--oxido-claro);
   }
   .pie__grid {
     display: grid;
-    gap: 2rem;
+    gap: 2.25rem;
   }
   @media (min-width: 52rem) {
     .pie__grid {
-      grid-template-columns: 1.2fr 1.3fr 1fr;
+      grid-template-columns: 1.2fr 1.2fr 1fr;
+      gap: 3rem;
     }
   }
   .pie__marca {
-    font: 400 1.75rem/1.1 var(--serif);
-    color: #fff;
+    font: 400 2.4rem/1.05 var(--serif);
+    letter-spacing: -0.02em;
+    color: var(--porcelana);
     margin-bottom: 0.5rem;
   }
   .pie__marca em {
-    font-style: normal;
-    color: var(--salvia-300);
+    font-style: italic;
+    color: var(--oxido-claro);
   }
   .pie__tit {
-    font: 600 0.8rem/1.2 var(--sans);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--salvia-300);
-    margin-bottom: 0.9rem;
+    font: italic 400 1.3rem/1.2 var(--serif);
+    letter-spacing: 0;
+    color: var(--oxido-claro);
+    margin-bottom: 0.6rem;
   }
   .pie__chico {
     font-size: 0.88rem;
-    color: var(--salvia-300);
   }
   .pie__lista {
     list-style: none;
@@ -83,31 +84,20 @@ const anio = 2026;
     padding: 0;
   }
   .pie__lista li {
-    display: flex;
-    gap: 0.6rem;
-    margin-bottom: 0.6rem;
-    align-items: flex-start;
+    margin-bottom: 0.4rem;
   }
-  .pie__lista :global(.icono) {
-    margin-top: 0.3rem;
-    color: var(--salvia-300);
-  }
-  .pie__lista--enlaces li {
-    margin-bottom: 0;
-  }
-  .pie__lista--enlaces a {
+  .pie__enlace {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
   }
   .pie__base {
-    margin-top: 2rem;
-    padding-block: 1.25rem 2rem;
-    border-top: 1px solid rgb(255 255 255 / 0.18);
+    margin-top: 2.5rem;
+    padding-block: 1.25rem 2.25rem;
+    border-top: 1px solid rgb(245 241 236 / 0.3);
     font-size: 0.88rem;
-    color: var(--salvia-300);
   }
   .pie__base p {
-    margin: 0;
+    margin: 0 0 0.35rem;
   }
 </style>

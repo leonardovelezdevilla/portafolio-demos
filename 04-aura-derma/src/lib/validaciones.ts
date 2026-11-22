@@ -32,11 +32,29 @@ export function validarDni(v: string): string {
   return '';
 }
 
+/**
+ * Motivos generales de consulta. Son los únicos que viajan por WhatsApp: no hay texto libre,
+ * así los datos de salud (sensibles, Ley 29733) no pasan a Meta con más detalle del necesario.
+ */
+export const MOTIVOS_GENERALES = [
+  'Control de acné',
+  'Revisión de lunares o manchas',
+  'Piel sensible o irritación',
+  'Caída del cabello',
+  'Procedimiento (peeling o crioterapia)',
+  'Primera consulta, aún no lo sé',
+] as const;
+
 export function validarMotivo(v: string): string {
   const t = v.trim();
-  if (t.length < 5) return 'Cuéntanos brevemente el motivo (mínimo 5 caracteres).';
-  if (t.length > 200) return 'El motivo es muy largo; resúmelo en 200 caracteres.';
+  if (t.length < 5) return 'Elige un motivo general de la lista.';
+  if (t.length > 200) return 'El motivo es muy largo; elige uno de la lista.';
   return '';
+}
+
+/** En el formulario solo se admite un motivo de la lista (sin texto libre). */
+export function validarMotivoGeneral(v: string): string {
+  return (MOTIVOS_GENERALES as readonly string[]).includes(v.trim()) ? '' : 'Elige un motivo general de la lista.';
 }
 
 export function validarConsentimiento(v: boolean): string {

@@ -9,7 +9,7 @@ Taller mecánico ficticio en Los Olivos, Lima. Demo de Vélez De Villa. Marca, p
 - Garantías, preguntas frecuentes, Privacidad, Términos y Libro de Reclamaciones de demo.
 
 ## Diseño
-Industrial y directo: asfalto, amarillo señal, Barlow Condensed y Barlow. Ver `DECISIONES.md`.
+Ficha técnica: gris concreto, tinta y amarillo señal; Big Shoulders Display, Chivo y Chivo Mono. Ver `DECISIONES.md`.
 
 ## Capturas
 Carpeta `capturas/` a 360, 768 y 1440 px: inicio, cotizador (paso 2 y resultado), reserva (y confirmación) y seguimiento.

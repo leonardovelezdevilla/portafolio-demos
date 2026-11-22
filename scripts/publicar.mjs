@@ -3,6 +3,7 @@
 import { execSync } from 'node:child_process';
 import { readdirSync, statSync, readFileSync, writeFileSync, rmSync, mkdirSync, cpSync, existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SITE = 'https://velezdevilla.com';
 const DEMOS = {
@@ -12,11 +13,12 @@ const DEMOS = {
   '04-aura-derma': 'aura-derma',
   '05-nexo-automatiza': 'nexo-automatiza',
   '06-pulso-studio': 'pulso-studio',
+  '07-alba-pasteleria': 'alba-pasteleria',
   '08-taller-ruta': 'taller-ruta',
   '09-habitat-sur': 'habitat-sur',
   '10-lumen-idiomas': 'lumen-idiomas',
 };
-const raiz = new URL('..', import.meta.url).pathname;
+const raiz = fileURLToPath(new URL('..', import.meta.url));
 const salida = join(raiz, 'salida', 'portafolio');
 rmSync(join(raiz, 'salida'), { recursive: true, force: true });
 mkdirSync(salida, { recursive: true });

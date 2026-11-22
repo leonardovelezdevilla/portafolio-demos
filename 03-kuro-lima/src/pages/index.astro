@@ -64,7 +64,7 @@ const tiemposOmakase = [
       <div class="hero__grid">
         <div>
           <h1 id="hero-titulo">Kuro<span>Lo negro, lo hondo, lo bien hecho. Cocina nikkei con el mar de Lima.</span></h1>
-          <p class="hero__texto">Pesca del día, ají amarillo y el corte preciso de la cocina japonesa. Platos desde S/ 24, de martes a domingo, en una casa pequeña de Barranco.</p>
+          <p class="hero__texto">Pesca del día, ají amarillo y el corte preciso de la cocina japonesa. Platos desde S/&nbsp;24, de martes a domingo, en una casa pequeña de Barranco.</p>
           <div class="hero__acciones">
             <a class="boton boton--oro" href="#reserva">Reservar mesa</a>
             <a class="boton boton--linea" href="#carta">Ver la carta</a>
@@ -92,12 +92,13 @@ const tiemposOmakase = [
           <p>Se formó en cocinas de Lima y de Osaka, y volvió a Barranco con una idea sencilla: respetar el producto como lo hacen en Japón y condimentarlo como lo hacemos acá. Compra pescado en el muelle cada madrugada, corta a pedido y no sirve nada que no comería en su propia casa.</p>
         </div>
         <blockquote class="cita">«Kuro significa negro. Es el color de la sartén bien curada, de la salsa que lleva horas y de la noche en que nadie quiere irse.»</blockquote>
-        <p class="firma">Daigo Higa Valdivia · Chef (personaje ficticio)</p>
+        <p class="firma">Daigo Higa Valdivia · Chef (personaje ficticio) <span class="etiqueta-demo">Ejemplo de demo</span></p>
         <dl class="cifras">
           <div><dt>8</dt><dd>asientos en la barra omakase</dd></div>
           <div><dt>6</dt><dd>secciones en la carta</dd></div>
-          <div><dt>24</dt><dd>platos, de S/ 16 a S/ 78</dd></div>
+          <div><dt>24</dt><dd>platos, de S/&nbsp;16 a S/&nbsp;78</dd></div>
         </dl>
+        <p class="nota-cifras"><span class="etiqueta-demo">Ejemplo de demo</span></p>
       </div>
     </div>
   </section>
@@ -107,14 +108,13 @@ const tiemposOmakase = [
   <section class="seccion oscuro" id="omakase" aria-labelledby="omakase-titulo">
     <div class="contenedor omakase__grid">
       <div>
-        <p class="sobretitulo">Experiencia omakase</p>
         <h2 class="titulo-seccion" id="omakase-titulo">Déjalo en <em>nuestras manos</em></h2>
         <p class="bajada">Diez pasos en la barra, a un metro del chef. No hay carta: hay lo mejor que llegó esta mañana.</p>
-        <p class="precio-grande">S/ 320 <small>por persona · IGV incluido</small></p>
+        <p class="precio-grande">S/&nbsp;320 <small>por persona · IGV incluido</small></p>
         <ol class="lista-tiempos">
           {tiemposOmakase.map((t) => <li>{t}</li>)}
         </ol>
-        <p class="omakase__notas">Maridaje de sakes y piscos opcional: S/ 140 por persona. Solo 8 asientos, martes a sábado, a las 19:00 y a las 21:30. Se reserva con 48 horas de anticipación desde el formulario de abajo y queda sujeto a confirmación. Si tienes alergias, indícalas al reservar y consúltalas con el personal: adaptamos lo que podemos, pero no garantizamos ausencia de trazas.</p>
+        <p class="omakase__notas">Maridaje de sakes y piscos opcional: S/&nbsp;140 por persona. Solo 8 asientos, martes a sábado, a las 19:00 y a las 21:30. Se reserva con 48 horas de anticipación desde el formulario de abajo y queda sujeto a confirmación. Si tienes alergias, indícalas al reservar y consúltalas con el personal: adaptamos lo que podemos, pero no garantizamos ausencia de trazas.</p>
         <p><a class="boton boton--oro" href="#reserva" data-reservar-tipo="omakase">Reservar omakase</a></p>
       </div>
       <figure class="omakase__foto">
@@ -128,7 +128,6 @@ const tiemposOmakase = [
 
   <section class="seccion oscuro" id="testimonios" aria-labelledby="testimonios-titulo">
     <div class="contenedor">
-      <p class="sobretitulo">Mesas que volvieron</p>
       <h2 class="titulo-seccion" id="testimonios-titulo">Lo que dicen <em>en la mesa</em></h2>
       <p class="bajada">Opiniones de ejemplo para esta demostración: no corresponden a clientes reales.</p>
       <div class="testimonios__grid">
@@ -151,7 +150,6 @@ const tiemposOmakase = [
   <section class="seccion" id="visitanos" aria-labelledby="visitanos-titulo">
     <div class="contenedor ubicacion__grid">
       <div>
-        <p class="sobretitulo">Visítanos</p>
         <h2 class="titulo-seccion" id="visitanos-titulo">En el corazón de <em>Barranco</em></h2>
         <div class="dato">
           <Icono nombre="map-pin" />
@@ -184,7 +182,6 @@ const tiemposOmakase = [
         </div>
       </div>
       <div class="plano">
-        <p class="sobretitulo">Cómo llegar</p>
         <strong>Jr. Los Cedros 245</strong>
         <p>A dos cuadras del parque principal de Barranco. Estacionamiento en la calle y a pocos pasos del Metropolitano (estación Barranco).</p>
         <p>Referencias ficticias, solo para la demo: esta página no incluye mapa porque la dirección no existe.</p>

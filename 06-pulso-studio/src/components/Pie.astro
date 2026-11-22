@@ -3,10 +3,10 @@ import Icono from './Icono.astro';
 import { urlWhatsApp } from '../lib/horario';
 ---
 <footer class="pie">
-  <div class="contenedor">
+  <div class="contenedor contenedor--ancho">
     <div class="pie__grid">
       <div>
-        <a class="marca" href="/">Pulso<b>.</b> <small>Studio</small></a>
+        <a class="marca" href="/">Pulso<b>.</b><small> Studio</small></a>
         <p>Pilates reformer y funcional en Surco.<br />Av. Los Fresnos 482, Santiago de Surco, Lima (dirección ficticia).</p>
         <p>Reservas por WhatsApp: <a href={urlWhatsApp('Hola Pulso Studio, tengo una consulta.')} target="_blank" rel="noopener noreferrer">Escribir por WhatsApp<span class="solo-lector"> (se abre en una pestaña nueva)</span></a> (número de demostración).</p>
         <p class="pie-nota">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta).</p>
@@ -31,7 +31,7 @@ import { urlWhatsApp } from '../lib/horario';
     </div>
     <div class="pie__legal">
       <p><strong>Demo de portafolio — Vélez De Villa.</strong> Pulso Studio es una marca ficticia: el estudio, las instructoras, la dirección, el RUC 20000000001 (ficticio), los precios y los cupos no son reales.</p>
-      <p>Fotografías de Unsplash y Pexels; créditos en el repositorio (CREDITOS.md).</p>
+      <p>Fotografías ilustrativas de Unsplash y Pexels: no muestran el estudio ficticio. Créditos en el repositorio (CREDITOS.md).</p>
     </div>
   </div>
 </footer>

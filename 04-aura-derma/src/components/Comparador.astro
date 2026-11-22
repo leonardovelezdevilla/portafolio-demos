@@ -13,24 +13,24 @@ const FILAS = [
 ] as const;
 ---
 
-<section class="seccion seccion--blanca" id="tratamientos" aria-labelledby="trat-titulo">
+<section class="seccion" id="tratamientos" aria-labelledby="trat-titulo">
   <div class="contenedor">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Tratamientos</p>
-      <h2 id="trat-titulo">Compara con calma lo que te interesa</h2>
-      <p class="lead">
-        Elige dos o tres opciones para ver, lado a lado, para qué sirven, cuánto duran, qué molestias pueden dar y qué cuidados piden después.
-      </p>
-    </div>
-
-    <div class="aviso" role="note">
-      <Icon name="info" />
-      <p><strong>Aviso:</strong> {AVISO_MEDICO}</p>
+    <div class="comp-cab">
+      <h2 id="trat-titulo">Compara con <em>calma</em> lo que te interesa</h2>
+      <div class="comp-cab__lado">
+        <p class="lead">
+          Marca dos o tres tratamientos y léelos lado a lado: para qué sirven, cuánto duran, qué molestias pueden dar y qué cuidados piden después.
+        </p>
+        <div class="aviso" role="note">
+          <Icon name="info" />
+          <p><strong>Aviso médico:</strong> esta comparación es informativa; la indicación la da el especialista.</p>
+        </div>
+      </div>
     </div>
 
     <div id="comparador" class="comparador" data-max="3" data-inicial="consulta,acne">
       <fieldset class="comp-fieldset">
-        <legend>Elige 2 o 3 tratamientos para comparar</legend>
+        <legend class="comp-leyenda">Elige 2 o 3 tratamientos para comparar</legend>
         <p class="comp-motivo" id="comp-estado" role="status" aria-live="polite"></p>
         <div class="comp-opciones">
           {
@@ -51,7 +51,7 @@ const FILAS = [
       <div id="comp-resultado">
         <div class="comp-scroll" tabindex="0" role="region" aria-label="Tabla comparativa de tratamientos">
           <table class="comp-tabla">
-            <caption>Comparación de tratamientos. Precios referenciales ficticios en soles, IGV incluido.</caption>
+            <caption class="visually-hidden">Comparación de tratamientos. Precios referenciales ficticios en soles, IGV incluido.</caption>
             <thead>
               <tr>
                 <th scope="col">Característica</th>
@@ -99,12 +99,9 @@ const FILAS = [
       </div>
       <p class="comp-vacio" id="comp-vacio" hidden>Marca al menos dos tratamientos para ver la comparación.</p>
 
-      <p class="nota-sim comp-nota-pie">
-        Precios referenciales y ficticios, en soles e IGV incluido. La cantidad de sesiones es una referencia habitual y no un compromiso: el especialista la define tras evaluarte.
-      </p>
       <div class="aviso" role="note">
         <Icon name="info" />
-        <p>{AVISO_MEDICO}</p>
+        <p>Precios referenciales y ficticios, en soles e IGV incluido. Las sesiones son una referencia habitual, no un compromiso: el especialista las define tras evaluarte. {AVISO_MEDICO}</p>
       </div>
       <p class="comp-cta"><a class="btn" id="comp-reservar" href="#agenda"><Icon name="calendar-days" /> Reservar una consulta de evaluación</a></p>
     </div>
@@ -112,14 +109,39 @@ const FILAS = [
 </section>
 
 <style>
+  .comp-cab {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .comp-cab h2 {
+    margin: 0;
+  }
+  .comp-cab__lado .lead {
+    margin-bottom: 1.25rem;
+  }
+  .comp-leyenda {
+    font: italic 400 1.3rem/1.2 var(--serif);
+    margin-bottom: 0.9rem;
+  }
   .comparador {
-    margin-top: 1.75rem;
+    margin-top: 0;
   }
   .comp-fieldset {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   .comp-cta {
+    margin-top: 2rem;
+  }
+  .comparador > .aviso {
     margin-top: 1.5rem;
+  }
+  @media (min-width: 62rem) {
+    .comp-cab {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 4rem;
+      align-items: end;
+    }
   }
 </style>
 

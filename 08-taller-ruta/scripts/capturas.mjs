@@ -20,6 +20,7 @@ for (const w of [360, 768, 1440]) {
     if (!(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))) problemas.push(`${w}${ruta}: scroll horizontal`);
   }
   await page.goto(base + '/');
+  await page.evaluate(() => document.fonts.ready);
   for (let y = 0; y < (await page.evaluate(() => document.documentElement.scrollHeight)); y += 400) { await page.evaluate((v) => window.scrollTo(0, v), y); await page.waitForTimeout(40); }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: path.join(salida, `${w}-inicio.png`), fullPage: true });

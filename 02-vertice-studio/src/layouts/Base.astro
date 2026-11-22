@@ -94,10 +94,10 @@ const enlaces = [
           </noscript>
         </div>
       </div>
-      <nav class="nav-movil" aria-label="Secciones">
-        {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
-      </nav>
     </header>
+    <nav class="nav-movil" aria-label="Secciones">
+      {enlaces.map((e) => <a href={e.href}>{e.t}</a>)}
+    </nav>
 
     <main id="contenido" tabindex="-1">
       <slot />
@@ -127,7 +127,6 @@ const enlaces = [
         </div>
 
         <section class="confirmacion" data-confirmacion tabindex="-1" aria-labelledby="conf-titulo" hidden>
-          <p class="etiqueta">Pedido armado</p>
           <h3 id="conf-titulo">Se abrió WhatsApp</h3>
           <p>Tu pedido quedó escrito en un mensaje. <strong>Aún no está enviado</strong>: envíalo desde WhatsApp para que el vendedor lo reciba. Ahí se confirma el stock y se acuerda el pago.</p>
           <p>Si no se abrió nada (a veces el navegador bloquea la ventana), usa este enlace:</p>

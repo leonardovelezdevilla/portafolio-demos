@@ -8,7 +8,7 @@ Esta demo **no usa fotografías**: se apoya en tipografía y diagramas SVG propi
 - Bricolage Grotesque (The Bricolage Grotesque Project Authors), vía `@fontsource/bricolage-grotesque`. Licencia: `public/fonts/OFL-BricolageGrotesque.txt`.
 
 ## Íconos
-- Lucide (`lucide-static`), licencia ISC, como SVG en línea.
+- Lucide (`lucide-static`), licencia ISC, como SVG en línea. Copia de la licencia en `public/licencias/LICENSE-lucide-ISC.txt`.
 
 ## Otros
 - `public/og.png`: generada con `scripts/og.html` + Playwright. Logotipo y diagrama del héroe: SVG propios.

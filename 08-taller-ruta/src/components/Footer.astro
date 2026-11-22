@@ -3,6 +3,7 @@ import { TALLER, WA_BASE } from '../data/taller';
 import Icon from './Icon.astro';
 ---
 <footer class="pie oscuro">
+  <div class="pie__banda" aria-hidden="true"></div>
   <div class="wrap pie__grid">
     <div>
       <p class="pie__logo">Taller Ruta</p>
@@ -31,11 +32,13 @@ import Icon from './Icon.astro';
 </footer>
 
 <style>
-  .pie { background: var(--asfalto); color: var(--texto-claro); padding-top: 56px; border-top: 6px solid var(--senal); }
-  .pie__grid { display: grid; gap: 36px; padding-bottom: 40px; }
+  .pie { background: var(--asfalto); color: var(--texto-claro); }
+  .pie__banda { height: 10px; background: var(--senal); }
+  .pie__grid { display: grid; gap: 36px; padding-block: 56px 40px; }
   @media (min-width: 768px) { .pie__grid { grid-template-columns: 1.3fr 1fr 1fr; } }
-  .pie__logo { font-family: var(--f-titular); font-weight: 700; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .pie__h { font-family: var(--f-cuerpo); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-claro-suave); margin-bottom: 10px; }
+  /* Momento tipográfico: el nombre, enorme */
+  .pie__logo { font-family: var(--f-titular); font-weight: 800; font-size: clamp(4rem, 13vw, 9rem); line-height: 0.85; text-transform: uppercase; letter-spacing: 0.01em; color: #fff; margin-bottom: 16px; }
+  .pie__h { font-family: var(--f-mono); font-weight: 500; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texto-claro-suave); margin-bottom: 10px; }
   .pie__lista a { display: inline-flex; align-items: center; min-height: 44px; }
   .pie__lista li > span { display: block; padding-block: 6px; }
   .pie__libro { margin-top: 12px; }

@@ -11,7 +11,6 @@ const { fotos, nombre } = Astro.props;
     {fotos.map((k, i) => (
       <li class:list={['g-foto', { activa: i === 0 }]} data-foto aria-label={`Foto ${i + 1} de ${fotos.length}`}>
         <Image src={FOTOS[k].src} alt={FOTOS[k].alt} width={1100} height={760} widths={[480, 800, 1100]} sizes="(min-width: 1000px) 700px, 100vw" format="webp" quality={74} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
-        <p class="g-pie"><strong>{FOTOS[k].sello}.</strong> Foto de {FOTOS[k].autor}.</p>
       </li>
     ))}
   </ul>
@@ -25,20 +24,24 @@ const { fotos, nombre } = Astro.props;
       <li><button type="button" data-ir={i} aria-label={`Ver foto ${i + 1} de ${fotos.length}`} aria-current={i === 0 ? 'true' : undefined}><Image src={FOTOS[k].src} alt="" width={120} height={84} densities={[1, 2]} format="webp" quality={60} loading="lazy" decoding="async" /></button></li>
     ))}
   </ul>
+  <p class="g-nota">Fotos referenciales de fachada y acabados de ejemplo: no son este departamento. Créditos de las fotos en el pie de página.</p>
   <p class="sr-only" role="status" data-vivo></p>
 </section>
 <style>
   .g-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2rem; }
-  .g-foto img { width: 100%; height: auto; aspect-ratio: 11 / 7.6; object-fit: cover; border: 2px solid var(--tinta); background: var(--papel-2); }
-  .g-pie { font-size: .88rem; color: var(--tinta-2); margin: .4rem 0 0; }
+  .g-foto { position: relative; overflow: hidden; background: var(--papel-2); }
+  .g-foto img { width: 100%; height: auto; aspect-ratio: 11 / 8; object-fit: cover; }
+  .g-nota { font-size: .85rem; color: var(--tinta-2); margin: .8rem 0 0; }
   @media (scripting: enabled) { .g-foto:not(.activa) { display: none; } }
   .g-ctrl { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: .8rem; }
-  .g-btn { width: 48px; height: 48px; display: grid; place-items: center; background: var(--blanco); color: var(--tinta); border: 2px solid var(--tinta); cursor: pointer; }
+  .g-btn { width: 48px; height: 48px; display: grid; place-items: center; background: var(--blanco); color: var(--tinta); border: 1.5px solid var(--tinta); cursor: pointer; transition: background-color .15s ease, color .15s ease, transform .12s ease; }
   .g-btn:hover { background: var(--tinta); color: var(--papel); }
-  .g-cont { margin: 0; font-weight: 600; }
-  .g-mini { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
-  .g-mini button { padding: 0; width: 100%; min-height: 44px; border: 2px solid var(--tinta-2); background: none; cursor: pointer; display: block; }
-  .g-mini button[aria-current='true'] { border-color: var(--tinta); box-shadow: 0 4px 0 var(--sol); }
+  .g-btn:active { transform: translateY(1px) scale(.97); }
+  .g-cont { margin: 0; font-weight: 600; font-size: .95rem; }
+  .g-mini { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+  .g-mini button { padding: 0; width: 100%; min-height: 44px; border: 1.5px solid transparent; background: none; cursor: pointer; display: block; opacity: .75; transition: opacity .15s ease; }
+  .g-mini button:hover { opacity: 1; }
+  .g-mini button[aria-current='true'] { opacity: 1; border-color: var(--tinta); box-shadow: 0 5px 0 var(--sol); }
   .g-mini img { width: 100%; height: auto; aspect-ratio: 10 / 7; object-fit: cover; }
 </style>
 <script>

@@ -51,3 +51,16 @@
 - Sin dominio: canonical y og:image son relativos. Al publicar hay que ponerlos absolutos (`site` en `astro.config.mjs`).
 - Los datos de talla en cm de la guía son referenciales.
 - Probado en Edge (Chromium). Sin pruebas en Safari/Firefox.
+
+## Pulido 2026-11
+- Se mantiene identidad (Anton + Space Mono, naranja/negro, bordes y sombras duras). Rama `rediseno-2026-11`, sin commit.
+- Cabecera a 360: de 99 px a 55 px. Solo queda la fila logo + carrito fija; los 3 enlaces (Catálogo, Cómo comprar, Tallas) pasan a una tira `nav-movil` normal bajo la cabecera, que se va con el scroll. `scroll-padding-top` bajó a 76 px.
+- Fotos: «Violeta Pro» ya no encuadra el balón (recorte a la derecha, alt sin balón); «Cancha Pro» conserva zapatilla + balón porque es de básquet. No se pudo abrir Unsplash/Pexels desde aquí (401), así que no se añadieron fotos nuevas; siguen 9 fotos para 12 modelos (CREDITOS.md sin cambios).
+- Migas y enlace «Cambios y devoluciones» de la ficha: 44 px de alto. `a.tarjeta__foto` con `aria-label` del producto. `h2#vr-titulo` nace con texto «Vista rápida».
+- «Cómo comprar»: se quitó 01/02/03; ahora palabras grandes ELIGE / ARMA / ENVÍA (la del medio contorneada).
+- Etiquetas en mayúsculas: se quitaron las de la ficha, la vista rápida (categoría pasa a texto simple tras el título) y «Pedido armado» del carrito. Queda la del héroe (y las de 404 y Libro, que son páginas aparte).
+- Sin cambios en `src/lib` ni `tests/`. npm test 27/27; verificador 0 ERROR.
+- Revisión (segunda ronda): héroe en una pantalla (h1, foto con 30svh en celular, texto y botones debajo; en ≥700 px dos columnas con `min-height` de pantalla); se quitó la franja de 4 datos y la cinta quedó con 3 mensajes. Entrada del héroe una vez (opacity desde 0,4 + translateY, apagada con reduced-motion).
+- Fotos repetidas: el orden de `productos.ts` se cambió para que ningún par con la misma foto quede contiguo (en 2, 3 y 4 columnas), y la ficha ya no recomienda un modelo con su misma foto. **Faltan 3 fotos nuevas verificables** (Nodo 91/Pila Blanca, Ráfaga Air/Trama Run, Violeta Pro/Cancha Pro): las consigue Leonardo.
+- Colores de la ficha y vista rápida como texto («Colores: Blanco · Negro»); «Guía de tallas» en blanco; botón de tarjeta «Ver»; JSON-LD con horario; meta description ≤ 155; `touch-action` y `overscroll-behavior`. «ARMA» ya va en naranja sólido.
+- No aplicado: tarjeta ancha/jerarquía en el catálogo y resumen de tallas en la tarjeta (la lista la reescribe el JS del filtro).

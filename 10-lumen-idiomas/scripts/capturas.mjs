@@ -29,6 +29,7 @@ for (const ancho of [360, 768, 1440]) {
 
   // Inicio completo (con carga de imágenes diferidas)
   await p.evaluate(async () => {
+    await document.fonts.ready;
     for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }
     window.scrollTo(0, 0);
   });

@@ -9,6 +9,9 @@ Demo ficticia de Vélez De Villa: academia de inglés en Pueblo Libre para jóve
 - **Matrícula** validada: si el alumno es menor de edad exige los datos del padre, madre o apoderado; termina en una confirmación de demo y un enlace a `wa.me` prellenado.
 - Precios por ciclo en S/ con IGV incluido y materiales aparte, docentes ficticios, Privacidad, Términos y Libro de Reclamaciones de demo.
 
+## Diseño
+Rediseño 2026-11, «escalera de niveles»: héroe navy con la escalera A1 a C1, test de nivel en dos columnas con el «12» gigante, horarios agrupados por nivel en bloques plegables, precios en dos bandas. Paleta navy + rojo; fuentes Newsreader + Atkinson Hyperlegible.
+
 ## Capturas
 
 `capturas/` (360, 768 y 1440): `inicio`, `test-curso`, `test-resultado`, `horarios-filtrados`, `matricula-menor-errores` y `matricula-confirmacion`.

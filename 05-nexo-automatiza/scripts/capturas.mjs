@@ -12,6 +12,7 @@ const problemas = [];
 
 // Recorre la página para disparar las animaciones de scroll y espera a que terminen.
 async function recorrer(page) {
+  await page.evaluate(() => document.fonts.ready);
   const alto = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < alto; y += 300) {
     await page.evaluate((v) => window.scrollTo(0, v), y);

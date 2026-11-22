@@ -1,18 +1,18 @@
 ---
-import Icon from './Icon.astro';
 import { FRANJAS } from '../lib/visita';
-interface Props { departamento: string; id?: string; }
-const { departamento, id = 'ag' } = Astro.props;
+interface Props { departamento: string; id?: string; compacto?: boolean; }
+const { departamento, id = 'ag', compacto = false } = Astro.props;
 ---
 <section class="ag" id={id} data-agenda data-depto={departamento} aria-labelledby={`${id}-t`}>
-  <h2 id={`${id}-t`}>Agenda una visita</h2>
-  <p class="lead">Elige día y franja. Horarios de ejemplo de una sala de ventas ficticia.</p>
+  {compacto
+    ? <h2 id={`${id}-t`} class="sr-only">Formulario para agendar una visita</h2>
+    : <><h2 id={`${id}-t`}>Agenda una visita</h2><p class="lead">Elige día y franja. Horarios de ejemplo de una sala de ventas ficticia.</p></>}
   <form class="ag-form" novalidate data-form>
     <div class="resumen-err" tabindex="-1" hidden data-resumen></div>
     <div class="campo">
       <label for={`${id}-fecha`}>Día de la visita</label>
       <input id={`${id}-fecha`} name="fecha" type="date" required aria-describedby={`${id}-fecha-a ${id}-fecha-e`} data-campo="fecha" />
-      <p class="ayuda" id={`${id}-fecha-a`}>Atendemos de lunes a sábado, desde mañana y hasta dentro de 45 días. Los sábados solo en la mañana.</p>
+      <p class="ayuda" id={`${id}-fecha-a`}>Escribe o elige la fecha (día/mes/año, por ejemplo 25/11/2026). Atendemos de lunes a sábado, desde mañana y hasta dentro de 45 días. Los sábados solo en la mañana.</p>
       <p class="err" id={`${id}-fecha-e`} data-err="fecha"></p>
     </div>
     <fieldset class="campo franjas" aria-describedby={`${id}-franja-e`} data-grupo-franja>
@@ -31,18 +31,13 @@ const { departamento, id = 'ag' } = Astro.props;
       <p class="err" id={`${id}-nombre-e`} data-err="nombre"></p>
     </div>
     <div class="campo">
-      <label for={`${id}-tel`}>Celular (9 dígitos)</label>
-      <input id={`${id}-tel`} name="telefono" type="tel" inputmode="tel" autocomplete="tel-national" required aria-describedby={`${id}-tel-e`} data-campo="telefono" />
-      <p class="err" id={`${id}-tel-e`} data-err="telefono"></p>
-    </div>
-    <div class="campo">
       <div class="check">
         <input id={`${id}-cons`} type="checkbox" name="consentimiento" aria-describedby={`${id}-cons-e`} data-campo="consentimiento" />
-        <label for={`${id}-cons`}>Acepto que Habitat Sur use mi nombre y celular solo para coordinar esta visita, según la <a href="/privacidad/">política de privacidad</a> (demo).</label>
+        <label for={`${id}-cons`}>Acepto que Habitat Sur use mi nombre solo para coordinar esta visita, según la <a href="/privacidad/">política de privacidad</a> (demo).</label>
       </div>
       <p class="err" id={`${id}-cons-e`} data-err="consentimiento"></p>
     </div>
-    <p class="ayuda"><Icon name="message-circle" size={16} /> Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos de tus ingresos, deudas ni documentos.</p>
+    <p class="ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta). No escribas datos de tus ingresos, deudas ni documentos.</p>
     <button type="submit" class="btn btn-primario">Preparar mensaje de WhatsApp</button>
   </form>
   <div class="ag-ok" hidden data-ok>
@@ -54,16 +49,17 @@ const { departamento, id = 'ag' } = Astro.props;
   </div>
 </section>
 <style>
-  .ag-form, .ag-ok { display: grid; gap: 1.1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.3rem; max-width: 640px; }
+  .ag-form, .ag-ok { display: grid; gap: 1.1rem; background: var(--blanco); border: 1px solid var(--tinta); padding: clamp(1.1rem, 3vw, 2rem); color: var(--tinta); }
   .ag-ok[hidden] { display: none; }
   .franjas { border: 0; padding: 0; margin: 0; min-width: 0; }
-  .radio { display: grid; grid-template-columns: 28px 1fr; gap: .7rem; align-items: start; padding: .7rem; border: 2px solid var(--tinta-2); background: var(--papel); min-height: 48px; cursor: pointer; margin-bottom: .5rem; }
-  .radio:has(input:checked) { border-color: var(--tinta); background: #fff3de; }
+  .radio { display: grid; grid-template-columns: 28px 1fr; gap: .7rem; align-items: start; padding: .7rem; border: 1.5px solid var(--tinta-2); background: var(--papel); min-height: 48px; cursor: pointer; margin-bottom: .5rem; }
+  .radio:has(input:checked) { border-color: var(--tinta); background: #f1e4cf; }
   .radio input { width: 24px; height: 24px; margin: .1rem 0 0; accent-color: var(--sol); }
   .radio small { display: block; color: var(--error); font-weight: 600; }
   .radio small:empty { display: none; }
   .radio:has(input:disabled) { border-style: dashed; border-color: var(--linea); cursor: not-allowed; background: transparent; }
   .ag-dl { margin: 0; }
+
   .ag-dl div { display: flex; flex-wrap: wrap; gap: .2rem 1rem; padding: .5rem 0; border-top: 1px solid var(--linea); }
   .ag-dl dt { min-width: 7rem; color: var(--tinta-2); }
   .ag-dl dd { margin: 0; font-weight: 600; }
@@ -101,19 +97,26 @@ const { departamento, id = 'ag' } = Astro.props;
       const el = k === 'franja' ? grupo : campo(k);
       if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
     };
+    // Si el cambio nace de pulsar el botón de enviar, el error movería el botón antes del clic: lo muestra el envío.
+    const boton = q<HTMLButtonElement>('button[type="submit"]');
+    let pulsando = false;
+    boton.addEventListener('pointerdown', () => { pulsando = true; });
+    document.addEventListener('pointerup', () => { pulsando = false; });
+    document.addEventListener('pointercancel', () => { pulsando = false; });
     fecha.addEventListener('change', () => {
       actualizarFranjas();
-      const e = validarVisita({ ...datos(), nombre: 'Ana Quispe', telefono: '900000000', consentimiento: true, franja: '' }, new Date());
+      if (pulsando) return;
+      const e = validarVisita({ ...datos(), nombre: 'Ana Quispe', consentimiento: true, franja: '' }, new Date());
       ponerError('fecha', e.fecha);
     });
-    function datos(): Visita { return { departamento: ag.dataset.depto ?? '', fecha: fecha.value, franja: franjaActual(), nombre: campo('nombre').value, telefono: campo('telefono').value, consentimiento: campo('consentimiento').checked }; }
+    function datos(): Visita { return { departamento: ag.dataset.depto ?? '', fecha: fecha.value, franja: franjaActual(), nombre: campo('nombre').value, consentimiento: campo('consentimiento').checked }; }
     const foco = (k: string) => (k === 'franja' ? (radios.find((r) => !r.disabled) ?? radios[0]) : campo(k)).focus();
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
       const d = datos();
       const err = validarVisita(d, new Date());
       const claves = Object.keys(err) as (keyof typeof err)[];
-      for (const k of ['fecha', 'franja', 'nombre', 'telefono', 'consentimiento']) ponerError(k, err[k as keyof typeof err]);
+      for (const k of ['fecha', 'franja', 'nombre', 'consentimiento']) ponerError(k, err[k as keyof typeof err]);
       if (claves.length) {
         pintarResumen(resumen, claves.map((k) => ({ msg: err[k]!, enfocar: () => foco(k) })));
         foco(claves[0]);
@@ -129,7 +132,6 @@ const { departamento, id = 'ag' } = Astro.props;
         ['Día', new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).format(f)],
         ['Franja', FRANJAS.find((x) => x.id === d.franja)?.etiqueta ?? ''],
         ['Nombre', d.nombre.trim()],
-        ['Celular', d.telefono.replace(/[\s-]/g, '')],
       ];
       for (const [k, v] of filas) { const row = document.createElement('div'); const dt = document.createElement('dt'); const dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; row.append(dt, dd); dl.append(row); }
       q<HTMLAnchorElement>('[data-wa]').href = urlWhatsApp(msg);

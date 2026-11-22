@@ -10,13 +10,17 @@ Cinco demos con marca ficticia, cada una en su carpeta de este repositorio. Toda
 
 | Demo | Caso | Interacción clave | Tipografía | Fotos |
 |---|---|---|---|---|
-| [01-kipuflow](01-kipuflow) | SaaS de finanzas para freelancers | Calculadora de renta de 4.ª categoría (con tests), precios mensual/anual, FAQ | Schibsted Grotesk + Onest | Ninguna (composición CSS) |
+| [01-kipuflow](01-kipuflow) | SaaS de finanzas para freelancers | Calculadora de renta de 4.ª categoría (con tests), precios mensual/anual, FAQ | IBM Plex Sans + IBM Plex Mono | Ninguna (composición CSS) |
 | [02-vertice-studio](02-vertice-studio) | Tienda de zapatillas | Filtro categoría + talla, vista rápida, carrito en localStorage, pedido por WhatsApp | Anton + Space Mono | 9 verificadas, sin logos de terceros |
 | [03-kuro-lima](03-kuro-lima) | Restaurante nikkei | Carta filtrable, reserva de mesa y omakase con horario de Lima | Cormorant Garamond + Figtree | 6 verificadas |
-| [04-aura-derma](04-aura-derma) | Clínica dermatológica | Comparador de tratamientos, agenda con ocupados simulados, datos de salud protegidos | Instrument Serif + Albert Sans | 2 verificadas |
+| [04-aura-derma](04-aura-derma) | Clínica dermatológica | Comparador de tratamientos, agenda con ocupados simulados, datos de salud protegidos | Bodoni Moda + Manrope | 2 verificadas |
 | [05-nexo-automatiza](05-nexo-automatiza) | Agencia de automatización | Casos con filtro y modal, cotizador de 5 pasos con rango en S/ | Unbounded + Bricolage Grotesque | Ninguna (SVG propio) |
 
 **Revisión:** cada demo pasó por 4 revisores (UX, accesibilidad, SEO/rendimiento, seguridad/legal Perú) y su constructor aplicó todo lo crítico, alto y medio. Detalle por demo en su `DECISIONES.md`.
+
+## Rediseño del 22-11-2026
+
+Las diez demos publicadas se rediseñaron (Kipuflow «Libro mayor», Aura Derma «Editorial de piel», Pulso «Ritmo», Alba «Vitrina», Taller Ruta «Ficha técnica», Habitat Sur «Arquitectura», Lumen con escalera de niveles) o se pulieron (Vértice, Kuro, Nexo), con 2 revisores por demo, `verificar.mjs` sin ERROR y pruebas en verde. Se suma **07-alba-pasteleria** (pastelería en Jesús María: configurador de tortas con precio y alérgenos en vivo) en velezdevilla.com/portafolio/alba-pasteleria/. Se conservan el WhatsApp del estudio y los ajustes de la revisión anterior.
 
 ## Decisiones
 

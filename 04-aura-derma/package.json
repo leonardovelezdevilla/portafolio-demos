@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "@fontsource/albert-sans": "^5.3.0",
-    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/bodoni-moda": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "lucide-static": "^1.77.0",
     "playwright-core": "^1.65.1",
     "typescript": "^6.0.3",

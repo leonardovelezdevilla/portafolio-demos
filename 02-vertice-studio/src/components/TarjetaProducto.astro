@@ -11,7 +11,7 @@ const tallas = tallasDisponibles(p);
 const lista = tallas.join(' · ');
 ---
 <li class="tarjeta" data-producto={p.slug} data-categoria={p.categoria} data-tallas={tallas.join(',')}>
-  <a class="tarjeta__foto" href={`/producto/${p.slug}/`} tabindex="-1" aria-hidden="true">
+  <a class="tarjeta__foto" href={`/producto/${p.slug}/`} tabindex="-1" aria-label={p.nombre}>
     <Image
       src={foto(p.foto)} alt="" width={640} height={800} fit="cover" position={p.posicion} format="webp" quality={72}
       sizes="(min-width: 1100px) 25vw, (min-width: 700px) 33vw, 50vw"
@@ -26,7 +26,7 @@ const lista = tallas.join(' · ');
     <p class="tarjeta__precio">{formatoSoles(p.precio)}</p>
     <p class="tarjeta__tallas" data-tallas-texto data-lista={lista}>Tallas EU: {lista}</p>
     <button type="button" class="btn tarjeta__vr" data-vista-rapida={p.slug} hidden>
-      <Icono nombre="ojo" tamano={18} /> Vista rápida<span class="sr-only">: {p.nombre}</span>
+      <Icono nombre="ojo" tamano={18} /> Ver<span class="sr-only"> vista rápida: {p.nombre}</span>
     </button>
   </div>
 </li>

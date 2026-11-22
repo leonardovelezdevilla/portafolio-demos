@@ -6,11 +6,9 @@ import { urlWhatsApp } from '../lib/horario';
 ---
 <div class="reserva">
   <div class="reserva__lado">
-    <p class="sobretitulo">Reserva de clase</p>
     <h2 id="t-reserva">Elige tu clase y reserva en un minuto</h2>
     <p class="bajada">Ves el horario de los próximos 7 días con los cupos. La reserva se cierra 1 hora antes de cada clase.</p>
     <ul role="list">
-      <li><Icono nombre="sparkles" /> <span><strong>Primera vez:</strong> clase de prueba a {soles(PRECIO_PRUEBA)} (IGV incluido) en lugar de {soles(PRECIO_SUELTA)}. Solo en clases de nivel inicial (Reformer Base y Funcional Full Body).</span></li>
       <li><Icono nombre="clock" /> <span>Llega 10 minutos antes para acomodar la máquina.</span></li>
       <li><Icono nombre="user" /> <span>Desde los {EDAD_MINIMA} años. Si eres menor de 18, necesitas la autorización de tu padre, madre o apoderado (regla de demo).</span></li>
       <li><Icono nombre="message-circle" /> <span>Al terminar, abres WhatsApp con el mensaje listo. La reserva queda confirmada cuando el estudio responde.</span></li>
@@ -24,6 +22,8 @@ import { urlWhatsApp } from '../lib/horario';
       <p class="ayuda ayuda--primera">Todos los campos son obligatorios.</p>
 
       <p class="elegida" data-elegida hidden><Icono nombre="calendar-check" /> <span><strong>Clase elegida:</strong> <span data-elegida-texto></span></span> <button type="button" class="enlace-boton" data-cambiar>Cambiar</button></p>
+
+      <p class="aviso aviso--prueba" role="status" data-aviso-prueba hidden><Icono nombre="info" /> <span data-aviso-prueba-texto></span></p>
 
       <div class="campo">
         <label for="ocurrencia">Clase</label>
@@ -119,6 +119,7 @@ import { urlWhatsApp } from '../lib/horario';
     const ETIQ: Record<string, string> = { ocurrencia: 'Clase', nombre: 'Nombre', celular: 'Celular', primeraVez: 'Primera vez', lesion: 'Lesiones', consentimientoSalud: 'Consentimiento de salud', consentimiento: 'Consentimiento' };
     const primerControl = (n: string): HTMLElement => form.querySelector(`[name="${n}"]`) as HTMLElement;
     const marcado = (n: string) => (form.querySelector(`input[name="${n}"]:checked`) as HTMLInputElement | null)?.value ?? '';
+    const avisoPrueba = form.querySelector<HTMLElement>('[data-aviso-prueba]')!;
     const AYUDA_BASE = 'Las clases llenas aparecen marcadas y no se pueden elegir.';
 
     const llenarSelect = (seleccion = '') => {
@@ -144,14 +145,28 @@ import { urlWhatsApp } from '../lib/horario';
         if (o.cupos.estado === 'llena' || noPrueba) op.disabled = true;
         grupo!.append(op);
       }
+      // La clase que la persona eligió se conserva aunque «primera vez» la deje fuera por un momento.
       const previo = seleccion || select.dataset.previo || '';
-      if (previo && [...select.options].some((x) => x.value === previo && !x.disabled)) select.value = previo;
+      const opcion = previo ? [...select.options].find((x) => x.value === previo) : undefined;
+      if (opcion && !opcion.disabled) select.value = previo;
+      const oc = lista.find((x) => x.id === previo);
+      const pausada = !!opcion && !!oc && opcion.disabled && prueba && oc.cupos.estado !== 'llena';
+      if (previo && !opcion) select.dataset.previo = '';
+      avisoPrueba.hidden = !pausada;
+      if (pausada) {
+        select.dataset.previo = previo;
+        avisoPrueba.querySelector('[data-aviso-prueba-texto]')!.textContent = `«${programaDe(oc!.clase).nombre}» del ${fechaCorta(oc!.fecha)} a las ${oc!.clase.hora} no es de nivel inicial, así que no vale para la clase de prueba. La guardamos: si cambias a «No, ya he venido» vuelve a quedar elegida, o elige otra clase de nivel inicial.`;
+        detalle.textContent = AYUDA_BASE;
+        elegida.hidden = true;
+        return;
+      }
       actualizarElegida();
     };
 
     const actualizarElegida = () => {
       const o = ocurrenciasReservables().find((x) => x.id === select.value);
       select.dataset.previo = select.value;
+      if (select.value) avisoPrueba.hidden = true;
       if (!o) { elegida.hidden = true; detalle.textContent = AYUDA_BASE; return; }
       const p = programaDe(o.clase);
       const txt = `${p.nombre} · ${fechaCorta(o.fecha)} · ${o.clase.hora}`;
@@ -167,9 +182,7 @@ import { urlWhatsApp } from '../lib/horario';
     document.addEventListener('pulso:elegir', ((e: CustomEvent<string>) => {
       llenarSelect(e.detail);
       if (select.value !== e.detail) {
-        // La clase no vale para el caso actual (p. ej. prueba con clase avanzada): se avisa en el select.
-        select.dataset.previo = '';
-        detalle.textContent = 'Esa clase no está disponible para clase de prueba. Elige una de nivel inicial o cambia tu respuesta de primera vez.';
+        // La clase no vale para clase de prueba: queda guardada y el aviso lo explica.
         select.focus();
         return;
       }
@@ -191,6 +204,7 @@ import { urlWhatsApp } from '../lib/horario';
     const mostrar = (n: string, msg: string | null) => {
       const p = document.querySelector<HTMLElement>(`#err-${n}`)!;
       const controles = form.querySelectorAll<HTMLElement>(`[name="${n}"]`);
+      if (msg && n === 'ocurrencia' && !avisoPrueba.hidden) { p.hidden = true; p.textContent = ''; controles.forEach((c) => c.setAttribute('aria-invalid', 'true')); return; }
       if (msg) { p.textContent = msg; p.hidden = false; controles.forEach((c) => c.setAttribute('aria-invalid', 'true')); }
       else { p.hidden = true; p.textContent = ''; controles.forEach((c) => c.removeAttribute('aria-invalid')); }
     };
@@ -250,8 +264,8 @@ import { urlWhatsApp } from '../lib/horario';
       pintar(e);
       const claves = ORDEN.filter((n) => e[n]);
       if (claves.length) {
-        resumen.scrollIntoView({ block: 'center' });
-        primerControl(claves[0]).focus();
+        resumen.scrollIntoView({ block: 'start' });
+        primerControl(claves[0]).focus({ preventScroll: true });
         return;
       }
       const o = ocurrenciasReservables().find((x) => x.id === d.ocurrencia)!;

@@ -7,12 +7,13 @@ import { vacantesDe } from '../lib/vacantes';
 import { NIVELES } from '../lib/test-nivel';
 
 const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docente), turno: turnoDe(g.inicio), pub: g.publico.startsWith('Jóvenes') ? 'j' : 'a' }));
+const BLOQUES = NIVELES.map((n) => ({ n, filas: filas.filter((f) => f.g.nivel === n) }));
+const NOMBRE_NIVEL: Record<string, string> = { A1: 'Principiante', A2: 'Básico', B1: 'Intermedio', B2: 'Intermedio alto', C1: 'Avanzado' };
 ---
 
 <section class="seccion seccion--papel2" id="horarios" aria-labelledby="hor-tit">
   <div class="contenedor">
     <div class="seccion__cabecera">
-      <p class="sobretitulo">Horarios por nivel</p>
       <h2 id="hor-tit">Elige el horario que <em>sí</em> puedes sostener</h2>
       <p class="lead">{CICLO.nombre}: {CICLO.duracion}, inicio en la {CICLO.inicioTexto}. Horas de Lima. Las vacantes son simuladas para esta demo.</p>
     </div>
@@ -59,35 +60,43 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
 
     <p class="hor__estado" id="hor-estado" role="status">Mostrando {filas.length} de {filas.length} grupos.</p>
 
-    <ul class="grupos" id="hor-lista">
-      {filas.map(({ g, v, d, turno, pub }) => (
-        <li class={`grupo grupo--${v.estado}`} data-nivel={g.nivel} data-mod={g.modalidad} data-turno={turno} data-pub={pub} data-libres={v.libres}>
-          <div class="grupo__cab">
-            <span class={`nivel nivel--${g.nivel}`}><span class="visually-hidden">Nivel </span>{g.nivel}</span>
-            <span class={`estado estado--${v.estado}`}>
-              <Icon name={v.estado === 'sin-vacantes' ? 'circle-slash' : v.estado === 'ultimas' ? 'timer' : 'circle-check'} />
-              {v.texto}
-            </span>
-          </div>
-          <h3 class="grupo__dias">{textoDias(g.dias)}</h3>
-          <p class="grupo__hora"><Icon name="clock" /> {g.inicio} a {g.fin}</p>
-          <p class="grupo__dato"><Icon name={g.modalidad === 'Virtual' ? 'monitor' : 'building-2'} /> {g.modalidad}{g.modalidad === 'Presencial' ? ' en Pueblo Libre' : ' por videollamada'}</p>
-          <p class="grupo__dato"><Icon name="users" /> {g.publico}</p>
-          <p class="grupo__dato"><Icon name="user-round" /> {d.nombre} (docente ficticio)</p>
-          <p class="grupo__precio">{soles(PRECIOS[g.modalidad].ciclo)} por ciclo <small>IGV incl. · materiales aparte</small></p>
-          {v.estado === 'sin-vacantes' ? (
-            <p class="grupo__cierre">
-              <span class="grupo__agotado">Este grupo no tiene vacantes.</span>
-              <a class="btn btn--suave" href="/#horarios" data-ver-nivel={g.nivel} data-ver-pub={pub}>Ver otros horarios de {g.nivel}<span class="visually-hidden"> para {g.publico}</span></a>
-            </p>
-          ) : (
-            <p class="grupo__cierre">
-              <a class="btn btn--suave" href="/#matricula" data-horario={g.id} aria-label={`Elegir este horario: ${etiquetaGrupo(g)}, ${g.publico}`}>Elegir este horario</a>
-            </p>
-          )}
-        </li>
+    <p class="hor__precio">Precio por ciclo: {soles(PRECIOS.Presencial.ciclo)} presencial · {soles(PRECIOS.Virtual.ciclo)} virtual, IGV incluido, materiales aparte.</p>
+
+    <div class="niveles" id="hor-lista">
+      {BLOQUES.map(({ n, filas: fs }, bi) => (
+        <details class="bloque" data-bloque={n} open>
+          <summary>
+            <span class={`nivel nivel--${n} bloque__chip`}><span class="visually-hidden">Nivel </span>{n}</span>
+            <span class="bloque__nombre">{NOMBRE_NIVEL[n]}</span>
+            <span class="bloque__cuenta" data-total={fs.length}>{fs.length} grupos</span>
+          </summary>
+          <ul class="grupos">
+            {fs.map(({ g, v, d, turno, pub }) => (
+              <li class={`grupo grupo--${v.estado}`} data-nivel={g.nivel} data-mod={g.modalidad} data-turno={turno} data-pub={pub} data-libres={v.libres}>
+                <p class="grupo__dias">{textoDias(g.dias)}</p>
+                <p class="grupo__hora">{g.inicio} a {g.fin}</p>
+                <p class="grupo__mod"><Icon name={g.modalidad === 'Virtual' ? 'monitor' : 'building-2'} /> {g.modalidad}</p>
+                <p class="grupo__pub">{g.publico}</p>
+                <p class="grupo__doc">{d.nombre} <span class="visually-hidden">(docente ficticio)</span></p>
+                <p class="grupo__estado">
+                  <span class={`estado estado--${v.estado}`}>
+                    <Icon name={v.estado === 'sin-vacantes' ? 'circle-slash' : v.estado === 'ultimas' ? 'timer' : 'circle-check'} />
+                    {v.texto}
+                  </span>
+                </p>
+                <p class="grupo__cierre">
+                  {v.estado === 'sin-vacantes' ? (
+                    <a class="btn btn--suave" href="/#horarios" data-ver-nivel={g.nivel} data-ver-pub={pub}>Ver otros de {g.nivel}<span class="visually-hidden"> para {g.publico}</span></a>
+                  ) : (
+                    <a class="btn btn--suave" href="/#matricula" data-horario={g.id} aria-label={`Elegir este horario: ${etiquetaGrupo(g)}, ${g.publico}`}>Elegir</a>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </details>
       ))}
-    </ul>
+    </div>
 
     <div class="hor__vacio" id="hor-vacio" hidden>
       <p><strong>Ningún grupo cumple esos filtros.</strong> Prueba con otro turno, modalidad o público, o quita los filtros.</p>
@@ -96,28 +105,48 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
 </section>
 
 <style>
-  .filtros { display: grid; gap: 0 1rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); align-items: end; background: var(--blanco); border: 1.5px solid var(--linea); border-radius: var(--radio); padding: 1rem 1.1rem 0.5rem; margin-bottom: 1rem; }
+  .filtros { display: grid; gap: 0 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); align-items: end; background: var(--blanco); border: 1.5px solid var(--linea); border-radius: var(--radio); padding: 1rem 1.1rem 0.5rem; margin-bottom: 1rem; }
   .filtros__chk { align-self: center; margin-bottom: 1.1rem; min-height: 48px; align-items: center; }
   .filtros__limpiar { margin-bottom: 1.1rem; }
   .hor__estado { color: var(--tinta-suave); font-size: 0.95rem; margin-bottom: 1rem; }
-  .grupos { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
-  .grupo { background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 16px; padding: 1.1rem 1.2rem 1.2rem; display: flex; flex-direction: column; gap: 0.15rem; }
-  .grupo--sin-vacantes { background: var(--papel); border-style: dashed; border-color: #6d7794; }
-  .grupo__cab { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
-  .estado { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; font-size: 0.9rem; padding: 0.2rem 0.65rem; border-radius: 999px; }
+  @media (max-width: 39.99rem) { .filtros { grid-template-columns: 1fr 1fr; padding-inline: 0.8rem; } .filtros__chk, .filtros__limpiar { grid-column: 1 / -1; } .filtros__limpiar { margin-bottom: 0.7rem; } .filtros :global(.campo) { margin-bottom: 0.7rem; } }
+  .hor__precio { font-size: 0.95rem; color: var(--tinta-suave); margin: 0 0 1rem; }
+  .niveles { display: grid; gap: 0.75rem; }
+  .bloque { background: var(--blanco); border: 1.5px solid var(--azul-900); border-radius: 14px; overflow: hidden; }
+  .bloque > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 0.9rem; min-height: 64px; padding: 0.6rem 1rem; }
+  .bloque > summary::-webkit-details-marker { display: none; }
+  .bloque > summary::after { content: '+'; margin-left: 0.25rem; font: 600 1.6rem/1 var(--serif); color: var(--coral-700); flex: none; }
+  .bloque[open] > summary::after { content: '−'; }
+  .bloque__chip { font: 600 1.6rem/1 var(--serif); min-width: 3.4rem; padding: 0.35rem 0.6rem; }
+  .bloque__nombre { font: 600 1.35rem/1.2 var(--serif); color: var(--azul-900); margin-right: auto; }
+  .bloque__cuenta { white-space: nowrap; color: var(--tinta-suave); font-size: 0.95rem; }
+  .grupos { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+  .grupo { display: grid; gap: 0.1rem 0.75rem; padding: 0.8rem 1rem; border-bottom: 1px solid var(--linea); grid-template-columns: 1fr auto; grid-template-areas: 'dias estado' 'hora doc' 'mod pub' 'cierre cierre'; align-items: center; }
+  .grupo:last-child { border-bottom: 0; }
+  .grupo p { margin: 0; }
+  .grupo--sin-vacantes { background: var(--papel); }
+  .grupo__dias { grid-area: dias; font-weight: 700; color: var(--azul-900); }
+  .grupo__dias::first-letter { text-transform: uppercase; }
+  .grupo__hora { grid-area: hora; font-weight: 700; }
+  .grupo__mod { grid-area: mod; display: flex; gap: 0.4rem; align-items: center; color: var(--tinta-suave); }
+  .grupo__pub { grid-area: pub; color: var(--tinta-suave); justify-self: end; font-size: 0.95rem; }
+  .grupo__doc { grid-area: doc; color: var(--tinta-suave); justify-self: end; font-size: 0.95rem; }
+  .grupo__estado { grid-area: estado; justify-self: end; }
+  .grupo__cierre { grid-area: cierre; margin-top: 0.5rem !important; }
+  .grupo__cierre :global(.btn) { width: 100%; }
+  .estado { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; font-size: 0.88rem; padding: 0.2rem 0.65rem; border-radius: 999px; white-space: nowrap; }
   .estado :global(.icono) { width: 1.05em; height: 1.05em; }
   .estado--disponible { background: var(--ok-fondo); color: var(--ok); }
   .estado--ultimas { background: var(--sol-100); color: var(--aviso-texto); border: 1px solid var(--sol); }
   .estado--sin-vacantes { background: #e8e8ee; color: #3f4658; border: 1px dashed #6d7794; }
-  .grupo__dias { font-size: 1.55rem; margin: 0 0 0.35rem; }
-  .grupo__dias::first-letter { text-transform: uppercase; }
-  .grupo__hora { font-weight: 700; margin: 0 0 0.35rem; display: flex; gap: 0.5rem; align-items: center; }
-  .grupo__dato { margin: 0 0 0.2rem; display: flex; gap: 0.5rem; align-items: center; color: var(--tinta-suave); font-size: 0.98rem; }
-  .grupo__precio { margin: 0.5rem 0 0; font-weight: 700; color: var(--azul-900); }
-  .grupo__precio small { display: block; font-weight: 400; color: var(--tinta-suave); font-size: 0.85rem; }
-  .grupo__cierre { margin: 0; display: grid; gap: 0.5rem; margin-top: auto; padding-top: 0.8rem; }
-  .grupo__cierre :global(.btn) { width: 100%; }
-  .grupo__agotado { font-weight: 700; color: #3f4658; font-size: 0.95rem; }
+  @media (min-width: 56rem) {
+    .grupo { grid-template-columns: 1.5fr 1fr 1fr 1.3fr 1.2fr 1.1fr 9.5rem; grid-template-areas: 'dias hora mod pub doc estado cierre'; gap: 0 1rem; padding: 0.55rem 1.1rem; min-height: 56px; }
+    .grupo__estado { justify-self: start; }
+    .grupo__doc, .grupo__pub { justify-self: start; font-size: inherit; }
+    .grupo__cierre { margin-top: 0 !important; }
+    .grupo__cierre :global(.btn) { min-height: 44px; padding-block: 0.4rem; }
+    .grupo:hover { background: var(--papel-2); }
+  }
   .hor__vacio { background: var(--blanco); border: 1.5px dashed #6d7794; border-radius: var(--radio); padding: 1.25rem; }
   .hor__vacio p { margin: 0; }
 </style>
@@ -125,6 +154,11 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
 <script>
   const lista = document.getElementById('hor-lista')!;
   const items = Array.from(lista.querySelectorAll<HTMLElement>('.grupo'));
+  const bloques = Array.from(lista.querySelectorAll<HTMLDetailsElement>('.bloque'));
+  const movil = window.matchMedia('(max-width: 55.99rem)');
+  // Con JS solo el primer nivel queda abierto (o los que cumplen el filtro); sin JS todos van abiertos.
+  const hayFiltro = () => !!(nivel.value || pub.value || mod.value || turno.value || vac.checked);
+  const plegar = () => bloques.forEach((b, i) => (b.open = i === 0));
   const nivel = document.getElementById('f-nivel') as HTMLSelectElement;
   const pub = document.getElementById('f-pub') as HTMLSelectElement;
   const mod = document.getElementById('f-mod') as HTMLSelectElement;
@@ -146,14 +180,24 @@ const filas = GRUPOS.map((g) => ({ g, v: vacantesDe(g), d: docentePorId(g.docent
       li.hidden = !ok;
       if (ok) n++;
     });
+    bloques.forEach((b) => {
+      const vis = b.querySelectorAll('.grupo:not([hidden])').length;
+      b.hidden = vis === 0;
+      const c = b.querySelector<HTMLElement>('.bloque__cuenta')!;
+      const tot = Number(c.dataset.total);
+      c.textContent = vis === tot ? `${tot} grupos` : `${vis} de ${tot}`;
+      if (hayFiltro() && vis > 0) b.open = true;
+    });
     vacio.hidden = n > 0;
     estado.textContent = `Mostrando ${n} de ${items.length} grupos.`;
   }
+  plegar();
   [nivel, pub, mod, turno, vac].forEach((el) => el.addEventListener('change', aplicar));
   document.getElementById('f-limpiar')!.addEventListener('click', () => {
     nivel.value = pub.value = mod.value = turno.value = '';
     vac.checked = false;
     aplicar();
+    plegar();
   });
   // Desde el resultado del test: filtra por el nivel obtenido.
   window.addEventListener('lumen:nivel', (e) => {

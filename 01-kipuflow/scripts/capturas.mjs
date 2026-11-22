@@ -13,6 +13,8 @@ for (const [w, h] of [[320, 700], [360, 780], [768, 1024], [1440, 900]]) {
   pag.on('pageerror', (e) => errores.push(String(e)));
   await pag.goto(base + '/');
   await pag.evaluate(() => document.fonts.ready);
+  await pag.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 50)); } window.scrollTo(0, 0); });
+  await pag.waitForTimeout(300);
   const desborde = await pag.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   if (desborde > 0) { console.log(`DESBORDE ${w}px: ${desborde}`); problemas++; }
   await pag.screenshot({ path: path.join(salida, `inicio-${w}.png`), fullPage: true });

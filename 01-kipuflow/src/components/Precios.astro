@@ -10,27 +10,29 @@ const planes = [
 ---
 <section class="seccion" id="precios" aria-labelledby="t-pre">
   <div class="contenedor">
-    <div class="cabecera-sec">
-      <p class="sobretitulo">Precios</p>
-      <h2 id="t-pre">Elige cómo pagar. Cambia cuando quieras.</h2>
-      <p class="lead">Precios de demostración en soles. Pagando el año completo ahorras cerca de 20 % frente al pago mensual. Precios en S/ con IGV incluido (ejemplo de demo).</p>
-    </div>
-
     <div class="precios" id="precios-bloque">
-      <fieldset class="interruptor">
-        <legend class="sr-only">Periodo de facturación</legend>
-        <input type="radio" name="periodo" id="p-mensual" value="mensual" checked />
-        <label for="p-mensual">Mensual</label>
-        <input type="radio" name="periodo" id="p-anual" value="anual" />
-        <label for="p-anual">Anual <span class="chip">≈ 20 % menos</span></label>
-      </fieldset>
+      <div class="cabecera-sec pre-cab">
+        <div>
+          <h2 id="t-pre">Elige cómo pagar. Cambia cuando quieras.</h2>
+          <p class="lead">Precios de demostración en soles. Pagando el año completo ahorras cerca de 20 % frente al pago mensual. Precios en S/ con IGV incluido (ejemplo de demo).</p>
+        </div>
+        <fieldset class="interruptor">
+          <legend class="sr-only">Periodo de facturación</legend>
+          <input type="radio" name="periodo" id="p-mensual" value="mensual" checked />
+          <label for="p-mensual">Mensual</label>
+          <input type="radio" name="periodo" id="p-anual" value="anual" />
+          <label for="p-anual">Anual <span class="chip">≈ 20 % menos</span></label>
+        </fieldset>
+      </div>
 
-      <div class="planes">
+      <div class="tarifas">
         {planes.map((p) => (
-          <article class:list={['plan', 'vidrio', { destacado: p.destacado }]}>
-            {p.destacado && <p class="recomendado">Recomendado</p>}
-            <h3>{p.nombre}</h3>
-            <p class="para">{p.para}</p>
+          <article class:list={['plan', { destacado: p.destacado }]} aria-labelledby={`pl-${p.id}`}>
+            <div class="pl-id">
+              <h3 id={`pl-${p.id}`}>{p.nombre}</h3>
+              {p.destacado && <p class="recomendado">Recomendado</p>}
+              <p class="para">{p.para}</p>
+            </div>
             <div class="monto">
               <p class="v-mensual"><span class="num precio">{sol.format(p.mensual)}</span> <span class="por">al mes</span></p>
               <p class="v-anual"><s class="tachado"><span class="sr-only">Precio mensual: </span>{sol.format(p.mensual)}</s> <span class="num precio">{sol.format(p.anualMes)}</span> <span class="por">al mes, cobrado al año ({sol.format(p.anualMes * 12)})</span>
@@ -50,34 +52,39 @@ const planes = [
 </section>
 
 <style>
-  .interruptor { display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 1.6rem; border: 1px solid var(--borde); border-radius: 14px; background: rgba(5,9,14,.6); position: relative; }
+  .pre-cab { display: grid; gap: 1.6rem; align-items: end; }
+  .pre-cab h2 { max-width: 16ch; }
+  .interruptor { display: inline-flex; justify-self: start; gap: 4px; padding: 4px; margin: 0; border: 1px solid var(--linea-fuerte); border-radius: var(--radio); background: var(--blanco); position: relative; min-width: 0; }
   .interruptor input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .interruptor label { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--texto-2); }
-  .interruptor input:checked + label { background: var(--verde); color: var(--verde-osc); }
-  .interruptor input:focus-visible + label { outline: 3px solid var(--azul); outline-offset: 2px; }
-  .chip { font-size: .85rem; font-weight: 600; padding: .2rem .45rem; border-radius: 99px; background: rgba(4,40,27,.16); }
-  .interruptor input:not(:checked) + label .chip { background: rgba(62,230,162,.16); color: var(--verde); }
-  .planes { display: grid; gap: 1rem; align-items: start; }
-  .plan { padding: 1.6rem; display: grid; gap: 1rem; }
-  .plan.destacado { border-color: rgba(62,230,162,.55); background: linear-gradient(170deg, rgba(62,230,162,.14), rgba(22,32,44,.78) 50%); }
-  .recomendado { font: 600 .8rem var(--f-texto); text-transform: uppercase; letter-spacing: .08em; color: var(--verde); }
-  .plan h3 { font-size: 1.5rem; font-weight: 700; }
-  .para { color: var(--texto-2); }
-  .precio { font-size: 2.6rem; font-weight: 700; line-height: 1; }
-  .por { color: var(--texto-2); font-size: .95rem; }
-  .ahorro { display: block; margin-top: .5rem; color: var(--verde); font-weight: 600; }
+  .interruptor label { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem; border-radius: 4px; cursor: pointer; font-weight: 500; color: var(--tinta-2); }
+  .interruptor input:checked + label { background: var(--tinta); color: #fff; }
+  .interruptor input:focus-visible + label { outline: 3px solid var(--cobalto); outline-offset: 2px; }
+  .chip { font: 500 .78rem var(--f-mono); padding: .2rem .45rem; border-radius: 3px; background: rgba(255,255,255,.16); }
+  .interruptor input:not(:checked) + label .chip { background: var(--cobalto-claro); color: var(--cobalto-osc); }
+  .tarifas { border-top: 2px solid var(--tinta); display: grid; }
+  .plan { display: grid; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid var(--linea-fuerte); align-items: start; }
+  .plan.destacado { background: var(--surf); margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+  .plan h3 { font-size: 1.7rem; font-weight: 500; letter-spacing: -.02em; }
+  .recomendado { display: inline-block; margin-top: .4rem; font: 500 .75rem var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: #fff; background: var(--cobalto); padding: .25rem .5rem; border-radius: 3px; }
+  .para { color: var(--tinta-2); margin-top: .5rem; }
+  .precio { font-size: clamp(2.4rem, 9vw, 3.4rem); font-weight: 500; line-height: 1; letter-spacing: -.04em; }
+  .por { color: var(--tinta-2); font-size: .95rem; }
+  .ahorro { display: block; margin-top: .5rem; color: var(--cobalto-osc); font-weight: 600; }
   .v-anual { display: none; }
-  .tachado { color: var(--texto-2); font-size: 1.05rem; margin-right: .3rem; }
+  .tachado { color: var(--tinta-2); font: 400 1.05rem var(--f-mono); margin-right: .3rem; }
   .precios:has(#p-anual:checked) .v-anual { display: block; }
   .precios:has(#p-anual:checked) .v-mensual { display: none; }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
   li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
-  li svg { color: var(--verde); margin-top: 3px; }
-  .pie-precios { margin-top: 1.2rem; color: var(--texto-2); font-size: .92rem; }
-  @media (min-width: 720px) { .planes { grid-template-columns: repeat(3, 1fr); } .plan { padding: 1.3rem; } }
-  @media (min-width: 1000px) {
-    .plan { padding: 1.6rem; }
-    .plan.destacado { padding-block: 2.4rem; margin-top: -1rem; }
+  li svg { color: var(--cobalto); margin-top: 3px; }
+  .plan .btn { line-height: 1.25; padding-block: .7rem; text-align: center; }
+  .pie-precios { margin-top: 1.2rem; color: var(--tinta-2); font-size: .92rem; }
+  @media (min-width: 900px) {
+    .pre-cab { grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; }
+    .plan { grid-template-columns: minmax(0, 4fr) minmax(0, 3.4fr) minmax(0, 4fr) minmax(0, 3fr); gap: 2rem; padding-block: 2.2rem; transition: background-color .2s; }
+    .plan.destacado { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+    .plan:not(.destacado):hover { background: linear-gradient(90deg, var(--surf), transparent); }
+    .plan .btn { justify-self: end; width: 100%; }
   }
 </style>
 <script>

@@ -1,0 +1,430 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import { foto } from '../data/fotos';
+import { productos, datosProducto, OCASIONES, SABORES, RANGOS_PORCIONES } from '../data/productos';
+import { ALERGENOS, BIZCOCHOS, COBERTURAS, DECORACIONES, MENSAJE_MAX, RELLENOS, TAMANOS, TRAZAS } from '../lib/config';
+import { DISTRITOS, RECARGO_2_PISOS } from '../lib/distritos';
+import { efectoPorPorcion, formatoSoles } from '../lib/precio';
+import Politica from '../components/Politica.astro';
+import { urlWhatsApp } from '../lib/whatsapp';
+
+const lista = productos.map(datosProducto);
+const ORDEN = ['dorada', 'silvestre', 'huerto', 'nube', 'cacao-y-fresa', 'campo-abierto', 'jardin-de-rosas'];
+const vitrina = ORDEN.map((slug) => lista.find((p) => p.slug === slug)!);
+const desde = Math.min(...lista.map((p) => p.precio));
+const FORMA: Record<string, { w: number; h: number; completa?: boolean }> = {
+  dorada: { w: 800, h: 640, completa: true }, silvestre: { w: 800, h: 900, completa: true }, huerto: { w: 520, h: 780 },
+  nube: { w: 520, h: 420 }, 'cacao-y-fresa': { w: 640, h: 640 }, 'campo-abierto': { w: 800, h: 560, completa: true }, 'jardin-de-rosas': { w: 640, h: 480 },
+};
+const efecto = (pp: number) => (pp === 0 ? 'Incluido' : `+ ${formatoSoles(efectoPorPorcion(pp, 12))} en tu torta de 12`);
+const porcion = (pp: number) => `${formatoSoles(pp)} por porción`;
+const waNota = urlWhatsApp('Hola Alba, quiero encargar una torta (demo).');
+const menuItems = lista.map((p) => ({
+  '@type': 'MenuItem',
+  name: p.nombre,
+  description: p.descripcion,
+  image: '/og.png',
+  offers: { '@type': 'Offer', price: p.precio.toFixed(2), priceCurrency: 'PEN', availability: 'https://schema.org/PreOrder', url: `/?base=${p.slug}` },
+}));
+const jsonLd: object[] = [{
+  '@context': 'https://schema.org',
+  '@type': 'Bakery',
+  name: 'Alba Pastelería (demo)',
+  description: 'Pastelería ficticia de tortas a pedido en Jesús María, Lima. Datos ficticios de demo de portafolio.',
+  url: '/',
+  image: '/og.png',
+  hasMenu: { '@type': 'Menu', name: 'Tortas de ejemplo', hasMenuSection: [{ '@type': 'MenuSection', name: 'Tortas a pedido', hasMenuItem: menuItems }] },
+  address: { '@type': 'PostalAddress', streetAddress: 'Av. Ejemplo 123', addressLocality: 'Jesús María', addressRegion: 'Lima', addressCountry: 'PE' },
+  telephone: '+51900000000',
+  priceRange: 'S/ 95 - S/ 700',
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '09:00', closes: '19:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '09:00', closes: '14:00' },
+  ],
+}, ...lista.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `Torta ${p.nombre} (demo)`,
+  description: p.descripcion,
+  image: '/og.png',
+  url: `/?base=${p.slug}`,
+  brand: { '@type': 'Brand', name: 'Alba Pastelería (demo)' },
+  offers: { '@type': 'Offer', price: p.precio.toFixed(2), priceCurrency: 'PEN', availability: 'https://schema.org/PreOrder', url: `/?base=${p.slug}` },
+}))];
+---
+<Base
+  titulo="Alba Pastelería | Tortas a pedido en Jesús María (demo)"
+  descripcion="Arma tu torta a pedido con precio en vivo en soles, elige fecha y pide por WhatsApp. Recojo en Jesús María o delivery por distrito. Demo de portafolio."
+  ruta="/"
+  jsonLd={jsonLd}
+>
+  <section class="hero oscuro" aria-labelledby="t-hero">
+    <div class="hero__foto">
+      <Image src={foto('dos-pisos-rosas')} alt="Torta blanca de dos pisos con rosas rosadas, higos y moras cayendo en cascada por un lado, sobre una bandeja blanca" width={1200} height={1539} format="webp" quality={78} widths={[640, 960, 1280]} sizes="(min-width: 900px) 70vw, 100vw" loading="eager" fetchpriority="high" decoding="async" />
+    </div>
+    <div class="contenedor hero__texto">
+      <h1 id="t-hero">Tortas de autor, hechas para <em>tu fecha</em>.</h1>
+      <p class="hero__lead">Pastelería a pedido en Jesús María. Armas tu torta, ves el precio y los alérgenos al instante y pides por WhatsApp.</p>
+      <div class="hero__acciones">
+        <a class="btn btn--primario" href="#configurador">Arma tu torta <Icono nombre="flecha" /></a>
+        <a class="btn btn--claro" href="#catalogo">Ver el catálogo</a>
+      </div>
+      <ul class="hero__datos">
+        <li><strong>Desde {formatoSoles(desde)}</strong> <span>IGV incluido</span></li>
+        <li><strong>48 h</strong> <span>de anticipación (72 h con 2 pisos)</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="vitrina" id="catalogo" aria-labelledby="t-catalogo">
+    <div class="contenedor">
+      <div class="vitrina__cab">
+        <h2 id="t-catalogo">Siete tortas para empezar</h2>
+        <p class="lead">Todas se pueden cambiar. Elige una y ajústala en el configurador, o créala desde cero. <a href="#configurador">Saltar al configurador</a></p>
+      </div>
+      <p class="nota nota--ilus">Fotos ilustrativas: la decoración puede variar.</p>
+
+      <form class="filtros" data-filtros aria-label="Filtrar tortas" novalidate>
+        <div class="campo">
+          <label for="f-ocasion">Ocasión</label>
+          <select id="f-ocasion" name="ocasion">
+            <option value="">Todas</option>
+            {Object.entries(OCASIONES).map(([k, v]) => <option value={k}>{v}</option>)}
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-sabor">Sabor</label>
+          <select id="f-sabor" name="sabor">
+            <option value="">Todos</option>
+            {Object.entries(SABORES).map(([k, v]) => <option value={k}>{v}</option>)}
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-porciones">Porciones</label>
+          <select id="f-porciones" name="porciones">
+            <option value="">Cualquiera</option>
+            {Object.entries(RANGOS_PORCIONES).map(([k, v]) => <option value={k}>{v}</option>)}
+          </select>
+        </div>
+        <button type="button" class="btn" data-limpiar hidden>Limpiar filtros</button>
+      </form>
+      <p class="estado" role="status" data-estado>Mostrando las {lista.length} tortas.</p>
+
+      <ul class="grilla" data-grilla>
+        {vitrina.map((p) => {
+          const f = FORMA[p.slug];
+          return (
+          <li class={`t t--${p.slug}${f.completa ? ' t--completa' : ''}`} data-ocasiones={p.ocasiones.join(' ')} data-sabor={p.sabor} data-rango={p.rango}>
+            <article class="tile" aria-labelledby={`p-${p.slug}`}>
+              <div class="tile__foto">
+                <Image src={foto(p.foto)} alt={p.alt} width={f.w} height={f.h} widths={[360, 560, 800]} sizes={f.completa ? '(min-width: 1000px) 480px, 100vw' : '(min-width: 1000px) 360px, 50vw'} format="webp" quality={76} loading="lazy" decoding="async" />
+              </div>
+              <div class="tile__info">
+                <div class="tile__fila">
+                  <h3 id={`p-${p.slug}`}>{p.nombre}</h3>
+                  <p class="precio">{formatoSoles(p.precio)} <small>IGV incl.</small></p>
+                </div>
+                <p class="t-extra">{p.descripcion}</p>
+                <p class="t-extra tile__meta">{p.tamanoEtiqueta} · {p.ocasiones.map((o) => OCASIONES[o]).join(', ')}</p>
+                <p class="alerg"><strong>Contiene:</strong> {p.alergenos.map((a) => ALERGENOS[a].toLowerCase()).join(', ')}.</p>
+                <a class="btn btn--sm" href={`/?base=${p.slug}#configurador`} data-personalizar={p.slug}>Personalizar <span class="sr-only">{p.nombre}</span></a>
+              </div>
+            </article>
+          </li>
+          );
+        })}
+      </ul>
+      <div class="sin-resultados" data-vacio hidden>
+        <p><strong>Ninguna torta cumple esos filtros.</strong></p>
+        <p>Prueba con otra combinación o arma la tuya desde cero.</p>
+        <button type="button" class="btn" data-limpiar-vacio>Quitar filtros</button>
+      </div>
+      <p class="nota mt">{TRAZAS} Los alérgenos de cada modelo corresponden a su receta base y cambian si modificas ingredientes.</p>
+    </div>
+  </section>
+
+  <section class="banda oscuro" aria-labelledby="t-banda">
+    <div class="contenedor banda__grid">
+      <h2 id="t-banda">Se hornea el día de tu entrega.</h2>
+      <ul class="banda__cifras">
+        <li><strong>48 h</strong><span>mínimo para pedir (72 h con 2 pisos)</span></li>
+        <li><strong>50 %</strong><span>de adelanto reserva tu fecha</span></li>
+        <li><strong>{DISTRITOS.length}</strong><span>distritos con delivery</span></li>
+      </ul>
+      <p class="banda__nota">Condiciones de ejemplo de demo.</p>
+    </div>
+  </section>
+
+  <section class="conf" id="configurador" aria-labelledby="t-conf">
+    <div class="contenedor">
+      <div class="conf__cab">
+        <h2 id="t-conf" tabindex="-1">Arma tu torta</h2>
+        <p class="lead">Cada elección actualiza el precio y los alérgenos. Todos los precios incluyen IGV.</p>
+      </div>
+      <noscript><p class="aviso">Este configurador necesita JavaScript. Sin él, escríbenos por <a href={waNota}>WhatsApp</a> con tamaño, sabor y fecha deseada.</p></noscript>
+
+      <form novalidate data-config data-pedido aria-label="Configurador de torta y pedido">
+        <nav class="wiz-nav" data-wiz-nav aria-label="Pasos del configurador" hidden></nav>
+        <div class="conf__grid">
+          <div class="wiz">
+            <section class="wiz__panel" data-wiz-panel data-wiz-titulo="Tamaño" aria-labelledby="w1">
+              <h3 id="w1" tabindex="-1">Elige el tamaño</h3>
+              <fieldset class="grupo">
+                <legend class="sr-only">Tamaño</legend>
+                <div class="opciones">
+                  {TAMANOS.map((t) => (
+                    <label class="opcion">
+                      <input type="radio" name="tamano" value={t.id} checked={t.id === '12'} />
+                      <span class="opcion__caja"><span class="opcion__t">{t.etiqueta}</span><span class="opcion__d">{t.detalle}</span><span class="opcion__p">{formatoSoles(t.precio)} base</span></span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="wiz__panel" data-wiz-panel data-wiz-titulo="Sabores" aria-labelledby="w2">
+              <h3 id="w2" tabindex="-1">Bizcocho y relleno</h3>
+              <fieldset class="grupo">
+                <legend>Bizcocho</legend>
+                <div class="opciones">
+                  {BIZCOCHOS.map((o) => (
+                    <label class="opcion">
+                      <input type="radio" name="bizcocho" value={o.id} checked={o.id === 'vainilla'} />
+                      <span class="opcion__caja"><span class="opcion__t">{o.nombre}</span><span class="opcion__d">{o.detalle}</span><span class="opcion__p" data-pp={o.porPorcion}>{efecto(o.porPorcion)}</span>{o.porPorcion > 0 && <span class="opcion__d opcion__x">{porcion(o.porPorcion)}</span>}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset class="grupo">
+                <legend>Relleno</legend>
+                <div class="opciones">
+                  {RELLENOS.map((o) => (
+                    <label class="opcion">
+                      <input type="radio" name="relleno" value={o.id} checked={o.id === 'manjar'} />
+                      <span class="opcion__caja"><span class="opcion__t">{o.nombre}</span><span class="opcion__d">{o.detalle}</span><span class="opcion__p" data-pp={o.porPorcion}>{efecto(o.porPorcion)}</span>{o.porPorcion > 0 && <span class="opcion__d opcion__x">{porcion(o.porPorcion)}</span>}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="wiz__panel" data-wiz-panel data-wiz-titulo="Acabado" aria-labelledby="w3">
+              <h3 id="w3" tabindex="-1">Cobertura, decoración y mensaje</h3>
+              <fieldset class="grupo">
+                <legend>Cobertura</legend>
+                <div class="opciones">
+                  {COBERTURAS.map((o) => (
+                    <label class="opcion">
+                      <input type="radio" name="cobertura" value={o.id} checked={o.id === 'chantilly'} />
+                      <span class="opcion__caja"><span class="opcion__t">{o.nombre}</span><span class="opcion__d">{o.detalle}</span><span class="opcion__p" data-pp={o.porPorcion}>{efecto(o.porPorcion)}</span>{o.porPorcion > 0 && <span class="opcion__d opcion__x">{porcion(o.porPorcion)}</span>}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset class="grupo">
+                <legend>Decoración (opcional)</legend>
+                <div class="opciones">
+                  {DECORACIONES.map((o) => (
+                    <label class="opcion opcion--check">
+                      <input type="checkbox" name="decoracion" value={o.id} />
+                      <span class="opcion__caja"><span class="opcion__t">{o.nombre}</span><span class="opcion__d">{o.detalle}{o.alergenos.length ? ` · contiene ${o.alergenos.map((a) => ALERGENOS[a].toLowerCase()).join(' y ')}` : ''}</span><span class="opcion__p" data-dec={o.precio}>+ {formatoSoles(o.precio)}</span></span>
+                    </label>
+                  ))}
+                </div>
+                <p class="campo__ayuda">En tortas de 2 pisos la decoración cuesta 1,5 veces más.</p>
+              </fieldset>
+              <div class="grupo">
+                <div class="campo">
+                  <div class="mensaje-fila"><label for="mensaje">Mensaje en la torta (opcional)</label><span class="contador" id="mensaje-contador" data-contador-wrap>0 de {MENSAJE_MAX}</span></div>
+                  <input id="mensaje" name="mensaje" type="text" maxlength={MENSAJE_MAX} autocomplete="off" aria-describedby="mensaje-ayuda mensaje-contador mensaje-error" />
+                  <p class="campo__ayuda" id="mensaje-ayuda">Hasta {MENSAJE_MAX} caracteres: letras, números y signos simples. Sin costo adicional.</p>
+                  <p class="sr-only" role="status" data-limite></p>
+                  <p class="error" id="mensaje-error" data-error="mensaje" hidden></p>
+                </div>
+                <div class="campo sin-margen">
+                  <label for="notas">Detalles del diseño (opcional)</label>
+                  <textarea id="notas" name="notas" maxlength="200" aria-describedby="notas-ayuda notas-error"></textarea>
+                  <p class="campo__ayuda" id="notas-ayuda">Colores, tema o referencias. Máximo 200 caracteres. No escribas datos de salud ni alergias: lo que escribas aquí viaja tal cual en el mensaje de WhatsApp.</p>
+                  <p class="error" id="notas-error" data-error="notas" hidden></p>
+                </div>
+              </div>
+            </section>
+
+            <section class="wiz__panel entrega" data-wiz-panel data-wiz-titulo="Pedido" id="entrega" aria-labelledby="w4">
+              <h3 id="w4" tabindex="-1">Entrega y pedido</h3>
+              <p class="lead">Elige cuándo y cómo la recibes. Los lunes y feriados no atendemos.</p>
+              <p class="nota">Todos los campos son obligatorios, salvo los marcados como opcionales.</p>
+              <Politica id="politica" plegada />
+<div class="paso">
+            <div class="error error--resumen" data-resumen-errores role="alert" hidden></div>
+            <div class="campo">
+              <label for="nombre">Tu nombre</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="name" aria-describedby="nombre-error" aria-required="true" required />
+              <p class="error" id="nombre-error" data-error="nombre" hidden></p>
+            </div>
+            <fieldset class="campo" aria-describedby="entrega-error">
+              <legend>¿Cómo la recibes? (obligatorio)</legend>
+              <div class="opciones">
+                <label class="opcion"><input type="radio" name="entrega" value="recojo" checked /><span class="opcion__caja"><span class="opcion__t"><Icono nombre="tienda" tamano={18} /> Recojo en tienda</span><span class="opcion__d">Av. Ejemplo 123, Jesús María (ficticia) · Gratis</span></span></label>
+                <label class="opcion"><input type="radio" name="entrega" value="delivery" /><span class="opcion__caja"><span class="opcion__t"><Icono nombre="camion" tamano={18} /> Delivery</span><span class="opcion__d">Costo según distrito, desde {formatoSoles(DISTRITOS[0].costo)}</span></span></label>
+              </div>
+              <p class="error" id="entrega-error" data-error="entrega" hidden></p>
+            </fieldset>
+            <div data-bloque-delivery hidden>
+              <div class="fila2">
+                <div class="campo">
+                  <label for="distrito">Distrito</label>
+                  <select id="distrito" name="distrito" aria-describedby="distrito-ayuda distrito-error" aria-required="true">
+                    <option value="">Elige un distrito</option>
+                    {DISTRITOS.map((d) => <option value={d.nombre}>{d.nombre} ({formatoSoles(d.costo)})</option>)}
+                  </select>
+                  <p class="error" id="distrito-error" data-error="distrito" hidden></p>
+                </div>
+                <div class="campo">
+                  <label for="direccion">Dirección de entrega</label>
+                  <input id="direccion" name="direccion" type="text" autocomplete="street-address" aria-describedby="direccion-ayuda direccion-error" aria-required="true" />
+                  <p class="campo__ayuda" id="direccion-ayuda">Calle, número y una referencia.</p>
+                  <p class="error" id="direccion-error" data-error="direccion" hidden></p>
+                </div>
+              </div>
+              <p class="campo__ayuda" id="distrito-ayuda" data-aviso-delivery >Fuera de estos distritos solo hay recojo en tienda. Torta de 2 pisos: recargo de {formatoSoles(RECARGO_2_PISOS)} por delivery.</p>
+            </div>
+            <div class="fila2">
+              <div class="campo">
+                <label for="fecha">Fecha de <span data-etq-fecha>recojo</span></label>
+                <input id="fecha" name="fecha" type="date" aria-describedby="fecha-ayuda fecha-error" aria-required="true" />
+                <p class="campo__ayuda" id="fecha-ayuda"><strong>Cerrado los lunes y feriados.</strong> <span data-ayuda-fecha>Con 48 horas de anticipación.</span></p>
+                <div class="fechas-sug" data-sugerencias hidden><span class="campo__ayuda">Próximas fechas:</span> <span class="fechas-sug__botones" data-sug-botones></span></div>
+                <p class="error" id="fecha-error" data-error="fecha" hidden></p>
+              </div>
+              <div class="campo">
+                <label for="hora"><span data-etq-hora>Hora de recojo</span></label>
+                <select id="hora" name="hora" aria-describedby="hora-ayuda fecha-error hora-error" aria-required="true" disabled>
+                  <option value="">Elige primero la fecha</option>
+                </select>
+                <p class="campo__ayuda" id="hora-ayuda"><span data-ayuda-hora>Mar a sáb de 9:00 a 19:00; domingo de 9:00 a 14:00.</span></p>
+                <p class="error" id="hora-error" data-error="hora" hidden></p>
+              </div>
+            </div>
+
+            <dl class="conf-ok__resumen" data-totales aria-label="Totales del pedido">
+              <div><dt>Torta</dt><dd data-t-torta>S/ 0.00</dd></div>
+              <div><dt>Delivery</dt><dd data-t-envio>No aplica</dd></div>
+              <div><dt>Total del pedido (IGV incluido)</dt><dd data-t-total><strong>S/ 0.00</strong></dd></div>
+              <div><dt>Adelanto del 50 % por Yape o Plin</dt><dd data-t-adelanto>S/ 0.00</dd></div>
+            </dl>
+
+            <div class="campo">
+              <label class="check">
+                <input id="acepta" type="checkbox" name="acepta" value="si" aria-describedby="acepta-ayuda acepta-error" aria-required="true" />
+                <span>He leído la <a href="/privacidad/" target="_blank" rel="noopener">Política de privacidad<span class="sr-only"> (se abre en una pestaña nueva)</span></a> y acepto que mi nombre y el detalle del pedido se usen para gestionarlo por WhatsApp.</span>
+              </label>
+              <p class="campo__ayuda" id="acepta-ayuda">Al abrir WhatsApp, tu mensaje y tu número pasan a WhatsApp (Meta), que los trata según su propia política y puede transferirlos fuera del Perú.</p>
+              <p class="error" id="acepta-error" data-error="acepta" hidden></p>
+            </div>
+            <p class="aviso"><Icono nombre="aviso" tamano={18} /> <strong>Alergias:</strong> no escribas diagnósticos ni datos de salud en WhatsApp. Si alguien tiene alergia, avísanos por llamada o al recoger y te indicamos qué ingredientes lleva cada torta.</p>
+            <p class="mt"><button type="submit" class="btn btn--primario btn--bloque"><Icono nombre="mensaje" /> Pedir por WhatsApp</button></p>
+            <p class="nota">Se abrirá WhatsApp en otra pestaña. Demo: el número es ficticio y no se cobra nada.</p>
+          </div>
+            </section>
+          </div>
+
+          <aside class="resumen" aria-labelledby="t-resumen" id="resumen">
+            <div class="resumen__caja">
+              <h3 id="t-resumen" tabindex="-1">Resumen de tu torta</h3>
+              <dl data-lineas></dl>
+              <dl>
+                <div class="t-total"><dt>Total de la torta <span class="sr-only">(IGV incluido)</span></dt><dd data-total>S/ 0.00</dd></div>
+              </dl>
+              <p class="sr-only" role="status" data-anuncio></p>
+              <p class="resumen__min" data-min>IGV incluido.</p>
+              <div class="resumen__aler">
+                <strong>Esta torta contiene</strong>
+                <ul class="chips chips--sep" data-alergenos></ul>
+                <p>{TRAZAS}</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="barra-total oscuro" role="region" aria-label="Resumen rápido de tu torta">
+          <div class="barra-total__datos">
+            <span>Torta <strong data-total-barra>S/ 0.00</strong> <small data-barra-envio></small></span>
+            <small class="barra-total__aler" data-barra-aler></small>
+          </div>
+          <a href="#resumen" data-ver-resumen>Ver resumen<span class="sr-only"> de la torta</span></a>
+        </div>
+      </form>
+
+      <section class="conf-ok" data-confirmacion tabindex="-1" aria-labelledby="ok-t" hidden>
+        <h3 id="ok-t">Pedido <span data-n-pedido></span> listo para enviar</h3>
+        <p>Se abrió WhatsApp con tu pedido escrito. <strong>Aún no está enviado</strong>: envíalo desde WhatsApp para que lo recibamos. En esta demo el número es ficticio y no habrá respuesta.</p>
+        <div class="panel-acento">
+          <p class="sin-margen"><strong>Política de adelanto:</strong> para reservar la fecha pedimos un adelanto del 50 % por Yape o Plin (<span data-ok-adelanto></span>) dentro de 24 horas, y el saldo al recoger o recibir la torta. Cancelación y cambios: <a href="/terminos/#politica">ver política</a>. <strong>En esta demo no se cobra ni se pide ningún pago.</strong></p>
+        </div>
+        <dl class="conf-ok__resumen" data-ok-resumen></dl>
+        <p>Si no se abrió WhatsApp (a veces el navegador bloquea la ventana), usa este enlace:</p>
+        <p><a class="btn btn--primario" data-enlace-wa href={waNota} target="_blank" rel="noopener noreferrer"><Icono nombre="mensaje" /> Abrir WhatsApp con mi pedido<span class="sr-only"> (se abre en una pestaña nueva)</span></a></p>
+        <div class="conf-ok__acciones">
+          <button type="button" class="btn" data-editar><Icono nombre="lapiz" tamano={18} /> Cambiar el pedido</button>
+          <button type="button" class="btn" data-nuevo><Icono nombre="reset" tamano={18} /> Empezar otra torta</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="como" id="como-pedir" aria-labelledby="t-como">
+    <div class="contenedor como__grid">
+      <div class="como__cab">
+        <h2 id="t-como">Sin cuenta ni tarjeta</h2>
+        <p class="lead">Armas, eliges fecha, envías por WhatsApp y reservas con un adelanto. Así de corto.</p>
+      </div>
+      <dl class="como__lista">
+        <div><dt>Arma tu torta</dt><dd>Tamaño, sabores y decoración. El precio se calcula solo.</dd></div>
+        <div><dt>Elige la fecha</dt><dd>Con 48 h de anticipación (72 h si es de 2 pisos), de martes a domingo.</dd></div>
+        <div><dt>Envía el pedido</dt><dd>Se abre WhatsApp con todo el detalle ya escrito.</dd></div>
+        <div><dt>Reserva con el adelanto</dt><dd>El 50 % por Yape o Plin en 24 h; el saldo se paga al recibir.</dd></div>
+      </dl>
+      <div class="como__info">
+        <div class="caja">
+          <h3><Icono nombre="reloj" /> Horario de recojo y entrega</h3>
+          <ul class="horario">
+            <li><span>Lunes</span><strong>Cerrado</strong></li>
+            <li><span>Martes a sábado</span><strong>9:00 a 19:00</strong></li>
+            <li><span>Domingo</span><strong>9:00 a 14:00</strong></li>
+            <li><span>Feriados</span><strong>Cerrado</strong></li>
+          </ul>
+          <p class="nota mt-s">La última hora de recojo o entrega es 30 minutos antes del cierre.</p>
+        </div>
+        <div class="caja">
+          <h3><Icono nombre="camion" /> Delivery por distrito</h3>
+          <ul class="costos" aria-label="Costo de delivery por distrito, IGV incluido">
+            {DISTRITOS.map((d) => <li><span>{d.nombre}</span><strong>{formatoSoles(d.costo)}</strong></li>)}
+          </ul>
+          <p class="nota mt-s">Tortas de 2 pisos: recargo de {formatoSoles(RECARGO_2_PISOS)}. Otros distritos: solo recojo en tienda.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="preguntas" aria-labelledby="t-faq">
+    <div class="contenedor faq__grid">
+      <h2 id="t-faq">Antes de pedir</h2>
+      <div>
+      <details><summary>¿Con cuánta anticipación debo pedir?</summary><div>Con 48 horas como mínimo. Las tortas de 2 pisos necesitan 72 horas. Contamos las horas desde el momento del pedido, en hora de Lima.</div></details>
+      <details><summary>¿Cómo se paga?</summary><div>Reservamos con un adelanto del 50 % por Yape o Plin dentro de 24 horas y el saldo se paga al recibir o recoger. Si cancelas, la devolución depende de la anticipación (ver la política en «Entrega y pedido»). En esta demo no se cobra nada.</div></details>
+      <details><summary>¿Hacen tortas sin gluten, sin huevo o sin lácteos?</summary><div>No. Nuestra cocina maneja gluten, huevo, leche, frutos secos, maní y soya, por lo que no podemos garantizar ausencia de trazas. Cada torta muestra los alérgenos de su receta; si tienes dudas, consúltanos antes de pedir.</div></details>
+      <details><summary>¿Puedo cambiar el pedido después de enviarlo?</summary><div>La fecha, el diseño o los ingredientes se cambian sin costo hasta 48 horas antes, por el mismo chat de WhatsApp. Si cambian el tamaño o los ingredientes, se recalcula el precio.</div></details>
+      <details><summary>¿Cómo se conserva la torta?</summary><div>En refrigeración y fuera de la luz directa. Las tortas con chantilly o frutas frescas se consumen el mismo día o al día siguiente.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import '../scripts/catalogo';
+    import '../scripts/configurador';
+    import '../scripts/pasos';
+  </script>
+</Base>

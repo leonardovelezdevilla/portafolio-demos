@@ -6,17 +6,16 @@ const preguntas = [
   { q: '¿Qué debo llevar a mi primera cita?', a: 'Tu DNI, los productos que usas en la piel (o fotos de sus etiquetas), exámenes o recetas anteriores y una lista de tus dudas.' },
   { q: '¿Los precios son definitivos?', a: 'No. Los montos «desde S/» son referenciales y ficticios en esta demo, expresados en soles e IGV incluido. En una clínica real, el costo final lo confirma el equipo después de la evaluación.' },
   { q: '¿Puedo cambiar o cancelar mi cita?', a: 'Sí, avisando por WhatsApp con al menos 24 horas de anticipación, para liberar el horario a otro paciente.' },
-  { q: '¿Cómo cuidan mis datos de salud?', a: 'Los datos de salud son datos personales sensibles según la Ley 29733. Solo se piden con tu consentimiento expreso y para gestionar tu cita. En esta demo no se guarda nada; el mensaje de WhatsApp lo envías tú, y WhatsApp pertenece a Meta, por eso te pedimos no escribir detalles clínicos. Más detalles en la política de privacidad.' },
+  { q: '¿Cómo cuidan mis datos de salud?', a: 'Los datos de salud son datos personales sensibles según la Ley 29733. Solo se piden con tu consentimiento expreso y para gestionar tu cita. En esta demo no se guarda nada y el formulario no tiene un campo de texto libre: eliges un motivo general de una lista, que sigue siendo un dato de salud y viaja en el mensaje de WhatsApp (con el tratamiento de interés, si lo eliges). Ese mensaje lo envías tú y WhatsApp pertenece a Meta: no escribas síntomas, diagnósticos ni fotos. Más detalles en la política de privacidad.' },
   { q: '¿Atienden urgencias?', a: 'No. Si tienes fiebre, una lesión que sangra o crece rápidamente, hinchazón del rostro o dificultad para respirar, acude de inmediato a un servicio de emergencia.' },
   { q: '¿Dónde veo la colegiatura de los especialistas?', a: 'En esta demo los perfiles son ficticios. En una clínica real, el CMP y el RNE de cada especialista se muestran en la clínica y se pueden verificar en el Colegio Médico del Perú.' },
 ];
 ---
 
-<section class="seccion seccion--blanca" id="preguntas" aria-labelledby="faq-titulo">
+<section class="seccion seccion--papel" id="preguntas" aria-labelledby="faq-titulo">
   <div class="contenedor faq">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Preguntas frecuentes</p>
-      <h2 id="faq-titulo">Lo que suelen preguntarnos</h2>
+    <div class="faq__cab">
+      <h2 id="faq-titulo">Lo que suelen <em>preguntarnos</em></h2>
     </div>
     <div class="faq__lista">
       {
@@ -28,7 +27,7 @@ const preguntas = [
             </summary>
             <p>
               {p.a}
-              {p.q.includes('datos de salud') && <> <a href="/privacidad/">Leer privacidad</a>.</>}
+              {p.q.includes('datos de salud') && <> <a class="dibuja" href="/privacidad/">Leer privacidad</a>.</>}
             </p>
           </details>
         ))
@@ -38,8 +37,26 @@ const preguntas = [
 </section>
 
 <style>
+  .faq {
+    display: grid;
+    gap: 2rem;
+  }
+  .faq__cab h2 {
+    margin: 0;
+  }
+  @media (min-width: 62rem) {
+    .faq {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .faq__cab {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
   .faq__lista {
-    max-width: 48rem;
+    border-top: 1px solid var(--tinta);
   }
   details {
     border-bottom: 1px solid var(--linea);
@@ -50,25 +67,28 @@ const preguntas = [
     gap: 1rem;
     justify-content: space-between;
     align-items: center;
-    min-height: 56px;
-    padding: 0.85rem 0.25rem;
+    min-height: 64px;
+    padding: 0.9rem 0;
     cursor: pointer;
-    font: 600 1.08rem/1.35 var(--sans);
-    color: var(--salvia-900);
+    font: 400 1.4rem/1.2 var(--serif);
+    color: var(--tinta);
+  }
+  summary:hover {
+    color: var(--oxido);
   }
   summary::-webkit-details-marker {
     display: none;
   }
   summary :global(.icono) {
     transition: transform 0.2s;
-    color: var(--salvia-700);
+    color: var(--oxido);
   }
   details[open] summary :global(.icono) {
     transform: rotate(180deg);
   }
   details p {
-    margin: 0 0 1.1rem;
-    padding-inline: 0.25rem;
+    margin: 0 0 1.25rem;
+    max-width: 40rem;
     color: var(--tinta-suave);
   }
 </style>

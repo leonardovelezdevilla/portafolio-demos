@@ -14,27 +14,34 @@ const puntos = [
   <div class="metodo__foto">
     <Image src={foto} alt="Tres personas ríen alrededor de una mesa de madera mientras conversan." widths={[640, 1024, 1600]} sizes="100vw" format="webp" quality={72} loading="lazy" decoding="async" />
   </div>
-  <div class="contenedor metodo__cuerpo">
-    <h2 id="met-tit">Cómo se estudia en <em>Lumen</em></h2>
-    <ul class="metodo__lista">
-      {puntos.map((p) => (
-        <li><Icon name={p.i} /><div><h3>{p.t}</h3><p>{p.d}</p></div></li>
-      ))}
-    </ul>
-    <p class="metodo__credito">Foto: Brooke Cagle, vía Unsplash (recorte). Las personas que aparecen no tienen relación con esta marca ficticia.</p>
+  <div class="contenedor metodo__marco">
+    <div class="metodo__panel">
+      <h2 id="met-tit">Cómo se estudia en <em>Lumen</em></h2>
+      <ul class="metodo__lista">
+        {puntos.map((p) => (
+          <li><Icon name={p.i} /><div><h3>{p.t}</h3><p>{p.d}</p></div></li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
 <style>
-  .metodo { background: var(--papel); }
-  .metodo__foto { height: clamp(11rem, 30vw, 22rem); overflow: hidden; background: var(--azul-900); }
+  .metodo { position: relative; background: var(--azul-900); }
+  .metodo__foto { height: clamp(14rem, 45vw, 20rem); overflow: hidden; }
   .metodo__foto :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 62% 30%; }
-  .metodo__cuerpo { padding-block: clamp(2.5rem, 7vw, 4.5rem); }
+  .metodo__panel { background: var(--azul-900); color: #e9edf8; padding: clamp(1.75rem, 5vw, 3rem) 0; }
+  .metodo h2 { color: #fff; }
+  .metodo h2 em { color: #ff9b85; }
   .metodo__lista { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 1.5rem; }
-  @media (min-width: 52rem) { .metodo__lista { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
   .metodo__lista li { display: flex; gap: 0.9rem; align-items: flex-start; }
-  .metodo__lista :global(.icono) { width: 2.5rem; height: 2.5rem; padding: 0.55rem; background: var(--sol); border-radius: 12px; color: var(--azul-900); }
-  .metodo__lista h3 { font-size: 1.35rem; margin-bottom: 0.25rem; }
-  .metodo__lista p { margin: 0; color: var(--tinta-suave); }
-  .metodo__credito { margin: 2rem 0 0; font-size: 0.85rem; color: var(--tinta-suave); }
+  .metodo__lista :global(.icono) { width: 2.5rem; height: 2.5rem; padding: 0.55rem; background: var(--coral); border-radius: 50%; color: #fff; }
+  .metodo__lista h3 { font-size: 1.35rem; margin-bottom: 0.25rem; color: #fff; }
+  .metodo__lista p { margin: 0; color: #c9d2ea; }
+  @media (min-width: 62rem) {
+    .metodo { min-height: min(100svh, 46rem); }
+    .metodo__foto { position: absolute; inset: 0; height: auto; }
+    .metodo__marco { position: relative; min-height: min(100svh, 46rem); display: flex; align-items: flex-end; justify-content: flex-start; }
+    .metodo__panel { width: min(100%, 38rem); padding: 2.5rem; }
+  }
 </style>

@@ -3,15 +3,19 @@ import Icon from './Icon.astro';
 const planes = [['', 'Aún no lo sé'], ['esencial', 'Esencial'], ['pro', 'Pro'], ['estudio', 'Estudio']];
 const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor/a o traductor/a', 'Fotógrafo/a o videógrafo/a', 'Otra profesión'];
 ---
-<section class="seccion" id="acceso" aria-labelledby="t-acc">
+<section class="seccion acc-sec" id="acceso" aria-labelledby="t-acc">
   <div class="contenedor acc">
     <div>
-      <p class="sobretitulo">Acceso anticipado</p>
       <h2 id="t-acc">Sé de los primeros en probar Kipuflow.</h2>
       <p class="lead">Déjanos tu nombre, correo y profesión. Nada se envía hasta que tú abras WhatsApp: al terminar verás una confirmación de ejemplo y un mensaje ya escrito que puedes enviar o descartar.</p>
+      <ul class="recibes">
+        <li>Una invitación cuando abra tu turno, sin tarjeta.</li>
+        <li>La calculadora completa con tus propios recibos.</li>
+        <li>Precio de lanzamiento de ejemplo en el plan que elijas.</li>
+      </ul>
     </div>
 
-    <div class="vidrio caja">
+    <div class="caja">
       <form id="acc-form" novalidate>
         <div class="campo">
           <label for="nombre">Nombre y apellido</label>
@@ -61,22 +65,23 @@ const profesiones = ['Diseñador/a', 'Desarrollador/a', 'Consultor/a', 'Redactor
 </section>
 
 <style>
-  .acc { display: grid; gap: 2rem; align-items: center; }
-  .caja { padding: 1.5rem; }
+  .acc-sec { background: var(--surf); border-top: 1px solid var(--linea); }
+  .acc { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 900px) { .acc { align-items: center; } }
+  .acc h2 { max-width: 13ch; }
+  .recibes { list-style: none; margin: 2rem 0 0; padding: 0; border-top: 1px solid var(--linea-fuerte); }
+  .recibes li { padding: .9rem 0; border-bottom: 1px solid var(--linea); color: var(--tinta); }
+  .caja { background: var(--blanco); border: 1px solid var(--tinta); border-radius: 8px; padding: 1.5rem; }
   form { display: grid; gap: 1.1rem; }
-  .campo { display: grid; gap: .4rem; }
-  label { font-weight: 600; }
-  input, select { font: inherit; min-height: 48px; padding: .6rem .9rem; border-radius: 10px; color: var(--texto); background: rgba(5,9,14,.7); border: 1px solid rgba(190,220,245,.35); width: 100%; }
-  [aria-invalid='true'] { border-color: var(--error); }
-  .err { color: var(--error); font-size: .92rem; }
-  .legal { color: var(--texto-2); font-size: .9rem; }
+  form[hidden] { display: none; }
+  .legal { color: var(--tinta-2); font-size: .9rem; }
   .check-fila { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: start; }
-  .check-fila input { width: 24px; min-height: 24px; height: 24px; margin-top: 2px; accent-color: var(--verde); }
-  .check-fila label { font-weight: 400; color: var(--texto-2); }
+  .campo .check-fila input { width: 24px; min-height: 24px; height: 24px; margin-top: 2px; accent-color: var(--cobalto); }
+  .check-fila label { font-weight: 400; color: var(--tinta-2); }
   .ok { display: grid; gap: 1rem; justify-items: start; }
-  .ok svg { color: var(--verde); }
+  .ok svg { color: var(--cobalto); }
   .ok[hidden] { display: none; }
-  @media (min-width: 900px) { .acc { grid-template-columns: 1fr 1fr; gap: 4rem; } .caja { padding: 2rem; } }
+  @media (min-width: 900px) { .acc { grid-template-columns: 1fr 1fr; gap: 6rem; } .caja { padding: 2.2rem; } }
 </style>
 
 <script>

@@ -9,8 +9,11 @@ Sitio de un restaurante nikkei **ficticio** en Barranco, Lima. Demo de [Vélez D
 - Privacidad, Términos de demo y **Libro de Reclamaciones de demo** (con número de hoja, sin envío), 404 propia.
 - SEO: JSON-LD `Restaurant`, Open Graph 1200×630, `noindex` mientras sea demo.
 
+## Diseño
+Pulido 2026-11: se mantienen la paleta tierra, carbón y dorado y las fuentes Cormorant Garamond + Figtree. Cabecera móvil de 58 px con botón «Menú», primera pantalla con titular y foto del nigiri, barra de reserva que se oculta al llegar al formulario y omakase con foto fija en escritorio.
+
 ## Capturas
-Carpeta [`capturas/`](capturas): inicio, carta filtrada, reserva con errores y reserva con éxito a 360, 768 y 1440 px.
+Carpeta [`capturas/`](capturas): inicio, carta filtrada, reserva con errores, con éxito y de grupos a 360, 768 y 1440 px.
 
 ![Inicio 1440](capturas/inicio-1440.png)
 

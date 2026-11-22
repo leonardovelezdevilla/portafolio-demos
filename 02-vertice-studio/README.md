@@ -25,6 +25,9 @@ node scripts/og.mjs        # regenera public/og.png (Playwright + Edge)
 node scripts/capturas.mjs  # capturas a 360, 768 y 1440 (requiere npm run preview)
 ```
 
+## Diseño
+Pulido 2026-11: se mantiene la identidad brutalista (Anton + Space Mono, naranja y negro, bordes y sombras duras). Cabecera móvil de 55 px, héroe en una pantalla, «Cómo comprar» con palabras grandes ELIGE / ARMA / ENVÍA.
+
 ## Capturas
 En [`capturas/`](capturas/): inicio, filtro aplicado, vista rápida, aviso al agregar, carrito, formulario, confirmación del pedido y página de producto a 360, 768 y 1440 px.
 

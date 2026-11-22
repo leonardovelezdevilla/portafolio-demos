@@ -11,7 +11,7 @@ Fotos de stock referenciales: no muestran el taller ficticio ni un taller peruan
 Se revisó cada imagen: sin logos ni marcas legibles. Se descartaron otras candidatas por mostrar logos (jabón de aceite y chaqueta con emblema de una marca de autos, caja con marca, placa de matrícula legible). Ninguna imagen generada por IA.
 
 ## Tipografías (SIL OFL, vía @fontsource, autohospedadas en `public/fonts/`)
-- Barlow Condensed (600, 700) y Barlow (400, 600). Licencias: `OFL-BarlowCondensed.txt`, `OFL-Barlow.txt`.
+- Big Shoulders Display (800), Chivo (400, 600) y Chivo Mono (500). Licencias: `OFL-big-shoulders-display.txt`, `OFL-chivo.txt`, `OFL-chivo-mono.txt`.
 
 ## Íconos
-- Lucide (`lucide-static`), licencia ISC.
+- Lucide (`lucide-static`), licencia ISC (copia en `public/licencias/LICENSE-lucide-ISC.txt`).

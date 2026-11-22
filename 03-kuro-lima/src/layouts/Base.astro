@@ -49,6 +49,18 @@ const { titulo, descripcion, ruta, jsonld, sinCanonical } = Astro.props;
       <slot />
     </main>
     <Pie />
-    <div class="barra-reserva"><a class="boton boton--oro" href="/#reserva">Reservar mesa</a><a class="boton boton--linea" href="/#carta">Carta</a></div>
+    <div class="barra-reserva" data-barra><a class="boton boton--oro" href="/#reserva">Reservar mesa</a><a class="boton boton--linea" href="/#carta">Carta</a></div>
+    <script>
+      const barra = document.querySelector<HTMLElement>('[data-barra]');
+      const zonas = [...document.querySelectorAll<HTMLElement>('#reserva, .pie')];
+      if (barra && zonas.length && 'IntersectionObserver' in window) {
+        const visibles = new Set<Element>();
+        const io = new IntersectionObserver((es) => {
+          es.forEach((e) => (e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target)));
+          barra.classList.toggle('barra-reserva--oculta', visibles.size > 0);
+        });
+        zonas.forEach((z) => io.observe(z));
+      }
+    </script>
   </body>
 </html>

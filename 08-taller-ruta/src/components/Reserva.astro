@@ -2,13 +2,12 @@
 import { SERVICIOS, VEHICULOS } from '../data/precios';
 import Icon from './Icon.astro';
 ---
-<section class="seccion seccion--oscura" id="reserva" aria-labelledby="t-res">
+<section class="seccion seccion--oscura oscuro" id="reserva" aria-labelledby="t-res">
   <div class="wrap res">
     <div class="res__lado">
-      <p class="etiqueta">Reserva de cita</p>
       <h2 id="t-res">Elige día y turno. Nosotros te esperamos.</h2>
       <p class="intro">Atendemos de lunes a sábado, en turno de mañana y de tarde, con cupos limitados para dedicarle tiempo a cada vehículo.</p>
-      <dl class="horario">
+      <dl class="horario mono">
         <div><dt>Lunes a viernes</dt><dd>Mañana: ingreso de 8:00 a 12:00<br />Tarde: ingreso de 14:00 a 17:30</dd></div>
         <div><dt>Sábados</dt><dd>Mañana: ingreso de 8:00 a 12:00<br />Tarde: ingreso de 14:00 a 16:00</dd></div>
         <div><dt>Domingos y feriados</dt><dd>Cerrado</dd></div>
@@ -338,21 +337,24 @@ import Icon from './Icon.astro';
 
 <style is:global>
   .res { display: grid; gap: 40px; }
-  @media (min-width: 960px) { .res { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } }
-  .horario { display: grid; gap: 0; margin: 28px 0 20px; border-top: 1px solid var(--linea-oscura); }
+  @media (min-width: 960px) { .res { grid-template-columns: 5fr 7fr; gap: 72px; align-items: start; } .res__lado { position: sticky; top: 24px; } }
+  .horario { display: grid; gap: 0; margin: 28px 0 20px; border-top: 4px solid var(--texto-claro); font-size: 0.92rem; }
   .horario div { padding-block: 14px; border-bottom: 1px solid var(--linea-oscura); display: grid; gap: 4px; }
-  .horario dt { font-family: var(--f-titular); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; color: var(--senal); }
-  .horario dd { margin: 0; }
+  .horario dt { font-family: var(--f-titular); font-weight: 800; font-size: 1.7rem; text-transform: uppercase; color: #fff; }
+  .horario dd { margin: 0; color: var(--texto-claro-suave); }
   .pequeno { font-size: 0.93rem; }
-  .panel { background: var(--papel); color: var(--texto); border-radius: var(--radio); padding: clamp(18px, 4vw, 36px); --foco: #14181b; }
+  .panel { background: var(--papel); color: var(--texto); border-radius: var(--radio); padding: clamp(18px, 4vw, 36px); border-top: 8px solid var(--senal); --foco: #121416; }
   .panel .muted { color: var(--texto-suave); }
+  .panel .chip-demo { color: var(--texto); }
   .turnos { display: grid; gap: 10px; }
-  .confirma h3 { font-size: 2rem; }
+  .confirma h3 { font-size: 2.6rem; }
   .datos { display: grid; gap: 0; margin: 12px 0 20px; border-top: 2px solid var(--asfalto); }
-  .datos div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linea); }
+  .datos div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px dotted var(--asfalto); }
   .datos dt { font-weight: 600; color: var(--texto-suave); }
   .datos dd { margin: 0; overflow-wrap: anywhere; }
+  #res-codigo { font-family: var(--f-mono); font-weight: 500; }
   .nav { display: flex; flex-wrap: wrap; gap: 12px; }
   .panel .opciones, .turnos { grid-template-columns: 1fr; }
   .panel legend { font-weight: 600; padding: 0; margin-bottom: 6px; }
+  .panel input#r-placa { font-family: var(--f-mono); font-weight: 500; text-transform: uppercase; }
 </style>

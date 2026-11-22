@@ -7,7 +7,7 @@ import Reserva from '../components/Reserva.astro';
 import Planes from '../components/Planes.astro';
 import Faq from '../components/Faq.astro';
 import { PREGUNTAS } from '../data/faq';
-import { PROGRAMAS, NIVELES, TIPOS } from '../data/clases';
+import { PROGRAMAS, NIVELES, TIPOS, CLASES } from '../data/clases';
 import { PRECIO_PRUEBA } from '../data/planes';
 import { soles } from '../lib/precios';
 import fotoHero from '../assets/fotos/reformer-fring.jpg';
@@ -41,80 +41,78 @@ const programas = Object.values(PROGRAMAS);
   <script type="application/ld+json" set:html={JSON.stringify(faqld)} />
 
   <section class="hero oscuro" aria-labelledby="t-hero">
-    <div class="contenedor hero__grid">
-      <div>
-        <p class="sobretitulo">Pilates reformer y funcional · Surco</p>
-        <h1 id="t-hero">Mueve el cuerpo. <em>Siente el pulso.</em></h1>
-        <p class="bajada">Clases pequeñas de 8 a 12 personas, instructoras que te guían durante la clase y un horario que se adapta a tu semana. Tu primera clase cuesta {soles(PRECIO_PRUEBA)}.</p>
+    <Image class="hero__img" src={fotoHero} alt="Dos mujeres entrenan acostadas sobre máquinas de pilates reformer, con las piernas extendidas hacia arriba, junto a grandes ventanales." widths={[640, 960, 1440, 1920]} sizes="100vw" format="webp" loading="eager" fetchpriority="high" decoding="async" />
+    <div class="hero__velo" aria-hidden="true"></div>
+    <div class="contenedor contenedor--ancho hero__in">
+      <p class="sobretitulo">Pilates reformer y funcional · Santiago de Surco</p>
+      <h1 id="t-hero"><span>Mueve el cuerpo.</span> <em>Siente el pulso.</em></h1>
+      <div class="hero__pie">
+        <p class="bajada">Clases de 8 a 12 personas, con una instructora que te guía durante toda la sesión y un horario que se adapta a tu semana.</p>
         <div class="hero__acciones">
-          <a class="boton boton--lima" href="#reserva">Reservar clase de prueba</a>
+          <a class="boton" href="#reserva">Reservar clase de prueba</a>
           <a class="boton boton--linea" href="#horario">Ver horario y cupos</a>
         </div>
-        <ul class="hero__datos" role="list">
-          <li><Icono nombre="map-pin" /> Santiago de Surco, Lima</li>
-          <li><Icono nombre="users" /> Grupos de 8 a 12</li>
-          <li><Icono nombre="clock" /> Primera clase 6:30 a. m.</li>
-        </ul>
-        <svg class="pulso-linea" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 20h120l14-16 22 32 18-24 10 8h216" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" /></svg>
+        <p class="hero__nota">Foto ilustrativa (no es el estudio ficticio).</p>
       </div>
-      <figure class="hero__foto">
-        <Image src={fotoHero} alt="Dos mujeres entrenan acostadas sobre máquinas de pilates reformer, con las piernas extendidas hacia arriba, junto a grandes ventanales." widths={[480, 720, 960]} sizes="(min-width: 62rem) 40vw, 100vw" format="webp" loading="eager" fetchpriority="high" decoding="async" />
-        <figcaption>Foto ilustrativa de Pexels (no es el estudio ficticio).</figcaption>
-      </figure>
+      <ul class="hero__datos" role="list">
+        <li><strong>{soles(PRECIO_PRUEBA)}</strong> primera clase</li>
+        <li><strong>{CLASES.length}</strong> clases por semana</li>
+        <li><strong>6:30</strong> primera clase del día</li>
+      </ul>
+      <svg class="pulso-linea" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 20h120l14-16 22 32 18-24 10 8h216" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" /></svg>
     </div>
   </section>
 
-  <section class="seccion" id="horario" aria-labelledby="t-horario">
-    <div class="contenedor">
+  <section class="seccion seccion--horario" id="horario" aria-labelledby="t-horario">
+    <div class="contenedor contenedor--ancho">
       <div class="seccion__cab">
-        <p class="sobretitulo">Horario semanal</p>
         <h2 id="t-horario">Encuentra tu clase</h2>
-        <p class="bajada">Filtra por tipo, nivel o día. Los cupos mostrados corresponden a la próxima fecha de cada clase.</p>
+        <p class="bajada">Elige un día y filtra por tipo o nivel. Los cupos corresponden a la próxima fecha de cada clase.</p>
       </div>
       <Horario />
     </div>
   </section>
 
-  <section class="banda lima-fondo" aria-label="Clase de prueba">
-    <div class="contenedor banda__in">
-      <p><strong>Primera vez en Pulso: clase de prueba a {soles(PRECIO_PRUEBA)}.</strong><br />IGV incluido. Una por persona, solo en clases de nivel inicial.</p>
-      <a class="boton" href="#reserva">Reservar mi prueba</a>
+  <section class="banda" aria-label="Clase de prueba">
+    <div class="contenedor contenedor--ancho banda__in">
+      <p class="banda__cifra" aria-hidden="true">{soles(PRECIO_PRUEBA)}</p>
+      <p class="banda__texto"><strong>Primera vez en Pulso: clase de prueba.</strong><br />IGV incluido. Una por persona, solo en clases de nivel inicial.</p>
+      <a class="boton boton--tinta" href="#reserva">Reservar mi prueba</a>
     </div>
   </section>
 
-  <section class="seccion oscuro" id="clases" aria-labelledby="t-clases">
-    <div class="contenedor">
+  <section class="seccion oscuro seccion--clases" id="clases" aria-labelledby="t-clases">
+    <div class="contenedor contenedor--ancho">
       <div class="seccion__cab">
-        <p class="sobretitulo">Nuestras clases</p>
         <h2 id="t-clases">Seis programas, dos salas</h2>
       </div>
-      <div class="tira">
-        <Image src={fotoA} alt="Mujer en una pose de pilates sobre una cama reformer, con una pierna extendida hacia arriba, en un salón claro con espejos en arco." widths={[360, 540]} sizes="(min-width: 48rem) 30vw, 50vw" format="webp" loading="lazy" decoding="async" />
-        <Image src={fotoB} alt="Mujer acostada sobre un reformer con las piernas elevadas y los pies en las correas, con aros y pelotas de pilates en estantes." widths={[360, 540]} sizes="(min-width: 48rem) 30vw, 50vw" format="webp" loading="lazy" decoding="async" />
-        <div class="tira__texto"><p>Reformer en sala de 8 camas y funcional en sala de 12 puestos. Fotos de Unsplash y Pexels, ilustrativas (créditos en CREDITOS.md).</p></div>
+      <div class="mosaico">
+        <Image class="mosaico__a" src={fotoA} alt="Mujer en una pose de pilates sobre una cama reformer, con una pierna extendida hacia arriba, en un salón claro con espejos en arco." widths={[360, 540, 720]} sizes="(min-width: 48rem) 34vw, 50vw" format="webp" loading="lazy" decoding="async" />
+        <div class="mosaico__b"><p class="mosaico__n">8</p><p>camas en la Sala Reformer</p></div>
+        <Image class="mosaico__c" src={fotoB} alt="Mujer acostada sobre un reformer con las piernas elevadas y los pies en las correas, con aros y pelotas de pilates en estantes." widths={[360, 540, 720]} sizes="(min-width: 48rem) 28vw, 50vw" format="webp" loading="lazy" decoding="async" />
+        <div class="mosaico__d"><p class="mosaico__n">12</p><p>puestos en la Sala Funcional</p></div>
       </div>
-      <div class="programas">
+      <ul class="programas" role="list">
         {programas.map((p) => (
-          <article class="programa">
+          <li class="programa">
             <h3>{p.nombre}</h3>
             <p>{p.resumen}</p>
             <p class="programa__tags"><span>{TIPOS[p.tipo].nombre} · {p.duracion} min</span><span class="intensidad" aria-hidden="true">{[0, 1, 2].map((i) => <i class={i <= ['inicial', 'intermedio', 'avanzado'].indexOf(p.nivel) ? 'on' : ''}></i>)}</span><span>Nivel {NIVELES[p.nivel].toLowerCase()}</span></p>
-          </article>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 
-  <section class="seccion seccion--arena" id="reserva" aria-labelledby="t-reserva">
-    <div class="contenedor">
+  <section class="seccion seccion--sup" id="reserva" aria-labelledby="t-reserva">
+    <div class="contenedor contenedor--ancho">
       <Reserva />
     </div>
   </section>
 
-  <section class="seccion oscuro" id="planes" aria-labelledby="t-planes">
-    <div class="contenedor">
+  <section class="seccion" id="planes" aria-labelledby="t-planes">
+    <div class="contenedor contenedor--ancho">
       <div class="seccion__cab">
-        <p class="sobretitulo">Planes y paquetes</p>
         <h2 id="t-planes">Elige cómo quieres entrenar</h2>
         <p class="bajada">Un plan mensual si vienes cada semana; un paquete si tu agenda cambia. Precios en soles, con IGV incluido.</p>
       </div>
@@ -122,21 +120,17 @@ const programas = Object.values(PROGRAMAS);
     </div>
   </section>
 
-  <section class="seccion" id="faq" aria-labelledby="t-faq">
-    <div class="contenedor">
-      <div class="seccion__cab">
-        <p class="sobretitulo">Preguntas frecuentes</p>
-        <h2 id="t-faq">Antes de tu primera clase</h2>
-      </div>
+  <section class="seccion oscuro" id="faq" aria-labelledby="t-faq">
+    <div class="contenedor contenedor--ancho faq-sec">
+      <h2 id="t-faq">Antes de tu primera clase</h2>
       <Faq />
     </div>
   </section>
 
-  <section class="seccion seccion--arena" id="ubicacion" aria-labelledby="t-ubic">
-    <div class="contenedor ubic">
+  <section class="seccion seccion--persimon" id="ubicacion" aria-labelledby="t-ubic">
+    <div class="contenedor contenedor--ancho ubic">
       <div>
-        <p class="sobretitulo">Ubicación (ficticia)</p>
-        <h2 id="t-ubic">Estamos en Surco</h2>
+        <h2 id="t-ubic" class="ubic__titulo">Estamos en <span>Surco.</span></h2>
         <dl>
           <div><dt><Icono nombre="map-pin" /> Dirección</dt><dd>Av. Los Fresnos 482, Santiago de Surco, Lima (dirección ficticia).</dd></div>
           <div><dt><Icono nombre="clock" /> Atención</dt><dd>Lunes a viernes de 6:00 a 21:00 · sábados de 7:30 a 12:30 · domingos de 9:30 a 12:30.</dd></div>
@@ -146,7 +140,7 @@ const programas = Object.values(PROGRAMAS);
       </div>
       <div class="mapa">
         <svg viewBox="0 0 320 160" role="img" aria-label="Esquema ilustrativo de calles con un punto que marca Pulso Studio" focusable="false">
-          <path d="M0 110h320M0 50h320M80 0v160M200 0v160M260 0l-60 160" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="6" />
+          <path d="M0 110h320M0 50h320M80 0v160M200 0v160M260 0l-60 160" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="6" />
           <circle cx="200" cy="50" r="12" fill="currentColor" />
           <circle cx="200" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="3" />
         </svg>

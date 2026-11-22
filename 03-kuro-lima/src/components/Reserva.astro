@@ -8,7 +8,6 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
 <section class="seccion" id="reserva" aria-labelledby="reserva-titulo">
   <div class="contenedor reserva__grid">
     <div class="reserva__lado">
-      <p class="sobretitulo">Reserva</p>
       <h2 class="titulo-seccion" id="reserva-titulo">Tu mesa, <em>sin apuro</em></h2>
       <p class="bajada">Cuéntanos cuándo vienes y te armamos la mesa. Confirmamos por WhatsApp.</p>
       <ul>
@@ -34,7 +33,7 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
             <label for="tipo">Qué quieres reservar</label>
             <select id="tipo" name="tipo">
               <option value="mesa">Mesa en el salón (carta)</option>
-              <option value="omakase">Omakase en la barra (S/ 320 por persona)</option>
+              <option value="omakase">Omakase en la barra (S/&nbsp;320 por persona)</option>
             </select>
             <p class="ayuda" id="ayuda-tipo" data-ayuda-tipo>Mesa: de martes a domingo, hasta 1 hora antes del cierre.</p>
           </div>
@@ -92,8 +91,9 @@ const opciones = Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1);
 
           <div class="campo">
             <label for="alergias">Alergias o restricciones <span class="opcional">(opcional)</span></label>
-            <textarea id="alergias" name="alergias" maxlength="300" aria-describedby="ayuda-alergias err-alergias"></textarea>
+            <textarea id="alergias" name="alergias" maxlength="300" aria-describedby="ayuda-alergias aviso-alergias err-alergias"></textarea>
             <p class="ayuda" id="ayuda-alergias">Mariscos, maní, soya, gluten, sésamo… Es un dato de salud, por eso pedimos tu autorización abajo. La cocina no puede garantizar ausencia de trazas: consulta al personal al ordenar.</p>
+            <p class="aviso-salud" id="aviso-alergias"><strong>Escribe solo lo necesario</strong> (por ejemplo, «maní» o «sin gluten»): sin diagnósticos, medicinas ni historial médico. Este texto viajará dentro del mensaje de WhatsApp (Meta).</p>
             <p class="error" id="err-alergias" hidden></p>
           </div>
 

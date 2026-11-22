@@ -1,17 +1,49 @@
 ---
+const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
+const bruto = 3200;
+const ret = Math.round(bruto * 0.08);
 ---
-<section class="franja" aria-label="Cómo funciona en tres pasos">
-  <div class="contenedor pasos">
-    <div><span class="n num">1</span><p><strong>Emites</strong> tu recibo en SUNAT como siempre.</p></div>
-    <div><span class="n num">2</span><p><strong>Registras</strong> el monto y Kipuflow separa la retención.</p></div>
-    <div><span class="n num">3</span><p><strong>Decides</strong> cuánto apartar antes de la declaración anual.</p></div>
+<section class="banda" aria-labelledby="t-banda">
+  <div class="contenedor banda-in">
+    <div class="banda-tit">
+      <h2 id="t-banda">Del recibo a tu cuenta, cifra por cifra.</h2>
+      <p class="banda-demo"><span class="etiqueta-demo">Ejemplo de demo</span></p>
+    </div>
+    <div class="ecuacion" role="group" aria-label="Un recibo de 3,200 soles con retención de 8 % deja 2,944 soles">
+      <p class="term"><span class="etq">Recibo bruto</span><span class="num cifra">{sol.format(bruto)}</span></p>
+      <p class="op num" aria-hidden="true">−</p>
+      <p class="term"><span class="etq">Retención de 8 %</span><span class="num cifra">{sol.format(ret)}</span></p>
+      <p class="op num" aria-hidden="true">=</p>
+      <p class="term final"><span class="etq">Te llega</span><span class="num cifra">{sol.format(bruto - ret)}</span></p>
+    </div>
+    <ol class="pasos">
+      <li><strong>Emites</strong> tu recibo en SUNAT, como siempre.</li>
+      <li><strong>Registras</strong> el monto y Kipuflow separa la retención.</li>
+      <li><strong>Decides</strong> cuánto apartar antes de la declaración anual.</li>
+    </ol>
   </div>
 </section>
 <style>
-  .franja { background: linear-gradient(100deg, rgba(62,230,162,.14), rgba(93,180,255,.14)); border-block: 1px solid var(--borde); }
-  .pasos { display: grid; gap: 1.2rem; padding-block: 1.8rem; }
-  .pasos > div { display: grid; grid-template-columns: auto 1fr; gap: .9rem; align-items: center; }
-  .n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--verde); color: var(--verde-osc); font-weight: 700; font-size: 1.2rem; }
-  p { margin: 0; }
-  @media (min-width: 800px) { .pasos { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; padding-block: 2.2rem; } }
+  .banda { background: var(--cobalto); color: #fff; padding-block: clamp(3.5rem, 8vw, 6rem); }
+  .banda :global(:focus-visible) { outline-color: #fff; }
+  .banda-in { display: grid; gap: clamp(2rem, 5vw, 3.5rem); }
+  .banda-tit { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: end; justify-content: space-between; }
+  .banda-tit h2 { max-width: 18ch; }
+  .ecuacion { display: grid; gap: .2rem; border-block: 1px solid rgba(255,255,255,.55); padding-block: 1.4rem; }
+  .term { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-block: .5rem; }
+  .etq { font-size: 1rem; }
+  .cifra { font-size: clamp(2.4rem, 11vw, 3.4rem); font-weight: 500; letter-spacing: -.04em; line-height: 1; white-space: nowrap; }
+  .op { display: none; }
+  .final { border-top: 1px solid rgba(255,255,255,.55); margin-top: .5rem; padding-top: 1rem; }
+  .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2rem; font-size: 1.08rem; }
+  .pasos li { border-top: 1px solid rgba(255,255,255,.55); padding-top: .9rem; }
+  @media (min-width: 900px) {
+    .ecuacion { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: 1.5rem; padding-block: 2.2rem; container-type: inline-size; }
+    .term { display: grid; gap: .8rem; }
+    .cifra { font-size: clamp(2.4rem, 5cqw, 4.8rem); }
+    .term { min-width: 0; align-content: start; padding-block: 0; }
+    .op { display: block; font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1; margin-top: 2.4rem; opacity: .75; }
+    .final { border-top: 0; margin: 0; padding: 0; }
+    .pasos { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+  }
 </style>

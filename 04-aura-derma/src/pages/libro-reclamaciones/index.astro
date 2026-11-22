@@ -137,16 +137,10 @@ import { NEGOCIO } from '../../lib/negocio';
         <div class="firma-prov">
           <strong>Observaciones y acciones adoptadas por el proveedor:</strong> este espacio lo completa la clínica al responder (demo: queda en blanco).
         </div>
-        <div class="campo">
-          <div class="check">
-            <input type="checkbox" id="lr-consentimiento" name="consentimiento" required aria-required="true" aria-describedby="err-consentimiento" />
-            <label for="lr-consentimiento">
-              <span class="req" aria-hidden="true">*</span> Doy mi conformidad a esta hoja (cumple el papel de firma del consumidor) y acepto el tratamiento de mis datos personales, incluidos los de salud que pueda mencionar (sensibles), según la{' '}
-              <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad<span class="visually-hidden"> (se abre en otra pestaña)</span></a>.
-            </label>
-          </div>
-          <p class="error" id="err-consentimiento" hidden></p>
-        </div>
+        <p class="aviso-legal">
+          Al registrar esta hoja, la presentas como consumidor y aceptas que se traten tus datos personales, incluidos los de salud que menciones (sensibles), solo para atenderla, según la
+          <a href="/privacidad/" target="_blank" rel="noopener noreferrer">política de privacidad<span class="visually-hidden"> (se abre en otra pestaña)</span></a>. Esta hoja es tu constancia; no hay casilla que condicione el envío.
+        </p>
         <p class="nota-sim">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI.</p>
       </fieldset>
 
@@ -181,7 +175,7 @@ import { NEGOCIO } from '../../lib/negocio';
   }
   .num-hoja {
     font: 400 1.9rem var(--serif);
-    color: var(--salvia-900);
+    color: var(--tinta);
   }
   .aviso {
     margin-bottom: 1.25rem;
@@ -196,7 +190,6 @@ import { NEGOCIO } from '../../lib/negocio';
   import {
     numeroHoja,
     validarCelular,
-    validarConsentimiento,
     validarCorreo,
     validarDocumento,
     validarMonto,
@@ -220,7 +213,7 @@ import { NEGOCIO } from '../../lib/negocio';
 
   const ids: Record<string, string> = {
     nombre: 'lr-nombre', doc: 'lr-doc', domicilio: 'lr-domicilio', correo: 'lr-correo', celular: 'lr-celular', padre: 'lr-padre',
-    servicio: 'lr-servicio', monto: 'lr-monto', detalle: 'lr-detalle', pedido: 'lr-pedido', consentimiento: 'lr-consentimiento',
+    servicio: 'lr-servicio', monto: 'lr-monto', detalle: 'lr-detalle', pedido: 'lr-pedido', 
   };
   const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
 
@@ -264,7 +257,6 @@ import { NEGOCIO } from '../../lib/negocio';
       monto: validarMonto(val('monto')),
       detalle: validarTexto(val('detalle'), 20, 1000, 'Detalle'),
       pedido: validarTexto(val('pedido'), 10, 500, 'Pedido'),
-      consentimiento: validarConsentimiento((form.elements.namedItem('consentimiento') as HTMLInputElement).checked),
     };
     const claves = Object.keys(ids).filter((k) => err[k]);
     if (claves.length) {

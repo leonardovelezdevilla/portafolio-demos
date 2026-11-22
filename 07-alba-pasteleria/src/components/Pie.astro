@@ -1,0 +1,45 @@
+---
+import Icono from './Icono.astro';
+interface Props { wa: string }
+const { wa } = Astro.props;
+---
+<footer class="pie oscuro">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div>
+        <p class="pie__marca">Alba</p>
+        <p>Tortas a pedido en Jesús María, Lima. Hechas el día de tu entrega.</p>
+        <p>Razón social ficticia: Alba Pastelería S.A.C. · RUC 20000000001 (ficticio, no válido) · Av. Ejemplo 123, Jesús María, Lima (ficticia).</p>
+      </div>
+      <div>
+        <h2>Pedidos</h2>
+        <ul>
+          <li><a href="/#catalogo">Catálogo</a></li>
+          <li><a href="/#configurador">Arma tu torta</a></li>
+          <li><a href="/#como-pedir">Cómo pedir</a></li>
+          <li><a href="/#preguntas">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="/privacidad/">Privacidad</a></li>
+          <li><a href="/terminos/">Términos de demo</a></li>
+          <li><a href="/libro-reclamaciones/"><Icono nombre="libro" tamano={18} /> Libro de Reclamaciones (demo)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contacto</h2>
+        <ul>
+          <li><a href={wa}><Icono nombre="mensaje" tamano={16} /> WhatsApp (número de demo)</a></li>
+          <li>Mar a sáb, 9:00 a 19:00</li>
+          <li>Dom, 9:00 a 14:00 · Lunes cerrado</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__legal">
+      <span>Demo de portafolio — Vélez De Villa. Marca, productos y precios son ficticios; no se vende ni se cobra nada.</span>
+      <span>Fotos ilustrativas de Pexels y Unsplash (créditos en el repositorio): no corresponden a tortas de Alba.</span>
+    </div>
+  </div>
+</footer>

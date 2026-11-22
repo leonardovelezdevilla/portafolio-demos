@@ -1,0 +1,30 @@
+---
+import torta from 'lucide-static/icons/cake-slice.svg?raw';
+import mensaje from 'lucide-static/icons/message-circle.svg?raw';
+import pin from 'lucide-static/icons/map-pin.svg?raw';
+import reloj from 'lucide-static/icons/clock.svg?raw';
+import calendario from 'lucide-static/icons/calendar-days.svg?raw';
+import camion from 'lucide-static/icons/truck.svg?raw';
+import tienda from 'lucide-static/icons/store.svg?raw';
+import menu from 'lucide-static/icons/menu.svg?raw';
+import cerrar from 'lucide-static/icons/x.svg?raw';
+import check from 'lucide-static/icons/check.svg?raw';
+import abajo from 'lucide-static/icons/chevron-down.svg?raw';
+import libro from 'lucide-static/icons/book-open.svg?raw';
+import aviso from 'lucide-static/icons/triangle-alert.svg?raw';
+import imprimir from 'lucide-static/icons/printer.svg?raw';
+import flecha from 'lucide-static/icons/arrow-right.svg?raw';
+import lapiz from 'lucide-static/icons/pencil.svg?raw';
+import billetera from 'lucide-static/icons/wallet.svg?raw';
+import reset from 'lucide-static/icons/rotate-ccw.svg?raw';
+
+const iconos = { torta, mensaje, pin, reloj, calendario, camion, tienda, menu, cerrar, check, abajo, libro, aviso, imprimir, flecha, lapiz, billetera, reset };
+interface Props { nombre: keyof typeof iconos; tamano?: number }
+const { nombre, tamano = 20 } = Astro.props;
+const svg = iconos[nombre]
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/\s(width|height)="24"/g, '')
+  .replace('<svg', `<svg width="${tamano}" height="${tamano}" aria-hidden="true" focusable="false"`)
+  .replace(/class="[^"]*"/, 'class="icono"');
+---
+<Fragment set:html={svg} />

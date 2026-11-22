@@ -3,24 +3,27 @@ import Icon from './Icon.astro';
 import { ESPECIALISTAS } from '../lib/especialistas';
 import { TRATAMIENTOS } from '../lib/tratamientos';
 import { NEGOCIO } from '../lib/negocio';
+import { MOTIVOS_GENERALES } from '../lib/validaciones';
 ---
 
-<section class="seccion seccion--salvia" id="agenda" aria-labelledby="ag-titulo">
+<section class="seccion seccion--papel" id="agenda" aria-labelledby="ag-titulo">
   <div class="contenedor ag">
-    <div class="seccion__cabecera">
-      <p class="sobretitulo">Agenda</p>
-      <h2 id="ag-titulo" tabindex="-1">Reserva tu cita en 4 pasos</h2>
+    <div class="ag__lado">
+    <div class="ag__cab">
+      <h2 id="ag-titulo" tabindex="-1">Reserva tu <em>hora</em></h2>
       <p class="lead">
-        Elige especialista, día y hora. Al final se abre WhatsApp con tu solicitud ya escrita para que la clínica la confirme.
+        Cuatro pasos: especialista, día, hora y tus datos. Al final se abre WhatsApp con tu solicitud ya escrita para que la clínica la confirme.
       </p>
       <p class="nota-sim">
         Demo: los horarios <strong>ocupados son simulados</strong> y se calculan siempre igual para cada fecha. No se reserva nada real. Hora de Lima.
       </p>
       <p class="salida-wa">
-        ¿Prefieres escribirnos directo? <a href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">Abrir WhatsApp ({NEGOCIO.telefonoVisible})<span class="visually-hidden">, se abre en otra pestaña o aplicación</span></a>
+        ¿Prefieres escribirnos directo? <a class="dibuja" href={`https://wa.me/${NEGOCIO.whatsapp}`} rel="noopener">Abrir WhatsApp ({NEGOCIO.telefonoVisible})<span class="visually-hidden">, se abre en otra pestaña o aplicación</span></a>
       </p>
     </div>
+    </div>
 
+    <div class="ag__form">
     <noscript>
       <div class="aviso">
         <Icon name="info" />
@@ -33,7 +36,7 @@ import { NEGOCIO } from '../lib/negocio';
       <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio. El DNI y el tratamiento de interés son opcionales.</p>
 
       <fieldset class="agenda-paso" id="ag-esp-grupo">
-        <legend><span class="num-paso" aria-hidden="true">1</span> Elige especialista</legend>
+        <legend><span class="num-paso" aria-hidden="true">1/4</span> Elige especialista</legend>
         <div class="esp-lista">
           {
             ESPECIALISTAS.map((e, i) => (
@@ -50,14 +53,14 @@ import { NEGOCIO } from '../lib/negocio';
       </fieldset>
 
       <fieldset class="agenda-paso" id="ag-fecha-grupo" aria-describedby="err-fecha">
-        <legend><span class="num-paso" aria-hidden="true">2</span> Elige el día (próximos 14 días) <span class="req" aria-hidden="true">*</span></legend>
+        <legend><span class="num-paso" aria-hidden="true">2/4</span> Elige el día (próximos 14 días) <span class="req" aria-hidden="true">*</span></legend>
         <p class="nota-sim" id="ag-dias-ayuda" role="status"></p>
         <div class="dias-grid" id="ag-dias"></div>
         <p class="error" id="err-fecha" hidden></p>
       </fieldset>
 
       <fieldset class="agenda-paso" id="ag-hora-grupo" aria-describedby="err-hora">
-        <legend><span class="num-paso" aria-hidden="true">3</span> Elige la hora (cada 30 minutos) <span class="req" aria-hidden="true">*</span></legend>
+        <legend><span class="num-paso" aria-hidden="true">3/4</span> Elige la hora (cada 30 minutos) <span class="req" aria-hidden="true">*</span></legend>
         <p class="nota-sim" id="ag-hora-ayuda" role="status">Primero elige un día.</p>
         <div class="horas-grid" id="ag-horas"></div>
         <ul class="leyenda">
@@ -69,7 +72,7 @@ import { NEGOCIO } from '../lib/negocio';
       </fieldset>
 
       <fieldset class="agenda-paso">
-        <legend><span class="num-paso" aria-hidden="true">4</span> Tus datos</legend>
+        <legend><span class="num-paso" aria-hidden="true">4/4</span> Tus datos</legend>
         <div class="grid-2">
           <div class="campo">
             <label for="ag-nombre">Nombre y apellido <span class="req" aria-hidden="true">*</span></label>
@@ -84,7 +87,7 @@ import { NEGOCIO } from '../lib/negocio';
           </div>
           <div class="campo">
             <label for="ag-dni">DNI (opcional)</label>
-            <input type="text" id="ag-dni" name="dni" inputmode="numeric" maxlength="8" aria-describedby="ayuda-dni err-dni" />
+            <input type="text" id="ag-dni" name="dni" inputmode="numeric" maxlength="8" autocomplete="off" spellcheck="false" aria-describedby="ayuda-dni err-dni" />
             <p class="ayuda" id="ayuda-dni">8 números. Solo sirve para agilizar tu registro en la clínica; no se incluye en el mensaje de WhatsApp.</p>
             <p class="error" id="err-dni" hidden></p>
           </div>
@@ -97,11 +100,14 @@ import { NEGOCIO } from '../lib/negocio';
           </div>
         </div>
         <div class="campo">
-          <label for="ag-motivo">Motivo de la consulta, breve <span class="req" aria-hidden="true">*</span></label>
-          <textarea id="ag-motivo" name="motivo" maxlength="200" required aria-required="true" aria-describedby="ayuda-motivo err-motivo"></textarea>
-          <p class="ayuda" id="ayuda-motivo">Máximo 200 caracteres, en términos generales (por ejemplo, «control de acné» o «revisión de lunares»).</p>
+          <label for="ag-motivo">Motivo general de la consulta <span class="req" aria-hidden="true">*</span></label>
+          <select id="ag-motivo" name="motivo" required aria-required="true" aria-describedby="ayuda-motivo err-motivo">
+            <option value="">Elige un motivo</option>
+            {MOTIVOS_GENERALES.map((m) => <option value={m}>{m}</option>)}
+          </select>
+          <p class="ayuda" id="ayuda-motivo">Solo eliges un motivo general de la lista: aquí no hay un campo para escribir síntomas ni diagnósticos.</p>
           <p class="aviso-wa">
-            <strong>No escribas diagnósticos ni detalles clínicos.</strong> Este texto viajará por WhatsApp, que pertenece a Meta. Los detalles de tu salud se conversan en la consulta.
+            <strong>Por WhatsApp solo viaja un motivo general, que sigue siendo un dato de salud:</strong> no escribas síntomas, diagnósticos ni fotos. El mensaje lleva además tu nombre, celular, la cita y el tratamiento de interés si lo eliges; WhatsApp pertenece a Meta. Tu DNI no viaja.
           </p>
           <p class="error" id="err-motivo" hidden></p>
         </div>
@@ -133,6 +139,7 @@ import { NEGOCIO } from '../lib/negocio';
         <button type="button" class="btn btn--suave" id="ag-otra">Hacer otra solicitud</button>
       </div>
     </div>
+    </div>
   </div>
 </section>
 
@@ -140,7 +147,7 @@ import { NEGOCIO } from '../lib/negocio';
   import { ESPECIALISTAS } from '../lib/especialistas';
   import { TRATAMIENTOS } from '../lib/tratamientos';
   import { bloquesDelDia, formatearFecha, proximosDias, validarFechaHora } from '../lib/horarios';
-  import { construirUrlWhatsApp, normalizarCelular, validarPaciente } from '../lib/validaciones';
+  import { construirUrlWhatsApp, normalizarCelular, validarMotivoGeneral, validarPaciente } from '../lib/validaciones';
 
   const form = document.getElementById('agenda-form') as HTMLFormElement | null;
   if (form) {
@@ -285,10 +292,12 @@ import { NEGOCIO } from '../lib/negocio';
         nombre: get('nombre').value,
         celular: get('celular').value,
         dni: get('dni').value,
-        motivo: get('motivo').value,
+        motivo: (form.elements.namedItem('motivo') as HTMLSelectElement).value,
         consentimiento: get('consentimiento').checked,
       };
       const errores: Record<string, string> = { ...validarPaciente(datos) };
+      const eMotivo = validarMotivoGeneral(datos.motivo);
+      if (eMotivo) errores.motivo = eMotivo;
       const eFecha = validarFechaHora(fecha, hora, esp.id, ahora(), esp.dias);
       if (eFecha) {
         if (!fecha || /fecha|domingos|próximos|no atiende|no es válida/i.test(eFecha)) errores.fecha = eFecha;
@@ -356,3 +365,34 @@ import { NEGOCIO } from '../lib/negocio';
     pintarDias();
   }
 </script>
+
+<style>
+  .ag {
+    display: grid;
+    gap: 2rem;
+  }
+  .ag__cab h2 {
+    margin-bottom: 0.4em;
+  }
+  .ag__cab .nota-sim {
+    margin-bottom: 1rem;
+  }
+  .salida-wa a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  @media (min-width: 64rem) {
+    .ag {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+      gap: 4rem;
+      align-items: start;
+    }
+    .ag__lado {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
+</style>

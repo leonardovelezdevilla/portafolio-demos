@@ -12,15 +12,21 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
 <section class="seccion oscuro" id="matricula" aria-labelledby="mat-tit">
   <div class="contenedor mat">
     <div class="seccion__cabecera">
-      <p class="sobretitulo">Matrícula</p>
       <h2 id="mat-tit">Pide tu matrícula en <em>dos minutos</em></h2>
       <p class="lead">Completa los datos y termina en WhatsApp con el mensaje listo. En esta demo no se reserva ninguna vacante real.</p>
+      <h3 class="mat__despues">Qué pasa después</h3>
+      <ol class="mat__pasos">
+        <li>Te llega el mensaje de WhatsApp con tus datos ya escritos.</li>
+        <li>Una persona del equipo te propone un día para la entrevista de ubicación, sin costo.</li>
+        <li>Después de la entrevista pagas el ciclo y tu vacante queda confirmada.</li>
+      </ol>
     </div>
 
     <div class="mat__panel">
       <form id="mat-form" novalidate aria-labelledby="mat-tit">
         <div id="mat-resumen" class="resumen-errores" role="alert" tabindex="-1"></div>
         <p class="visually-hidden" id="mat-estado" role="status"></p>
+        <p class="mat__elegido" id="mat-elegido" hidden></p>
         <p class="nota-req"><span class="req" aria-hidden="true">*</span> Obligatorio.</p>
 
         <fieldset>
@@ -151,7 +157,12 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
 </section>
 
 <style>
-  .mat__panel { background: var(--papel); color: var(--tinta); border-radius: 20px; padding: clamp(1.1rem, 4vw, 2.25rem); max-width: 56rem; }
+  .mat__panel { background: var(--papel); color: var(--tinta); border-radius: 20px; padding: clamp(1.1rem, 4vw, 2.25rem); max-width: 56rem; scroll-margin-top: 5rem; }
+  @media (min-width: 62rem) { .mat { display: grid; grid-template-columns: 1fr 1.6fr; gap: 4rem; align-items: start; } .mat__panel { max-width: none; } .mat .seccion__cabecera { position: sticky; top: 6rem; margin-bottom: 0; } }
+  #mat-form { scroll-margin-top: 5.5rem; }
+  .mat__despues { margin: 2rem 0 0.75rem; font-size: 1.5rem; }
+  .mat__pasos { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.6rem; color: #d3daee; }
+  .mat__elegido { margin: 0 0 1rem; padding: 0.7rem 1rem; background: var(--azul-100); border: 1.5px solid var(--azul-700); border-radius: 10px; font-weight: 700; color: var(--azul-900); }
   .mat__panel :global(legend) { font: 600 1.5rem/1.2 var(--serif); margin-bottom: 0.9rem; }
   .mat__panel a { color: var(--azul-700); }
   .oscuro .mat__panel :global(:focus-visible) { outline-color: var(--azul-900); }
@@ -337,6 +348,10 @@ const porNivel = NIVELES.map((n) => ({ n, grupos: GRUPOS.filter((g) => g.nivel =
       horario.value = id!;
       estadoEl.textContent = '';
       setTimeout(() => (estadoEl.textContent = `Horario seleccionado: ${op.text}.`), 30);
+      const el = document.getElementById('mat-elegido')!;
+      el.textContent = `Grupo elegido: ${op.text}`;
+      el.hidden = false;
+      setTimeout(() => document.getElementById('mat-form')!.scrollIntoView({ block: 'start' }), 80);
       setTimeout(() => document.getElementById('m-alumno')!.focus({ preventScroll: true }), 400);
     }
   });

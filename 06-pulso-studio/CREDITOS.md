@@ -10,8 +10,7 @@ Cada página fue abierta y verificada el 20-11-2026. Ninguna muestra logos ni ma
 | `reformer-popovici-b.jpg` | Roxana Popovici (@roxanarxx) | https://unsplash.com/photos/woman-does-pilates-exercise-on-a-reformer-machine-aY5uOJ2o96g | Unsplash License |
 
 ## Tipografías (SIL OFL 1.1, autohospedadas en `public/fonts/`)
-- Red Hat Display 700 y 900 (titulares) — `@fontsource/red-hat-display`, licencia en `OFL-red-hat-display.txt`.
-- Public Sans 400 y 600 (texto) — `@fontsource/public-sans`, licencia en `OFL-public-sans.txt`.
+- Archivo variable (ejes wght y wdth: titulares en ancho 125 y texto en 100) — `@fontsource-variable/archivo`, licencia en `OFL-archivo.txt`.
 
 ## Íconos
 Lucide (`lucide-static`), licencia ISC: `LICENSES/lucide-ISC.txt`.

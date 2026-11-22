@@ -2,7 +2,7 @@
 import Icon from './Icon.astro';
 const preguntas = [
   { q: '¿Kipuflow presenta mi declaración a SUNAT?', a: 'No. Kipuflow organiza tus recibos, retenciones y gastos y te muestra una estimación. La declaración y el pago los haces tú en SUNAT, o tu contador.' },
-  { q: '¿Cuándo me retienen el 8 %?', a: 'Cuando un cliente que actúa como agente de retención te paga un recibo por honorarios que supera S/ 1 500. Si el recibo es de S/ 1 500 o menos, no hay retención. La retención es un pago a cuenta de tu impuesto anual, no un costo adicional.' },
+  { q: '¿Cuándo me retienen el 8 %?', a: 'Cuando un cliente que actúa como agente de retención te paga un recibo por honorarios que supera S/ 1,500. Si el recibo es de S/ 1,500 o menos, no hay retención. La retención es un pago a cuenta de tu impuesto anual, no un costo adicional.' },
   { q: '¿El cálculo de la calculadora es oficial?', a: 'No, es referencial. Usa un valor de la UIT 2026 que conviene confirmar en SUNAT, y no considera todos los casos (otras rentas, gastos deducibles por boletas, pagos a cuenta). Confirma siempre con un contador o con SUNAT.' },
   { q: '¿Puedo cambiar de plan o pasar de mensual a anual?', a: 'Sí, en cualquier momento. En esta demo no se cobra nada, así que los planes sirven para mostrar cómo sería la experiencia.' },
   { q: '¿Qué pasa con mis datos?', a: 'En esta demo no se guarda ni se envía nada a un servidor. En un producto real, los datos se tratarían según la Ley 29733 de Protección de Datos Personales; revisa la página de Privacidad.' },
@@ -12,12 +12,11 @@ const preguntas = [
 <section class="seccion" id="faq" aria-labelledby="t-faq">
   <div class="contenedor faq-in">
     <div class="cabecera-sec">
-      <p class="sobretitulo">Preguntas frecuentes</p>
       <h2 id="t-faq">Lo que suelen preguntar antes de empezar.</h2>
     </div>
     <div class="lista">
       {preguntas.map((p) => (
-        <details class="vidrio">
+        <details>
           <summary><span>{p.q}</span><Icon name="plus" size={20} /></summary>
           <p>{p.a}</p>
         </details>
@@ -28,15 +27,17 @@ const preguntas = [
 
 <style>
   .faq-in { display: grid; gap: 1rem; }
-  .lista { display: grid; gap: .7rem; }
-  details { padding: 0; }
-  summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 56px; padding: .9rem 1.2rem; cursor: pointer; font: 500 1.08rem var(--f-titulo); list-style: none; border-radius: var(--radio); }
+  .lista { display: grid; border-top: 2px solid var(--tinta); }
+  details { border-bottom: 1px solid var(--linea-fuerte); }
+  summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 72px; padding: 1.2rem 0; cursor: pointer; font: 500 clamp(1.15rem, 2.2vw, 1.55rem)/1.25 var(--f-texto); letter-spacing: -.015em; list-style: none; }
   summary::-webkit-details-marker { display: none; }
-  summary svg { flex: none; color: var(--verde); transition: transform .2s; }
+  summary:hover span { text-decoration: underline; text-decoration-color: var(--cobalto); text-underline-offset: 5px; }
+  summary svg { flex: none; color: var(--cobalto); transition: transform .2s; }
   details[open] summary svg { transform: rotate(45deg); }
-  details p { padding: 0 1.2rem 1.2rem; color: var(--texto-2); max-width: 65ch; }
+  details p { padding: 0 3rem 1.6rem 0; color: var(--tinta-2); max-width: 65ch; font-size: 1.1rem; }
   @media (min-width: 900px) {
     .faq-in { grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; }
     .cabecera-sec { position: sticky; top: 100px; margin: 0; }
+    .cabecera-sec h2 { max-width: 10ch; font-size: clamp(2.8rem, 5.2vw, 5rem); }
   }
 </style>

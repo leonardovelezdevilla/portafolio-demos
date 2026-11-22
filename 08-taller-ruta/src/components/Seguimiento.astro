@@ -1,42 +1,47 @@
 ---
-import { SEGUIMIENTOS } from '../data/seguimiento';
+import { ETAPAS, SEGUIMIENTOS } from '../data/seguimiento';
 import Icon from './Icon.astro';
 ---
-<section class="seccion seccion--papel" id="seguimiento" aria-labelledby="t-seg">
-  <div class="wrap seg">
-    <div class="seg__lado">
-      <p class="etiqueta">Seguimiento de tu vehículo</p>
-      <h2 id="t-seg">Sin llamadas para saber cómo va</h2>
-      <p class="intro">Con el código que te damos al recibir tu vehículo ves en qué etapa está. Prueba con un código de ejemplo.</p>
-      <p class="aviso"><span class="chip-demo">Ejemplo de demo</span> Estos códigos no corresponden a vehículos reales: son para mostrar cómo se vería el seguimiento. El código te lo entregamos al recibir tu vehículo en el taller. En un taller real se pediría además tu DNI o celular, y la placa se mostraría oculta en parte, como aquí.</p>
-    </div>
-
-    <div class="seg__cuerpo">
+<section class="seccion seccion--papel seg" id="seguimiento" aria-labelledby="t-seg">
+  <div class="wrap">
+    <div class="seg__cab">
+      <div>
+        <h2 id="t-seg">Sin llamadas para saber cómo va</h2>
+        <p class="intro">Con el código que te damos al recibir tu vehículo ves en qué etapa está. Prueba con un código de ejemplo.</p>
+      </div>
       <form id="seg-form" novalidate method="post" action="/404/" class="seg__form" aria-label="Buscar seguimiento">
         <div class="campo">
           <label for="seg-codigo">Código de seguimiento</label>
-          <p class="ayuda" id="seg-ayuda">Ejemplo: TR-DEMO-1002</p>
           <div class="seg__fila">
-            <input id="seg-codigo" name="codigo" autocomplete="off" aria-describedby="seg-ayuda e-seg" />
+            <input id="seg-codigo" class="mono" name="codigo" autocomplete="off" placeholder="TR-DEMO-1002" aria-describedby="seg-ayuda e-seg" />
             <button class="btn btn--oscuro" type="submit"><Icon nombre="buscar" tamano={20} /> Ver estado</button>
           </div>
+          <p class="ayuda" id="seg-ayuda">Ejemplo: TR-DEMO-1002. O toca un código de ejemplo:</p>
           <p class="err" id="e-seg" role="alert"></p>
         </div>
-        <p class="ayuda">O prueba con:</p>
         <ul class="seg__ejemplos">
           {SEGUIMIENTOS.map((s) => (
-            <li><button type="button" class="btn btn--borde seg__ej" data-codigo={s.codigo}>{s.codigo}</button></li>
+            <li><button type="button" class="seg__ej mono" data-codigo={s.codigo}>{s.codigo}</button></li>
           ))}
         </ul>
       </form>
-
-      <div id="seg-res" class="seg__res" hidden>
-        <h3 tabindex="-1" id="seg-titulo"></h3>
-        <p class="muted" id="seg-meta"></p>
-        <ol class="linea" id="seg-linea"></ol>
-        <p class="aviso" id="seg-nota"></p>
-      </div>
     </div>
+
+    <div id="seg-res" class="seg__res" data-estado="vacio">
+      <h3 tabindex="-1" id="seg-titulo">Escribe un código para ver su línea de estados</h3>
+      <p class="seg__meta mono" id="seg-meta">Las cinco etapas por las que pasa tu vehículo.</p>
+      <ol class="linea" id="seg-linea" aria-label="Línea de estados del vehículo">
+        {ETAPAS.map((e, i) => (
+          <li class="pendiente">
+            <span class="marca-etapa mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div><strong>{e.nombre}</strong> <span class="estado-txt mono">Pendiente</span><p>{e.detalle}</p></div>
+          </li>
+        ))}
+      </ol>
+      <p class="aviso" id="seg-nota" hidden></p>
+    </div>
+
+    <p class="aviso seg__aviso"><span class="chip-demo">Ejemplo de demo</span> Estos códigos no corresponden a vehículos reales: son para mostrar cómo se vería el seguimiento. El código te lo entregamos al recibir tu vehículo en el taller. En un taller real se pediría además tu DNI o celular, y la placa se mostraría oculta en parte, como aquí.</p>
   </div>
 </section>
 
@@ -48,39 +53,27 @@ import Icon from './Icon.astro';
   const input = document.getElementById('seg-codigo') as HTMLInputElement;
   const err = document.getElementById('e-seg')!;
   const res = document.getElementById('seg-res')!;
+  const titulo = document.getElementById('seg-titulo')!;
+  const meta = document.getElementById('seg-meta')!;
+  const nota = document.getElementById('seg-nota')!;
 
-  function mostrar(codigo: string) {
-    const s = buscarSeguimiento(codigo);
-    if (!s) {
-      err.textContent = esCodigoDeCita(codigo)
-        ? 'Aún no recibimos tu vehículo: el código de seguimiento (TR-DEMO-…) se entrega en el taller al recibirlo.'
-        : 'No encontramos ese código. Revisa que diga TR-DEMO seguido de 4 números o usa uno de los ejemplos.';
-      input.setAttribute('aria-invalid', 'true');
-      res.hidden = true;
-      input.focus();
-      return;
-    }
-    err.textContent = '';
-    input.removeAttribute('aria-invalid');
-    input.value = s.codigo;
-    const titulo = document.getElementById('seg-titulo')!;
-    titulo.textContent = `Estado: ${ETAPAS[s.etapa].nombre}`;
-    document.getElementById('seg-meta')!.textContent = `${s.codigo}. ${s.vehiculo}, placa ${ocultarPlaca(s.placa)}. Servicio: ${s.servicio}.`;
+  // Pinta la línea de estados. etapa = -1: sin resultado, todas pendientes.
+  function pintar(etapa: number) {
     document.getElementById('seg-linea')!.replaceChildren(
       ...ETAPAS.map((e, i) => {
         const li = document.createElement('li');
-        const estado = i < s.etapa ? 'hecho' : i === s.etapa ? 'actual' : 'pendiente';
+        const estado = i < etapa ? 'hecho' : i === etapa ? 'actual' : 'pendiente';
         li.className = estado;
         if (estado === 'actual') li.setAttribute('aria-current', 'step');
         const marca = document.createElement('span');
-        marca.className = 'marca-etapa';
-        marca.textContent = estado === 'hecho' ? '✓' : String(i + 1);
+        marca.className = 'marca-etapa mono';
+        marca.textContent = estado === 'hecho' ? '✓' : String(i + 1).padStart(2, '0');
         marca.setAttribute('aria-hidden', 'true');
         const t = document.createElement('div');
         const n = document.createElement('strong');
         n.textContent = e.nombre;
         const etiqueta = document.createElement('span');
-        etiqueta.className = 'estado-txt';
+        etiqueta.className = 'estado-txt mono';
         etiqueta.textContent = estado === 'hecho' ? 'Completada' : estado === 'actual' ? 'En esta etapa' : 'Pendiente';
         const d = document.createElement('p');
         d.textContent = e.detalle;
@@ -89,17 +82,47 @@ import Icon from './Icon.astro';
         return li;
       }),
     );
-    document.getElementById('seg-nota')!.textContent = s.nota;
-    res.hidden = false;
+  }
+
+  // Deja la tarjeta como al inicio: nunca queda un resultado anterior bajo un error.
+  function limpiar(mensaje: string) {
+    res.dataset.estado = 'vacio';
+    titulo.textContent = 'Sin resultado para ese código';
+    meta.textContent = 'Revisa el código o usa uno de los ejemplos.';
+    pintar(-1);
+    nota.hidden = true;
+    nota.textContent = '';
+    err.textContent = mensaje;
+    input.setAttribute('aria-invalid', 'true');
+    input.focus();
+  }
+
+  function mostrar(codigo: string) {
+    const s = buscarSeguimiento(codigo);
+    if (!s) {
+      limpiar(
+        esCodigoDeCita(codigo)
+          ? 'Aún no recibimos tu vehículo: el código de seguimiento (TR-DEMO-…) se entrega en el taller al recibirlo.'
+          : 'No encontramos ese código. Revisa que diga TR-DEMO seguido de 4 números o usa uno de los ejemplos.',
+      );
+      return;
+    }
+    err.textContent = '';
+    input.removeAttribute('aria-invalid');
+    input.value = s.codigo;
+    res.dataset.estado = 'listo';
+    titulo.textContent = `Estado: ${ETAPAS[s.etapa].nombre}`;
+    meta.textContent = `${s.codigo} · ${s.vehiculo} · placa ${ocultarPlaca(s.placa)} · ${s.servicio}`;
+    pintar(s.etapa);
+    nota.textContent = s.nota;
+    nota.hidden = false;
     titulo.focus();
   }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!input.value.trim()) {
-      err.textContent = 'Escribe un código de seguimiento.';
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
+      limpiar('Escribe un código de seguimiento.');
       return;
     }
     mostrar(input.value);
@@ -112,22 +135,42 @@ import Icon from './Icon.astro';
 </script>
 
 <style is:global>
-  .seg { display: grid; gap: 40px; }
-  @media (min-width: 960px) { .seg { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } }
+  .seg__cab { display: grid; gap: 28px; }
+  @media (min-width: 960px) { .seg__cab { grid-template-columns: 1fr 1fr; gap: 72px; align-items: end; } }
   .seg__fila { display: grid; gap: 10px; }
   @media (min-width: 520px) { .seg__fila { grid-template-columns: 1fr auto; } }
-  .seg__ejemplos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-  .seg__ej { font-size: 0.95rem; padding-inline: 14px; }
-  .seg__res { margin-top: 28px; border-top: 3px solid var(--asfalto); padding-top: 20px; }
-  .seg__res h3 { font-size: 2.1rem; }
-  .linea { display: grid; gap: 0; margin: 20px 0; }
-  .linea li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding-bottom: 20px; position: relative; }
-  .linea li:not(:last-child)::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: 0; border-left: 3px solid var(--linea); }
-  .linea li.hecho:not(:last-child)::before { border-left-color: var(--asfalto); }
-  .linea p { margin: 2px 0 0; color: var(--texto-suave); font-size: 0.97rem; }
-  .marca-etapa { display: grid; place-items: center; width: 40px; height: 40px; border: 3px solid var(--linea); border-radius: 50%; font-family: var(--f-titular); font-weight: 700; font-size: 1.2rem; background: #fff; color: var(--texto-suave); }
-  .hecho .marca-etapa { background: var(--asfalto); border-color: var(--asfalto); color: #fff; }
-  .actual .marca-etapa { background: var(--senal); border-color: var(--asfalto); color: var(--asfalto); }
-  .estado-txt { display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--texto-suave); }
-  .actual .estado-txt { color: var(--asfalto); background: var(--senal); padding: 0 6px; border-radius: 2px; }
+  .seg input.mono { font-size: 1.15rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .seg__ejemplos { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* Códigos de ejemplo: fichas de matrícula sobrias */
+  .seg__ej { min-height: 44px; padding: 6px 14px; font-size: 0.9rem; letter-spacing: 0.04em; background: var(--papel); color: var(--asfalto); border: 2px solid var(--asfalto); border-radius: 2px; cursor: pointer; transition: background-color 0.15s, transform 0.1s; }
+  .seg__ej:hover { background: var(--concreto); }
+  .seg__ej:active { transform: translateY(1px); }
+  .seg__res { margin-top: 44px; border-top: 4px solid var(--asfalto); padding-top: 24px; }
+  .seg__res h3 { font-size: clamp(2.2rem, 5vw, 3.6rem); margin-bottom: 6px; }
+  .seg__meta { color: var(--texto-suave); margin-bottom: 28px; font-size: 0.95rem; overflow-wrap: anywhere; }
+  /* Línea de estados: cinco celdas en fila (celular: en columna) */
+  .linea { display: grid; gap: 8px; margin: 0 0 24px; }
+  @media (min-width: 900px) { .linea { grid-template-columns: repeat(5, 1fr); gap: 0; } }
+  .linea li { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 16px; border: 2px solid var(--asfalto); background: transparent; }
+  .linea li.hecho { background: var(--asfalto); color: #fff; }
+  .linea li.actual { background: var(--senal); color: var(--asfalto); }
+  .linea li.pendiente { border-style: dashed; border-color: #7d8489; color: var(--texto-suave); }
+  @media (min-width: 900px) {
+    .linea li { grid-template-columns: 1fr; gap: 10px; border-left-width: 0; padding: 18px 16px 22px; align-content: start; }
+    .linea li:first-child { border-left-width: 2px; }
+    .linea li.pendiente { border-left-width: 2px; margin-left: -2px; }
+    .linea li.pendiente:first-child { margin-left: 0; }
+  }
+  .linea strong { font-family: var(--f-titular); font-weight: 800; font-size: 1.7rem; line-height: 1; text-transform: uppercase; }
+  .linea p { margin: 8px 0 0; font-size: 0.92rem; line-height: 1.4; }
+  .linea li.hecho p { color: var(--texto-claro-suave); }
+  .linea li.actual p { color: var(--asfalto); }
+  .marca-etapa { font-size: 1.5rem; line-height: 1; }
+  .estado-txt { display: block; margin-top: 6px; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .seg__aviso { margin-top: 8px; }
+  /* Estado vacío liviano: sin cajas deshabilitadas, solo una línea de texto */
+  .seg__res[data-estado='vacio'] { margin-top: 28px; padding-top: 16px; }
+  .seg__res[data-estado='vacio'] h3 { font-family: var(--f-cuerpo); font-weight: 600; font-size: 1.1rem; text-transform: none; line-height: 1.4; margin-bottom: 4px; }
+  .seg__res[data-estado='vacio'] .linea { display: none; }
+  .seg__res[data-estado='vacio'] .seg__meta { margin-bottom: 0; }
 </style>

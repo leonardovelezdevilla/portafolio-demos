@@ -26,7 +26,7 @@
   .cab { position: relative; z-index: 20; border-bottom: 1px solid var(--linea-ink); }
   .cab { position: sticky; top: 0; }
   .cab__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; padding-block: 8px; }
-  .marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--paper); min-height: 44px; }
+  .marca { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; gap: 10px; text-decoration: none; color: var(--paper); min-height: 44px; }
   .marca__logo { width: 34px; height: 34px; }
   .marca__txt { font-family: var(--f-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; }
   .marca__txt span { color: var(--lima); }
@@ -37,5 +37,11 @@
   .nav .nav__cta:hover { color: var(--ink); background: var(--paper); text-decoration: none; }
   .ancho { display: none; }
   @media (min-width: 700px) { .ancho { display: block; } }
-  @media (max-width: 420px) { .nav a { padding: 0 7px; font-size: 0.9rem; } }
+  @media (max-width: 479px) {
+    .cab__in { flex-wrap: nowrap; padding-block: 4px; gap: 4px; }
+    .marca__txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .nav { flex-wrap: nowrap; gap: 0; }
+    .nav a { padding: 0 6px; font-size: 0.85rem; }
+    .nav .nav__cta { padding: 0 12px; margin-left: 2px; }
+  }
 </style>

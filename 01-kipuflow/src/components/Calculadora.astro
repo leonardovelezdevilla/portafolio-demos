@@ -6,16 +6,15 @@ const r = calcular(inicial);
 const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
 const pct = (n: number) => `${Math.round(n * 100)} %`;
 ---
-<section class="seccion" id="calculadora" aria-labelledby="t-calc">
+<section class="seccion calc-sec" id="calculadora" aria-labelledby="t-calc">
   <div class="contenedor">
     <div class="cabecera-sec">
-      <p class="sobretitulo">Calculadora referencial</p>
       <h2 id="t-calc">¿Cuánto te retienen y cuánto pagarías al año?</h2>
-      <p class="lead">Renta de 4.ª categoría para recibos por honorarios. Mueve los números y mira la retención, la deducción y el tramo de la escala.</p>
+      <p class="lead">Calculadora referencial de renta de 4.ª categoría para recibos por honorarios. Mueve los números y mira la retención, la deducción y el tramo de la escala.</p>
     </div>
 
     <div class="calc">
-      <form class="calc-form vidrio" id="calc-form" novalidate aria-describedby="calc-aviso">
+      <form class="calc-form" id="calc-form" novalidate aria-describedby="calc-aviso">
         <div class="campo">
           <label for="ingreso">Ingresos brutos mensuales (S/)</label>
           <input id="ingreso" name="ingreso" type="number" inputmode="decimal" min="0" max="1000000" step="50" value={inicial.ingresoMensual} aria-describedby="ingreso-err" />
@@ -29,21 +28,21 @@ const pct = (n: number) => `${Math.round(n * 100)} %`;
         </div>
         <div class="regla">
           <Icon name="info" size={20} />
-          <p><strong>Retención de 8 %:</strong> si un agente de retención te paga un recibo que <em>supera</em> S/ 1 500, te descuenta el 8 %. Es un pago a cuenta de tu impuesto anual, no el impuesto final.</p>
+          <p><strong>Retención de 8 %:</strong> si un agente de retención te paga un recibo que <em>supera</em> S/ 1,500, te descuenta el 8 %. Es un pago a cuenta de tu impuesto anual, no el impuesto final.</p>
         </div>
       </form>
 
-      <div class="calc-res vidrio" id="calc-res">
+      <div class="calc-res" id="calc-res">
         <p class="sr-only" role="status" id="calc-status"></p>
         <p class="obsoleto" id="calc-obsoleto" hidden>No se recalculó: corrige los valores marcados. Lo que ves abajo es el cálculo anterior.</p>
         <h3 class="sr-only">Resultado</h3>
-        <p class="res-estado" data-out="estado">{r.seRetiene ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1 500: te retienen 8 %.` : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1 500: sin retención.`}</p>
+        <p class="res-estado" data-out="estado">{r.seRetiene ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1,500: te retienen 8 %.` : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1,500: sin retención.`}</p>
         <div class="res-grande">
           <p class="res-etq" data-out="saldoEtq">{r.saldo > 0 ? 'Impuesto por pagar al regularizar' : r.saldo < 0 ? 'Saldo a favor estimado' : 'Sin saldo'}</p>
           <p class="res-valor num" data-out="saldo">{sol.format(Math.abs(r.saldo))}</p>
           <p class="res-estim">Estimación, no una devolución garantizada.</p>
         </div>
-        <p class="aviso" id="calc-aviso"><Icon name="circle-alert" size={20} /><span>Cálculo referencial, no reemplaza la asesoría de un contador ni la información de SUNAT.</span></p>
+        <p class="aviso" id="calc-aviso"><Icon name="circle-alert" size={20} /><span>Cálculo referencial, no reemplaza la asesoría de un contador ni la información de <span translate="no">SUNAT</span>.</span></p>
         <dl class="res-lista">
           <div><dt>Ingreso anual</dt><dd class="num" data-out="ingresoAnual">{sol.format(r.ingresoAnual)}</dd></div>
           <div><dt>Deducción 20 % (tope 24 UIT)</dt><dd class="num" data-out="deduccion20">− {sol.format(r.deduccion20)}</dd></div>
@@ -54,7 +53,7 @@ const pct = (n: number) => `${Math.round(n * 100)} %`;
           <div><dt>Retención por mes</dt><dd class="num" data-out="retencionMensual">{sol.format(r.retencionMensual)}</dd></div>
         </dl>
         <div class="tramos" tabindex="0" role="region" aria-labelledby="tramos-tit">
-          <p class="tramos-tit" id="tramos-tit">Cómo cae tu renta neta en la escala</p>
+          <p class="tramos-tit" id="tramos-tit">Cómo cae tu renta neta en la escala <span class="desliza">Desliza para ver todo</span></p>
           <table>
             <caption class="sr-only">Tramos de la escala progresiva</caption>
             <thead><tr><th scope="col">Tramo (UIT)</th><th scope="col">Base</th><th scope="col">Tasa</th><th scope="col">Impuesto</th></tr></thead>
@@ -78,44 +77,51 @@ const pct = (n: number) => `${Math.round(n * 100)} %`;
 </section>
 
 <style>
-  .calc { display: grid; gap: 1.2rem; }
-  .calc-form { padding: 1.4rem; display: grid; gap: 1.2rem; align-content: start; }
-  .campo { display: grid; gap: .4rem; }
-  label { font-weight: 600; }
-  input { font: inherit; min-height: 48px; padding: .6rem .9rem; border-radius: 10px; color: var(--texto); background: rgba(5,9,14,.7); border: 1px solid rgba(190,220,245,.35); width: 100%; }
-  input[aria-invalid='true'] { border-color: var(--error); }
-  .ayuda { color: var(--texto-2); font-size: .92rem; }
-  .err { color: var(--error); font-size: .92rem; min-height: 0; }
-  .regla { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: 1rem; border-radius: 12px; background: rgba(93,180,255,.1); border: 1px solid rgba(93,180,255,.3); font-size: .98rem; }
-  .regla svg { color: var(--azul); margin-top: 3px; }
-  .aviso { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: 1rem; border-radius: 12px; background: rgba(255,212,121,.1); border: 1px solid rgba(255,212,121,.45); color: var(--alerta); font-weight: 600; font-size: .98rem; }
+  .calc-sec { background: var(--surf); border-block: 1px solid var(--linea); }
+  .cabecera-sec h2 { max-width: 20ch; }
+  .calc { display: grid; gap: 0; border: 1px solid var(--tinta); border-radius: 8px; background: var(--blanco); }
+  .calc-form { padding: 1.6rem 1.3rem; display: grid; gap: 1.6rem; align-content: start; border-radius: 7px 7px 0 0; }
+  .campo label { font-size: 1.05rem; }
+  .campo input { font-family: var(--f-mono); font-size: 1.5rem; min-height: 64px; padding-inline: 1rem; }
+  .regla { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: 1rem; border-radius: var(--radio); background: var(--cobalto-claro); font-size: .95rem; }
+  .regla svg { color: var(--cobalto); margin-top: 3px; }
+  .calc-res { background: var(--tinta); color: #fff; padding: 1.6rem 1.3rem; display: grid; gap: 1.6rem; align-content: start; min-width: 0; border-radius: 0 0 7px 7px; }
+  .res-estado { color: #c3cdd5; }
+  .res-grande { border-top: 1px solid rgba(255,255,255,.4); padding-top: 1rem; container-type: inline-size; }
+  .res-etq { font-weight: 500; color: #fff; }
+  .res-valor { font-size: clamp(2.4rem, 13cqw, 9.5rem); font-weight: 500; line-height: .95; color: #b9bfff; margin-top: .6rem; letter-spacing: -.05em; white-space: nowrap; }
+  .res-estim { color: #c3cdd5; font-size: .92rem; margin-top: .7rem; }
+  .aviso { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: .9rem 1rem; border-radius: var(--radio); background: #fff4d6; border: 1px solid #c99a1e; color: #4a3600; font-weight: 500; font-size: .95rem; }
   .aviso svg { margin-top: 3px; }
-  .calc-res { padding: 1.4rem; display: grid; gap: 1.2rem; align-content: start; min-width: 0; }
-  .res-estado { color: var(--texto-2); font-size: .98rem; }
-  .res-etq { color: var(--texto-2); }
-  .res-valor { font-size: clamp(2.4rem, 9vw, 3.6rem); font-weight: 700; line-height: 1; color: var(--verde); margin-top: .3rem; }
-  .res-lista { margin: 0; display: grid; }
-  .res-lista > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-top: 1px solid var(--borde); }
-  .res-lista dt { color: var(--texto-2); }
-  .res-lista dd { white-space: nowrap; margin: 0; font-weight: 500; text-align: right; }
-  .res-lista .sub { color: var(--texto); }
-  .res-lista .sub dt, .res-lista .sub dd { color: var(--azul); font-weight: 600; }
-  .tramos-tit { font: 500 .95rem var(--f-titulo); margin-bottom: .5rem; }
-  .tramos { overflow-x: auto; }
+  .res-lista { margin: 0; display: grid; border-top: 1px solid rgba(255,255,255,.4); }
+  .res-lista > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; padding: .75rem 0; border-bottom: 1px solid rgba(255,255,255,.18); }
+  .res-lista dt { color: #c3cdd5; }
+  .res-lista dd { white-space: nowrap; margin: 0; font-weight: 500; text-align: right; color: #fff; font-size: 1.05rem; }
+  .res-lista .sub dt, .res-lista .sub dd { color: #b9bfff; font-weight: 600; }
+  .tramos-tit { font: 600 1rem var(--f-texto); margin-bottom: .6rem; }
+  .tramos { overflow-x: auto; background:
+      linear-gradient(90deg, #14202a 30%, rgba(20,32,42,0)) left center / 36px 100% no-repeat local,
+      linear-gradient(270deg, #14202a 30%, rgba(20,32,42,0)) right center / 36px 100% no-repeat local,
+      linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,0)) left center / 14px 100% no-repeat scroll,
+      linear-gradient(270deg, rgba(255,255,255,.28), rgba(255,255,255,0)) right center / 14px 100% no-repeat scroll; }
+  .desliza { color: #c3cdd5; font: 400 .82rem var(--f-texto); margin-left: .5rem; }
+  @media (min-width: 640px) { .desliza { display: none; } }
   .tramos :global(td:first-child), .tramos :global(th[scope='row']) { white-space: nowrap; }
-  table { width: 100%; border-collapse: collapse; font-size: .82rem; min-width: 0; }
-  .tramos :global(th), .tramos :global(td) { padding: .45rem .25rem; text-align: right; border-top: 1px solid var(--borde); white-space: nowrap; }
-  thead th { color: var(--texto-2); font-weight: 600; font-size: .82rem; }
-  .tramos :global(th:first-child) { text-align: left; font-weight: 600; }
-  .nota { color: var(--texto-2); font-size: .9rem; margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
-  .res-estim { color: var(--texto-2); font-size: .92rem; margin-top: .4rem; }
-  .obsoleto { color: var(--error); font-weight: 600; padding: .7rem 1rem; border: 1px solid rgba(255,155,155,.5); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .tramos :global(th), .tramos :global(td) { padding: .5rem .3rem; text-align: right; border-top: 1px solid rgba(255,255,255,.18); white-space: nowrap; }
+  thead th { color: #c3cdd5; font-weight: 500; border-top: 0 !important; }
+  .tramos :global(th:first-child) { text-align: left; font-weight: 500; }
+  .tramos :global(td) { color: #fff; }
+  .nota { color: #c3cdd5; font-size: .9rem; margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+  .calc-res :focus-visible { outline-color: #fff; }
+  .obsoleto { color: #ffd0cc; font-weight: 600; padding: .7rem 1rem; border: 1px solid #ff9b94; border-radius: var(--radio); }
   .obsoleto[hidden] { display: none; }
   .calc-res.viejo .res-grande, .calc-res.viejo .res-lista, .calc-res.viejo .tramos { opacity: .45; }
-  @media (min-width: 900px) {
-    .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 1.6rem; align-items: start; }
-    .calc-form, .calc-res { padding: 2rem; }
-    .calc-form { position: sticky; top: 90px; }
+  @media (min-width: 640px) { .res-lista { grid-template-columns: 1fr 1fr; column-gap: 2.5rem; } .res-lista .sub { grid-column: 1 / -1; } }
+  @media (min-width: 960px) {
+    .calc { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); align-items: stretch; min-height: min(760px, calc(100svh - 12rem)); }
+    .calc-form { padding: 2.6rem 2.4rem; gap: 2rem; position: sticky; top: 96px; align-self: start; border-radius: 7px 0 0 7px; }
+    .calc-res { padding: 2.6rem 3rem; gap: 1.8rem; border-radius: 0 7px 7px 0; }
   }
 </style>
 
@@ -137,30 +143,55 @@ const pct = (n: number) => `${Math.round(n * 100)} %`;
     const res = document.getElementById('calc-res')!;
     const obsoleto = document.getElementById('calc-obsoleto')!;
     let t: number | undefined;
+    // Las cifras cuentan hasta su valor nuevo. Solo presentación: el cálculo ya salió de calcular().
+    const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const previo = new Map<string, number>();
+    const marcos = new Map<string, number>();
+    const cuenta = (k: string, destino: number, prefijo = '') => {
+      const el = out(k);
+      const desde = previo.get(k) ?? destino;
+      previo.set(k, destino);
+      window.cancelAnimationFrame(marcos.get(k) ?? 0);
+      if (sinMovimiento.matches || desde === destino) { el.textContent = prefijo + sol.format(destino); return; }
+      const ini = performance.now();
+      const paso = (ahora: number) => {
+        const p = Math.min(1, (ahora - ini) / 380);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefijo + sol.format(p === 1 ? destino : Math.round(desde + (destino - desde) * e));
+        if (p < 1) marcos.set(k, window.requestAnimationFrame(paso));
+      };
+      marcos.set(k, window.requestAnimationFrame(paso));
+    };
+    for (const k of ['saldo', 'ingresoAnual', 'deduccion20', 'deduccionFija', 'rentaNeta', 'impuestoAnual', 'retencionAnual', 'retencionMensual']) {
+      const v = Number((out(k).textContent ?? '').replace(/\D/g, ''));
+      if (Number.isFinite(v)) previo.set(k, v);
+    }
     const actualizar = () => {
       const i = ingreso.value.trim() === '' ? NaN : Number(ingreso.value);
       const n = recibos.value.trim() === '' ? NaN : Number(recibos.value);
       let ok = true;
-      if (!Number.isFinite(i) || i < 0 || i > 1_000_000) { setErr(ingreso, 'Escribe un monto mensual entre S/ 0 y S/ 1 000 000.'); ok = false; } else setErr(ingreso, '');
+      if (!Number.isFinite(i) || i < 0 || i > 1_000_000) { setErr(ingreso, 'Escribe un monto mensual entre S/ 0 y S/ 1,000,000.'); ok = false; } else setErr(ingreso, '');
       if (!Number.isInteger(n) || n < 1 || n > 60) { setErr(recibos, 'Escribe un número entero de recibos entre 1 y 60.'); ok = false; } else setErr(recibos, '');
       obsoleto.hidden = ok;
       res.classList.toggle('viejo', !ok);
       if (!ok) { status.textContent = 'No se recalculó: hay valores no válidos.'; return; }
       const r = calcular({ ingresoMensual: i, recibosPorMes: n });
-      out('estado').textContent = r.seRetiene
-        ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1 500: te retienen 8 %.`
-        : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1 500: sin retención.`;
-      out('saldoEtq').textContent = r.saldo > 0 ? 'Impuesto por pagar al regularizar' : r.saldo < 0 ? 'Saldo a favor estimado' : 'Sin saldo';
-      out('saldo').textContent = sol.format(Math.abs(r.saldo));
-      out('ingresoAnual').textContent = sol.format(r.ingresoAnual);
-      out('deduccion20').textContent = `− ${sol.format(r.deduccion20)}`;
-      out('deduccionFija').textContent = `− ${sol.format(r.deduccionFija)}`;
-      out('rentaNeta').textContent = sol.format(r.rentaNeta);
-      out('impuestoAnual').textContent = sol.format(r.impuestoAnual);
-      out('retencionAnual').textContent = `− ${sol.format(r.retencionAnual)}`;
-      out('retencionMensual').textContent = sol.format(r.retencionMensual);
+      const estadoTxt = r.seRetiene
+        ? `Cada recibo de ${sol.format(r.montoPorRecibo)} supera S/ 1,500: te retienen 8 %.`
+        : `Cada recibo de ${sol.format(r.montoPorRecibo)} no supera S/ 1,500: sin retención.`;
+      const etqTxt = r.saldo > 0 ? 'Impuesto por pagar al regularizar' : r.saldo < 0 ? 'Saldo a favor estimado' : 'Sin saldo';
+      out('estado').textContent = estadoTxt;
+      out('saldoEtq').textContent = etqTxt;
+      cuenta('saldo', Math.abs(r.saldo));
+      cuenta('ingresoAnual', r.ingresoAnual);
+      cuenta('deduccion20', r.deduccion20, '− ');
+      cuenta('deduccionFija', r.deduccionFija, '− ');
+      cuenta('rentaNeta', r.rentaNeta);
+      cuenta('impuestoAnual', r.impuestoAnual);
+      cuenta('retencionAnual', r.retencionAnual, '− ');
+      cuenta('retencionMensual', r.retencionMensual);
       window.clearTimeout(t);
-      t = window.setTimeout(() => { status.textContent = `${out('saldoEtq').textContent}: ${out('saldo').textContent}. ${out('estado').textContent}`; }, 400);
+      t = window.setTimeout(() => { status.textContent = `${etqTxt}: ${sol.format(Math.abs(r.saldo))}. ${estadoTxt}`; }, 400);
       const tb = out('tramos');
       tb.replaceChildren();
       if (r.tramos.length === 0) {

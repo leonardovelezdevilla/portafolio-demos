@@ -7,8 +7,11 @@ Estudio ficticio de pilates reformer y funcional en Surco, Lima. Demo de Vélez 
 - Reserva de clase validada (celular peruano, primera vez con prueba a S/ 35, lesión como dato sensible, consentimiento) que termina en confirmación demo y WhatsApp prellenado.
 - Planes mensuales y paquetes en S/ con IGV indicado, FAQ, ubicación ficticia, Privacidad, Términos y Libro de Reclamaciones de demo.
 
+## Diseño
+Dirección «Ritmo» (rediseño 2026-11): arena, tinta y persimón; héroe con foto a sangre y titular expandido, horario en pizarra de 7 columnas en escritorio y un día a la vez en celular, planes como tarifas en filas.
+
 ## Stack
-Astro (estático), CSS propio, JS mínimo en islas, Vitest. Red Hat Display y Public Sans autohospedadas, íconos Lucide.
+Astro (estático), CSS propio, JS mínimo en islas, Vitest. Archivo (variable, ancho expandido en titulares) autohospedada, íconos Lucide.
 
 ## Correr
 ```

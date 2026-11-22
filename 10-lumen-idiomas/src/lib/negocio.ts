@@ -10,7 +10,7 @@ export const NEGOCIO = {
   direccion: 'Av. Ficticia 456, piso 2',
   distrito: 'Pueblo Libre, Lima',
   ruc: '20000000001',
-  atencion: 'Lunes a viernes de 9:00 a 20:00 · Sábados de 9:00 a 13:00',
+  atencion: 'Clases: lunes a viernes de 7:00 a 21:00, sábados de 9:00 a 17:00. Atención administrativa: lunes a viernes de 9:00 a 20:00, sábados de 9:00 a 13:00',
 } as const;
 
 export const AVISO_WHATSAPP =

@@ -2,7 +2,10 @@
 
 SaaS ficticio de finanzas para freelancers peruanos. Astro estático, CSS propio, JS mínimo en islas.
 
-Muestra: calculadora referencial de renta de 4.ª categoría (retención 8 %, deducciones, escala), precios mensual/anual, bento de funciones, testimonios «Ejemplo de demo», FAQ con `<details>` y formulario de acceso anticipado que termina en wa.me o confirmación demo.
+Muestra: calculadora referencial de renta de 4.ª categoría (retención 8 %, deducciones, escala), precios mensual/anual, lista de funciones con informe de ejemplo, testimonios «Ejemplo de demo», FAQ con `<details>` y formulario de acceso anticipado que termina en wa.me o confirmación demo.
+
+## Diseño
+Dirección «Libro mayor» (rediseño 2026-11): claro y exacto, con la app en HTML real en el héroe, banda cobalto con la ecuación bruto − retención = te llega y calculadora a ancho completo. Paleta #f7f9fa / #14202a / cobalto #1f2de6; fuentes IBM Plex Sans e IBM Plex Mono (autohospedadas).
 
 ## Correr
 ```

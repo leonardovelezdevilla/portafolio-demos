@@ -1,35 +1,28 @@
 ---
-import Icon from './Icon.astro';
 import { NAV, NEGOCIO } from '../lib/negocio';
 ---
 
 <header class="cab">
   <div class="contenedor cab__fila">
-    <a class="marca" href="/" aria-label={`${NEGOCIO.nombre}, inicio`}>
-      <span class="marca__sello"><Icon name="leaf" /></span>
-      <span class="marca__txt">Aura <em>Derma</em></span>
-    </a>
+    <a class="marca" translate="no" href="/" aria-label={`${NEGOCIO.nombre}, inicio`}>Aura <em>Derma</em></a>
 
     <nav class="nav-desktop" aria-label="Principal">
       <ul>
-        {NAV.map((n) => <li><a href={n.href}>{n.texto}</a></li>)}
+        {NAV.map((n) => <li><a class="dibuja" href={n.href}>{n.texto}</a></li>)}
       </ul>
     </nav>
 
-    <a class="btn cab__cta" href="/#agenda">Reservar cita</a>
-
-    <details class="menu-movil">
-      <summary>
-        <Icon name="menu" class="icono ic-abrir" />
-        <span class="visually-hidden">Menú</span>
-      </summary>
-      <nav aria-label="Principal móvil">
-        <ul>
-          {NAV.map((n) => <li><a href={n.href}>{n.texto}</a></li>)}
-          <li><a class="btn" href="/#agenda">Reservar cita</a></li>
-        </ul>
-      </nav>
-    </details>
+    <div class="cab__acciones">
+      <a class="btn btn--chico" href="/#agenda">Reservar<span class="cab__cita">cita</span></a>
+      <details class="menu-movil">
+        <summary>Menú</summary>
+        <nav aria-label="Principal móvil">
+          <ul>
+            {NAV.map((n) => <li><a href={n.href}>{n.texto}</a></li>)}
+          </ul>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 
@@ -38,50 +31,40 @@ import { NAV, NEGOCIO } from '../lib/negocio';
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgb(247 243 234 / 0.96);
-    border-bottom: 1px solid var(--linea);
+    background: var(--porcelana);
+    border-bottom: 1px solid var(--tinta);
   }
   .cab__fila {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-height: 4.25rem;
-    position: relative;
+    min-height: var(--alto-cab);
   }
   .marca {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
-    color: var(--salvia-900);
-    font: 400 1.5rem/1 var(--serif);
+    gap: 0.28em;
     min-height: 44px;
+    color: var(--tinta);
+    text-decoration: none;
+    font: 400 1.65rem/1 var(--serif);
+    letter-spacing: -0.02em;
   }
   .marca em {
-    font-style: normal;
-    color: var(--salvia-700);
+    font-style: italic;
+    color: var(--oxido);
   }
-  .marca__sello {
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    background: var(--salvia-700);
-    color: var(--blanco);
+  .marca:hover {
+    color: var(--tinta);
+    text-decoration: none;
   }
-  .marca__sello :global(.icono) {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
-  .nav-desktop,
-  .cab__cta {
+  .nav-desktop {
     display: none;
   }
   .nav-desktop ul {
     display: flex;
-    gap: 0.25rem;
+    gap: 2rem;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -90,73 +73,82 @@ import { NAV, NEGOCIO } from '../lib/negocio';
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    padding: 0 0.8rem;
     color: var(--tinta);
-    text-decoration: none;
     font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 8px;
+    font-size: 0.92rem;
   }
-  .nav-desktop a:hover {
-    background: var(--salvia-100);
+  .cab__acciones {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cab__cita {
+    display: none;
+  }
+  .cab .btn {
+    gap: 0.3em;
   }
   .menu-movil summary {
     list-style: none;
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border: 1.5px solid var(--salvia-500);
-    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border: 1px solid var(--tinta);
     cursor: pointer;
-    color: var(--salvia-900);
+    color: var(--tinta);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
   }
   .menu-movil summary::-webkit-details-marker {
     display: none;
   }
+  .menu-movil[open] summary {
+    background: var(--tinta);
+    color: var(--porcelana);
+  }
   .menu-movil nav {
     position: absolute;
+    left: 0;
     right: 0;
-    top: calc(100% + 0.25rem);
-    width: min(100%, 20rem);
-    background: var(--blanco);
-    border: 1px solid var(--linea);
-    border-radius: var(--radio);
-    box-shadow: var(--sombra);
-    padding: 0.5rem;
+    top: 100%;
+    background: var(--porcelana);
+    border-bottom: 1px solid var(--tinta);
+    padding: 0.5rem var(--gutter) 1rem;
   }
   .menu-movil ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .menu-movil li a:not(.btn) {
+  .menu-movil li a {
     display: flex;
     align-items: center;
-    min-height: 48px;
-    padding: 0 0.9rem;
+    min-height: 56px;
+    width: 100%;
+    border-bottom: 1px solid var(--linea);
     color: var(--tinta);
     text-decoration: none;
-    font-weight: 600;
-    border-radius: 8px;
+    font: 400 1.7rem/1.1 var(--serif);
   }
-  .menu-movil li a:not(.btn):hover {
-    background: var(--salvia-100);
-  }
-  .menu-movil .btn {
-    width: 100%;
-    margin-top: 0.5rem;
+  .menu-movil li a:hover {
+    color: var(--oxido);
   }
   @media (min-width: 62rem) {
-    .nav-desktop,
-    .cab__cta {
+    .nav-desktop {
       display: block;
     }
-    .cab__cta {
-      display: inline-flex;
+    .cab__cita {
+      display: inline;
     }
     .menu-movil {
       display: none;
+    }
+    .cab__fila {
+      min-height: 4.5rem;
     }
   }
 </style>

@@ -11,7 +11,7 @@ import { ENVIO, formatoSoles } from '../lib/carrito';
 
 const hero = porSlug('musgo-knit')!;
 const cuenta = (id: string) => productos.filter((p) => p.categoria === id).length;
-const marquee = ['Pedidos por WhatsApp', 'Yape', 'Plin', 'Contraentrega en Lima', 'Tallas EU 36 a 45', 'Cambios de talla en 7 días'];
+const marquee = ['Pedidos por WhatsApp', 'Yape · Plin · Contraentrega en Lima', 'Tallas EU 36 a 45'];
 
 const store = {
   '@context': 'https://schema.org',
@@ -20,6 +20,7 @@ const store = {
   description: 'Tienda ficticia de zapatillas urbanas en Lima, con pedido por WhatsApp. Demo de portafolio.',
   telephone: '+51900000000',
   priceRange: 'S/ 219 - S/ 429',
+  openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '10:00', closes: '19:00' },
   paymentAccepted: 'Yape, Plin, Contraentrega',
   currenciesAccepted: 'PEN',
   address: { '@type': 'PostalAddress', streetAddress: 'Av. Ejemplo 123 (ficticia)', addressLocality: 'Lima', addressCountry: 'PE' },
@@ -61,14 +62,6 @@ const store = {
           <a href={`/producto/${hero.slug}/`}><span>Destacado</span> {hero.nombre} · {formatoSoles(hero.precio)} <Icono nombre="flecha" tamano={18} /></a>
         </figcaption>
       </figure>
-    </div>
-    <div class="contenedor">
-      <ul class="datos">
-        <li><strong>EU 36–45</strong><span>10 tallas por modelo</span></li>
-        <li><strong>4 líneas</strong><span>Running, urbana, skate, básquet</span></li>
-        <li><strong>Yape · Plin</strong><span>o contraentrega en Lima</span></li>
-        <li><strong>Desde {formatoSoles(ENVIO.lima.tarifa)}</strong><span>envío en Lima</span></li>
-      </ul>
     </div>
   </section>
 
@@ -120,23 +113,20 @@ const store = {
     <div class="contenedor">
       <div class="seccion__cab">
         <h2 class="seccion__titulo" id="como-titulo">Cómo <mark>comprar</mark></h2>
-        <p class="lead">Tres pasos y un mensaje. Tú decides si lo envías.</p>
+        <p class="lead">Elige, arma y envía. Tú decides si lo envías.</p>
       </div>
       <ol class="pasos">
         <li>
-          <span class="pasos__n" aria-hidden="true">01</span>
-          <h3>Elige tu par</h3>
-          <p>Filtra por categoría y talla. Abre la vista rápida para ver el modelo sin salir del catálogo.</p>
+          <h3>Elige</h3>
+          <p><strong>Tu par.</strong> Filtra por categoría y talla. Abre la vista rápida para ver el modelo sin salir del catálogo.</p>
         </li>
         <li>
-          <span class="pasos__n" aria-hidden="true">02</span>
-          <h3>Arma tu carrito</h3>
-          <p>Ajusta cantidades y elige Lima o provincias. El carrito se guarda en tu navegador.</p>
+          <h3>Arma</h3>
+          <p><strong>Tu carrito.</strong> Ajusta cantidades y elige Lima o provincias. El carrito se guarda en tu navegador.</p>
         </li>
         <li>
-          <span class="pasos__n" aria-hidden="true">03</span>
-          <h3>Confirma por WhatsApp</h3>
-          <p>Completas tus datos y se abre WhatsApp con el pedido escrito. Ahí se confirma el stock y se acuerda el pago (Yape, Plin o contraentrega).</p>
+          <h3>Envía</h3>
+          <p><strong>Por WhatsApp.</strong> Completas tus datos y se abre WhatsApp con el pedido escrito. Ahí se confirma el stock y se acuerda el pago (Yape, Plin o contraentrega).</p>
         </li>
       </ol>
       <div class="envios">
@@ -192,37 +182,43 @@ const store = {
   .marquee li { padding: 13px 22px; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.08em; white-space: nowrap; }
   .marquee li::after { content: '✱'; margin-left: 44px; color: var(--naranja); }
   .marquee--pausa .marquee__pista { animation-play-state: paused; }
-  .marquee__pausa { position: absolute; right: 0; top: 0; bottom: 0; min-height: 44px; padding: 0 14px; border: 0; border-left: 3px solid var(--blanco); background: var(--naranja); color: var(--negro); font: 700 12px var(--fuente-texto); text-transform: uppercase; cursor: pointer; border-radius: 0; z-index: 1; }
+  .marquee__pausa { position: absolute; right: 0; top: 0; bottom: 0; min-height: 44px; padding: 0 10px; border: 0; border-left: 3px solid var(--blanco); background: var(--naranja); color: var(--negro); font: 700 11px var(--fuente-texto); text-transform: uppercase; cursor: pointer; border-radius: 0; z-index: 1; }
   .marquee__pausa:hover { background: var(--blanco); }
   @keyframes correr { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .marquee { display: none; } }
 
   .hero { border-bottom: var(--borde); }
-  .hero__grid { display: grid; gap: 28px; padding-block: 32px 28px; }
-  .hero__texto { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-  .hero h1 { font-size: clamp(64px, 17vw, 170px); line-height: 0.95; }
+  .hero__grid { display: grid; gap: 14px; padding-block: 18px 22px; }
+  .hero__texto { display: contents; }
+  .hero__texto > .etiqueta { order: 1; justify-self: start; }
+  .hero h1 { order: 2; font-size: clamp(60px, 17vw, 96px); line-height: 0.95; }
+  .hero__visual { order: 3; }
+  .hero__texto > .lead { order: 4; }
+  .hero__ctas { order: 5; }
   .hero h1 mark { display: inline-block; line-height: 0.9; background: var(--naranja); color: var(--negro); padding: 0 0.1em; box-shadow: 6px 6px 0 var(--negro); }
   .hero__ctas { display: flex; flex-wrap: wrap; gap: 14px; }
-  .hero__visual { margin: 0; position: relative; border: var(--borde); box-shadow: var(--sombra); background: var(--naranja); align-self: start; }
-  .hero__visual :global(img) { width: 100%; height: auto; aspect-ratio: 900 / 760; object-fit: cover; }
+  .hero__visual { margin: 0 6px 0 0; position: relative; border: var(--borde); box-shadow: var(--sombra); background: var(--naranja); align-self: start; }
+  .hero__visual :global(img) { width: 100%; height: 30svh; min-height: 150px; object-fit: cover; }
   .hero__visual figcaption { border-top: var(--borde); background: var(--blanco); }
-  .hero__visual figcaption a { display: flex; align-items: center; gap: 8px; padding: 12px 14px; font-weight: 700; text-transform: uppercase; font-size: 13px; text-decoration: none; letter-spacing: 0.04em; }
+  .hero__visual figcaption a { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-weight: 700; text-transform: uppercase; font-size: 13px; text-decoration: none; letter-spacing: 0.04em; }
   .hero__visual figcaption a span { background: var(--naranja); padding: 2px 8px; border: 2px solid var(--negro); }
   .hero__visual figcaption a:hover { background: var(--negro); color: var(--blanco); }
-  .datos { list-style: none; margin: 0 0 32px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border: var(--borde); background: var(--blanco); }
-  .datos li { padding: 12px 14px; border-bottom: var(--borde-fino); border-right: var(--borde-fino); display: flex; flex-direction: column; }
-  .datos li:nth-child(2n) { border-right: 0; }
-  .datos li:nth-last-child(-n+2) { border-bottom: 0; }
-  .datos strong { font: 400 clamp(22px, 5vw, 30px)/1 var(--fuente-titulo); text-transform: uppercase; }
-  .datos span { font-size: 12px; }
-  @media (min-width: 900px) {
-    .hero__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; padding-block: 48px 36px; gap: 48px; }
-    .hero h1 { font-size: clamp(64px, 9.5vw, 170px); }
-    .datos { grid-template-columns: repeat(4, 1fr); }
-    .datos li { border-bottom: 0; border-right: var(--borde-fino); }
-    .datos li:nth-child(2n) { border-right: var(--borde-fino); }
-    .datos li:last-child { border-right: 0; }
+  @media (min-width: 700px) {
+    .hero { min-height: calc(100svh - 143px); display: grid; align-items: center; }
+    .hero__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; padding-block: 28px; gap: 20px 36px; }
+    .hero__texto { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+    .hero h1 { font-size: clamp(60px, 9.5vw, 128px); }
+    .hero__visual :global(img) { height: auto; aspect-ratio: 900 / 760; max-height: calc(100svh - 280px); }
   }
+  @media (min-width: 900px) { .hero { min-height: calc(100svh - 101px); } }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__texto > *, .hero__visual { animation: entra 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .hero h1 { animation-delay: 0.05s; }
+    .hero__texto > .lead { animation-delay: 0.15s; }
+    .hero__ctas { animation-delay: 0.22s; }
+    .hero__visual { animation-delay: 0.1s; }
+  }
+  @keyframes entra { from { opacity: 0.4; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
   .filtros { border: var(--borde); background: var(--blanco); box-shadow: var(--sombra-chica); margin-bottom: 24px; }
   .filtros__grupo { padding: 14px 14px 10px; border-bottom: var(--borde-fino); }
@@ -246,8 +242,7 @@ const store = {
   .pasos { list-style: none; margin: 0 0 40px; padding: 0; display: grid; gap: 0; border: 3px solid var(--blanco); }
   .pasos li { padding: 22px 20px; border-bottom: 3px solid var(--blanco); }
   .pasos li:last-child { border-bottom: 0; }
-  .pasos__n { display: block; font: 400 72px/1 var(--fuente-titulo); color: var(--naranja); }
-  .pasos h3 { font-size: 36px; margin: 6px 0 10px; }
+  .pasos h3 { font-size: clamp(64px, 14vw, 120px); line-height: 0.9; margin: 0 0 12px; color: var(--naranja); }
   .pasos p { margin: 0; }
   @media (min-width: 800px) { .pasos { grid-template-columns: repeat(3, 1fr); } .pasos li { border-bottom: 0; border-right: 3px solid var(--blanco); } .pasos li:last-child { border-right: 0; } }
   .envios { display: grid; gap: 20px; }

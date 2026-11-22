@@ -1,107 +1,112 @@
 ---
 import { Image } from 'astro:assets';
-import Icon from './Icon.astro';
 import foto from '../assets/fotos/pexels-7446660.jpg';
 
 const pasos = [
-  { icono: 'message-circle', t: 'Conversamos', d: 'Cuéntanos qué te preocupa, desde cuándo y qué productos usas. Sin prisa.' },
-  { icono: 'scan-search', t: 'Revisamos tu piel', d: 'El especialista examina la zona y, si hace falta, usa un dermatoscopio, que es una lente de aumento con luz.' },
-  { icono: 'clipboard-list', t: 'Te explicamos el plan', d: 'Te contamos las opciones, los cuidados y qué controles podrías necesitar. Tú decides.' },
-  { icono: 'calendar-days', t: 'Definimos el seguimiento', d: 'Si corresponde, agendamos un control. Nada se indica sin evaluarte antes.' },
+  { t: 'Conversamos.', d: 'Cuéntanos qué te preocupa, desde cuándo y qué productos usas. Sin prisa.' },
+  { t: 'Revisamos tu piel.', d: 'El especialista examina la zona y, si hace falta, usa un dermatoscopio, que es una lente de aumento con luz.' },
+  { t: 'Te explicamos el plan.', d: 'Te contamos las opciones, los cuidados y qué controles podrías necesitar. Tú decides.' },
+  { t: 'Definimos el seguimiento.', d: 'Si corresponde, agendamos un control. Nada se indica sin evaluarte antes.' },
 ];
 ---
 
-<section class="seccion seccion--blanca" id="primera-consulta" aria-labelledby="pc-titulo">
-  <div class="contenedor pc">
-    <div>
-      <div class="seccion__cabecera">
-        <p class="sobretitulo">Tu primera consulta</p>
-        <h2 id="pc-titulo">Qué esperar cuando llegues</h2>
-        <p class="lead">Dura entre 30 y 40 minutos. Llega 10 minutos antes y trae tus productos y exámenes anteriores.</p>
-      </div>
-      <ol class="pasos">
-        {
-          pasos.map((p) => (
-            <li>
-              <span class="pasos__ic"><Icon name={p.icono} /></span>
-              <div>
-                <h3>{p.t}</h3>
-                <p>{p.d}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-    <figure class="pc__foto">
-      <Image
-        src={foto}
-        alt="Detalle de una paciente que mira por un dermatoscopio acoplado a una tableta que sostiene una mano enguantada."
-        widths={[420, 640, 800]}
-        sizes="(min-width: 62rem) 40vw, 100vw"
-        format="webp"
-        quality={72}
-        loading="lazy"
-        decoding="async"
-      />
-      <figcaption>Foto: Gustavo Fring / Pexels.</figcaption>
-    </figure>
+<section class="pc" id="primera-consulta" aria-labelledby="pc-titulo">
+  <figure class="pc__foto">
+    <Image
+      src={foto}
+      alt="Una paciente mira por un dermatoscopio acoplado a una tableta que sostiene una mano con guante azul."
+      widths={[480, 720, 960, 1280]}
+      sizes="(min-width: 62rem) 46vw, 100vw"
+      format="webp"
+      quality={72}
+      loading="lazy"
+      decoding="async"
+    />
+  </figure>
+  <div class="pc__texto">
+    <p class="pc__cifra" aria-hidden="true">30–40<span> min</span></p>
+    <h2 id="pc-titulo">Tu primera consulta, <em>paso a paso</em></h2>
+    <p class="lead">Dura entre 30 y 40 minutos. Llega 10 minutos antes y trae tus productos y exámenes anteriores.</p>
+    <dl class="pc__pasos">
+      {
+        pasos.map((p) => (
+          <div>
+            <dt>{p.t}</dt>
+            <dd>{p.d}</dd>
+          </div>
+        ))
+      }
+    </dl>
   </div>
 </section>
 
 <style>
   .pc {
     display: grid;
-    gap: 2.5rem;
-    align-items: start;
-  }
-  @media (min-width: 62rem) {
-    .pc {
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 4rem;
-    }
-  }
-  .pasos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1.25rem;
-  }
-  .pasos li {
-    display: flex;
-    gap: 1rem;
-  }
-  .pasos__ic {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: var(--salvia-100);
-    color: var(--salvia-900);
-  }
-  .pasos h3 {
-    margin-bottom: 0.15rem;
-  }
-  .pasos p {
-    margin: 0;
-    color: var(--tinta-suave);
+    background: var(--papel);
+    border-block: 1px solid var(--tinta);
   }
   .pc__foto {
     margin: 0;
+    position: relative;
+    min-height: 20rem;
+    overflow: hidden;
   }
   .pc__foto :global(img) {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 4.2;
+    height: 100%;
     object-fit: cover;
-    border-radius: var(--radio-lg);
+    object-position: 45% 50%;
   }
-  .pc__foto figcaption {
-    font-size: 0.82rem;
+  .pc__texto {
+    padding: clamp(3rem, 8vw, 6rem) var(--gutter);
+  }
+  .pc__cifra {
+    margin: 0 0 0.5rem;
+    font: 400 clamp(5rem, 15vw, 10.5rem) / 0.85 var(--serif);
+    letter-spacing: -0.04em;
+    color: var(--oxido);
+  }
+  .pc__cifra span {
+    font: italic 400 clamp(1.4rem, 3vw, 2rem) var(--serif);
+    letter-spacing: 0;
+    color: var(--tinta);
+  }
+  .pc__pasos {
+    margin: 2rem 0 0;
+    border-top: 1px solid var(--tinta);
+  }
+  .pc__pasos > div {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--linea);
+  }
+  .pc__pasos dt {
+    font: italic 400 1.55rem/1.15 var(--serif);
+    color: var(--tinta);
+  }
+  .pc__pasos dd {
+    margin: 0.2rem 0 0;
     color: var(--tinta-suave);
-    margin-top: 0.6rem;
+    max-width: 38rem;
+  }
+  @media (min-width: 62rem) {
+    .pc {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+    .pc__foto {
+      min-height: 0;
+    }
+    .pc__texto {
+      padding-right: max(var(--gutter), calc((100vw - var(--ancho)) / 2));
+      padding-left: clamp(2rem, 5vw, 5rem);
+    }
+    .pc__pasos > div {
+      display: grid;
+      grid-template-columns: 14rem 1fr;
+      gap: 1.5rem;
+      align-items: baseline;
+    }
   }
 </style>

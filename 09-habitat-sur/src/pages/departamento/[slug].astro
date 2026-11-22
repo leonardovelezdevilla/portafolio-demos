@@ -29,6 +29,7 @@ const jsonld = {
   priceCurrency: 'PEN',
   availability: disponibilidad,
   description: 'Oferta ficticia de demo de portafolio; precio de ejemplo.',
+  seller: { '@type': 'RealEstateAgent', name: 'Habitat Sur (marca ficticia, demo de portafolio)' },
   itemOffered: apartamento,
 };
 const tc = String(TIPO_CAMBIO).replace('.', ',');
@@ -37,77 +38,116 @@ const dorm = `${d.dormitorios} ${d.dormitorios === 1 ? 'dormitorio' : 'dormitori
 const banos = `${d.banos} ${d.banos === 1 ? 'baño' : 'baños'}`;
 ---
 <Base titulo={`${d.nombre}, ${d.distrito} · Habitat Sur`} descripcion={`${dorm}, ${d.area} m², ${soles(d.precio)} (precio de ejemplo). ${d.resumen}`} ruta={ruta} jsonld={jsonld}>
-  <div class="contenedor ficha">
-    <nav class="migas" aria-label="Ruta de navegación"><a href="/">Inicio</a> <span aria-hidden="true">/</span> <a href="/departamentos/">Departamentos</a> <span aria-hidden="true">/</span> <span aria-current="page">{d.nombre}</span></nav>
-    <header class="f-cab">
-      <div>
-        <p class="sobretitulo">{d.distrito} · {d.proyecto}</p>
-        <h1>{d.nombre}</h1>
-        <p class="lead">{d.resumen}</p>
+  <header class="f-cab">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta de navegación"><a href="/">Inicio</a> <span aria-hidden="true">/</span> <a href="/departamentos/">Departamentos</a> <span aria-hidden="true">/</span> <span aria-current="page">{d.nombre}</span></nav>
+      <div class="fc-grid">
+        <div>
+          <p class="f-lugar">{d.distrito} · {d.proyecto}</p>
+          <h1>{d.nombre}</h1>
+          <p class="lead">{d.resumen}</p>
+        </div>
+        <div class="f-precio">
+          <p class="etapa">{d.etapa === 'entrega inmediata' ? 'Entrega inmediata' : `${cap} · entrega estimada ${d.entrega}`}</p>
+          <p class="monto">{soles(d.precio)}</p>
+          <p class="ref">Referencial {dolares(d.precio)} (tipo de cambio fijo de demo, S/ {tc} por US$). Precio de ejemplo, sin desglose de IGV ni gastos notariales y registrales.</p>
+          <p class="f-btns"><a class="btn btn-primario" href="#visita">Agendar visita</a> <a class="btn" href="#sim">Simular cuota</a></p>
+        </div>
       </div>
-      <div class="f-precio">
-        <p class="etapa">{d.etapa === 'entrega inmediata' ? 'Entrega inmediata' : `${cap} · entrega estimada ${d.entrega}`}</p>
-        <p class="monto">{soles(d.precio)}</p>
-        <p class="ref">Referencial {dolares(d.precio)} (tipo de cambio fijo de demo, S/ {tc} por US$). Precio de ejemplo, sin desglose de IGV ni gastos notariales y registrales.</p>
-        <p class="f-btns"><a class="btn btn-primario" href="#visita">Agendar visita</a> <a class="btn" href="#sim">Simular cuota</a></p>
-      </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="f-cols">
-      <div class="f-izq">
-        <Galeria fotos={d.fotos} nombre={d.nombre} />
+  <div class="contenedor f-cols">
+    <div class="f-izq">
+      <Galeria fotos={d.fotos} nombre={d.nombre} />
+    </div>
+    <div class="f-der">
+      <h2>Características</h2>
+      <dl class="datos">
+        <div><dt><Icon name="bed-double" size={18} /> Dormitorios</dt><dd>{d.dormitorios}</dd></div>
+        <div><dt><Icon name="bath" size={18} /> Baños</dt><dd>{d.banos}</dd></div>
+        <div><dt><Icon name="ruler" size={18} /> Área techada (sin áreas comunes)</dt><dd>{d.area} m²</dd></div>
+        <div><dt><Icon name="building-2" size={18} /> Piso</dt><dd>{d.piso}</dd></div>
+        <div><dt><Icon name="map-pin" size={18} /> Zona</dt><dd>{d.distrito}, {d.zona}</dd></div>
+        <div><dt><Icon name="calendar" size={18} /> Entrega (fecha estimada)</dt><dd>{d.entrega}</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <section class="seccion bloque-plano" aria-labelledby="plano-h">
+    <div class="contenedor bp-grid">
+      <div class="bp-plano">
+        <h2 id="plano-h">Plano esquemático</h2>
+        <Plano dormitorios={d.dormitorios} banos={d.banos} area={d.area} />
       </div>
-      <div class="f-der">
-        <h2>Características</h2>
-        <dl class="datos">
-          <div><dt><Icon name="bed-double" size={18} /> Dormitorios</dt><dd>{d.dormitorios}</dd></div>
-          <div><dt><Icon name="bath" size={18} /> Baños</dt><dd>{d.banos}</dd></div>
-          <div><dt><Icon name="ruler" size={18} /> Área techada (sin áreas comunes)</dt><dd>{d.area} m²</dd></div>
-          <div><dt><Icon name="building-2" size={18} /> Piso</dt><dd>{d.piso}</dd></div>
-          <div><dt><Icon name="map-pin" size={18} /> Zona</dt><dd>{d.distrito}, {d.zona}</dd></div>
-          <div><dt><Icon name="calendar" size={18} /> Entrega (fecha estimada)</dt><dd>{d.entrega}</dd></div>
-        </dl>
+      <div class="bp-txt">
+        <h3>Lo que incluye</h3>
         <ul class="car">
           {d.caracteristicas.map((c) => <li><Icon name="check" size={18} /> {c}</li>)}
         </ul>
         <p class="salvedad"><Icon name="info" size={18} /> <span><strong>Datos de ejemplo.</strong> Áreas, fechas de entrega y equipamiento son referenciales: en un proyecto real constarían en la minuta y en los planos aprobados, y pueden variar.</span></p>
       </div>
     </div>
+  </section>
 
-    <section class="bloque" aria-labelledby="plano-h">
-      <h2 id="plano-h">Plano esquemático</h2>
-      <div class="plano-w"><Plano dormitorios={d.dormitorios} banos={d.banos} area={d.area} /></div>
-    </section>
-  </div>
+  <div class="sim-banda"><div class="contenedor seccion"><Simulador precio={d.precio} id="sim" /></div></div>
 
-  <div class="oscuro-papel"><div class="contenedor seccion"><Simulador precio={d.precio} id="sim" /></div></div>
-  <div class="contenedor seccion"><Agenda departamento={`${d.nombre}, ${d.distrito}`} id="visita" /></div>
+  <section class="seccion visita-ficha" aria-label="Agenda de visita">
+    <div class="contenedor vf-grid">
+      <div class="vf-txt">
+        <h2>Visita {d.nombre}</h2>
+        <p class="lead">Elige día y franja y el mensaje sale listo por WhatsApp.</p>
+        <dl class="vf-horas">
+          <div><dt>Lunes a viernes</dt><dd>10:00 a 13:00 y 15:00 a 18:00</dd></div>
+          <div><dt>Sábados</dt><dd>10:00 a 13:00</dd></div>
+        </dl>
+        <p class="ayuda">Horarios de ejemplo de una sala de ventas ficticia.</p>
+      </div>
+      <Agenda departamento={`${d.nombre}, ${d.distrito}`} id="visita" compacto />
+    </div>
+  </section>
 </Base>
 <style>
-  .ficha { padding-top: 1.5rem; padding-bottom: 3rem; }
-  .migas { font-size: .95rem; margin-bottom: 1.5rem; }
+  .f-cab { background: var(--papel-2); border-bottom: 1px solid var(--tinta); padding-bottom: clamp(2rem, 5vw, 3.5rem); }
+  .migas { font-size: .9rem; padding-block: 1.2rem 1.8rem; }
   .migas a { color: var(--tinta); }
-  .f-cab { display: grid; gap: 1.5rem; border-bottom: 2px solid var(--tinta); padding-bottom: 2rem; margin-bottom: 2rem; }
-  .f-cab h1 { font-size: clamp(2.2rem, 7vw, 3.8rem); }
-  .f-precio { border: 2px solid var(--tinta); background: var(--blanco); padding: 1.2rem; align-self: start; }
-  .f-precio p { margin-bottom: .5rem; }
-  .f-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
-  .etapa { font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; color: var(--sol-osc); }
-  .monto { font: 700 clamp(2.2rem, 7vw, 3rem)/1.05 var(--f-titulo); margin: 0 0 .3rem; }
-  .ref { font-size: .9rem; color: var(--tinta-2); }
-  @media (min-width: 900px) { .f-cab { grid-template-columns: 1.4fr 1fr; align-items: end; } }
-  .f-cols { display: grid; gap: 2.5rem; }
-  @media (min-width: 1000px) { .f-cols { grid-template-columns: 1.35fr 1fr; align-items: start; } }
-  .datos { margin: 0 0 1.5rem; }
-  .datos div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-top: 1px solid var(--linea); }
+  .fc-grid { display: grid; gap: 1.6rem; }
+  .f-lugar { color: var(--tinta-2); margin-bottom: .6rem; }
+  .f-cab h1 { font-size: clamp(3rem, 9vw, 6.5rem); margin-bottom: .2em; }
+  .f-precio { background: var(--tinta); color: var(--papel); padding: 1.5rem; align-self: end; border-top: 4px solid var(--sol); }
+  .f-precio p { margin-bottom: .6rem; }
+  .f-precio .btn { border-color: var(--papel); color: var(--papel); }
+  .f-precio .btn:hover { background: var(--papel); color: var(--tinta); }
+  .f-precio .btn-primario { background: var(--sol-claro); border-color: var(--sol-claro); color: var(--tinta); }
+  .f-precio .btn-primario:hover { background: #fff; border-color: #fff; }
+  .f-precio :focus-visible { outline-color: var(--sol-claro); }
+  .f-btns { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.2rem 0 0 !important; }
+  .etapa { font-size: .95rem; color: var(--sol-claro); }
+  .monto { font: 400 clamp(2.8rem, 7vw, 4rem)/1 var(--f-titulo); margin: 0 0 .5rem; }
+  .ref { font-size: .85rem; color: #c9ced2; }
+  @media (min-width: 900px) { .fc-grid { grid-template-columns: 1.4fr 1fr; gap: 4rem; } }
+  .f-cols { display: grid; gap: 2.5rem; padding-block: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1000px) { .f-cols { grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; } }
+  .f-der h2 { font-size: clamp(2rem, 4vw, 2.8rem); }
+  .datos { margin: 0; border-top: 1px solid var(--tinta); }
+  .datos div { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid var(--linea); }
   .datos dt { display: inline-flex; align-items: center; gap: .5rem; color: var(--tinta-2); }
   .datos dd { margin: 0; font-weight: 600; text-align: right; }
-  .car { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+  .bloque-plano { background: var(--papel-2); border-block: 1px solid var(--tinta); }
+  .bp-grid { display: grid; gap: 2.5rem; align-items: start; }
+  .bp-plano h2 { font-size: clamp(2.1rem, 5vw, 3.4rem); }
+  .bp-txt h3 { font-size: 2rem; }
+  .car { list-style: none; padding: 0; margin: 0 0 1.6rem; display: grid; gap: .6rem; }
   .car li { display: flex; gap: .6rem; align-items: flex-start; }
-  .car :global(svg) { margin-top: .25rem; color: var(--sol-osc); flex: none; }
-  .salvedad { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; padding: 1rem; background: #fff3de; border: 2px solid var(--tinta); font-size: .95rem; }
+  .car :global(svg) { margin-top: .3rem; color: var(--sol-osc); flex: none; }
+  .salvedad { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; padding: 1rem; background: var(--papel); border: 1px solid var(--tinta); font-size: .92rem; }
   .salvedad :global(svg) { margin-top: .2rem; }
-  .bloque { margin-top: 3rem; }
-  .plano-w { max-width: 640px; }
-  .oscuro-papel { background: var(--papel-2); border-block: 2px solid var(--tinta); }
+  @media (min-width: 1000px) { .bp-grid { grid-template-columns: 1.5fr 1fr; gap: 4rem; } .bp-txt { padding-top: 6.5rem; } }
+  .sim-banda { background: var(--papel); }
+  .vf-grid { display: grid; gap: 2rem; align-items: start; }
+  .vf-horas { margin: 1.8rem 0 1rem; border-top: 1px solid var(--tinta); }
+  .vf-horas div { display: grid; gap: .1rem; padding: .8rem 0; border-bottom: 1px solid var(--linea); }
+  .vf-horas dt { font-size: .9rem; color: var(--tinta-2); }
+  .vf-horas dd { margin: 0; font: 400 1.35rem/1.25 var(--f-titulo); }
+  @media (min-width: 900px) { .vf-grid { grid-template-columns: .9fr 1.1fr; gap: 5rem; } }
 </style>

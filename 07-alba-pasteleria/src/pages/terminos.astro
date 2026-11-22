@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Politica from '../components/Politica.astro';
+---
+<Base
+  titulo="Términos de demo | Alba Pastelería"
+  descripcion="Términos de la demo de Alba Pastelería: sitio ficticio sin ventas ni cobros, con políticas de ejemplo de anticipación, adelanto, cancelación y entrega."
+  ruta="/terminos/"
+>
+  <header class="pagina-cab"><div class="contenedor"><h1>Términos de demo</h1><p>Condiciones de uso de este sitio de portafolio y políticas de ejemplo del negocio ficticio.</p></div></header>
+  <div class="contenedor seccion">
+    <p class="aviso-demo"><strong>Demo de portafolio — Vélez De Villa.</strong> Alba Pastelería no existe. Nada de lo que se muestra se vende, se cobra ni se entrega.</p>
+    <div class="prosa">
+      <h2>Qué es este sitio</h2>
+      <p>Es una demostración de diseño y programación. Los productos, precios, horarios, distritos, números de teléfono, RUC y direcciones son ficticios. Las fotografías son ilustrativas (Pexels y Unsplash) y no corresponden a tortas de un negocio real.</p>
+      <h2>Políticas de ejemplo del negocio</h2>
+      <ul>
+        <li><strong>Precios:</strong> en soles (S/) con IGV incluido.</li>
+        <li><strong>Anticipación:</strong> 48 horas como mínimo; 72 horas para tortas de 2 pisos, contadas en hora de Lima.</li>
+        <li><strong>Días sin atención:</strong> lunes y feriados nacionales.</li>
+        <li><strong>Alérgenos:</strong> cada torta indica los alérgenos de su receta. La cocina es compartida, por lo que puede haber trazas de gluten, huevo, leche, frutos secos, maní y soya.</li>
+        <li><strong>Delivery:</strong> solo en los distritos de la lista, con el costo indicado; las tortas de 2 pisos tienen recargo.</li>
+      </ul>
+      <Politica nivel={2} id="politica" />
+      <p>En esta demo no se cobra ni se devuelve dinero: todo lo anterior es un ejemplo de redacción.</p>
+      <h2>Reclamos</h2>
+      <p>Puedes registrar una hoja de ejemplo en el <a href="/libro-reclamaciones/">Libro de Reclamaciones (demo)</a>.</p>
+      <h2>Datos personales</h2>
+      <p>Consulta la <a href="/privacidad/">Política de privacidad</a>.</p>
+    </div>
+  </div>
+</Base>

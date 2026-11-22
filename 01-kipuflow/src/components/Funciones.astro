@@ -1,65 +1,80 @@
 ---
 import Icon from './Icon.astro';
+const sol = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 });
+const funciones = [
+  { icono: 'receipt', t: 'Recibos que se arman solos', d: 'Cliente, concepto y monto: Kipuflow calcula la retención de 8 % cuando corresponde y te dice cuánto te llegará. Tú emites en SUNAT; aquí queda todo ordenado.' },
+  { icono: 'bell-ring', t: 'Recordatorios de pagos a cuenta', d: 'Un aviso antes de cada vencimiento mensual y otro cuando tus ingresos se acercan al tope para suspender retenciones.' },
+  { icono: 'wallet', t: 'Gastos con categoría', d: 'Registra boletas y facturas por categoría y sabe qué parte cuenta para tu declaración.' },
+  { icono: 'chart-column', t: 'Reportes que se entienden', d: 'Ingresos por cliente, mes contra mes y proyección anual con la escala del impuesto a la renta.' },
+  { icono: 'file-spreadsheet', t: 'Archivo para tu contador', d: 'Un solo archivo con recibos, retenciones y gastos del periodo. Sin pedir capturas por WhatsApp.' },
+];
+const clientes = [
+  { n: 'Agencia Faro', v: 9800 },
+  { n: 'Estudio Brisa', v: 8400 },
+  { n: 'Hotel Cumbre', v: 6200 },
+  { n: 'Taller Pampa', v: 3600 },
+  { n: 'Colectivo Ñawi', v: 1840 },
+];
+const max = Math.max(...clientes.map((c) => c.v));
 ---
 <section class="seccion" id="funciones" aria-labelledby="t-fun">
-  <div class="contenedor">
-    <div class="cabecera-sec">
-      <p class="sobretitulo">Qué hace por ti</p>
+  <div class="contenedor fun">
+    <div class="fun-izq">
       <h2 id="t-fun">Todo el ciclo del recibo, en un solo lugar.</h2>
+      <div class="mini" aria-label="Vista de ejemplo: ingresos por cliente en 2026">
+        <div class="af-barra"><p>Reportes · ingresos por cliente</p><span class="etiqueta-demo">Ejemplo de demo</span></div>
+        <div class="tot"><p>Facturado en 2026</p><p class="num">{sol.format(clientes.reduce((a, c) => a + c.v, 0))}</p></div>
+        <ol class="bar">
+          {clientes.map((c) => (
+            <li>
+              <span class="b-nom">{c.n}</span>
+              <svg class="b-pista" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect width="100" height="8" fill="#ecf0f2" /><rect width={Math.round((c.v / max) * 100)} height="8" fill="#1f2de6" /></svg>
+              <span class="num b-val">{sol.format(c.v)}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
-    <div class="bento">
-      <article class="vidrio b-recibos">
-        <Icon name="receipt" size={26} />
-        <h3>Recibos por honorarios que se arman solos</h3>
-        <p>Cliente, concepto y monto: Kipuflow calcula la retención de 8 % cuando corresponde y te dice cuánto te llegará a la cuenta. Tú emites en SUNAT; aquí queda todo ordenado.</p>
-        <div class="mini" aria-hidden="true">
-          <span>Bruto <b class="num">S/ 3 200</b></span>
-          <span>Retención <b class="num">−S/ 256</b></span>
-          <span>Te llega <b class="num ok">S/ 2 944</b></span>
-        </div>
-      </article>
-      <article class="vidrio b-recordatorios">
-        <Icon name="bell-ring" size={24} />
-        <h3>Recordatorios de pagos a cuenta</h3>
-        <p>Un aviso antes de cada vencimiento mensual y otro cuando tus ingresos se acercan al tope para suspender retenciones.</p>
-      </article>
-      <article class="vidrio b-gastos">
-        <Icon name="wallet" size={24} />
-        <h3>Gastos</h3>
-        <p>Registra boletas y facturas por categoría y sepas qué parte cuenta para tu declaración.</p>
-      </article>
-      <article class="vidrio b-reportes">
-        <Icon name="chart-column" size={24} />
-        <h3>Reportes que se entienden</h3>
-        <p>Ingresos por cliente, mes contra mes y proyección anual con la escala del impuesto a la renta.</p>
-      </article>
-      <article class="vidrio b-contador">
-        <Icon name="file-spreadsheet" size={24} />
-        <h3>Exportación para tu contador</h3>
-        <p>Un solo archivo con recibos, retenciones y gastos del periodo. Sin pedir capturas por WhatsApp.</p>
-      </article>
-    </div>
+    <ul class="fun-lista">
+      {funciones.map((f) => (
+        <li>
+          <Icon name={f.icono} size={22} />
+          <div>
+            <h3>{f.t}</h3>
+            <p>{f.d}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
 <style>
-  .bento { display: grid; gap: 1rem; }
-  article { padding: 1.5rem; display: grid; gap: .7rem; align-content: start; }
-  article > svg { color: var(--verde); }
-  article p { color: var(--texto-2); }
-  .b-recibos { background: linear-gradient(160deg, rgba(62,230,162,.14), rgba(22,32,44,.7) 55%); }
-  .b-recibos h3 { font-size: 1.6rem; font-weight: 700; max-width: 18ch; }
-  .b-reportes > svg, .b-contador > svg { color: var(--azul); }
-  .mini { display: grid; gap: .5rem; margin-top: .8rem; padding: 1rem; border-radius: 12px; background: rgba(0,0,0,.3); }
-  .mini span { display: flex; justify-content: space-between; color: var(--texto-2); }
-  .mini b { color: var(--texto); font-weight: 500; }
-  .mini .ok { color: var(--verde); font-weight: 700; }
-  @media (min-width: 768px) {
-    .bento { grid-template-columns: repeat(6, 1fr); }
-    .b-recibos { grid-column: 1 / 5; grid-row: span 2; padding: 2rem; }
-    .b-recordatorios { grid-column: 5 / 7; }
-    .b-gastos { grid-column: 5 / 7; }
-    .b-reportes { grid-column: 1 / 4; }
-    .b-contador { grid-column: 4 / 7; }
+  .tot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1.2rem 1.2rem .4rem; flex-wrap: wrap; }
+  .tot p:first-child { color: var(--tinta-2); }
+  .tot .num { font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 500; letter-spacing: -.04em; color: var(--cobalto); }
+  .fun { display: grid; gap: 2.5rem; }
+  .fun-izq { display: grid; gap: 2rem; align-content: start; }
+  .fun-izq h2 { max-width: 18ch; }
+  .fun-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--tinta); }
+  .fun-lista li { display: grid; grid-template-columns: auto 1fr; gap: 1rem; padding-block: 1.4rem; border-bottom: 1px solid var(--linea); transition: background-color .2s; }
+  .fun-lista li > svg { color: var(--cobalto); margin-top: 2px; }
+  .fun-lista h3 { margin-bottom: .3rem; }
+  .fun-lista p { color: var(--tinta-2); max-width: 54ch; }
+  .mini { background: var(--blanco); border: 1px solid var(--tinta); border-radius: 8px; overflow: hidden; }
+  .af-barra { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .7rem 1rem; background: var(--tinta); color: #e6edf2; font-size: .9rem; }
+  .af-barra p { margin: 0; }
+  .bar { list-style: none; margin: 0; padding: .6rem 1.2rem 1.4rem; display: grid; }
+  .bar li { display: grid; grid-template-columns: 1fr auto; gap: .3rem .8rem; padding-block: .7rem; border-bottom: 1px solid var(--linea); }
+  .bar li:last-child { border-bottom: 0; }
+  .b-pista { grid-column: 1 / -1; grid-row: 2; width: 100%; height: 14px; display: block; }
+  .b-nom { font-size: 1.05rem; font-weight: 500; }
+  .b-val { font-size: 1.1rem; }
+  @media (min-width: 900px) {
+    .fun { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(3rem, 6vw, 5rem); align-items: start; }
+    .bar li { padding-block: 1rem; }
+    .fun-lista { border-top: 0; }
+    .fun-lista li:first-child { padding-top: 0; }
+    .fun-lista li:hover { background: linear-gradient(90deg, var(--surf), transparent); }
   }
 </style>

@@ -7,8 +7,8 @@ export const DIAS_ANTICIPACION_MIN = 1;
 export const DIAS_ANTICIPACION_MAX = 45;
 export const WHATSAPP = '51935852637';
 
-export interface Visita { departamento: string; fecha: string; franja: string; nombre: string; telefono: string; consentimiento: boolean; }
-export type ErroresVisita = Partial<Record<'fecha' | 'franja' | 'nombre' | 'telefono' | 'consentimiento', string>>;
+export interface Visita { departamento: string; fecha: string; franja: string; nombre: string; consentimiento: boolean; }
+export type ErroresVisita = Partial<Record<'fecha' | 'franja' | 'nombre' | 'consentimiento', string>>;
 
 /** 'YYYY-MM-DD' a Date local a mediodía (evita saltos de zona horaria). */
 export function parseFecha(s: string): Date | null {
@@ -34,7 +34,6 @@ export function validarVisita(v: Visita, hoy: Date): ErroresVisita {
   else if (f && !franjasDelDia(f).some((x) => x.id === v.franja)) e.franja = 'Esa franja no está disponible ese día (los sábados solo hay mañana).';
   const nombre = v.nombre.trim();
   if (nombre.length < 3 || !/\s/.test(nombre)) e.nombre = 'Escribe tu nombre y apellido.';
-  if (!/^9\d{8}$/.test(v.telefono.replace(/[\s-]/g, ''))) e.telefono = 'Escribe un celular peruano de 9 dígitos que empiece con 9.';
   if (!v.consentimiento) e.consentimiento = 'Marca la casilla para que usemos tus datos solo para coordinar la visita.';
   return e;
 }
@@ -43,6 +42,6 @@ export function mensajeWhatsApp(v: Visita, tituloDepto: string): string {
   const f = parseFecha(v.fecha);
   const franja = FRANJAS.find((x) => x.id === v.franja)?.etiqueta ?? v.franja;
   const dia = f ? new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).format(f) : v.fecha;
-  return `Hola, quisiera agendar una visita (demo). Departamento: ${tituloDepto}. Día: ${dia}. Franja: ${franja}. Nombre: ${v.nombre.trim()}. Celular: ${v.telefono.replace(/[\s-]/g, '')}.`;
+  return `Hola, quisiera agendar una visita (demo). Departamento: ${tituloDepto}. Día: ${dia}. Franja: ${franja}. Nombre: ${v.nombre.trim()}.`;
 }
 export const urlWhatsApp = (msg: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;

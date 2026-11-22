@@ -33,7 +33,7 @@ const inicial = Math.round((precio * 0.2) / 1000) * 1000;
       )}
       <div class="campo">
         <label for={`${id}-precio`}>Precio del departamento (S/)</label>
-        <input id={`${id}-precio`} name="precio" type="number" inputmode="numeric" min="50000" step="1000" value={precio} required aria-describedby={`${id}-precio-e`} data-campo="precio" />
+        <input id={`${id}-precio`} name="precio" type="number" inputmode="numeric" min="50000" max="5000000" step="1000" value={precio} required aria-describedby={`${id}-precio-e`} data-campo="precio" />
         <p class="err" id={`${id}-precio-e`}></p>
       </div>
       <div class="campo">
@@ -73,23 +73,23 @@ const inicial = Math.round((precio * 0.2) / 1000) * 1000;
   <p class="sr-only" role="status" data-anuncio></p>
 </section>
 <style>
-  .sim :global(h1), .sim :global(h2) { margin-bottom: 1rem; }
-  .sim :global(h1) { font-size: clamp(2rem, 6vw, 3rem); }
+  .sim :global(h1), .sim :global(h2) { margin-bottom: 1.2rem; max-width: 18ch; }
+  .sim :global(h1) { font-size: clamp(2.6rem, 7vw, 5rem); }
   .aviso-grande summary { cursor: pointer; font-weight: 600; text-decoration: underline; min-height: 44px; display: flex; align-items: center; }
   .aviso-grande details p { margin: .5rem 0 0; }
-  .sim-grid { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
-  .sim-form { display: grid; gap: 1.1rem; background: var(--blanco); border: 2px solid var(--tinta); padding: 1.3rem; align-content: start; }
-  .sim-res { background: var(--tinta); color: var(--papel); padding: 1.5rem; align-content: start; }
-  .sim-res .ayuda { color: #cfd7df; }
-  .r-etq { margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; font-size: .85rem; color: var(--sol-claro); }
-  .r-cuota { font: 700 clamp(2.4rem, 9vw, 3.6rem)/1.05 var(--f-titulo); margin: .3rem 0 1rem; }
+  .sim-grid { display: grid; gap: 0; margin-top: 2rem; border: 1px solid var(--tinta); }
+  .sim-form { display: grid; gap: 1.1rem; background: var(--blanco); padding: clamp(1.1rem, 3vw, 2rem); align-content: start; }
+  .sim-res { background: var(--tinta); color: var(--papel); padding: clamp(1.3rem, 3vw, 2.4rem); align-content: start; }
+  .sim-res .ayuda { color: #c9ced2; }
+  .r-etq { margin: 0; font-size: .95rem; color: var(--sol-claro); }
+  .r-cuota { font: 400 clamp(3.2rem, 11vw, 6.4rem)/1 var(--f-titulo); color: var(--sol-claro); margin: .15em 0 .5em; letter-spacing: -.02em; overflow-wrap: anywhere; }
   .r-det { margin: 0 0 1rem; display: grid; gap: 0; }
-  .r-det div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-top: 1px solid #44566a; }
-  .r-det dt { color: #cfd7df; }
+  .r-det div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-top: 1px solid #4a5560; }
+  .r-det dt { color: #c9ced2; }
   .r-det dd { margin: 0; font-weight: 600; text-align: right; }
-  .sim-mv { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; color: var(--tinta-2); font-size: .95rem; max-width: 80ch; }
+  .sim-mv { display: grid; grid-template-columns: auto 1fr; gap: .6rem; margin: 1.5rem 0 0; color: var(--tinta-2); font-size: .92rem; max-width: 80ch; }
   .sim-mv :global(svg) { margin-top: .2rem; }
-  @media (min-width: 860px) { .sim-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
+  @media (min-width: 860px) { .sim-grid { grid-template-columns: 1fr 1fr; align-items: stretch; } }
   @media (max-width: 859px) { .sim-res { order: -1; } }
 </style>
 <script>
@@ -128,7 +128,15 @@ const inicial = Math.round((precio * 0.2) / 1000) * 1000;
     };
     const decir = (t: string) => { anuncio.textContent = ''; requestAnimationFrame(() => { anuncio.textContent = t; }); };
     form.addEventListener('input', () => { resumen.hidden = true; pintar(false); });
+    // Si el cambio nace de pulsar «Calcular», el error aparecería antes del clic y movería el botón: lo muestra el envío.
+    const boton = q<HTMLButtonElement>('button[type="submit"]');
+    let pulsando = false;
+    let aplazado = false;
+    boton.addEventListener('pointerdown', () => { pulsando = true; aplazado = false; });
+    document.addEventListener('pointerup', () => { if (!pulsando) return; pulsando = false; setTimeout(() => { if (aplazado) { aplazado = false; pintar(true); } }, 0); });
+    document.addEventListener('pointercancel', () => { pulsando = false; });
     form.addEventListener('change', () => {
+      if (pulsando) { aplazado = true; return; }
       const err = pintar(true);
       decir(Object.keys(err).length ? 'Revisa los datos: hay un error.' : `Cuota mensual referencial ${q('[data-cuota]').textContent}`);
     });
@@ -138,6 +146,7 @@ const inicial = Math.round((precio * 0.2) / 1000) * 1000;
     });
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
+      aplazado = false;
       const err = pintar(true);
       const ks = Object.keys(err);
       if (!ks.length) { resumen.hidden = true; decir(`Cuota mensual referencial ${q('[data-cuota]').textContent}`); return; }

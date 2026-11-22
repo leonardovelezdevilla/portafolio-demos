@@ -1,34 +1,76 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base titulo="Libro de Reclamaciones de demo · Kipuflow" descripcion="Libro de Reclamaciones de demostración: muestra el formulario y el número de hoja, sin enviar ni guardar nada." ruta="/libro-reclamaciones/">
+<Base titulo="Libro de Reclamaciones de demo · Kipuflow" descripcion="Libro de Reclamaciones de demostración con el contenido de la hoja del DS 011-2011-PCM: valida los datos y genera un número de hoja de ejemplo, sin enviar ni guardar nada." ruta="/libro-reclamaciones/">
   <article class="contenedor texto">
     <p class="sobretitulo">Documento de demo</p>
     <h1>Libro de Reclamaciones</h1>
-    <p>Kipuflow es ficticio. Este formulario solo enseña cómo sería: valida en tu navegador y genera un número de hoja de ejemplo. No se envía ni se guarda nada.</p>
-    <form id="lr-form" class="vidrio lr" novalidate>
-      <div class="campo"><label for="lr-nombre">Nombre completo</label><input id="lr-nombre" type="text" autocomplete="name" aria-required="true" aria-describedby="lr-nombre-err" /><p class="err" id="lr-nombre-err" role="alert"></p></div>
-      <div class="campo"><label for="lr-doc">DNI (8 dígitos)</label><input id="lr-doc" type="text" inputmode="numeric" maxlength="8" aria-required="true" aria-describedby="lr-doc-err" /><p class="err" id="lr-doc-err" role="alert"></p></div>
-      <div class="campo"><label for="lr-tipo">Tipo</label><select id="lr-tipo" aria-required="true" aria-describedby="lr-tipo-err"><option value="">Elige una opción</option><option>Reclamo (disconformidad con el servicio)</option><option>Queja (malestar sin relación al servicio)</option></select><p class="err" id="lr-tipo-err" role="alert"></p></div>
-      <div class="campo"><label for="lr-detalle">Detalle</label><textarea id="lr-detalle" rows="4" aria-required="true" aria-describedby="lr-detalle-err"></textarea><p class="err" id="lr-detalle-err" role="alert"></p></div>
+    <p><strong>Demo de portafolio — Vélez De Villa.</strong> Kipuflow es ficticio. Esta hoja enseña cómo sería, con el contenido que pide el modelo del Reglamento (DS 011-2011-PCM): valida en tu navegador y genera un número de hoja de ejemplo. No se envía ni se guarda nada y no tiene valor legal. En un local o tienda real, el Libro debe estar a la vista con un aviso visible.</p>
+
+    <form id="lr-form" class="lr" novalidate aria-label="Hoja de reclamación (demo)">
+      <p class="hoja"><span>Hoja N.º <strong class="num" id="lr-num-previo">—</strong> (ejemplo)</span> <span>Fecha: <strong id="lr-fecha">—</strong></span></p>
+      <h2>Datos del proveedor (ficticios)</h2>
+      <dl class="prov">
+        <div><dt>Razón social</dt><dd>Kipuflow S.A.C. (ficticia)</dd></div>
+        <div><dt>RUC</dt><dd class="num">20000000001 (ficticio)</dd></div>
+        <div><dt>Domicilio</dt><dd>Lima, Perú (ficticio). Servicio en línea.</dd></div>
+      </dl>
+
+      <h2>1. Identificación del consumidor</h2>
+      <div class="campo"><label for="lr-nombre">Nombres y apellidos</label><input id="lr-nombre" type="text" autocomplete="name" aria-required="true" aria-describedby="lr-nombre-err" /><p class="err" id="lr-nombre-err" role="alert"></p></div>
+      <div class="fila">
+        <div class="campo"><label for="lr-doc">DNI (8 dígitos)</label><input id="lr-doc" type="text" inputmode="numeric" maxlength="8" autocomplete="off" aria-required="true" aria-describedby="lr-doc-err" /><p class="err" id="lr-doc-err" role="alert"></p></div>
+        <div class="campo"><label for="lr-cel">Celular (9 dígitos)</label><input id="lr-cel" type="tel" inputmode="numeric" maxlength="9" autocomplete="tel-national" aria-required="true" aria-describedby="lr-cel-err" /><p class="err" id="lr-cel-err" role="alert"></p></div>
+      </div>
+      <div class="campo"><label for="lr-correo">Correo electrónico</label><input id="lr-correo" type="email" autocomplete="email" inputmode="email" aria-required="true" aria-describedby="lr-correo-err" /><p class="err" id="lr-correo-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-dom">Domicilio</label><input id="lr-dom" type="text" autocomplete="street-address" aria-required="true" aria-describedby="lr-dom-err" /><p class="err" id="lr-dom-err" role="alert"></p></div>
+
+      <h2>2. Identificación del bien contratado</h2>
+      <div class="fila">
+        <div class="campo"><label for="lr-bien">Tipo</label><select id="lr-bien" aria-required="true" aria-describedby="lr-bien-err"><option value="">Elige una opción</option><option>Servicio</option><option>Producto</option></select><p class="err" id="lr-bien-err" role="alert"></p></div>
+        <div class="campo"><label for="lr-monto">Monto reclamado en S/ (opcional)</label><input id="lr-monto" type="text" inputmode="decimal" autocomplete="off" aria-describedby="lr-monto-err" /><p class="err" id="lr-monto-err" role="alert"></p></div>
+      </div>
+      <div class="campo"><label for="lr-desc">Descripción del bien contratado</label><input id="lr-desc" type="text" autocomplete="off" aria-required="true" aria-describedby="lr-desc-err" /><p class="err" id="lr-desc-err" role="alert"></p></div>
+
+      <h2>3. Detalle de la reclamación y pedido del consumidor</h2>
+      <div class="campo"><label for="lr-tipo">Tipo</label><select id="lr-tipo" aria-required="true" aria-describedby="lr-tipo-ayuda lr-tipo-err"><option value="">Elige una opción</option><option>Reclamo (disconformidad con el producto o servicio)</option><option>Queja (malestar con la atención, sin relación al servicio)</option></select><p class="ayuda" id="lr-tipo-ayuda">Reclamo: disconformidad con el servicio contratado. Queja: malestar por la atención recibida.</p><p class="err" id="lr-tipo-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-detalle">Detalle de lo ocurrido</label><textarea id="lr-detalle" rows="4" aria-required="true" aria-describedby="lr-detalle-err"></textarea><p class="err" id="lr-detalle-err" role="alert"></p></div>
+      <div class="campo"><label for="lr-pedido">Pedido del consumidor</label><textarea id="lr-pedido" rows="3" aria-required="true" aria-describedby="lr-pedido-err"></textarea><p class="err" id="lr-pedido-err" role="alert"></p></div>
+
+      <h2>4. Observaciones y acciones del proveedor</h2>
+      <p class="ayuda">Este recuadro lo completa el proveedor al responder. En esta demo queda en blanco: no hay proveedor real. Plazo de respuesta de ejemplo: 15 días hábiles.</p>
+
+      <p class="ayuda">Tus datos se usan solo para atender este reclamo, según la <a href="/privacidad/">Privacidad</a>. No hay casilla que condicione el reclamo.</p>
       <button class="btn btn-primario" type="submit">Generar hoja de ejemplo</button>
     </form>
-    <div id="lr-ok" class="vidrio lr" role="status" hidden tabindex="-1">
+
+    <div id="lr-ok" class="lr" role="status" hidden tabindex="-1">
       <h2>Hoja de reclamación de ejemplo</h2>
       <p>Número de hoja: <strong class="num" id="lr-num"></strong></p>
-      <p>Es una confirmación simulada. No se envió nada.</p>
+      <p>Fecha: <strong id="lr-fecha-ok"></strong></p>
+      <p>Es una confirmación simulada. No se envió ni se guardó nada. Puedes imprimirla o guardarla en PDF como constancia de ejemplo.</p>
+      <p><button type="button" class="btn btn-sec" id="lr-imprimir">Imprimir o guardar PDF</button></p>
     </div>
     <p><a href="/">Volver al inicio</a></p>
   </article>
 </Base>
 <style is:global>
-  .lr { padding: 1.5rem; display: grid; gap: 1rem; }
-  .lr .campo { display: grid; gap: .4rem; }
-  .lr label { font-weight: 600; }
-  .lr input, .lr select, .lr textarea { font: inherit; min-height: 48px; padding: .6rem .9rem; border-radius: 10px; color: var(--texto); background: rgba(5,9,14,.7); border: 1px solid rgba(190,220,245,.35); width: 100%; }
-  .lr [aria-invalid='true'] { border-color: var(--error); }
-  .lr .err { color: var(--error); font-size: .92rem; }
+  .lr { background: var(--blanco); border: 1px solid var(--tinta); border-radius: 8px; padding: 1.5rem; display: grid; gap: 1rem; }
   .lr[hidden] { display: none; }
+  .lr h2 { font-size: 1.15rem; font-weight: 600; margin: .8rem 0 0; padding-bottom: .5rem; border-bottom: 1px solid var(--linea); color: var(--tinta); }
+  .lr h2:first-child { margin-top: 0; }
+  .lr .prov { margin: 0; display: grid; border: 1px solid var(--linea); border-radius: var(--radio); }
+  .lr .prov div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; padding: .6rem .9rem; border-bottom: 1px solid var(--linea); }
+  .lr .prov div:last-child { border-bottom: 0; }
+  .lr .prov dt { color: var(--tinta-2); }
+  .lr .prov dd { margin: 0; }
+  .lr .fila { display: grid; gap: 1rem; }
+  .lr .hoja { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem 1.5rem; padding: .7rem .9rem; background: var(--surf); border-radius: var(--radio); }
+  .lr .check-fila { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: start; }
+  .lr .campo .check-fila input { width: 24px; min-height: 24px; height: 24px; margin-top: 2px; accent-color: var(--cobalto); }
+  .lr .check-fila label { font-weight: 400; color: var(--tinta-2); }
+  @media (min-width: 640px) { .lr .fila { grid-template-columns: 1fr 1fr; } }
+  @media print { .cab, .pie, .saltar, #lr-imprimir, article > p:last-child { display: none !important; } }
 </style>
 <script>
   const f = document.getElementById('lr-form') as HTMLFormElement;
@@ -36,9 +78,20 @@ import Base from '../layouts/Base.astro';
   const reglas: Record<string, [(v: string) => boolean, string]> = {
     'lr-nombre': [(v) => v.length >= 3 && /\s/.test(v), 'Escribe tu nombre y apellido.'],
     'lr-doc': [(v) => /^\d{8}$/.test(v), 'El DNI debe tener 8 números.'],
+    'lr-cel': [(v) => /^9\d{8}$/.test(v), 'El celular debe tener 9 números y empezar con 9.'],
+    'lr-correo': [(v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v), 'Escribe un correo válido, por ejemplo nombre@dominio.pe.'],
+    'lr-dom': [(v) => v.length >= 5, 'Escribe tu domicilio (mínimo 5 caracteres).'],
+    'lr-bien': [(v) => v !== '', 'Elige si contrataste un servicio o un producto.'],
+    'lr-monto': [(v) => v === '' || /^\d{1,7}([.,]\d{1,2})?$/.test(v), 'Escribe un monto en soles, por ejemplo 39 o 39,50, o déjalo vacío.'],
+    'lr-desc': [(v) => v.length >= 3, 'Describe el servicio contratado (mínimo 3 caracteres).'],
     'lr-tipo': [(v) => v !== '', 'Elige si es un reclamo o una queja.'],
     'lr-detalle': [(v) => v.length >= 10, 'Cuéntanos el detalle (mínimo 10 caracteres).'],
+    'lr-pedido': [(v) => v.length >= 5, 'Indica qué pides (mínimo 5 caracteres).'],
   };
+  const numero = `HR-DEMO-${String(Math.floor(Math.random() * 900000) + 100000)}`;
+  const fechaTxt = () => new Intl.DateTimeFormat('es-PE', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date());
+  document.getElementById('lr-num-previo')!.textContent = numero;
+  document.getElementById('lr-fecha')!.textContent = fechaTxt();
   f.addEventListener('submit', (e) => {
     e.preventDefault();
     let primero: HTMLElement | null = null;
@@ -50,7 +103,9 @@ import Base from '../layouts/Base.astro';
       if (!bien && !primero) primero = el;
     }
     if (primero) { primero.focus(); return; }
-    document.getElementById('lr-num')!.textContent = `HR-DEMO-${String(Math.floor(Math.random() * 900000) + 100000)}`;
+    document.getElementById('lr-num')!.textContent = numero;
+    document.getElementById('lr-fecha-ok')!.textContent = fechaTxt();
     f.hidden = true; ok.hidden = false; ok.focus();
   });
+  document.getElementById('lr-imprimir')!.addEventListener('click', () => window.print());
 </script>

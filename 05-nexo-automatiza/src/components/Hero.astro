@@ -31,9 +31,9 @@ import Icon from './Icon.astro';
         <desc id="d-diag">Un mensaje de WhatsApp llega a Google Sheets, de ahí se genera la boleta electrónica y finalmente un reporte llega al correo del dueño.</desc>
         <path class="diag__cable" d="M150 78 C 260 78, 260 150, 340 150" />
         <path class="diag__cable" d="M390 196 C 390 250, 150 230, 150 290" />
-        <path class="diag__cable" d="M200 336 C 300 336, 300 392, 340 392" />
+        <path class="diag__cable" d="M270 333 C 292 333, 288 392, 312 392" />
         <g class="diag__nodo diag__nodo--a">
-          <rect x="30" y="38" width="240" height="80" rx="6" />
+          <rect x="30" y="38" width="250" height="80" rx="6" />
           <text x="52" y="72" class="diag__n">01</text>
           <text x="52" y="100" class="diag__t">Mensaje por WhatsApp</text>
         </g>
@@ -48,9 +48,9 @@ import Icon from './Icon.astro';
           <text x="52" y="354" class="diag__t">Boleta electrónica</text>
         </g>
         <g class="diag__nodo diag__nodo--d">
-          <rect x="270" y="352" width="220" height="80" rx="6" />
-          <text x="292" y="386" class="diag__n">04</text>
-          <text x="292" y="414" class="diag__t">Reporte al correo</text>
+          <rect x="312" y="352" width="198" height="80" rx="6" />
+          <text x="332" y="386" class="diag__n">04</text>
+          <text x="332" y="414" class="diag__t">Reporte al correo</text>
         </g>
         <circle class="diag__punto" cx="150" cy="78" r="6" />
         <circle class="diag__punto" cx="390" cy="196" r="6" />
@@ -67,16 +67,24 @@ import Icon from './Icon.astro';
 <style>
   .hero { padding-top: 56px; position: relative; background: var(--paper); }
   .hero__grid { display: grid; gap: 48px; align-items: start; }
-  @media (min-width: 960px) {
-    .hero { padding-top: 96px; }
-    .hero__grid { grid-template-columns: 1.15fr 0.85fr; gap: 24px; }
-    .hero__fig { margin-top: 120px; margin-right: -24px; }
+  @media (min-width: 760px) {
+    .hero { padding-top: 40px; }
+    .hero__grid { grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; }
+    h1 { font-size: clamp(2.35rem, 8.2vw, 5.6rem); }
+    .hero__cinta { margin-top: 40px; }
   }
-  h1 { font-size: clamp(2.35rem, 11.4vw, 6.4rem); line-height: 0.98; letter-spacing: -0.035em; margin-bottom: 28px; }
+  @media (min-width: 960px) {
+    .hero { padding-top: 64px; }
+    .hero__grid { grid-template-columns: 1.15fr 0.85fr; gap: 24px; }
+    .hero__fig { margin-top: 40px; margin-right: -24px; }
+    h1 { font-size: clamp(2.35rem, 11.4vw, 6rem); }
+  }
+  h1 { font-size: clamp(2.35rem, 11.4vw, 6.4rem); line-height: 1.08; letter-spacing: -0.035em; margin-bottom: 28px; }
   .hero__tacha { display: inline-block; text-decoration: line-through; text-decoration-thickness: 0.07em; text-decoration-color: var(--brasa); color: var(--muted); }
   .hero__linea { display: block; margin-left: 0; }
   @media (min-width: 640px) { .hero__linea { margin-left: 0.9em; } }
-  mark { background: var(--lima); color: var(--ink); padding: 0 0.08em; }
+  mark { background: var(--lima); color: var(--ink); padding: 0 0.08em; display: inline-block; line-height: 0.95; position: relative; z-index: 0; }
+  .hero__linea { position: relative; z-index: 1; }
   .hero__lead { margin-bottom: 32px; }
   @media (min-width: 960px) { .hero__lead { margin-left: 3.2rem; } .hero__acciones { margin-left: 3.2rem; } }
   .hero__acciones { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -87,17 +95,23 @@ import Icon from './Icon.astro';
   .flujo li { font-weight: 700; font-size: 1.2rem; display: flex; gap: 14px; align-items: baseline; border-bottom: 1px dashed var(--muted-ink); padding-bottom: 12px; }
   .flujo li:last-child { border: 0; }
   .flujo b { font-family: var(--f-display); font-weight: 800; color: var(--lima); font-size: 0.9rem; }
-  @media (min-width: 640px) { .diag { display: block; } .flujo { display: none; } }
+  @media (min-width: 960px) { .diag { display: block; } .flujo { display: none; } }
   .diag__cable { fill: none; stroke: var(--muted-ink); stroke-width: 2; stroke-dasharray: 6 8; }
   .diag__nodo rect { fill: var(--ink-2); stroke: var(--paper); stroke-width: 1.5; }
   .diag__nodo--a rect { fill: var(--lima); stroke: var(--lima); }
   .diag__nodo--a text { fill: var(--ink); }
   .diag__n { font-family: var(--f-display); font-weight: 800; font-size: 14px; fill: var(--lima); }
-  .diag__t { font-family: var(--f-body); font-weight: 700; font-size: 20px; fill: var(--paper); }
+  .diag__t { font-family: var(--f-body); font-weight: 700; font-size: 17px; fill: var(--paper); }
   .diag__nodo--a .diag__n { fill: var(--ink); }
   .diag__punto { fill: var(--lima); }
   .hero__pie { font-size: 0.85rem; color: var(--muted-ink); margin-top: 12px; }
   @media (prefers-reduced-motion: no-preference) {
+    .hero__texto > *, .hero__fig { animation: entra 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .hero h1 { animation-delay: 0.06s; }
+    .hero__lead { animation-delay: 0.14s; }
+    .hero__acciones { animation-delay: 0.2s; }
+    .hero__fig { animation-delay: 0.12s; }
+    @keyframes entra { from { opacity: 0.4; transform: translateY(14px); } to { opacity: 1; transform: none; } }
     .diag__cable { animation: fluye 1.6s linear 3; } /* finita: 4,8 s (WCAG 2.2.2) */
     .diag__punto { animation: pulso 2s ease-in-out 2; transform-box: fill-box; transform-origin: center; }
     @keyframes fluye { to { stroke-dashoffset: -28; } }

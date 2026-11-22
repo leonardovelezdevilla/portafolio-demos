@@ -23,3 +23,18 @@
 - `robots.txt` sin Disallow (queda el `noindex`), `Cache-Control` inmutable en `/_astro/*` y `/fonts/*`, 404 sin canonical, `og:url`.
 - **Diferido hasta tener dominio**: `og:image`, `og:url`, `canonical` y `url` del JSON-LD siguen relativos; usar `site` en `astro.config.mjs` y URL absolutas al publicar. Quitar entonces `noindex`.
 - **No aplicado** (bajas): navegación anterior/siguiente en el modal, enlaces servicio-caso, realineación del proceso, reducción de fuentes a variables, ocultar el conteo con «Todos».
+
+## Pulido 2026-11
+- Se mantiene paleta (lima incluida: no se cambia el acento en este pulido), Plus Jakarta/Bricolage ya instaladas, titular tachado, cinta, sombras duras, cotizador y modal. Rama `rediseno-2026-11`, sin commit.
+- Cabecera a 360: de 109 px a 53 px, en una sola fila (solo el logo «N» visible; el texto «nexo.» queda como nombre accesible, `aria-label` del enlace) y enlaces más compactos. A ≥ 480 px se ve igual que antes.
+- Diagrama del héroe: texto de los nodos a 17 px y nodo 01 más ancho; «Mensaje por WhatsApp» ya no se corta a 768 ni a 1440.
+- `h3#modal-titulo` nace con texto «Caso de ejemplo» (el JS lo reemplaza al abrir).
+- Etiquetas en mayúsculas sobre títulos: queda solo la del héroe (se quitaron Casos, Cotizador, Proceso, Servicios y las dos de Testimonios/FAQ; la de la 404 es página aparte).
+- Enlaces «volver» de Términos y Libro a 44 px de alto; añadida `public/licencias/LICENSE-lucide-ISC.txt`.
+- Verificador: 5 ERROR «script en línea vs CSP» son falsos positivos (hash en `_headers`; no se tocan). AVISO de 404 con og:url ya existía. No se tocó «Mostrando 8 de 8 casos» (lógica).
+- npm test 12/12.
+- Revisión (segunda ronda): el recuadro lima de «vender.» ya no corta «Más» (line-height 1,08 y mark en inline-block); cable 03→04 visible (tarjeta 04 separada); a 640–959 px el héroe usa la lista de 4 pasos en vez del diagrama y dos columnas desde 760 px, así que a 768 cabe en una pantalla; a 1440 el héroe se compactó. Entrada del héroe (opacity 0,4 + translateY, una vez, apagada con reduced-motion). Enlaces del cotizador en tinta; chips del filtro acotados a `#casos`; `public/licencias/` citada en CREDITOS.md (no está ignorada por git; queda sin versionar hasta tu commit, hay que añadirla con `git add public/licencias`).
+- No aplicado: maqueta de WhatsApp/Sheets, casos y testimonios con jerarquía, cotizador sticky (cambios de diseño mayores).
+
+## Pulido 2026-11 (orquestador)
+- El script de arranque (clase `js` y respaldo de la animación) pasó de en línea con hash en la CSP a `public/js-flag.js` (igual que la versión publicada); la CSP queda `script-src 'self'` sin hashes y el verificador sin ERROR.

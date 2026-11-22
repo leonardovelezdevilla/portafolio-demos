@@ -1,30 +1,27 @@
 ---
 import { Image } from 'astro:assets';
-import foto from '../assets/fotos/pizarra-herramientas.jpg';
+import foto from '../assets/fotos/suspension-taller.jpg';
 import Icon from './Icon.astro';
 ---
-<section class="hero oscuro">
+<section class="hero oscuro" aria-labelledby="t-hero">
+  <Image class="hero__img" src={foto} alt="Mecánico trabajando bajo un vehículo levantado sobre soportes rojos, con un amortiguador de resorte sobre el piso del taller" width={1350} widths={[480, 768, 1100, 1350]} sizes="100vw" format="webp" quality={70} loading="eager" fetchpriority="high" decoding="async" />
+  <div class="hero__velo" aria-hidden="true"></div>
   <div class="wrap hero__in">
-    <div class="hero__txt">
-      <p class="etiqueta">Taller mecánico en Los Olivos</p>
-      <h1>Un rango en soles antes de abrir tu auto.</h1>
-      <p class="hero__lead">Cotiza tu mantenimiento en un minuto, reserva tu turno y sigue el estado de tu vehículo. El precio final requiere inspección: si aparece algo más, te lo mostramos y no hacemos nada sin tu aprobación.</p>
-      <div class="hero__acciones">
-        <a class="btn" href="#cotizador">Cotizar mantenimiento <Icon nombre="flecha-der" tamano={20} /></a>
-        <a class="btn btn--borde" href="#reserva">Reservar cita</a>
-      </div>
-      <ul class="hero__datos">
-        <li><Icon nombre="reloj" tamano={20} /> <span>Lunes a sábado, mañana y tarde. <span id="hero-apertura"></span></span></li>
-        <li><Icon nombre="pin" tamano={20} /> <span>Av. Ejemplo 000, Los Olivos <span class="muted">(dirección ficticia)</span></span></li>
-        <li><Icon nombre="insignia" tamano={20} /> Precios con IGV incluido</li>
-      </ul>
+    <p class="kicker">Taller mecánico · Los Olivos, Lima</p>
+    <h1 id="t-hero">Un rango en soles antes de abrir tu auto.</h1>
+    <p class="hero__lead">Cotiza tu mantenimiento en un minuto, reserva tu turno y sigue el estado de tu vehículo. El precio final requiere inspección: si aparece algo más, te lo mostramos y no hacemos nada sin tu aprobación.</p>
+    <div class="hero__acciones">
+      <a class="btn" href="#cotizador">Cotizar mantenimiento <Icon nombre="flecha-der" tamano={20} /></a>
+      <a class="btn btn--borde" href="#reserva">Reservar cita</a>
     </div>
-    <figure class="hero__foto">
-      <Image src={foto} alt="Pizarra de taller con llaves fijas y de corona colgadas por tamaños, y un esmeril de banco desenfocado delante" width={960} widths={[480, 720, 960]} sizes="(min-width: 960px) 520px, 100vw" format="webp" quality={72} loading="eager" fetchpriority="high" decoding="async" />
-      <figcaption class="hero__pie">Foto ilustrativa: Nina Mercado, Unsplash.</figcaption>
-    </figure>
   </div>
-  <div class="hero__ruta" aria-hidden="true"></div>
+  <div class="hero__banda sobre-senal">
+    <ul class="wrap hero__datos">
+      <li><strong class="mono">1 min</strong><span>para tu rango en soles, IGV incluido</span></li>
+      <li><strong class="mono">Lun a sáb</strong><span>turnos de mañana y tarde. <span id="hero-apertura">Horas de Lima.</span></span></li>
+      <li><strong class="mono">5 etapas</strong><span>de seguimiento, sin llamadas</span></li>
+    </ul>
+  </div>
 </section>
 
 <script>
@@ -34,18 +31,23 @@ import Icon from './Icon.astro';
 </script>
 
 <style>
-  .hero { background: var(--asfalto); color: var(--texto-claro); padding-top: clamp(40px, 7vw, 88px); }
-  .hero__in { display: grid; gap: 40px; padding-bottom: clamp(40px, 6vw, 72px); align-items: center; }
-  @media (min-width: 960px) { .hero__in { grid-template-columns: 1.15fr 0.85fr; gap: 64px; } }
-  .hero h1 { color: #fff; }
-  .hero__lead { font-size: 1.2rem; color: var(--texto-claro-suave); max-width: 52ch; }
-  .hero__acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 28px; }
-  .hero__datos { display: grid; gap: 4px 28px; font-size: 0.98rem; color: var(--texto-claro-suave); }
-  @media (min-width: 560px) { .hero__datos { grid-template-columns: repeat(auto-fit, minmax(210px, max-content)); } }
-  .hero__datos li { display: flex; align-items: center; gap: 10px; min-height: 32px; }
-  .hero__datos .icono { color: var(--senal); }
-  .hero__foto { margin: 0; position: relative; }
-  .hero__foto img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; filter: grayscale(0.15) contrast(1.05); }
-  .hero__pie { font-size: 0.85rem; color: var(--texto-claro-suave); margin-top: 8px; }
-  .hero__ruta { height: 14px; background: repeating-linear-gradient(90deg, var(--senal) 0 56px, transparent 56px 96px); opacity: 0.95; }
+  .hero { position: relative; isolation: isolate; display: grid; grid-template-rows: 1fr auto; min-height: clamp(600px, calc(100svh - var(--cab)), 920px); background: var(--asfalto); color: var(--texto-claro); overflow: hidden; }
+  .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; z-index: -2; filter: grayscale(0.2) contrast(1.05); }
+  @media (max-width: 899px) { .hero__img { object-position: 38% 0; height: 62%; } .hero .hero__in { padding-top: 230px; } }
+  .hero__velo { position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(18, 20, 22, 0.94) 0%, rgba(18, 20, 22, 0.86) 50%, rgba(18, 20, 22, 0.68) 70%, rgba(18, 20, 22, 0) 94%); }
+  @media (min-width: 900px) { .hero__velo { background: linear-gradient(90deg, rgba(18, 20, 22, 0.94) 0%, rgba(18, 20, 22, 0.84) 46%, rgba(18, 20, 22, 0.3) 100%); } }
+  .hero__in { align-self: end; padding-block: clamp(40px, 7vw, 96px) clamp(32px, 4vw, 56px); }
+  .kicker { font-family: var(--f-mono); font-weight: 500; font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-claro); margin-bottom: 18px; }
+  .hero h1 { color: #fff; font-size: clamp(3.2rem, 8.4vw, 7rem); max-width: 15ch; margin-bottom: 0.3em; animation: sube 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  .hero__lead { font-size: clamp(1.05rem, 1.6vw, 1.25rem); color: var(--texto-claro); max-width: 54ch; animation: sube 0.7s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  .hero__acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; animation: sube 0.7s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  @keyframes sube { from { transform: translateY(14px); } }
+  .hero__banda { background: var(--senal); color: var(--asfalto); }
+  .hero__datos { display: grid; gap: 0; }
+  @media (min-width: 760px) { .hero__datos { grid-template-columns: repeat(3, 1fr); } }
+  .hero__datos li { display: grid; gap: 0; padding: 14px 0; border-top: 1px solid rgba(18, 20, 22, 0.35); }
+  .hero__datos li:first-child { border-top: 0; }
+  @media (min-width: 760px) { .hero__datos li { border-top: 0; border-left: 1px solid rgba(18, 20, 22, 0.35); padding: 18px 24px; } .hero__datos li:first-child { border-left: 0; padding-left: 0; } }
+  .hero__datos strong { font-size: 1.6rem; line-height: 1.1; }
+  .hero__datos span { font-size: 0.95rem; font-weight: 600; }
 </style>
