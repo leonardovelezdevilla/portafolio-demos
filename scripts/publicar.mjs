@@ -15,7 +15,6 @@ const DEMOS = {
   '08-taller-ruta': 'taller-ruta',
   '09-habitat-sur': 'habitat-sur',
   '10-lumen-idiomas': 'lumen-idiomas',
-  '11-casa-patas': 'casa-patas',
 };
 const raiz = new URL('..', import.meta.url).pathname;
 const salida = join(raiz, 'salida', 'portafolio');
